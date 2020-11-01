@@ -1,5 +1,4 @@
 <?php
-
 require dirname(__DIR__)."/../library/subdomain/init.php";
 require dirname(__DIR__)."/../library/twilio/twilio.php";
 // require dirname(__DIR__)."/../library/mailgun/vendor/autoload.php";
