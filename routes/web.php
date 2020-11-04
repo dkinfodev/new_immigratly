@@ -40,7 +40,13 @@ Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginContro
 // Super Admin
 Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), function () {
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
+
+    Route::get('/edit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'editProfile']); 
+
+    Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
+
 });
+
 
 // User
 Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
