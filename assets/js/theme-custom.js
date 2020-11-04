@@ -1,5 +1,5 @@
-function internalServerError(){
-
+function internalError(){
+	warningMessage("Something went wrong. Try again!")
 }
 function showLoader(){
     $(".loader").show();
@@ -12,6 +12,9 @@ function successMessage(message){
 }
 function errorMessage(message){  
   toastr.error(message, 'Warning');
+}
+function warningMessage(message){
+  toastr.warning(message, 'Warning');
 }
 function redirect(url){
   window.location.href = url;
