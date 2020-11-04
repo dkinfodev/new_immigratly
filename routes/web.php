@@ -59,6 +59,18 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
 // Professional Admin
 Route::group(array('prefix' => 'professional', 'middleware' => 'professional'), function () {
     Route::get('/', [App\Http\Controllers\Professional\DashboardController::class, 'dashboard']);
+
+    Route::get('/profile', [App\Http\Controllers\Professional\DashboardController::class, 'profile']);
+
+    Route::get('/articles', [App\Http\Controllers\Professional\DashboardController::class, 'articles']);
+
+    Route::get('/events', [App\Http\Controllers\Professional\DashboardController::class, 'events']);
+
+    Route::get('/services', [App\Http\Controllers\Professional\DashboardController::class, 'services']);
+
+    Route::get('/complete-profile', [App\Http\Controllers\Professional\DashboardController::class, 'completeProfile']);
+
+    Route::get('/edit-profile', [App\Http\Controllers\Professional\DashboardController::class, 'editProfile']);	
 });
 
 
