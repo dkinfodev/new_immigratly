@@ -3,13 +3,10 @@
           <div class="navbar-vertical-footer-offset">
             <div class="navbar-brand-wrapper justify-content-between">
               <!-- Logo -->
-              
-              
                 <a class="navbar-brand" href="./index.html" aria-label="Front">
                   <img class="navbar-brand-logo" src="assets/svg/logos/logo.svg" alt="Logo">
                   <img class="navbar-brand-logo-mini" src="assets/svg/logos/logo-short.svg" alt="Logo">
                 </a>
-              
               <!-- End Logo -->
 
               <!-- Navbar Vertical Toggle -->
@@ -24,205 +21,24 @@
               <ul class="navbar-nav navbar-nav-lg nav-tabs">
                 <!-- Dashboards -->
                 <li class="navbar-vertical-aside-has-menu show">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle active" href="javascript:;" title="Dashboards">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link active" href="{{ baseUrl('/') }}" title="Dashboards">
                     <i class="tio-home-vs-1-outlined nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Dashboards</span>
                   </a>
-
-                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="./index.html" title="Default">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Default</span>
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link " href="./dashboard-alternative.html" title="Alternative">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Alternative</span>
-                      </a>
-                    </li>
-                  </ul>
                 </li>
                 <!-- End Dashboards -->
 
                 <li class="nav-item">
-                  <small class="nav-subtitle" title="Pages">Pages</small>
+                  <small class="nav-subtitle" title="Accounts">Accounts</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
 
-                <!-- Pages -->
+                <!-- Accounts -->
                 <li class="navbar-vertical-aside-has-menu ">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Pages">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/professionals') }}" title="Professionals">
                     <i class="tio-pages-outlined nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Pages</span>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Professionals</span>
                   </a>
-
-                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                    <li class="navbar-vertical-aside-has-menu ">
-                      <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:;" title="Users">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Users</span>
-                      </a>
-
-                      <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                        <li class="nav-item">
-                          <a class="nav-link " href="./users.html" title="Overview">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Overview</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./users-leaderboard.html" title="Leaderboard">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Leaderboard</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./users-add-user.html" title="Add user">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Add user <span class="badge badge-info badge-pill ml-1">Hot</span></span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-
-                    <li class="navbar-vertical-aside-has-menu ">
-                      <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:;" title="User profile">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">User profile <span class="badge badge-primary badge-pill ml-1">5</span></span>
-                      </a>
-
-                      <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                        <li class="nav-item">
-                          <a class="nav-link " href="./user-profile.html" title="Profile">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Profile</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./user-profile-teams.html" title="Teams">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Teams</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./user-profile-projects.html" title="Projects">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Projects</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./user-profile-connections.html" title="Connections">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Connections</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./user-profile-my-profile.html" title="My profile">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">My profile</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-
-                    <li class="navbar-vertical-aside-has-menu ">
-                      <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:;" title="Account">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Account</span>
-                      </a>
-
-                      <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                        <li class="nav-item">
-                          <a class="nav-link " href="./account-settings.html" title="Settings">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Settings</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./account-billing.html" title="Billing">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Billing</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./account-invoice.html" title="Invoice">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Invoice</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./account-api-keys.html" title="API Keys">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">API Keys</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-
-                    <li class="navbar-vertical-aside-has-menu ">
-                      <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:;" title="Projects">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Projects</span>
-                      </a>
-
-                      <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                        <li class="nav-item">
-                          <a class="nav-link " href="./projects.html" title="Overview">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Overview</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./projects-timeline.html" title="Timeline">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Timeline</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-
-                    <li class="navbar-vertical-aside-has-menu ">
-                      <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:;" title="Project">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Project</span>
-                      </a>
-
-                      <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                        <li class="nav-item">
-                          <a class="nav-link " href="./project.html" title="Overview">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Overview</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./project-files.html" title="Files">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Files <span class="badge badge-info badge-pill ml-1">Hot</span></span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./project-activity.html" title="Activity">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Activity</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./project-teams.html" title="Teams">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Teams</span>
-                          </a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link " href="./project-settings.html" title="Settings">
-                            <span class="tio-circle-outlined nav-indicator-icon"></span>
-                            <span class="text-truncate">Settings</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
                 </li>
                 <!-- End Pages -->
 

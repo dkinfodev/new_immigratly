@@ -135,6 +135,16 @@
                   </div>
                 </div>
                 <!-- End Form Group -->
+                <div class="js-form-message form-group">
+                  <label class="input-label">Company Name</label>
+                  <input type="text" class="form-control form-control-lg" name="company_name" id="company_name" placeholder="Company Name" aria-label="company_name" required data-msg="Please enter a valid company name.">
+                </div>
+                <div class="js-form-message form-group">
+                  <label class="input-label">Choose your subdomain name</label>
+                    
+                    <input type="text" name="subdomain" class="form-control" id="subdomain" name="form-control-rangelength" placeholder="Subdomain between 4 - 10 chars" minlength="4" maxlength="10" required>
+                </div>
+                <!-- End Form Group -->
                 <!-- Form Group -->
                 <div class="js-form-message form-group">
                   <label class="input-label" for="password">Password</label>

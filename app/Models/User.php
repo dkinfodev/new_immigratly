@@ -38,4 +38,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function ProfessionalPanel()
+    {
+        return $this->hasOne('App\Models\ProfessionalPanel','user_id');
+    } 
+
+    public function ProfessionalDetail()
+    {
+        return $this->hasOne('App\Models\ProfessionalDetails','user_id');
+    } 
 }

@@ -1,8 +1,9 @@
 <?php
 require dirname(__DIR__)."/../library/subdomain/init.php";
 require dirname(__DIR__)."/../library/twilio/twilio.php";
-// require dirname(__DIR__)."/../library/mailgun/vendor/autoload.php";
-// use Mailgun\Mailgun;
+
+use App\Models\Settings;
+
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
         $file_type = array(
@@ -1287,5 +1288,14 @@ if(!function_exists("prefill_answer")){
 
         }
         return $value;
+    }
+}
+
+if(!function_exists("subdomain")){
+    function subdomain($subdomain){
+        $rootdomain = Settings::where("meta_key",'rootdomain')->first();
+        $rootdomain = $rootdomain->meta_value;
+        $domain = $subdomain.".".$rootdomain;
+        return $domain;
     }
 }

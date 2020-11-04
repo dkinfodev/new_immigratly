@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\Admin::class,
         'user' => \App\Http\Middleware\User::class,
         'professional' => \App\Http\Middleware\Professional::class,
+        'curl_api' => \App\Http\Middleware\Api::class,
     ];
 }

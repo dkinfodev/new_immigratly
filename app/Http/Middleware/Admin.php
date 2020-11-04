@@ -19,11 +19,12 @@ class Admin
     {
         if(Auth::check()){
             if(Auth::user()->role == 'admin'){
-                if(Auth::user()->profile_status == 1){
-                    return $next($request);
-                }else{
-                    return Redirect::to('/profile-create');
-                }
+                return $next($request);
+                // if(Auth::user()->profile_status == 1){
+                //     return $next($request);
+                // }else{
+                //     return Redirect::to('/profile-create');
+                // }
             }
             else
                 return Redirect::to('/home');

@@ -40,6 +40,15 @@ Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginContro
 // Super Admin
 Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), function () {
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
+
+    Route::group(array('prefix' => 'professionals'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'activeProfessionals']);
+        Route::post('/ajax-active', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getActiveList']);
+        Route::get('/inactive', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'inactiveProfessionals']);
+        Route::post('/ajax-inactive', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getPendingList']);
+
+        Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
+    });
 });
 
 // User
