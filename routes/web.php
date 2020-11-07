@@ -45,6 +45,88 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
 
     Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
 
+    Route::group(array('prefix' => 'licence-bodies'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'licenceBodies']);
+
+        Route::post('/list', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'getList']); 
+
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'add']);
+
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'save']); 
+
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'delete']); 
+
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'edit']); 
+
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'update']);
+
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'search']); 
+
+    });
+
+    Route::group(array('prefix' => 'languages'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'languages']);
+
+        Route::post('/list', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'getList']); 
+
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'add']);
+
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'save']); 
+
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'delete']); 
+
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'edit']); 
+
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'update']);
+
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'search']); 
+
+    });
+
+
+    Route::group(array('prefix' => 'visa-services'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'visaServices']);
+
+        Route::post('/list', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'getList']); 
+
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'add']);
+
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'save']); 
+
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'delete']); 
+
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'edit']); 
+
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'update']);
+
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\visaServicesController::class, 'search']); 
+    });
+
+
+    Route::group(array('prefix' => 'lead-qualities'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'leadQualities']);
+
+        Route::post('/list', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'getList']); 
+
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'add']);
+
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'save']); 
+
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'delete']); 
+
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'edit']); 
+
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'update']);
+
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\LeadQualitiesController::class, 'search']); 
+
+    });
+
+    
 });
 
 

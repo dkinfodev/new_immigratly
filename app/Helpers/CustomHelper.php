@@ -285,6 +285,7 @@ if(!function_exists("author_slug")){
         return $slug;
     }
 }
+
 if(!function_exists("authorFollowed")){
     function authorFollowed($author_id,$user_id) { 
         $is_followed = AuthorFollowers::where("user_id",$user_id)->where("author_id",$author_id)->count();

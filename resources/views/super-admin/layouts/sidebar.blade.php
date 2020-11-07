@@ -226,7 +226,32 @@
                 </li>
                 <!-- End Pages -->
 
-                <!-- Apps -->
+                <!-- Settings -->
+                <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Settings">
+                    <i class="tio-apps nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Settings <span class="badge badge-info badge-pill ml-1">Basic</span></span>
+                  </a>
+
+                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{baseUrl('licence-bodies/')}}" title="Licence Bodies">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Licence Bodies</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{baseUrl('languages/')}}" title="Languages">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Languages</span>
+                      </a>
+                    </li>
+                    
+                  </ul>
+                </li>
+                <!-- End Settings -->
+
+                <!-- Apps 
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Apps">
                     <i class="tio-apps nav-icon"></i>
@@ -254,7 +279,7 @@
                     </li>
                   </ul>
                 </li>
-                <!-- End Apps -->
+                 End Apps -->
 
                 <!-- Authentication -->
                 <li class="navbar-vertical-aside-has-menu ">
