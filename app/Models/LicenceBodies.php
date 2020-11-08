@@ -9,4 +9,9 @@ class LicenceBodies extends Model
 {
     use HasFactory;
     protected $table = "licence_bodies";
+
+    public function CountryName()
+    {
+        return $this->belongsTo('App\Models\Countries','country_id');
+    }
 }
