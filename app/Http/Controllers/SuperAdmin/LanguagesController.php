@@ -86,17 +86,17 @@ class LanguagesController extends Controller
             'name' => 'required|unique:languages,name,'.$object->id,
         ]);
 
-     if ($validator->fails()) {
-        $response['status'] = false;
-        $error = $validator->errors()->toArray();
-        $errMsg = array();
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
 
-        foreach($error as $key => $err){
-            $errMsg[$key] = $err[0];
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
         }
-        $response['message'] = $errMsg;
-        return response()->json($response);
-    }
 
         $object->name = $request->input("name");
         $object->save();
@@ -104,14 +104,14 @@ class LanguagesController extends Controller
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('/languages');
         $response['message'] = "Record updated successfully";
-       
+
         return response()->json($response);
     }
 
     public function delete($id){
         $id = base64_decode($id);
         Languages::where("id",$id)->delete();
-        return redirect()->back();
+        return redirect()->back()->with("error","Record delete successfully");
     }
 
     public function search($keyword){
