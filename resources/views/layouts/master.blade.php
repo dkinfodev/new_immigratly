@@ -19,14 +19,24 @@
     <link rel="stylesheet" href="assets/vendor/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="assets/vendor/chart.js/dist/Chart.min.css">
     <link rel="stylesheet" href="assets/vendor/daterangepicker/daterangepicker.css">
-    <link rel="stylesheet" href="assets/vendors/toastr/toastr.css">
-    <link rel="stylesheet" href="assets/css/fonts/font-awesome/css/font-awesome.min.css">
+    
 
     <!-- CSS Front Template -->
     <link rel="stylesheet" href="assets/css/theme.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/vendor/toastr/toastr.css">
+    <link rel="stylesheet" href="assets/vendor/toastr/plugin/toastr.css">
+    <link rel="stylesheet" href="assets/vendor/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css" />
+    <link rel="stylesheet" href="assets/css/fonts/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/custom.css">
     @yield('style')
+
+    <script>
+    var BASEURL = "{{ baseUrl('/') }}";
+    var SITEURL = "{{ url('/') }}";
+    var csrf_token = "{{ csrf_token() }}";
+    </script>
   </head>
 
   <body class="has-navbar-vertical-aside navbar-vertical-aside-show-xl   footer-offset">
@@ -83,7 +93,8 @@
           </div>
         </div>
     </main>
-    
+    <div class="modal fade" id="popupModal" tabindex="-1" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    </div>
 
     <!-- JS Global Compulsory  -->
     <script src="assets/vendor/jquery/dist/jquery.min.js"></script>
@@ -103,9 +114,12 @@
     <script src="assets/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
     <script src="assets/vendor/datatables.net.extensions/select/select.min.js"></script>
     <script src="assets/vendor/clipboard/dist/clipboard.min.js"></script>
-    <script src="assets/vendors/toastr/toastr.min.js"></script>
-
+    <script src="assets/vendor/toastr/toastr.min.js"></script>
+    <script src="assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <!-- JS Front -->
+    <script src="assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
+    <script src="assets/vendor/ckeditor/ckeditor.js"></script>
     <script src="assets/js/theme.min.js"></script>
     <script src="assets/js/theme-custom.js"></script>
 
@@ -114,6 +128,9 @@
       $(document).on('ready', function () {
         $('.js-navbar-vertical-aside-toggle-invoker').click(function () {
           $('.js-navbar-vertical-aside-toggle-invoker i').tooltip('hide');
+        });
+        $('.js-file-attach').each(function () {
+          var customFile = new HSFileAttach($(this)).init();
         });
         // initialization of navbar vertical navigation
         var sidebar = $('.js-navbar-vertical-aside').hsSideNav();
@@ -138,10 +155,45 @@
         });
 
         // initialization of select2
-        $('.js-select2-custom').each(function () {
+        $('select').each(function () {
           var select2 = $.HSCore.components.HSSelect2.init($(this));
         });
       });
+
+      function showPopup(url,method='get',paramters = {}){
+        $.ajax({
+            url: url+"?_token="+csrf_token,
+            dataType:'json',
+            type:method,
+            data:paramters,
+            beforeSend:function(){
+                showLoader();
+                $("#popupModal").html('');
+            },
+            success: function (result) {
+                hideLoader();
+                if(result.status == true){
+                    $("#popupModal").html(result.contents);
+                    $("#popupModal").modal("show");
+                }else{
+                    if(result.message != undefined){
+                        errorMessage(result.message);
+                    }else{
+                        errorMessage("No Modal Data found");    
+                    }
+                }
+            },
+            error:function(){
+                hideLoader();
+                internalServerError();
+            }
+        });
+      }
+    
+    function closeModal(){
+        $("#popupModal").html('');
+        $("#popupModal").modal("hide");
+    }
     </script>
     @yield('javascript')
   </body>

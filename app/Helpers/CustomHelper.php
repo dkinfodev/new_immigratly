@@ -1,8 +1,8 @@
 <?php
 require dirname(__DIR__)."/../library/subdomain/init.php";
 require dirname(__DIR__)."/../library/twilio/twilio.php";
-// require dirname(__DIR__)."/../library/mailgun/vendor/autoload.php";
-// use Mailgun\Mailgun;
+
+use App\Models\Settings;
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
         $file_type = array(
@@ -285,7 +285,6 @@ if(!function_exists("author_slug")){
         return $slug;
     }
 }
-
 if(!function_exists("authorFollowed")){
     function authorFollowed($author_id,$user_id) { 
         $is_followed = AuthorFollowers::where("user_id",$user_id)->where("author_id",$author_id)->count();
@@ -1288,5 +1287,42 @@ if(!function_exists("prefill_answer")){
 
         }
         return $value;
+    }
+}
+
+if(!function_exists("subdomain")){
+    function subdomain($subdomain){
+        $rootdomain = Settings::where("meta_key",'rootdomain')->first();
+        $rootdomain = $rootdomain->meta_value;
+        $domain = $subdomain.".".$rootdomain;
+        return $domain;
+    }
+}
+
+if(!function_exists("checkProfileStatus")){
+    function checkProfileStatus($subdomain){
+        $db_prefix = Settings::where("meta_key","database_prefix")->first();
+        $db_prefix = $db_prefix->meta_value;
+        $database = $db_prefix.$subdomain;
+        
+        $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
+        $db = DB::select($query, [$database]);
+       
+        if (empty($db)) {
+            $response['status'] = "failed";
+            $response['message'] = "Panel Database not exists";
+        } else {
+            $response['status'] = "success";
+            $professional = DB::table($database.".domain_details")->first();
+            $response['professional'] = $professional;
+        }
+        return $response;
+    }
+}
+if(!function_exists("db_prefix")){
+    function db_prefix(){
+        $db_prefix = Settings::where("meta_key","database_prefix")->first();
+        $db_prefix = $db_prefix->meta_value;
+        return $db_prefix;
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LicenceBodies extends Model
 {
-    //use HasFactory;
+    use HasFactory;
     protected $table = "licence_bodies";
 
     public function CountryName()

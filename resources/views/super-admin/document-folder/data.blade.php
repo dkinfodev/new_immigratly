@@ -13,7 +13,8 @@
     </a>
   </td>
 
-  <td> <a href="{{baseUrl('languages/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; <a href="{{baseUrl('languages/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+
+  <td> <a href="{{baseUrl('documents/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; <a href="{{baseUrl('documents/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>
 </tr>

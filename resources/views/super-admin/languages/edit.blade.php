@@ -31,7 +31,7 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="languages-form" class="js-validate" action="{{ baseUrl('/languages/update') }}" method="post">
+      <form id="languages-form" class="js-validate" action="{{ baseUrl('/languages/update/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
         <!-- Input Group -->
@@ -40,7 +40,6 @@
           <div class="col-sm-10">
             <input type="text" name="name" id="name" placeholder="Enter language" class="form-control" value="{{$record->name}}">
           </div>
-          <input type="hidden" value="{{base64_encode($record->id)}}" name="rid" id="rid">
         </div>
         <!-- End Input Group -->
 
@@ -66,11 +65,11 @@
         $(".update-btn").find('.fa-spin').remove();
         $(".update-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
         
-        var id = $("#rid").val();
         var name = $("#name").val();
         var formData = $("#languages-form").serialize();
+        var url = $("#languages-form").attr('action');
         $.ajax({
-          url:"{{ baseUrl('languages/update') }}",
+          url:url,
           type:"post",
           data:formData,
           dataType:"json",

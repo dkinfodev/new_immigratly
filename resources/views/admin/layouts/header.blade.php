@@ -35,7 +35,7 @@
 <div class="navbar-nav-wrap">
 <div class="navbar-brand-wrapper">
 <!-- Logo -->
-<a class="navbar-brand" href="./index.html" aria-label="Front">
+<a class="navbar-brand" href="{{ baseUrl('/') }}" aria-label="Front">
   <img class="navbar-brand-logo" src="assets/svg/logos/logo.svg" alt="Logo">
   <img class="navbar-brand-logo-mini" src="assets/svg/logos/logo-short.svg" alt="Logo">
 </a>
@@ -687,104 +687,22 @@
               <img class="avatar-img" src="assets/img/160x160/img6.jpg" alt="Image Description">
             </div>
             <div class="media-body">
-              <span class="card-title h5">Mark Williams</span>
-              <span class="card-text">mark@example.com</span>
+              <span class="card-title h5">{{ Auth::user()->first_name." ".Auth::user()->last_name }}</span>
+              <span class="card-text">{{Auth::user()->email}}</span>
             </div>
           </div>
         </div>
 
         <div class="dropdown-divider"></div>
 
-        <!-- Unfold -->
-        <div class="hs-unfold w-100">
-          <a class="js-hs-unfold-invoker navbar-dropdown-submenu-item dropdown-item d-flex align-items-center" href="javascript:;"
-             data-hs-unfold-options='{
-               "target": "#navSubmenuPagesAccountDropdown1",
-               "event": "hover"
-             }'>
-            <span class="text-truncate pr-2" title="Set status">Set status</span>
-            <i class="tio-chevron-right navbar-dropdown-submenu-item-invoker ml-auto"></i>
-          </a>
-
-          <div id="navSubmenuPagesAccountDropdown1" class="hs-unfold-content hs-unfold-has-submenu dropdown-unfold dropdown-menu navbar-dropdown-sub-menu">
-            <a class="dropdown-item" href="#">
-              <span class="legend-indicator bg-success mr-1"></span>
-              <span class="text-truncate pr-2" title="Available">Available</span>
-            </a>
-            <a class="dropdown-item" href="#">
-              <span class="legend-indicator bg-danger mr-1"></span>
-              <span class="text-truncate pr-2" title="Busy">Busy</span>
-            </a>
-            <a class="dropdown-item" href="#">
-              <span class="legend-indicator bg-warning mr-1"></span>
-              <span class="text-truncate pr-2" title="Away">Away</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">
-              <span class="text-truncate pr-2" title="Reset status">Reset status</span>
-            </a>
-          </div>
-        </div>
-        <!-- End Unfold -->
 
         <a class="dropdown-item" href="#">
           <span class="text-truncate pr-2" title="Profile &amp; account">Profile &amp; account</span>
         </a>
 
-        <a class="dropdown-item" href="#">
-          <span class="text-truncate pr-2" title="Settings">Settings</span>
-        </a>
-
         <div class="dropdown-divider"></div>
 
-        <a class="dropdown-item" href="#">
-          <div class="media align-items-center">
-            <div class="avatar avatar-sm avatar-dark avatar-circle mr-2">
-              <span class="avatar-initials">HS</span>
-            </div>
-            <div class="media-body">
-              <span class="card-title h5">Htmlstream <span class="badge badge-primary badge-pill text-uppercase ml-1">PRO</span></span>
-              <span class="card-text">hs.example.com</span>
-            </div>
-          </div>
-        </a>
-
-        <div class="dropdown-divider"></div>
-
-        <!-- Unfold -->
-        <div class="hs-unfold w-100">
-          <a class="js-hs-unfold-invoker navbar-dropdown-submenu-item dropdown-item d-flex align-items-center" href="javascript:;"
-             data-hs-unfold-options='{
-               "target": "#navSubmenuPagesAccountDropdown2",
-               "event": "hover"
-             }'>
-            <span class="text-truncate pr-2" title="Customization">Customization</span>
-            <i class="tio-chevron-right navbar-dropdown-submenu-item-invoker  ml-auto"></i>
-          </a>
-
-          <div id="navSubmenuPagesAccountDropdown2" class="hs-unfold-content hs-unfold-has-submenu dropdown-unfold dropdown-menu navbar-dropdown-sub-menu">
-            <a class="dropdown-item" href="#">
-              <span class="text-truncate pr-2" title="Invite people">Invite people</span>
-            </a>
-            <a class="dropdown-item" href="#">
-              <span class="text-truncate pr-2" title="Analytics">Analytics</span>
-              <i class="tio-open-in-new"></i>
-            </a>
-            <a class="dropdown-item" href="#">
-              <span class="text-truncate pr-2" title="Customize Front">Customize Front</span>
-              <i class="tio-open-in-new"></i>
-            </a>
-          </div>
-        </div>
-        <!-- End Unfold -->
-
-        <a class="dropdown-item" href="#">
-          <span class="text-truncate pr-2" title="Manage team">Manage team</span>
-        </a>
-
-        <div class="dropdown-divider"></div>
-
-        <a class="dropdown-item" href="#">
+        <a class="dropdown-item" href="{{ url('logout') }}">
           <span class="text-truncate pr-2" title="Sign out">Sign out</span>
         </a>
       </div>

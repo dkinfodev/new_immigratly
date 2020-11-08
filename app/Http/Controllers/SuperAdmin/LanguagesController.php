@@ -21,14 +21,14 @@ class LanguagesController extends Controller
     {
         $viewData['total_bodies'] = Languages::count();
         $viewData['pageTitle'] = "Languages";
-        return view(roleFolder().'.languages.list',$viewData);
+        return view(roleFolder().'.languages.lists',$viewData);
     } 
 
-    public function getList(Request $request)
+    public function getAjaxList(Request $request)
     {
         $records = Languages::orderBy('id',"desc")->paginate();
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.languages.data',$viewData);
+        $view = View::make(roleFolder().'.languages.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();
@@ -45,7 +45,7 @@ class LanguagesController extends Controller
 
     public function save(Request $request){
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'name' => 'required|unique:languages',
         ]);
         
         if ($validator->fails()) {
@@ -59,13 +59,8 @@ class LanguagesController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-        
-        $now = \Carbon\Carbon::now();
-
         $object =  new Languages;
         $object->name = $request->input("name");
-        $object->created_at = $now;
-        $object->updated_at = null;
         $object->save();
         
         $response['status'] = true;
@@ -83,43 +78,40 @@ class LanguagesController extends Controller
         return view(roleFolder().'.languages.edit',$viewData);
     }
 
-    public function update(Request $request){
-     $validator = Validator::make($request->all(), [
-        'name' => 'required',
-    ]);
+    public function update($id,Request $request){
 
-     if ($validator->fails()) {
-        $response['status'] = false;
-        $error = $validator->errors()->toArray();
-        $errMsg = array();
-
-        foreach($error as $key => $err){
-            $errMsg[$key] = $err[0];
-        }
-        $response['message'] = $errMsg;
-        return response()->json($response);
-    }
-
-        $now = \Carbon\Carbon::now();
-
-        $id = $request->input("rid");
         $id = base64_decode($id);
         $object =  Languages::find($id);
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:languages,name,'.$object->id,
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
         $object->name = $request->input("name");
-        $object->updated_at = $now;
         $object->save();
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('/languages');
         $response['message'] = "Record updated successfully";
-       
+
         return response()->json($response);
     }
 
     public function delete($id){
         $id = base64_decode($id);
         Languages::where("id",$id)->delete();
-        return redirect()->back();
+        return redirect()->back()->with("error","Record delete successfully");
     }
 
     public function search($keyword){

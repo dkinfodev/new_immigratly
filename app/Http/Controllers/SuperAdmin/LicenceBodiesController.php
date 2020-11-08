@@ -24,14 +24,14 @@ class LicenceBodiesController extends Controller
         $viewData['total_bodies'] = LicenceBodies::count();
         //$viewData['records'] = LicenceBodies::count();
         $viewData['pageTitle'] = "Licence Bodies";
-        return view(roleFolder().'.licence-bodies.list',$viewData);
+        return view(roleFolder().'.licence-bodies.lists',$viewData);
     } 
 
-    public function getList(Request $request)
+    public function getAjaxList(Request $request)
     {
         $records = LicenceBodies::orderBy('id',"desc")->paginate();
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.licence-bodies.data',$viewData);
+        $view = View::make(roleFolder().'.licence-bodies.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();
@@ -56,7 +56,6 @@ class LicenceBodiesController extends Controller
             'country_id' => 'required',
         ]);
         
-        session(['redirect_back' => $request->input('redirect_back')]);
         if ($validator->fails()) {
             $response['status'] = false;
             $error = $validator->errors()->toArray();
@@ -69,23 +68,15 @@ class LicenceBodiesController extends Controller
             return response()->json($response);
         }
         
-        $now = \Carbon\Carbon::now();
-
         $object =  new LicenceBodies;
         $object->name = $request->input("name");
         $object->country_id = $request->input("country_id");
-        $object->created_at = $now;
-        $object->updated_at = null;
         $object->save();
         
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('licence-bodies');
         
         $response['message'] = "Record added successfully";
-        
-        /*
-        \Session::flash('success_message', 'Licence Body has been added successfully!'); */
-        
         return response()->json($response);
     }
 
@@ -99,54 +90,45 @@ class LicenceBodiesController extends Controller
         return view(roleFolder().'.licence-bodies.edit',$viewData);
     }
 
-    public function update(Request $request){
-     $validator = Validator::make($request->all(), [
-        'name' => 'required',
-        'country_id' => 'required',
-    ]);
+    public function update($id,Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'country_id' => 'required',
+        ]);
 
-     session(['redirect_back' => $request->input('redirect_back')]);
-     if ($validator->fails()) {
-        $response['status'] = false;
-        $error = $validator->errors()->toArray();
-        $errMsg = array();
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
 
-        foreach($error as $key => $err){
-            $errMsg[$key] = $err[0];
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
         }
-        $response['message'] = $errMsg;
-        return response()->json($response);
-    }
 
-    $now = \Carbon\Carbon::now();
+        $id = base64_decode($id);
+        $object =  LicenceBodies::find($id);
+        $object->name = $request->input("name");
+        $object->country_id = $request->input("country_id");
+        $object->save();
 
-    $id = $request->input("rid");
-    $id = base64_decode($id);
-    $object =  LicenceBodies::find($id);
-    $object->name = $request->input("name");
-    $object->country_id = $request->input("country_id");
-    $object->updated_at = $now;
-    $object->save();
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('/licence-bodies');
 
-    $response['status'] = true;
-    $response['redirect_back'] = baseUrl('/licence-bodies');
-
-    $response['message'] = "Record updated successfully";
-
-        /* \Session::flash('success_message', 'Licence Body has been added successfully!'); */
-        
+        $response['message'] = "Record updated successfully";
         return response()->json($response);
     }
 
     public function delete($id){
         $id = base64_decode($id);
         LicenceBodies::where("id",$id)->delete();
-        return redirect()->back();
+        return redirect()->back()->with('error',"Record deleted successfully");
     }
 
     public function search($keyword){
         $keyword = $keyword;
-        
         $records = LicenceBodies::where("name" , 'LIKE' , "%$keyword%")->paginate();
 
         $viewData['records'] = $records;

@@ -38,8 +38,7 @@
         <!-- Input Group -->
         <div class="js-form-message form-group">
           <label class="input-label">Licence Body</label>
-
-          <textarea class="form-control form-control-flush" rows=3 name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." ></textarea>
+          <input class="form-control form-control-flush" rows=3 name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." value="" />
         </div>
         <!-- End Input Group -->
 

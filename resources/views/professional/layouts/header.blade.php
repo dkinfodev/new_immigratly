@@ -35,7 +35,7 @@
 <div class="navbar-nav-wrap">
 <div class="navbar-brand-wrapper">
 <!-- Logo -->
-<a class="navbar-brand" href="./index.html" aria-label="Front">
+<a class="navbar-brand" href="{{ baseUrl('/') }}" aria-label="Front">
   <img class="navbar-brand-logo" src="assets/svg/logos/logo.svg" alt="Logo">
   <img class="navbar-brand-logo-mini" src="assets/svg/logos/logo-short.svg" alt="Logo">
 </a>

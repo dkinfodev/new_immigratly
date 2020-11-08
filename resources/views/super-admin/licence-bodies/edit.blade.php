@@ -32,17 +32,14 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="licenceBodies-form" class="js-validate" action="{{ baseUrl('/licence-bodies/save') }}" method="post">
+      <form id="licenceBodies-form" class="js-validate" action="{{ baseUrl('/licence-bodies/update/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
         <!-- Input Group -->
         <div class="js-form-message form-group">
           <label class="input-label">Licence Body</label>
 
-          <textarea class="form-control form-control-flush" rows=3 name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." >
-            {{ $record->name }}
-          </textarea>
-          <input type="hidden" value="{{base64_encode($record->id)}}" name="rid" id="rid">
+          <input class="form-control form-control-flush" rows=3 name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." value="{{ $record->name }}" />
         </div>
         <!-- End Input Group -->
 
@@ -81,8 +78,9 @@
         var name = $("#name").val();
         var country_id = $("#country_id").val();
         var formData = $("#licenceBodies-form").serialize();
+        var url  = $("#licenceBodies-form").attr('action');
         $.ajax({
-          url:"{{ baseUrl('licence-bodies/update') }}",
+          url:url,
           type:"post",
           data:formData,
           dataType:"json",
