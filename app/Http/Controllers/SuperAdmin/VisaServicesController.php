@@ -18,7 +18,7 @@ class VisaServicesController extends Controller
         $this->middleware('super_admin');
     }
 
-    public function visaServices()
+    public function index()
     {
         $viewData['total_bodies'] = VisaServices::count();
         $viewData['pageTitle'] = "Visa Services";

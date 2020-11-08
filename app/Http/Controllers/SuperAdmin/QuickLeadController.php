@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use View;
 
-use App\Models\User;
-use App\Models\LicenceBodies;
+use App\Models\QuickLead;
+use App\Models\VisaServices;
 use App\Models\Countries;
 
-class LicenceBodiesController extends Controller
+class QuickLeadController extends Controller
 {
     public function __construct()
     {
@@ -21,17 +21,18 @@ class LicenceBodiesController extends Controller
 
     public function index()
     {
-        $viewData['total_bodies'] = LicenceBodies::count();
-        //$viewData['records'] = LicenceBodies::count();
-        $viewData['pageTitle'] = "Licence Bodies";
-        return view(roleFolder().'.licence-bodies.lists',$viewData);
+        $viewData['total_bodies'] = QuickLead::count();
+        $viewData['countries'] = Countries::get();
+        $viewData['visaService'] = visaServices::get();
+        $viewData['pageTitle'] = "Quick Lead";
+        return view(roleFolder().'.quick-lead.list',$viewData);
     } 
 
     public function getAjaxList(Request $request)
     {
-        $records = LicenceBodies::orderBy('id',"desc")->paginate();
+        $records = QuickLead::orderBy('id',"desc")->paginate();
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.licence-bodies.ajax-list',$viewData);
+        $view = View::make(roleFolder().'.quick-lead.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();
@@ -41,19 +42,15 @@ class LicenceBodiesController extends Controller
     }
 
     public function add(){
-        $countries = Countries::get();
-        $viewData['countries'] = $countries;
-
-        $viewData['pageTitle'] = "Add Licence Bodies";
-        return view(roleFolder().'.licence-bodies.add',$viewData);
+        $viewData['pageTitle'] = "Add Language";
+        return view(roleFolder().'.quick-lead.add',$viewData);
     }
 
 
     public function save(Request $request){
-
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'country_id' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
         ]);
         
         if ($validator->fails()) {
@@ -67,33 +64,35 @@ class LicenceBodiesController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-        
-        $object =  new LicenceBodies;
-        $object->name = $request->input("name");
-        $object->country_id = $request->input("country_id");
+        $object =  new QuickLead;
+        $object->first_name = $request->input("first_name");
+        $object->last_name = $request->input("last_name");
+        $object->email = $request->input("email");
+        $object->phone_no = $request->input("phone_no");
+        $object->visa_service = $request->input("visa_service");
         $object->save();
         
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('licence-bodies');
-        
+        $response['redirect_back'] = baseUrl('quick-lead');
         $response['message'] = "Record added successfully";
+        
         return response()->json($response);
     }
 
 
     public function edit($id){
         $id = base64_decode($id);
-        $viewData['record'] = LicenceBodies::where("id",$id)->first();
-        $countries = Countries::get();
-        $viewData['countries'] = $countries;
-        $viewData['pageTitle'] = "Edit Licence Body";
-        return view(roleFolder().'.licence-bodies.edit',$viewData);
+        $viewData['record'] = QuickLead::where("id",$id)->first();
+        $viewData['pageTitle'] = "Edit Language";
+        return view(roleFolder().'.quick-lead.edit',$viewData);
     }
 
     public function update($id,Request $request){
+
+        $id = base64_decode($id);
+        $object =  QuickLead::find($id);
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'country_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -108,31 +107,30 @@ class LicenceBodiesController extends Controller
             return response()->json($response);
         }
 
-        $id = base64_decode($id);
-        $object =  LicenceBodies::find($id);
-        $object->name = $request->input("name");
-        $object->country_id = $request->input("country_id");
+        $object->first_name = $request->input("first_name");
+        $object->last_name = $request->input("last_name");
         $object->save();
 
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('/licence-bodies');
-
+        $response['redirect_back'] = baseUrl('/quick-lead');
         $response['message'] = "Record updated successfully";
+
         return response()->json($response);
     }
 
     public function delete($id){
         $id = base64_decode($id);
-        LicenceBodies::where("id",$id)->delete();
-        return redirect()->back()->with('error',"Record deleted successfully");
+        QuickLead::where("id",$id)->delete();
+        return redirect()->back()->with("error","Record delete successfully");
     }
 
     public function search($keyword){
         $keyword = $keyword;
-        $records = LicenceBodies::where("name" , 'LIKE' , "%$keyword%")->paginate();
+        
+        $records = QuickLead::where("first_name" , 'LIKE' , "%$keyword%")->paginate();
 
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.licence-bodies.data',$viewData);
+        $view = View::make(roleFolder().'.quick-lead.data',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();

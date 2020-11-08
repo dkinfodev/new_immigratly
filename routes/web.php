@@ -45,7 +45,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
 
     Route::group(array('prefix' => 'licence-bodies'), function () {
-        Route::get('/', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'licenceBodies']);
+        Route::get('/', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'getAjaxList']); 
         Route::get('/add', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'add']);
         Route::post('/save', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'save']); 
@@ -56,7 +56,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     });
 
     Route::group(array('prefix' => 'languages'), function () {
-        Route::get('/', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'languages']);
+        Route::get('/', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'getAjaxList']); 
         Route::get('/add', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'add']);
         Route::post('/save', [App\Http\Controllers\SuperAdmin\LanguagesController::class, 'save']); 
@@ -68,7 +68,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
 
 
     Route::group(array('prefix' => 'visa-services'), function () {
-        Route::get('/', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'visaServices']);
+        Route::get('/', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'getAjaxList']); 
         Route::get('/add', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'add']);
         Route::post('/save', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'save']); 
@@ -76,6 +76,29 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'edit']); 
         Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'update']);
         Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'search']); 
+    });
+
+    Route::group(array('prefix' => 'program-types'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'delete']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'update']);
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\ProgramTypesController::class, 'search']); 
+    });
+
+
+    Route::group(array('prefix' => 'quick-lead'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'delete']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'update']);
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\QuickLeadController::class, 'search']); 
     });
 
     Route::group(array('prefix' => 'document-folder'), function () {

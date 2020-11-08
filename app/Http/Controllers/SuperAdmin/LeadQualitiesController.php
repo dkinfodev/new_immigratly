@@ -17,7 +17,7 @@ class LeadQualitiesController extends Controller
         $this->middleware('super_admin');
     }
 
-    public function leadQualities()
+    public function index()
     {
         $viewData['total_bodies'] = LeadQualities::count();
         $viewData['pageTitle'] = "Lead Qualities";
@@ -61,15 +61,10 @@ class LeadQualitiesController extends Controller
             return response()->json($response);
         }
         
-        $now = \Carbon\Carbon::now();
-
         $object =  new LeadQualities;
         $object->name = $request->input("name");
         $object->point = $request->input("point");
-        $object->created_at = $now;
-        $object->updated_at = null;
         $object->save();
-        
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('lead-qualities');
         $response['message'] = "Record added successfully";
@@ -85,32 +80,30 @@ class LeadQualitiesController extends Controller
         return view(roleFolder().'.lead-qualities.edit',$viewData);
     }
 
-    public function update(Request $request){
+    public function update($id,Request $request){
+        $id = base64_decode($id);
+        $object =  LeadQualities::find($id);
+
      $validator = Validator::make($request->all(), [
         'name' => 'required',
         'point' => 'required',
     ]);
 
-     if ($validator->fails()) {
-        $response['status'] = false;
-        $error = $validator->errors()->toArray();
-        $errMsg = array();
+        if($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
 
-        foreach($error as $key => $err){
-            $errMsg[$key] = $err[0];
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
         }
-        $response['message'] = $errMsg;
-        return response()->json($response);
-    }
 
-        $now = \Carbon\Carbon::now();
-
-        $id = $request->input("rid");
-        $id = base64_decode($id);
         $object =  LeadQualities::find($id);
         $object->name = $request->input("name");
         $object->point = $request->input("point");
-        $object->updated_at = $now;
         $object->save();
 
         $response['status'] = true;

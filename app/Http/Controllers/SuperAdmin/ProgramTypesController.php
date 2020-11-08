@@ -8,11 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use View;
 
-use App\Models\User;
-use App\Models\LicenceBodies;
-use App\Models\Countries;
+use App\Models\ProgramTypes;
 
-class LicenceBodiesController extends Controller
+class ProgramTypesController extends Controller
 {
     public function __construct()
     {
@@ -21,17 +19,16 @@ class LicenceBodiesController extends Controller
 
     public function index()
     {
-        $viewData['total_bodies'] = LicenceBodies::count();
-        //$viewData['records'] = LicenceBodies::count();
-        $viewData['pageTitle'] = "Licence Bodies";
-        return view(roleFolder().'.licence-bodies.lists',$viewData);
+        $viewData['total_bodies'] = ProgramTypes::count();
+        $viewData['pageTitle'] = "Program Types";
+        return view(roleFolder().'.program-types.list',$viewData);
     } 
 
-    public function getAjaxList(Request $request)
+    public function getList(Request $request)
     {
-        $records = LicenceBodies::orderBy('id',"desc")->paginate();
+        $records = ProgramTypes::orderBy('id',"desc")->paginate();
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.licence-bodies.ajax-list',$viewData);
+        $view = View::make(roleFolder().'.program-types.data',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();
@@ -41,19 +38,15 @@ class LicenceBodiesController extends Controller
     }
 
     public function add(){
-        $countries = Countries::get();
-        $viewData['countries'] = $countries;
-
-        $viewData['pageTitle'] = "Add Licence Bodies";
-        return view(roleFolder().'.licence-bodies.add',$viewData);
+        $viewData['pageTitle'] = "Add Program Types";
+        return view(roleFolder().'.program-types.add',$viewData);
     }
 
 
     public function save(Request $request){
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'country_id' => 'required',
+            'point' => ['required', 'min:1', 'max:5'],
         ]);
         
         if ($validator->fails()) {
@@ -68,14 +61,12 @@ class LicenceBodiesController extends Controller
             return response()->json($response);
         }
         
-        $object =  new LicenceBodies;
+        $object =  new ProgramTypes;
         $object->name = $request->input("name");
-        $object->country_id = $request->input("country_id");
+        $object->point = $request->input("point");
         $object->save();
-        
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('licence-bodies');
-        
+        $response['redirect_back'] = baseUrl('program-types');
         $response['message'] = "Record added successfully";
         return response()->json($response);
     }
@@ -83,56 +74,53 @@ class LicenceBodiesController extends Controller
 
     public function edit($id){
         $id = base64_decode($id);
-        $viewData['record'] = LicenceBodies::where("id",$id)->first();
-        $countries = Countries::get();
-        $viewData['countries'] = $countries;
-        $viewData['pageTitle'] = "Edit Licence Body";
-        return view(roleFolder().'.licence-bodies.edit',$viewData);
+        $viewData['record'] = ProgramTypes::where("id",$id)->first();
+        $viewData['pageTitle'] = "Edit Program types";
+        return view(roleFolder().'.program-types.edit',$viewData);
     }
 
     public function update($id,Request $request){
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'country_id' => 'required',
-        ]);
+         $id = base64_decode($id);
+        $object =  ProgramTypes::find($id);
+     $validator = Validator::make($request->all(), [
+        'name' => 'required',
+        'point' => 'required',
+    ]);
 
-        if ($validator->fails()) {
-            $response['status'] = false;
-            $error = $validator->errors()->toArray();
-            $errMsg = array();
+     if ($validator->fails()) {
+        $response['status'] = false;
+        $error = $validator->errors()->toArray();
+        $errMsg = array();
 
-            foreach($error as $key => $err){
-                $errMsg[$key] = $err[0];
-            }
-            $response['message'] = $errMsg;
-            return response()->json($response);
+        foreach($error as $key => $err){
+            $errMsg[$key] = $err[0];
         }
+        $response['message'] = $errMsg;
+        return response()->json($response);
+    }
 
-        $id = base64_decode($id);
-        $object =  LicenceBodies::find($id);
         $object->name = $request->input("name");
-        $object->country_id = $request->input("country_id");
+        $object->point = $request->input("point");        
         $object->save();
-
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('/licence-bodies');
-
+        $response['redirect_back'] = baseUrl('program-types');
         $response['message'] = "Record updated successfully";
         return response()->json($response);
     }
 
     public function delete($id){
         $id = base64_decode($id);
-        LicenceBodies::where("id",$id)->delete();
-        return redirect()->back()->with('error',"Record deleted successfully");
+        ProgramTypes::where("id",$id)->delete();
+        return redirect()->back();
     }
 
     public function search($keyword){
         $keyword = $keyword;
-        $records = LicenceBodies::where("name" , 'LIKE' , "%$keyword%")->paginate();
+        
+        $records = ProgramTypes::where("name" , 'LIKE' , "%$keyword%")->paginate();
 
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.licence-bodies.data',$viewData);
+        $view = View::make(roleFolder().'.program-types.data',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();

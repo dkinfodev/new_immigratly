@@ -17,7 +17,7 @@ class LanguagesController extends Controller
         $this->middleware('super_admin');
     }
 
-    public function languages()
+    public function index()
     {
         $viewData['total_bodies'] = Languages::count();
         $viewData['pageTitle'] = "Languages";
