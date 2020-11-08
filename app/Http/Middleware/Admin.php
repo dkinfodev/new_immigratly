@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use Redirect;
 
+use App\Models\DomainDetails;
+
 class Admin
 {
     /**
@@ -18,16 +20,16 @@ class Admin
     public function handle($request, Closure $next)
     {
         if(Auth::check()){
+            $setting = DomainDetails::first();
             if(Auth::user()->role == 'admin'){
-                return $next($request);
-                // if(Auth::user()->profile_status == 1){
-                //     return $next($request);
-                // }else{
-                //     return Redirect::to('/profile-create');
-                // }
-            }
-            else
+                if($setting->profile_status == 2){
+                    return $next($request);
+                }else{
+                    return Redirect::to(baseUrl('/complete-profile'));
+                }
+            }else{
                 return Redirect::to('/home');
+            }
         }else{
             return Redirect::to('/login');
         }

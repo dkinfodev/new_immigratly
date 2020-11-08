@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use View;
+use DB;
 
 use App\Models\User;
 use App\Models\Professionals;
@@ -71,6 +72,28 @@ class ProfessionalController extends Controller
         
         $response['status'] = true;
         $response['message'] = "Professional status change to ".$status;
+        return response()->json($response);
+    }
+
+    public function profileStatus($status,Request $request)
+    {
+        $id = $request->input("id");
+        $db_prefix = db_prefix();
+        $professional = Professionals::where("id",$id)->first();
+        $subdomain = $professional->subdomain;
+        $database = $db_prefix.$subdomain;
+        $professional_status = DB::table($database.".domain_details")->first();
+
+        if($status == 'active'){
+            $upData['profile_status'] = 2;
+            $response['message'] = "Professional profile verified";
+        }else{
+            $upData['profile_status'] = 0;
+            $response['message'] = "Professional profile unverified";
+        }
+        DB::table($database.".domain_details")->where('id',$professional_status->id)->update($upData);
+        $response['status'] = true;
+        
         return response()->json($response);
     }
 }

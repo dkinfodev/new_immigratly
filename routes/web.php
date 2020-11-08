@@ -24,6 +24,9 @@ Route::get('/logout', function () {
 });
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/states', [App\Http\Controllers\CommonController::class, 'stateList']);
+Route::get('/cities', [App\Http\Controllers\CommonController::class, 'cityList']);
+Route::get('/licence-bodies', [App\Http\Controllers\CommonController::class, 'licenceBodies']);
 
 Route::get('/signup/professional', [App\Http\Controllers\Auth\RegisterController::class, 'professionalSignup']);
 Route::post('/signup/professional', [App\Http\Controllers\Auth\RegisterController::class, 'registerProfessional']);
@@ -48,6 +51,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/ajax-inactive', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getPendingList']);
 
         Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
+        Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
     });
 });
 
@@ -59,22 +63,29 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
 // Professional Admin
 Route::group(array('prefix' => 'professional', 'middleware' => 'professional'), function () {
     Route::get('/', [App\Http\Controllers\Professional\DashboardController::class, 'dashboard']);
-
     Route::get('/profile', [App\Http\Controllers\Professional\DashboardController::class, 'profile']);
-
     Route::get('/articles', [App\Http\Controllers\Professional\DashboardController::class, 'articles']);
-
     Route::get('/events', [App\Http\Controllers\Professional\DashboardController::class, 'events']);
-
     Route::get('/services', [App\Http\Controllers\Professional\DashboardController::class, 'services']);
-
     Route::get('/complete-profile', [App\Http\Controllers\Professional\DashboardController::class, 'completeProfile']);
-
     Route::get('/edit-profile', [App\Http\Controllers\Professional\DashboardController::class, 'editProfile']);	
 });
 
 
 // Admin of Professional Side
-Route::group(array('prefix' => 'admin', 'middleware' => 'admin'), function () {
-    Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);
+Route::group(array('prefix' => 'admin'), function () {
+    Route::group(array('middleware' => 'auth'), function () {
+        Route::get('/complete-profile', [App\Http\Controllers\Admin\ProfileController::class, 'completeProfile']);
+        Route::post('/save-profile', [App\Http\Controllers\Admin\ProfileController::class, 'saveProfile']);
+    });
+    Route::group(array('middleware' => 'admin'), function () {
+        Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);
+        Route::get('/profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile']);
+    });
+
+    Route::group(array('prefix' => 'leads'), function () {
+        Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
+        Route::post('/ajax-list', [App\Http\Controllers\Admin\LeadsController::class, 'getNewList']);
+        Route::get('/assigned', [App\Http\Controllers\Admin\LeadsController::class, 'assignedLeads']);
+    });
 });

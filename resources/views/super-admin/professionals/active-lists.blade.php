@@ -85,10 +85,10 @@
               </div>
             </th>
             <th class="table-column-pl-0">Name</th>
-            <th>Email</th>
+            <th>Subdomain Handler</th>
             <th>Contact Number</th>
-            <th>Profile Status</th>
-            <th></th>
+            <th>Panel Status</th>
+            <th>Profile status</th>
           </tr>
         </thead>
         <tbody>
@@ -272,6 +272,7 @@ function changeStatus(e){
         success: function (result) {
             if(result.status == true){
                 successMessage(result.message);
+                loadData();
             }else{
                 errorMessage(result.message);
             }
@@ -281,6 +282,49 @@ function changeStatus(e){
     $.ajax({
         type: "POST",
         url: BASEURL + '/professionals/status/inactive',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+        error: function(){
+          internalError();
+        }
+    });
+  }
+}
+
+function profileStatus(e){
+  var id = $(e).attr("data-id");
+  if($(e).is(":checked")){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/professionals/profile-status/active',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+            }else{
+                errorMessage(result.message);
+            }
+        },
+    });
+  }else{
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/professionals/profile-status/inactive',
         data:{
             _token:csrf_token,
             id:id,
