@@ -65,6 +65,10 @@
         $(".update-btn").find('.fa-spin').remove();
         $(".update-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
         
+<<<<<<< HEAD
+=======
+        var id = $("#rid").val();
+>>>>>>> dkdev
         var name = $("#name").val();
         var formData = $("#languages-form").serialize();
         var url = $("#languages-form").attr('action');
