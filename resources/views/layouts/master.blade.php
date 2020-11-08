@@ -40,12 +40,7 @@
   </head>
 
   <body class="has-navbar-vertical-aside navbar-vertical-aside-show-xl   footer-offset">
-    <div class="loader">
-      <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <h4 class="text-danger">Loading...</h4>
-    </div>
+    
   <script src="assets/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside-mini-cache.js"></script>
     
     @include(roleFolder().'.layouts.header')
@@ -131,7 +126,6 @@
     <!-- JS Plugins Init. -->
     <script>
       $(document).on('ready', function () {
-        $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })
         $('.js-navbar-vertical-aside-toggle-invoker').click(function () {
           $('.js-navbar-vertical-aside-toggle-invoker i').tooltip('hide');
         });

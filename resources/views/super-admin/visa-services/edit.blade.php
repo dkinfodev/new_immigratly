@@ -9,7 +9,7 @@
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/languages') }}">Languages</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/visa-services') }}">Visa Services</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit</li>
           </ol>
         </nav>
@@ -18,7 +18,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('languages/')}}">
+        <a class="btn btn-primary" href="{{baseUrl('/visa-services')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -31,18 +31,19 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="languages-form" class="js-validate" action="{{ baseUrl('/languages/update/'.base64_encode($record->id)) }}" method="post">
+      <form id="visaServices-form" class="js-validate" action="{{ baseUrl('/visa-services/update/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
         <!-- Input Group -->
         <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Language</label>
-          <div class="col-sm-10">
-            <input type="text" name="name" id="name" placeholder="Enter language" class="form-control" value="{{$record->name}}">
+          <label class="col-sm-2 col-form-label">Name</label>
+          
+          <div class="col-sm-10">  
+            <input type="text" name="name" id="name" placeholder="Enter visa service" class="form-control" value="{{$record->name}}">
           </div>
+         
         </div>
         <!-- End Input Group -->
-
 
         <div class="form-group">
           <button type="button" class="btn update-btn btn-primary">Update</button>
@@ -65,9 +66,10 @@
         $(".update-btn").find('.fa-spin').remove();
         $(".update-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
         
+        var id = $("#rid").val();
         var name = $("#name").val();
-        var formData = $("#languages-form").serialize();
-        var url = $("#languages-form").attr('action');
+        var formData = $("#visaServices-form").serialize();
+        var url = $("#visaServices-form").attr('action');
         $.ajax({
           url:url,
           type:"post",
@@ -101,6 +103,5 @@
       });
     });
   </script>
-
 
   @endsection

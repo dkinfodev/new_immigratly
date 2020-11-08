@@ -9,8 +9,9 @@
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/languages') }}">Languages</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/licence-bodies') }}">Licence Bodies</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Edit</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Licence Bodies</li>
           </ol>
         </nav>
 
@@ -18,7 +19,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('languages/')}}">
+        <a class="btn btn-primary" href="{{baseUrl('licence-bodies/')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -31,18 +32,26 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="languages-form" class="js-validate" action="{{ baseUrl('/languages/update/'.base64_encode($record->id)) }}" method="post">
+      <form id="licenceBodies-form" class="js-validate" action="{{ baseUrl('/licence-bodies/update/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
         <!-- Input Group -->
-        <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Language</label>
-          <div class="col-sm-10">
-            <input type="text" name="name" id="name" placeholder="Enter language" class="form-control" value="{{$record->name}}">
-          </div>
+        <div class="js-form-message form-group">
+          <label class="input-label">Licence Body</label>
+
+          <input class="form-control form-control-flush" rows=3 name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." value="{{ $record->name }}" />
         </div>
         <!-- End Input Group -->
 
+        <!-- Input Group -->
+        <div class="js-form-message form-group">
+          <label class="input-label">Country</label>
+          <select name="country_id" id="country_id" class="custom-select custom-select-flush">
+            @foreach($countries as $key=>$c)
+            <option <?php if(($record->country_id)==($c->id)) {echo "selected";} else {echo ""; }  ?> value="{{$c->id}}" name="{{$c->name}}">{{$c->name}}</option>
+            @endforeach
+          </select>
+        </div>
 
         <div class="form-group">
           <button type="button" class="btn update-btn btn-primary">Update</button>
@@ -65,9 +74,11 @@
         $(".update-btn").find('.fa-spin').remove();
         $(".update-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
         
+        var id = $("#rid").val();
         var name = $("#name").val();
-        var formData = $("#languages-form").serialize();
-        var url = $("#languages-form").attr('action');
+        var country_id = $("#country_id").val();
+        var formData = $("#licenceBodies-form").serialize();
+        var url  = $("#licenceBodies-form").attr('action');
         $.ajax({
           url:url,
           type:"post",
@@ -94,8 +105,8 @@
           }
         },
         error:function(){
-         $(".update-btn").find(".fa-spin").remove();
-         $(".update-btn").removeAttr("disabled");
+         $(".signup-btn").find(".fa-spin").remove();
+         $(".signup-btn").removeAttr("disabled");
        }
      });
       });

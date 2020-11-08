@@ -9,16 +9,15 @@
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/languages') }}">Languages</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/visa-services') }}">Visa Services</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add</li>
           </ol>
         </nav>
-
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('languages/')}}">
+        <a class="btn btn-primary" href="{{baseUrl('visa-services/')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -31,21 +30,20 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="languages-form" class="js-validate" action="{{ baseUrl('/languages/update/'.base64_encode($record->id)) }}" method="post">
+      <form id="visaServices-form" class="js-validate" action="{{ baseUrl('/visa-services/save') }}" method="post">
 
         @csrf
         <!-- Input Group -->
         <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Language</label>
+          <label class="col-sm-2 col-form-label">Name</label>
           <div class="col-sm-10">
-            <input type="text" name="name" id="name" placeholder="Enter language" class="form-control" value="{{$record->name}}">
+            <input type="text" name="name" id="name" placeholder="Enter Visa Service" class="form-control">
           </div>
         </div>
         <!-- End Input Group -->
 
-
         <div class="form-group">
-          <button type="button" class="btn update-btn btn-primary">Update</button>
+          <button type="button" class="btn add-btn btn-primary">Add</button>
         </div>
         <!-- End Input Group -->
 
@@ -59,26 +57,24 @@
   @section('javascript')
   <script type="text/javascript">
     $(document).ready(function(){
-      $(".update-btn").click(function(e){
+      $(".add-btn").click(function(e){
         e.preventDefault(); 
-        $(".update-btn").attr("disabled","disabled");
-        $(".update-btn").find('.fa-spin').remove();
-        $(".update-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
+        $(".add-btn").attr("disabled","disabled");
+        $(".add-btn").find('.fa-spin').remove();
+        $(".add-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
         
         var name = $("#name").val();
-        var formData = $("#languages-form").serialize();
-        var url = $("#languages-form").attr('action');
+        var formData = $("#visaServices-form").serialize();
         $.ajax({
-          url:url,
+          url:"{{ baseUrl('visa-services/save') }}",
           type:"post",
           data:formData,
           dataType:"json",
           beforeSend:function(){
-
           },
           success:function(response){
-           $(".update-btn").find(".fa-spin").remove();
-           $(".update-btn").removeAttr("disabled");
+           $(".add-btn").find(".fa-spin").remove();
+           $(".add-btn").removeAttr("disabled");
            if(response.status == true){
             successMessage(response.message);
             window.location.href = response.redirect_back;
@@ -94,13 +90,12 @@
           }
         },
         error:function(){
-         $(".update-btn").find(".fa-spin").remove();
-         $(".update-btn").removeAttr("disabled");
+         $(".add-btn").find(".fa-spin").remove();
+         $(".add-btn").removeAttr("disabled");
        }
      });
       });
     });
   </script>
-
 
   @endsection

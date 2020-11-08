@@ -696,7 +696,7 @@
         <div class="dropdown-divider"></div>
 
 
-        <a class="dropdown-item" href="{{ baseUrl('/edit-profile') }}">
+        <a class="dropdown-item" href="#">
           <span class="text-truncate pr-2" title="Profile &amp; account">Profile &amp; account</span>
         </a>
 
