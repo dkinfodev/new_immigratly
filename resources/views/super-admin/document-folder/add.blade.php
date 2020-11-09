@@ -9,16 +9,15 @@
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/visa-services') }}">Services</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/document-folder') }}">Document Folder</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Add</li>
           </ol>
         </nav>
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('visa-services')}}">
+        <a class="btn btn-primary" href="{{baseUrl('document-folder/')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -31,40 +30,18 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="visaServices-form" class="js-validate" action="{{ baseUrl('/visa-services/save') }}" method="post">
+      <form id="documents-form" class="js-validate" action="{{ baseUrl('/documents/save') }}" method="post">
 
         @csrf
-         <!-- Input Group -->
-        <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Service Under</label>
-          <div class="col-sm-10">
-            <select class="form-control" name="parent_id">
-              <option value="0">None</option>
-              @foreach($main_services as $service)
-              <option value="{{ $service->id }}">{{$service->name}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-        <!-- End Input Group -->
         <!-- Input Group -->
         <div class="js-form-message form-group row">
           <label class="col-sm-2 col-form-label">Name</label>
           <div class="col-sm-10">
-            <input type="text" name="name" id="name" placeholder="Enter Visa Service" class="form-control">
+            <input type="text" name="name" id="name" placeholder="Enter document name" class="form-control">
           </div>
         </div>
         <!-- End Input Group -->
-        <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Documents</label>
-          <div class="col-sm-10">
-            <select class="form-control" multiple name="document_folders[]">
-              @foreach($documents as $document)
-              <option value="{{ $document->id }}">{{$document->name}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
+
         <div class="form-group">
           <button type="button" class="btn add-btn btn-primary">Add</button>
         </div>
@@ -87,9 +64,9 @@
         $(".add-btn").prepend("<i class='fa fa-spin fa-spinner'></i>");
         
         var name = $("#name").val();
-        var formData = $("#visaServices-form").serialize();
+        var formData = $("#documents-form").serialize();
         $.ajax({
-          url:"{{ baseUrl('visa-services/save') }}",
+          url:"{{ baseUrl('document-folder/save') }}",
           type:"post",
           data:formData,
           dataType:"json",

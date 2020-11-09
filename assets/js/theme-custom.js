@@ -1,4 +1,5 @@
 function internalError(){
+	hideLoader();
 	warningMessage("Something went wrong. Try again!")
 }
 function showLoader(){

@@ -9,9 +9,9 @@
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/licence-bodies') }}">Licence Bodies</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Edit</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Licence Bodies</li>
+            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
 

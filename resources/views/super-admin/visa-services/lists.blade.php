@@ -10,8 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/super-admin') }}">Super Admin</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Visa Services</li>
+            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
 
@@ -42,7 +41,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" onchange="search(this.value)" type="search" class="form-control" placeholder="Search visa services" aria-label="Search visa service">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search visa services" aria-label="Search visa service">
             </div>
             <!-- End Search -->
           </form>
@@ -70,23 +69,25 @@
     <!-- End Header -->
 
     <!-- Table -->
-    <div class="table-responsive datatable-custom">
-      <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-        <thead class="thead-light">
-          <tr>
-            <th class="table-column-pr-0">
-              <div class="custom-control custom-checkbox">
-                <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
-                <label class="custom-control-label" for="datatableCheckAll"></label>
-              </div>
-            </th>
-            <th class="table-column-pl-0">Name</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+    <div class="col-sm-6">
+      <div class="table-responsive datatable-custom">
+        <table id="tableList" class="table table-borderless">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col" class="table-column-pr-0">
+                <div class="custom-control custom-checkbox">
+                  <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
+                  <label class="custom-control-label" for="datatableCheckAll"></label>
+                </div>
+              </th>
+              <th scope="col" class="table-column-pl-0">Name</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
     </div>
     <!-- End Table -->
 
@@ -147,19 +148,30 @@ $(document).ready(function(){
       changePage('prev');
     }
   });
+  $("#datatableSearch").keyup(function(){
+    var value = $(this).val();
+    if(value == ''){
+      loadData();
+    }
+    if(value.length > 3){
+      loadData();
+    }
+  })
 })
 loadData();
 function loadData(page=1){
+    var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
         url: BASEURL + '/visa-services/ajax-list?page='+page,
         data:{
-            _token:csrf_token
+            _token:csrf_token,
+            search:search
         },
         dataType:'json',
         beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            // var cols = $("#tableList thead tr > th").length;
+            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
             // $("#paginate").html('');
         },
         success: function (data) {
@@ -180,10 +192,6 @@ function loadData(page=1){
                 $(".previous").addClass("disabled","disabled");
               }
               $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
             }
         },
     });
@@ -191,43 +199,7 @@ function loadData(page=1){
 
 
 function search(keyword){
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/visa-services/search/'+keyword,
-        data:{
-            _token:csrf_token
-        },
-        dataType:'json',
-        beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
-        },
-        success: function (data) {
-            $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
-        },
-    });
+    loadData();
 }
 
 function changePage(action){
@@ -246,51 +218,5 @@ function changePage(action){
  
 }
 
-function confirmDelete(id){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonClass: 'btn btn-primary',
-      cancelButtonClass: 'btn btn-danger ml-1',
-      buttonsStyling: false,
-    }).then(function(result) {
-      if (result.value) {
-        $.ajax({
-            type: "POST",
-            url: BASEURL + '/visa-services/delete',
-            data:{
-                _token:csrf_token,
-                record_id:id,
-            },
-            dataType:'json',
-            success: function (result) {
-                if(result.status == true){
-                    Swal.fire({
-                        type: "success",
-                        title: 'Deleted!',
-                        text: 'Record Body has been deleted.',
-                        confirmButtonClass: 'btn btn-success',
-                    }).then(function () {
-                        window.location.href= result.redirect;
-                    });
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Error while deleting",
-                        type: "error",
-                        confirmButtonClass: 'btn btn-primary',
-                        buttonsStyling: false,
-                    });
-                }
-            },
-        });
-      }
-    })
-}
 </script>
 @endsection

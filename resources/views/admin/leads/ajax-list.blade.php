@@ -225,8 +225,8 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-  $('.js-hs-unfold-invoker').each(function () {
-    var unfold = new HSUnfold($(this)).init();
-  });
+  // $('.js-hs-unfold-invoker').each(function () {
+  //   var unfold = new HSUnfold($(this)).init();
+  // });
 })
 </script>

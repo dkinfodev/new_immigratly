@@ -3,8 +3,6 @@
           <div class="navbar-vertical-footer-offset">
             <div class="navbar-brand-wrapper justify-content-between">
               <!-- Logo -->
-              
-              
                 <a class="navbar-brand" href="{{ baseUrl('/') }}" aria-label="Front">
                   <img class="navbar-brand-logo" src="assets/svg/logos/logo.svg" alt="Logo">
                   <img class="navbar-brand-logo-mini" src="assets/svg/logos/logo-short.svg" alt="Logo">
@@ -35,7 +33,12 @@
                   <small class="nav-subtitle" title="Pages">Pages</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
-
+                <li class="navbar-vertical-aside-has-menu">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/services') }}" title="Services">
+                    <i class="tio-pages-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Services</span>
+                  </a>
+                </li>
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Leads">
                     <i class="tio-apps nav-icon"></i>

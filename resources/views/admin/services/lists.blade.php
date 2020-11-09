@@ -1,33 +1,134 @@
 @extends('layouts.master')
-
+@section("style")
+<style>
+.all_services li {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+}
+.sub_services li {
+    border-bottom: none;
+}
+</style>
+@endsection
 @section('content')
 <!-- Content -->
 <div class="content container-fluid">
-  <!-- Page Header -->
   <div class="page-header">
     <div class="row align-items-end">
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/licence-bodies') }}">Licence Body</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/services') }}">Services</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
-
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
+    </div>
+  </div>
+  <div class="accordion" id="accordionExample">
+    <div class="card" id="headingOne">
+      <a class="card-header card-btn btn-block" href="javascript:;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Choose your services
+        <span class="card-btn-toggle">
+          <span class="card-btn-toggle-default">
+            <i class="tio-add"></i>
+          </span>
+          <span class="card-btn-toggle-active">
+            <i class="tio-remove"></i>
+          </span>
+        </span>
+      </a>
 
-      <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/licence-bodies/add') }}">
-          <i class="tio-add mr-1"></i> Add 
-        </a>
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body">
+          <form id="services_form" action="{{ baseUrl('services/select-services') }}" method="post">
+              @csrf
+              <div class="row">
+                  @if (count($errors) > 0)
+                    <div class="col-md-12">
+                       <div class="text-danger">
+                          <ul>
+                             @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                             @endforeach
+                          </ul>
+                       </div>
+                    </div>
+                  @endif
+                  <div class="col-md-5 col-sm-5 col-lg-5">
+                      <!-- List -->
+                      <div class="panel-header">
+                        <h4>All Services</h4>
+                      </div>
+                      @if(count($all_services) > 0)
+                      <ul class="list-unstyled all_services">
+                        <li>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="chooseall">
+                            <label class="custom-control-label" for="chooseall">Choose All</label>
+                          </div>
+                        </li>
+                        @foreach($all_services as $key => $service)
+                        <li>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input parent_services" value="{{ $service->id }}" name="services[]" id="row-{{$key}}">
+                            <label class="custom-control-label" for="row-{{$key}}">{{$service->name}}</label>
+                          </div>
+                          
+                          @if(count($service->sub_services) > 0)
+                            <ul class="sub_services">
+                            @foreach($service->sub_services as $key2 => $service2)
+                              <li>
+                                  <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input child_services" value="{{ $service2->id }}" name="services[]" id="sub-{{$key2}}">
+                                    <label class="custom-control-label" for="sub-{{$key2}}">{{$service2->name}}</label>
+                                  </div>
+                              </li>
+                            @endforeach
+                            </ul>
+                          @endif
+                        </li>
+                        @endforeach
+                      </ul>
+                      @else
+                        <div class="text-danger">
+                            No services to choose
+                        </div>
+                      @endif
+                  </div>
+                  <div class="col-md-2 col-sm-2 col-lg-2">
+                      <div class="select-buttons text-center">
+                          <button type="button" class="btn btn-sm btn-primary" onclick="chooseSelected()">
+                              Choose Selected
+                          </button>
+                      </div>
+                  </div>
+                  <div class="col-md-5 col-sm-5 col-lg-5">
+                    <div class="panel-header">
+                      <h4>My Services</h4>
+                    </div>
+                    <ul class="list-inline list-separator selected_services">
+                      @if(!empty($my_services))
+                        @foreach($my_services as $service)
+                          @if(!empty($service->Service($service->service_id)))
+                            <li class="list-inline-item">{{$service->Service($service->service_id)->name}}</li>
+                          @endif
+                        @endforeach
+                      @else
+                        <div class="text-danger">
+                            No services selected
+                        </div>
+                      @endif
+                    </ul>
+                  </div>
+              </div>
+          </form>
+        </div>
       </div>
     </div>
-    <!-- End Row -->
   </div>
-  <!-- End Page Header -->
-
   <!-- Card -->
   <div class="card">
     <!-- Header -->
@@ -42,7 +143,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" onchange="search(this.value)" type="search" class="form-control" placeholder="Search Licence Bodies" aria-label="Search Licence Bodies">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search services" aria-label="Search services">
             </div>
             <!-- End Search -->
           </form>
@@ -74,15 +175,15 @@
       <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
         <thead class="thead-light">
           <tr>
-            <th class="table-column-pr-0">
+            <th scope="col" class="table-column-pr-0">
               <div class="custom-control custom-checkbox">
                 <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th class="table-column-pl-0">Name</th>
-            <th>Country</th>
-            <th>Action</th>
+            <th scope="col" >Service</th>
+            <th scope="col">Price</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -133,6 +234,8 @@
 
 @section('javascript')
 <script src="assets/vendor/hs-toggle-switch/dist/hs-toggle-switch.min.js"></script>
+<link rel="stylesheet" href="assets/vendor/jquery-ui/jquery-ui.css">
+<script src="assets/vendor/jquery-ui/jquery-ui.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
   $('.js-toggle-switch').each(function () {
@@ -148,12 +251,28 @@ $(document).ready(function(){
       changePage('prev');
     }
   });
+
+  $(".parent_services").change(function(){
+    if($(this).is(":checked")){
+      $(this).parents("li").find(".child_services").prop("checked",true);
+    }else{
+      $(this).parents("li").find(".child_services").prop("checked",false);
+    }
+  });
+  $("#chooseall").change(function(){
+    if($(this).is(":checked")){
+       $(".all_services input[type=checkbox]").prop("checked",true);
+    }else{
+       $(".all_services input[type=checkbox]").prop("checked",false);
+    }
+  });
+
 })
 loadData();
 function loadData(page=1){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/licence-bodies/ajax-list?page='+page,
+        url: BASEURL + '/services/ajax-list?page='+page,
         data:{
             _token:csrf_token
         },
@@ -189,49 +308,6 @@ function loadData(page=1){
         },
     });
 }
-
-
-
-function search(keyword){
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/licence-bodies/search/'+keyword,
-        data:{
-            _token:csrf_token
-        },
-        dataType:'json',
-        beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
-        },
-        success: function (data) {
-            $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
-        },
-    });
-}
-
 function changePage(action){
   var page = parseInt($("#pageno").val());
   if(action == 'prev'){
@@ -245,55 +321,20 @@ function changePage(action){
   }else{
     errorMessage("Invalid Page Number");
   }
- 
+  
 }
-
-function confirmDelete(id){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonClass: 'btn btn-primary',
-      cancelButtonClass: 'btn btn-danger ml-1',
-      buttonsStyling: false,
-    }).then(function(result) {
-      if (result.value) {
-        $.ajax({
-            type: "POST",
-            url: BASEURL + '/licence-bodies/delete',
-            data:{
-                _token:csrf_token,
-                record_id:id,
-            },
-            dataType:'json',
-            success: function (result) {
-                if(result.status == true){
-                    Swal.fire({
-                        type: "success",
-                        title: 'Deleted!',
-                        text: 'Licence Body has been deleted.',
-                        confirmButtonClass: 'btn btn-success',
-                    }).then(function () {
-                        window.location.href= result.redirect;
-                    });
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Error while deleting",
-                        type: "error",
-                        confirmButtonClass: 'btn btn-primary',
-                        buttonsStyling: false,
-                    });
-                }
-            },
-        });
-      }
-    })
+function chooseAll(){
+  // $(".all_services input[type=checkbox]").prop("checked",true);
+  // $("#services_form").submit();
 }
-
+function chooseSelected(){
+  if($(".all_services input[type=checkbox]:checked").length > 0){
+    $(".all_services input[type=checkbox]").prop("checked",true);
+    $("#services_form").submit();
+  }else{
+    errorMessage("Please select services!");
+  }
+  
+}
 </script>
 @endsection

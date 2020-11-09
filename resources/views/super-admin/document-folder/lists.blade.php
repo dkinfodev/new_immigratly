@@ -10,8 +10,8 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/licence-bodies') }}">Licence Body</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/super-admin') }}">Super Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Document Folder</li>
           </ol>
         </nav>
 
@@ -19,7 +19,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/licence-bodies/add') }}">
+        <a class="btn btn-primary" href="{{ baseUrl('/document-folder/add') }}">
           <i class="tio-add mr-1"></i> Add 
         </a>
       </div>
@@ -42,7 +42,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" onchange="search(this.value)" type="search" class="form-control" placeholder="Search Licence Bodies" aria-label="Search Licence Bodies">
+              <input id="datatableSearch" onchange="search(this.value)" type="search" class="form-control" placeholder="Search document" aria-label="Search document">
             </div>
             <!-- End Search -->
           </form>
@@ -81,7 +81,6 @@
               </div>
             </th>
             <th class="table-column-pl-0">Name</th>
-            <th>Country</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -153,7 +152,7 @@ loadData();
 function loadData(page=1){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/licence-bodies/ajax-list?page='+page,
+        url: BASEURL + '/document-folder/ajax-list?page='+page,
         data:{
             _token:csrf_token
         },
@@ -191,11 +190,10 @@ function loadData(page=1){
 }
 
 
-
 function search(keyword){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/licence-bodies/search/'+keyword,
+        url: BASEURL + '/documents/search/'+keyword,
         data:{
             _token:csrf_token
         },
@@ -264,7 +262,7 @@ function confirmDelete(id){
       if (result.value) {
         $.ajax({
             type: "POST",
-            url: BASEURL + '/licence-bodies/delete',
+            url: BASEURL + '/visa-services/delete',
             data:{
                 _token:csrf_token,
                 record_id:id,
@@ -275,7 +273,7 @@ function confirmDelete(id){
                     Swal.fire({
                         type: "success",
                         title: 'Deleted!',
-                        text: 'Licence Body has been deleted.',
+                        text: 'Record Body has been deleted.',
                         confirmButtonClass: 'btn btn-success',
                     }).then(function () {
                         window.location.href= result.redirect;
@@ -294,6 +292,5 @@ function confirmDelete(id){
       }
     })
 }
-
 </script>
 @endsection

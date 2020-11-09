@@ -160,82 +160,6 @@ if(!function_exists("companyName")){
         return $company;
     }
 }
-
-
-if(!function_exists("categoryCaseStudy")){
-    function categoryCaseStudy($category_name){
-        $case_study = CaseStudy::whereRaw("find_in_set('".$category_name."',category)")->count();
-        return $case_study;
-    }
-}
-
-if(!function_exists("tagCaseStudy")){
-    function tagCaseStudy($tag_name){
-        $case_study = CaseStudy::whereRaw("find_in_set('".$tag_name."',tags)")->count();
-        return $case_study;
-    }
-}
-
-
-if(!function_exists("categoryGeneralNote")){
-    function categoryGeneralNote($category_id,$user_id  = ''){
-        if($user_id != ''){
-            $count = GeneralNoteCategory::with("Note")
-                    ->where("category_id",$category_id)
-                    ->whereHas("Note",function($query) use($user_id){
-                        $query->where("added_by",$user_id);
-                    })
-                    ->count();
-        }else{
-            $count = GeneralNoteCategory::where("category_id",$category_id)->count();
-        }
-        // if($user_id == ''){
-        //     $case_study = GeneralNotes::whereRaw("find_in_set('".$category_name."',category)")->count();
-        // }else{
-        //     $case_study =  GeneralNotes::with('SharedUsers')
-        //             ->whereHas("SharedUsers",function($query) use($user_id){
-        //                 $query->where("user_id",$user_id);
-        //             })
-        //             ->whereRaw("find_in_set('".$category_name."',category)")
-        //             ->count();
-        // }
-        return $count;
-    }
-}
-
-if(!function_exists("tagGeneralNote")){
-    function tagGeneralNote($tag_id,$user_id=''){
-        // if($user_id == ''){
-        //     $case_study = GeneralNotes::whereRaw("find_in_set('".$tag_name."',tags)")->count();
-        // }else{
-        //     $case_study =  GeneralNotes::whereHas("SharedUsers",function($query) use($user_id){
-        //                 $query->where("user_id",$user_id);
-        //             })
-        //             ->whereRaw("find_in_set('".$tag_name."',tags)")
-        //             ->count();
-        // }
-        if($user_id != ''){
-            $count = GeneralNoteTags::with("Note")
-                    ->where("tag_id",$tag_id)
-                    ->whereHas("Note",function($query) use($user_id){
-                        $query->where("added_by",$user_id);
-                    })
-                    ->count();
-        }else{
-            $count = GeneralNoteTags::where("tag_id",$tag_id)->count();
-        }
-        return $count;
-    }
-}
-
-
-if(!function_exists("publicNotes")){
-    function publicNotes(){
-        $notes =  GeneralNotes::where("share_with","public")->where("status","publish")->get();
-        return $notes;
-    }
-}
-
 if(!function_exists("currencyFormat")){
     function currencyFormat($price = ''){
         if($price != ''){
@@ -260,31 +184,6 @@ if(!function_exists("WalletList")){
     }
 }
 
-if(!function_exists("isEventBooked")){
-    function isEventBooked($event_id,$user_id,$author_id) { 
-        $is_booked = EventBooked::where('event_id',$event_id)
-                    ->where('user_id',$user_id)
-                    ->where("author_id",$author_id)
-                    ->count();
-        return $is_booked;
-    }
-}
-
-if(!function_exists("isServiceBooked")){
-    function isServiceBooked($service_id,$user_id,$author_id) { 
-        $is_booked = ServiceBooked::where('service_id',$service_id)
-                    ->where("author_id",$author_id)
-                    ->where('user_id',$user_id)->count();
-        return $is_booked;
-    }
-}
-
-if(!function_exists("author_slug")){
-    function author_slug($author,$return = 'return') { 
-        $slug = str_slug($author->first_name."-".$author->last_name)."-".$author->id;
-        return $slug;
-    }
-}
 if(!function_exists("authorFollowed")){
     function authorFollowed($author_id,$user_id) { 
         $is_followed = AuthorFollowers::where("user_id",$user_id)->where("author_id",$author_id)->count();
@@ -302,28 +201,6 @@ if(!function_exists("paginateInfo")){
     function paginateInfo($records) { 
         $html ='<div class="page-info">Showing <span>'.$records->currentPage().' of '.$records->lastPage().' <small>('.$records->total().' records)</small></span></div>';
         return $html;
-    }
-}
-if(!function_exists("isProfileComplete")){
-    function isProfileComplete($user_id) { 
-        $complete = 1;
-        $user = User::where("id",$user_id)->first();
-        $education = ClientEducation::where("client_id",$user_id)->count();
-        $expirence = ClientExperience::where("client_id",$user_id)->count();
-        $lp = LanguageProficency::where("user_id",$user_id)->count();
-        if($user->about_author == ''){
-            $complete = 0;
-        }
-        if($education == 0){
-            $complete = 0;
-        }
-        if($expirence == 0){
-            $complete = 0;
-        }
-        if($lp == 0){
-            $complete = 0;
-        }
-        return $complete;
     }
 }
 if(!function_exists("getNotificationByType")){
@@ -411,17 +288,6 @@ if(! function_exists('setNotification')){
         
     }
 }
-
-if(!function_exists("visaDocumetRequired")){
-    function visaDocumetRequired($document_id,$visa_type_id){
-        $document = VisaDocuments::where("document_id",$document_id)->where("visa_type_id",$visa_type_id)->first();
-        if(!empty($document)){
-            return $document->is_required;
-        }else{
-            return 0;
-        }
-   }
-}
 if (! function_exists('getFileTypeIcon')) {
     function getFileTypeIcon($filename) {
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -448,19 +314,6 @@ if (! function_exists('getFileTypeIcon')) {
         else
         $icon = 'fa fa-file';
         return $icon;
-    }
-}
-
-
-if(!function_exists("fetchTemplate")){
-    function fetchTemplate($template_for,$template_type){
-        $mail_template = Templates::where("template_for",$template_for)
-                        ->where("template_type",$template_type)
-                        ->first();
-        if(!empty($mail_template)){
-            $mail_template = $mail_template->toArray();
-        }
-        return $mail_template;
     }
 }
 
@@ -647,18 +500,6 @@ if(!function_exists("runBackground")){
         // exec($cmd . " > /dev/null &");   
     }
 }
-
-
-if(!function_exists("visaDocumetRequired")){
-    function visaDocumetRequired($document_id,$visa_type_id){
-        $document = VisaDocuments::where("document_id",$document_id)->where("visa_type_id",$visa_type_id)->first();
-        if(!empty($document)){
-            return $document->is_required;
-        }else{
-            return 0;
-        }
-   }
-}
 if(!function_exists("set_cookie")){
     function set_cookie($key,$value){
         
@@ -673,16 +514,6 @@ if(!function_exists("get_cookie")){
         }else{
             return '';
         }
-   }
-}
-if(!function_exists("getVisaType")){
-    function getVisaType($id){
-        if(is_array($id)){
-            $visatype = VisaTypes::whereIn("id",$id)->get();
-        }else{
-            $visatype = VisaTypes::where("id",$id)->first();
-        }
-        return $visatype;
    }
 }
 if(!function_exists("generateString")){
@@ -711,68 +542,6 @@ if(!function_exists("randomNumber")){
         return $randomString; 
     } 
 }
-if(!function_exists("getTemplateType")){
-    function getTemplateType() { 
-        $types = TemplateType::get();
-        return $types;
-    }
-}
-
-if(!function_exists("getLeadCategory")){
-    function getLeadCategory() { 
-        $types = LeadCategory::get();
-        return $types;
-    }
-}
-
-if(!function_exists("getCommentTags")){
-    function getCommentTags() { 
-        $types = LeadCommentTags::get();
-        return $types;
-    }
-}
-if(!function_exists("LeadRead")){
-    function LeadRead($lead_id) { 
-        $read_by = \Auth::user()->id;
-
-        $is_read = isLeadRead($lead_id,$read_by);
-        if(count($is_read) <= 0){
-            $object = new LeadRead();
-            $object->lead_id = $lead_id;
-            $object->read_by = $read_by;
-            $object->save();
-        }
-    }
-}
-if(!function_exists("isLeadRead")){
-    function isLeadRead($lead_id,$read_by = '') { 
-        // $read_by = \Auth::user()->id;
-        $is_read = LeadRead::where("lead_id",$lead_id)
-                    ->where(function($query) use($read_by){
-                        if($read_by != ''){
-                            $query->where("read_by",$read_by);
-                        }
-                    })
-                    ->with("ReadByUser")
-                    ->get();
-        return $is_read;
-    }
-}
-
-if(!function_exists("getDocuments")){
-    function getDocuments($ids,$type) { 
-        $documents = array();
-        if($type == 'visa_document'){
-            $ids = explode(",",$ids);
-            $documents = Documents::whereIn("id",$ids)->get();
-        }
-        if($type == 'user_document'){
-            $ids = explode(",",$ids);
-            $documents = OtherDocuments::whereIn("id",$ids)->get();
-        }
-        return $documents;
-    }
-}
 if(!function_exists("userInitial")){
     function userInitial($user) { 
        $first_name = substr($user->first_name,0,1);
@@ -782,31 +551,6 @@ if(!function_exists("userInitial")){
        
        return $init;
     }
-}
-if(!function_exists("getNotifications")){
-    function getNotifications(){
-        $notifications = Notifications::where("user_id",\Auth::user()->id)->where("is_read",0)->orderBy('id','desc')->get();
-        $viewData['notifications'] = $notifications;
-        $view = View::make('layouts.notifications',$viewData);
-        $contents = $view->render();
-
-        $response['notifications'] = $contents;
-        $response['count'] = count($notifications);
-        return $response;
-
-   }
-}
-if(!function_exists("getNotificationByType")){
-    function getNotificationByType($meta_key,$meta_value){
-        $notifications = NotificationData::where("user_id",\Auth::user()->id)
-                            ->where("is_read",0)
-                            ->where("meta_key",$meta_key)
-                            ->where("meta_value",$meta_value)
-                            ->count();
-        $response['count'] = $notifications;
-        return $notifications;
-
-   }
 }
 
 if(!function_exists("createSubDomain")){
@@ -893,22 +637,6 @@ if(!function_exists("curlRequest")){
             }
         }
         return $curl_response;
-    }
-}
-if(!function_exists("dropDown")){
-    function dropDown($options=array(),$callfrom = 'professional' ){
-        $apiData['options'] = $options; 
-        if($callfrom == 'user'){
-            $curl_response = mainApi("dropdown",$apiData);
-        }else{
-            $curl_response = curlRequest("dropdown",$apiData);
-        }
-        if($curl_response->status != 'success'){
-            $response['error'] = $curl_response->message;
-        }else{
-            $response = $curl_response->data;
-        }
-        return $response;
     }
 }
 
@@ -1021,16 +749,6 @@ if(!function_exists("professionalApi")){
         return $curl_response;
     }
 }
-if(!function_exists("userPanelUrl")){
-    function userPanelUrl(){
-        if($_SERVER['SERVER_NAME'] == 'localhost'){
-            $api_url = 'http://localhost/jw/case-study/live-immigrately';
-        }else{
-            $api_url = 'http://users.immigratly.com';
-        }
-        return $api_url;
-    }
-}
 if(!function_exists("domain")){
     function domain(){
         if($_SERVER['SERVER_NAME'] == 'localhost'){
@@ -1057,238 +775,13 @@ if(!function_exists("verifyCode")){
         return $response;
     }
 }
-if(!function_exists("serviceCategory")){
-    function serviceCategory($category_id){
-        $apiData['category_id'] = $category_id; 
-        $curl_response = curlRequest("service-category",$apiData);
-        if($curl_response->status != 'success'){
-            $response['error'] = $curl_response->message;
-        }else{
-            $response = $curl_response->data;
-        }
-        return $response;
-    }
-}
-if(!function_exists("VisaType")){
-    function VisaType($id){
-        $apiData['id'] = $id; 
-        $curl_response = curlRequest("visa-type",$apiData);
-        if($curl_response->status != 'success'){
-            $response['error'] = $curl_response->message;
-            $data = array();
-        }else{
-            $data = $curl_response->data;
-        }
-        return $data;
-    }
-}
-
-if(!function_exists("serviceDetail")){
-    function serviceDetail($apiData,$professional){
-        $curl_response = professionalApi("service",$professional,$apiData);
-        if($curl_response->status != 'success'){
-            $viewData['api_error'] = $curl_response->message;
-            $service = array();
-        }else{
-            $data = $curl_response->data;
-            $service = $data;
-        }
-
-        return $service;
-    }
-}
-if(!function_exists("authorDetail")){
-    function authorDetail($user_id){
-        $user = User::with('ProfessionalPanel')->find($user_id);
-        return $user;
-    }
-}
-
-if(!function_exists("serviceInfo")){
-    function serviceInfo($service_id){
-        $service = Services::where("id",$service_id)->first();
-        return $service;
-    }
-}
-if(!function_exists("professionalDomain")){
-    function professionalDomain($value,$search_by){
-        $data = array();
-        if($search_by == 'id'){
-            $data = ProfessionalPanel::where("user_id",$value)->first();
-            $return = $data->subdomain;
-        }
-        if($search_by == 'domain'){
-            $data = ProfessionalPanel::with(['Company','User'])->where("subdomain",$value)->first();
-            $return = $data;
-        }
-        return $return;
-    }
-}
-if(!function_exists("ServiceWithProfessional")){
-    function ServiceWithProfessional($user_id,$professional_id){
-        $service = UserServices::where("user_id",$user_id)
-                ->where("professional_id",$professional_id)
-                ->get();
-        return $service;
-    }
-}
-if(!function_exists("generalTags")){
-    function generalTags($id){
-        if(is_array($id)){
-            $tags = GeneralTags::whereIn("id",$id)->get();
-        }else{
-            $tags = GeneralTags::where("id",$id)->first();
-        }
-        return $tags;
-   }
-}
-if(!function_exists("emailRequest")){
-    function emailRequest($user_id){
-        $count = ChangeEmail::where("user_id",$user_id)->count();
-        return $count;
-   }
-}
-if(!function_exists("allVisaTypes")){
-    function allVisaTypes(){
-        $visatypes = VisaTypes::get();
-        return $visatypes;
-   }
-}
-
-if(!function_exists("client_documents")){
-    function client_documents($user_id,$document_id,$type){
-        $documents = ClientDocuments::where("user_id",$user_id)
-                    ->where("document_id",$document_id)
-                    ->where("doc_type",$type)
-                    ->get();
-        return $documents;        
-   }
-}
-
-if(!function_exists("documents_sharing")){
-    function documents_sharing($user_id,$document_id,$professional_id,$type){
-        $documents = DocumentsSharing::where("user_id",$user_id)
-                    ->where("document_id",$document_id)
-                    ->where("professional_id",$professional_id)
-                    ->where("doc_type",$type)
-                    ->get();
-        $final_documents = array();
-        // pre($documents->toArray());
-        foreach($documents as $doc){
-        
-            $client_documents = ClientDocuments::where("user_id",$user_id)
-                    ->where("id",$doc->user_doc_id)
-                    // ->where("professional_id",$professional_id)
-                    // ->where("doc_type",$type)
-                    ->first();
-            $final_documents[] = $client_documents;
-        }
-        return $final_documents;        
-   }
-}
-
-if(!function_exists("count_documents")){
-    function count_documents($user_id,$document_id,$professional_id,$doc_type){
-        $documents = DocumentsSharing::where("user_id",$user_id)
-                ->where("document_id",$document_id)
-                ->where("professional_id",$professional_id)
-                ->where("doc_type",$doc_type)
-                ->get();
-        return $documents;
-   }
-}
-
-if(!function_exists("user_assigned_to")){
-    function user_assigned_to($user_id,$type){
-        $users = LeadAssignedTo::with(['Telecaller','Manager'])
-                            ->where("user_id",$user_id)
-                            ->where("user_type",$type)
-                            ->get();
-        return $users;
-    }
-}
-
-if(!function_exists("professional_admin")){
-    function professional_admin(){
-        $admin = User::where("role","admin")->first();
-        return $admin;
-    }
-}
-
-if(!function_exists("timeline_stages")){
-    function timeline_stages(){
-        $timeline_stages = array("Upload Pre Determined Documents","Ask for Documents","Send Documents and Ask for Upload","Send Documents","Send Custom Message","Ask for Payment");
-    }
-}
 if(!function_exists("str_slug")){
     function str_slug($string){
         $slug = Str::slug($string, '-');
         return $slug;
     }
 }
-if(!function_exists("cv_sections")){
-    function cv_sections(){
-        $sections = array("age","expirences","education","language");
-        return $sections;
-    }
-}
-if(!function_exists("prefill_answer")){
-    function prefill_answer($id,$options){
-        $question = PredefinedQuestions::where("id",$id)->first();
-        $value = '';
 
-        if($question->cv_section == 'age'){
-            $bday = new DateTime(\Auth::user()->dob);
-            $today = new Datetime(date('Y-m-d'));
-            $diff = $today->diff($bday);
-            $age = $diff->y;
-            foreach($options as $opt){
-                if(strpos($opt->value, ':') !== false){
-                    $exp_options = explode(":",$opt->value);
-                    // pre($exp_options);
-                    if($age >= $exp_options[0] && $age <= $exp_options[1]){
-                        $value = $opt->value;
-                    }
-                }
-
-                if($value == '' && strpos($opt->value, '>') !== false){
-                    $exp_options = explode(">",$opt->value);
-                    
-                    if($age >= $exp_options[1]){
-                        $value = $opt->value;
-                    }
-                }
-                if($value == '' && strpos($opt->value, '<') !== false){
-                    $exp_options = explode("<",$opt->value);
-                    
-                    if($age <= $exp_options[1]){
-                        $value = $opt->value;
-                    }
-                }
-
-                if($value == ''){
-                    if($age == $opt->value){
-                        $value = $opt->value;
-                    }
-                }
-            }
-        }
-        if($question->cv_section == 'education'){
-            $education = ClientEducation::where("client_id",\Auth::user()->id)
-                            ->where("is_highest_degree","1")
-                            ->first();
-            if(!empty($education)){
-                foreach($options as $opt){
-                    if($opt->value == $education->Degree->name){
-                        $value = $opt->value;
-                    }
-                }
-            }
-
-        }
-        return $value;
-    }
-}
 
 if(!function_exists("subdomain")){
     function subdomain($subdomain){

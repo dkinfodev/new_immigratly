@@ -9,8 +9,9 @@
       <div class="col-sm mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/visa-services') }}">Visa Services</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/visa-services') }}">Services</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
 
@@ -37,14 +38,24 @@
         <!-- Input Group -->
         <div class="js-form-message form-group row">
           <label class="col-sm-2 col-form-label">Name</label>
-          
           <div class="col-sm-10">  
             <input type="text" name="name" id="name" placeholder="Enter visa service" class="form-control" value="{{$record->name}}">
           </div>
-         
         </div>
         <!-- End Input Group -->
-
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Documents</label>
+          <div class="col-sm-10">
+            <?php
+              $document_folders = explode(",",$record->document_folders);
+            ?>
+            <select class="form-control" multiple name="document_folders[]">
+              @foreach($documents as $document)
+              <option {{ (in_array($document->id,$document_folders))?'selected':'' }} value="{{ $document->id }}">{{$document->name}}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
         <div class="form-group">
           <button type="button" class="btn update-btn btn-primary">Update</button>
         </div>

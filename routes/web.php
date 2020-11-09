@@ -43,6 +43,8 @@ Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginContro
 // Super Admin
 Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), function () {
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
+    Route::get('/edit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'editProfile']); 
+    Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
 
     Route::group(array('prefix' => 'licence-bodies'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'licenceBodies']);
@@ -77,7 +79,17 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'update']);
         Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'search']); 
     });
-
+    
+    Route::group(array('prefix' => 'document-folder'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'delete']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'update']);
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'search']); 
+    });
     Route::group(array('prefix' => 'professionals'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'activeProfessionals']);
         Route::post('/ajax-active', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getActiveList']);
@@ -115,11 +127,20 @@ Route::group(array('prefix' => 'admin'), function () {
     Route::group(array('middleware' => 'admin'), function () {
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);
         Route::get('/profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile']);
+        Route::group(array('prefix' => 'services'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\ServicesController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\ServicesController::class, 'getAjaxList']); 
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'update']);
+            Route::post('/select-services', [App\Http\Controllers\Admin\ServicesController::class, 'selectServices']);
+        });
+
+        Route::group(array('prefix' => 'leads'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\LeadsController::class, 'getNewList']);
+            Route::get('/assigned', [App\Http\Controllers\Admin\LeadsController::class, 'assignedLeads']);
+        });
     });
 
-    Route::group(array('prefix' => 'leads'), function () {
-        Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
-        Route::post('/ajax-list', [App\Http\Controllers\Admin\LeadsController::class, 'getNewList']);
-        Route::get('/assigned', [App\Http\Controllers\Admin\LeadsController::class, 'assignedLeads']);
-    });
+    
 });
