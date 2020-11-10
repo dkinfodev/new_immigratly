@@ -2,7 +2,7 @@
 <tr>
   <td class="table-column-pr-0">
     <div class="custom-control custom-checkbox">
-      <input type="checkbox" class="custom-control-input" id="row-{{$key}}">
+      <input type="checkbox" class="custom-control-input row-checkbox" value="{{ base64_encode($record->id) }}" id="row-{{$key}}">
       <label class="custom-control-label" for="row-{{$key}}"></label>
     </div>
   </td>
@@ -26,9 +26,9 @@
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         <a class="dropdown-item" href="{{baseUrl('services/edit/'.base64_encode($record->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('services/folders/'.base64_encode($record->id))}}">Document Folders</a>
+        <a class="dropdown-item" href="{{baseUrl('services/documents/'.base64_encode($record->id))}}">Document Folders</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="{{baseUrl('services/delete/'.base64_encode($record->id))}}">Delete</a>
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('services/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
     </div>
   </td>
@@ -40,6 +40,14 @@
 $(document).ready(function(){
   $('.js-hs-action').each(function () {
     var unfold = new HSUnfold($(this)).init();
+  });
+  $(".row-checkbox").change(function(){
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").show();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
   });
 })
 </script>

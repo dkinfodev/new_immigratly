@@ -2,12 +2,12 @@
 <tr>
   <td class="table-column-pr-0">
     <div class="custom-control custom-checkbox">
-      <input type="checkbox" class="custom-control-input" id="usersDataCheck1">
-      <label class="custom-control-label" for="usersDataCheck1"></label>
+      <input type="checkbox" class="custom-control-input" id="row-{{$key}}">
+      <label class="custom-control-label" for="row-{{$key}}"></label>
     </div>
   </td>
   <td class="table-column-pl-0">
-    <a class="d-flex align-items-center" href="./user-profile.html">
+    <a class="d-flex align-items-center" href="javascript:;">
       <div class="avatar avatar-soft-primary avatar-circle">
         <span class="avatar-initials">{{userInitial($record)}}</span>
       </div>

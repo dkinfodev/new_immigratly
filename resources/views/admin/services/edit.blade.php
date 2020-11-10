@@ -91,8 +91,6 @@ $(document).on('ready', function () {
       e.preventDefault();
       var formData = $("#form").serialize();
       var url  = $("#form").attr('action');
-      var formData = $("#form").serialize();
-      var url  = $("#form").attr('action');
       $.ajax({
           url:url,
           type:"post",
@@ -122,7 +120,6 @@ $(document).on('ready', function () {
             internalError();
           }
       });
-    
   });
 });
 

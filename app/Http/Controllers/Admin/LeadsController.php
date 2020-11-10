@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 use View;
+use DB;
 
 use App\Models\Leads;
-
+use App\Models\ProfessionalServices;
 class LeadsController extends Controller
 {
     public function __construct()
@@ -25,7 +28,14 @@ class LeadsController extends Controller
 
     public function getNewList(Request $request)
     {
-        $records = Leads::orderBy('id',"desc")->paginate();
+        $search = $request->input("search");
+        $records = Leads::orderBy('id',"desc")
+                        ->where(function($query) use($search){
+                            if($search != ''){
+                                $query->where("first_name","LIKE","%$search%");
+                            }
+                        })
+                        ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.leads.ajax-list',$viewData);
         $contents = $view->render();
@@ -35,4 +45,70 @@ class LeadsController extends Controller
         $response['total_records'] = $records->total();
         return response()->json($response);
     }
+
+    public function quickLead(){
+        $viewData['pageTitle'] = "Quick Lead";
+        $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
+       
+        $countries = DB::table(MAIN_DATABASE.".countries")->get();
+        $viewData['countries'] = $countries;
+        $view = View::make(roleFolder().'.leads.modal.quick-lead',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+
+    public function createQuickLead(Request $request){
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|unique:leads',
+            'country_code' => 'required',
+            'phone_no' => 'required|unique:leads',
+            'visa_service_id'=>'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object = new Leads();
+        $object->first_name = $request->input("first_name");
+        $object->last_name = $request->input("last_name");
+        $object->email = $request->input("first_name");
+        $object->country_code = $request->input("country_code");
+        $object->phone_no = $request->input("phone_no");
+        $object->visa_service_id = $request->input("visa_service_id");
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Lead added successfully";
+        return response()->json($response);
+    }
+
+    public function deleteSingle($id){
+        $id = base64_decode($id);
+        Leads::deleteRecord($id);
+        return redirect()->back()->with("success","Record has been deleted!");
+    }
+    public function deleteMultiple(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        for($i = 0;$i < count($ids);$i++){
+            $id = base64_decode($ids[$i]);
+            Leads::deleteRecord($id);
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Records deleted successfully'); 
+        return response()->json($response);
+    }
+
 }

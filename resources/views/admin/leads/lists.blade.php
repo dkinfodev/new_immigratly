@@ -19,7 +19,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="javascript:;">
+        <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('leads/quick-lead') ?>')" href="javascript:;">
           <i class="tio-user-add mr-1"></i> Quick Lead
         </a>
       </div>
@@ -46,7 +46,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search users" aria-label="Search users">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Lead" aria-label="Search Lead">
             </div>
             <!-- End Search -->
           </form>
@@ -61,7 +61,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('leads/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -86,7 +86,7 @@
             </th>
             <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Leads</th>
             <th scope="col" >Quality</th>
-            <th scope="col">Category</th>
+            <th scope="col">Visa Service</th>
             <th scope="col">Assigned</th>
             <th scope="col"></th>
             <th scope="col"></th>
@@ -155,14 +155,39 @@ $(document).ready(function(){
       changePage('prev');
     }
   });
+  $("#datatableSearch").keyup(function(){
+    var value = $(this).val();
+    if(value == ''){
+      loadData();
+    }
+    if(value.length > 3){
+      loadData();
+    }
+  });
+  $("#datatableCheckAll").change(function(){
+    if($(this).is(":checked")){
+      $(".row-checkbox").prop("checked",true);
+    }else{
+      $(".row-checkbox").prop("checked",false);
+    }
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").hide();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
+  });
+
 })
 loadData();
 function loadData(page=1){
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
         url: BASEURL + '/leads/ajax-list?page='+page,
         data:{
-            _token:csrf_token
+            _token:csrf_token,
+            search:search
         },
         dataType:'json',
         beforeSend:function(){

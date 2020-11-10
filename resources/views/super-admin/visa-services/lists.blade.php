@@ -156,7 +156,7 @@ $(document).ready(function(){
     if(value.length > 3){
       loadData();
     }
-  })
+  });
 })
 loadData();
 function loadData(page=1){
