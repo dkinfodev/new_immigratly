@@ -10,7 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/services') }}">Services</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/leads') }}">Leads</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -18,7 +18,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('/services')}}">
+        <a class="btn btn-primary" href="{{baseUrl('/leads')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -31,39 +31,40 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('/services/update/'.base64_encode($record->id)) }}" method="post">
+      <form id="form" class="js-validate" action="{{ baseUrl('/leads/update/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
         <!-- Input Group -->
-        <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Service Name</label>
-          <div class="col-sm-10 pt-2 font-weight-bold">
-           {{$record->Service($record->service_id)->name}}
-         </div>
-        </div>
-        <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Price</label>
-          <div class="col-sm-10">
-           <!-- <input type="text" name="name" placeholder="Enter price for your service" class="form-control"> -->
-           <div class="js-quantity-counter input-group-quantity-counter">
-              <input type="number" name="price" class="js-result form-control input-group-quantity-counter-control" value="1">
-
-              <div class="input-group-quantity-counter-toggle">
-                <a class="js-minus input-group-quantity-counter-btn" href="javascript:;">
-                  <i class="tio-remove"></i>
-                </a>
-                <a class="js-plus input-group-quantity-counter-btn" href="javascript:;">
-                  <i class="tio-add"></i>
-                </a>
+        <div class="row justify-content-md-between">
+            <div class="col-md-6">
+                <div class="js-form-message form-group row">
+                  <label class="col-sm-2 col-form-label">Name</label>
+                  <div class="col-sm-10 font-weight-bold">
+                      <div class="input-group input-group-sm-down-break">
+                        <input type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" id="first_name" placeholder="Your first name" aria-label="Your first name" value="{{ $record->first_name }}">
+                        @error('first_name')
+                        <span class="invalid-feedback" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                        <input type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" id="last_name" placeholder="Your last name" aria-label="Your last name" value="{{ $record->first_name }}">
+                        @error('last_name')
+                        <span class="invalid-feedback" role="alert">
+                          <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                      </div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+              <div class="js-form-message form-group row">
+                <label class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                 <input type="email" name="email" placeholder="Your email" value="{{ $record->email }}" class="form-control">
+               </div>
               </div>
             </div>
-         </div>
-        </div>
-        <div class="js-form-message form-group row">
-          <label class="col-sm-2 col-form-label">Description</label>
-          <div class="col-sm-10">
-           <textarea class="form-control" id="description" name="description">{{$record->description}}</textarea>
-         </div>
         </div>
         <div class="form-group">
           <button type="submit" class="btn add-btn btn-primary">Save</button>

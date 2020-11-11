@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="assets/vendor/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="assets/vendor/chart.js/dist/Chart.min.css">
     <link rel="stylesheet" href="assets/vendor/daterangepicker/daterangepicker.css">
-    
+    <link rel="stylesheet" type="text/css" href="assets/vendor/sweetalert2/sweetalert2.min.css">
 
     <!-- CSS Front Template -->
     <link rel="stylesheet" href="assets/css/theme.min.css">
@@ -125,10 +125,22 @@
     <!-- JS Front -->
     <script src="assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
     <script src="assets/vendor/ckeditor/ckeditor.js"></script>
+    <script src="assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
     <script src="assets/js/theme.min.js"></script>
     <script src="assets/js/theme-custom.js"></script>
 
     <!-- JS Plugins Init. -->
+    @if(Session::has('success'))
+    <script>
+        successMessage('{{ Session::get("success") }}');
+    </script>
+    @endif
+
+    @if(Session::has('error'))
+    <script>
+        errorMessage('{{ Session::get("error") }}');
+    </script>
+    @endif
     <script>
       $(document).on('ready', function () {
         $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })

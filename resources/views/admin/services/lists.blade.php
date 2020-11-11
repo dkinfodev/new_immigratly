@@ -158,7 +158,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('services/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -252,6 +252,20 @@ $(document).ready(function(){
     }
   });
 
+  $("#datatableCheckAll").change(function(){
+    if($(this).is(":checked")){
+      $(".row-checkbox").prop("checked",true);
+    }else{
+      $(".row-checkbox").prop("checked",false);
+    }
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").hide();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
+  });
+
   $(".parent_services").change(function(){
     if($(this).is(":checked")){
       $(this).parents("li").find(".child_services").prop("checked",true);
@@ -329,12 +343,12 @@ function chooseAll(){
 }
 function chooseSelected(){
   if($(".all_services input[type=checkbox]:checked").length > 0){
-    $(".all_services input[type=checkbox]").prop("checked",true);
     $("#services_form").submit();
   }else{
     errorMessage("Please select services!");
   }
   
 }
+
 </script>
 @endsection

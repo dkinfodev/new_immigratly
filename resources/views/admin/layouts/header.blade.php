@@ -701,6 +701,13 @@
         </a>
 
         <div class="dropdown-divider"></div>
+    
+        <a class="dropdown-item" href="{{baseUrl('staff')}}">
+          <span class="text-truncate pr-2" title="staff">Staff</span>
+        </a>
+        
+        <div class="dropdown-divider"></div>
+
 
         <a class="dropdown-item" href="{{ url('logout') }}">
           <span class="text-truncate pr-2" title="Sign out">Sign out</span>

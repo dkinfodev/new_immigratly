@@ -2,6 +2,11 @@
 
 @section('style')
 <link rel="stylesheet" href="assets/vendor/quill/dist/quill.snow.css">
+<style type="text/css">
+.page-header-tabs {
+    margin-bottom: 0px !important;
+}
+</style>
 @endsection
 
 @section('content')
@@ -47,6 +52,10 @@
               @elseif($profile_status == 1)
               <span class="badge badge-warning badge-pill ml-1">
                 <i class="tio-time mr-1"></i> Waiting for approval
+              </span>
+              @elseif($profile_status == 2)
+              <span class="badge badge-success badge-pill ml-1">
+                <i class="tio-checkmark-circle-outlined mr-1"></i> Profile Verified
               </span>
               @endif
             </a>
@@ -736,13 +745,7 @@ Next <i class="tio-chevron-right"></i>
     $('.js-step-form').each(function () {
       var stepForm = new HSStepForm($(this), {
         finish: function() {
-          // $("#validationFormProgress").hide();
-          // $("#validationFormContent").hide();
-          // $("#validationFormSuccessMessage").show();
           var formData = new FormData($("#profile_form")[0]);
-          // var formData = $("#profile_form")
-         
-          // $("#profile_form").submit();
           $.ajax({
             url:"{{ baseUrl('save-profile') }}",
             type:"post",
@@ -771,7 +774,7 @@ Next <i class="tio-chevron-right"></i>
                     $("input[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
                     
                     var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-                    $("input[name="+index+"]").parents(".js-form-message").append(html);
+                    $(html).insertAfter("*[name="+index+"]");
                     $("input[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
                 });
               }
@@ -782,24 +785,6 @@ Next <i class="tio-chevron-right"></i>
                 internalError();
             }
         });
-          // $.ajax({
-          //     url:"{{ baseUrl('save-profile') }}",
-          //     data:{
-          //       country_id:country_id
-          //     },
-          //     dataType:"json",
-          //     beforeSend:function(){
-          //        $("#state_id").html('');
-          //     },
-          //     success:function(response){
-          //       if(response.status == true){
-          //         $("#state_id").html(response.options);
-          //       } 
-          //     },
-          //     error:function(){
-                 
-          //     }
-          // });
         }
       }).init();
     });

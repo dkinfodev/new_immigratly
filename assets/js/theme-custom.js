@@ -20,6 +20,84 @@ function warningMessage(message){
 function redirect(url){
   window.location.href = url;
 }
+function initSelect(){
+	$('select').each(function () {
+      $.HSCore.components.HSSelect2.init($(this));
+    });
+}
+function confirmAction(e){
+	var url = $(e).attr("data-href");
+	Swal.fire({
+      title: 'Are you sure to delete?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      confirmButtonClass: 'btn btn-primary',
+      cancelButtonClass: 'btn btn-danger ml-1',
+      buttonsStyling: false,
+    }).then(function(result) {
+    	if(result.value){
+    		redirect(url);
+    	}
+    })
+}
+
+function deleteMultiple(e){
+	var url = $(e).attr("data-href");
+	if($(".row-checkbox:checked").length <= 0){
+		warningMessage("No records selected to delete");
+		return false;
+	}
+	Swal.fire({
+      title: 'Are you sure to delete?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      confirmButtonClass: 'btn btn-primary',
+      cancelButtonClass: 'btn btn-danger ml-1',
+      buttonsStyling: false,
+    }).then(function(result) {
+    	if(result.value){
+    		if($(".row-checkbox:checked").length <= 0){
+    			warningMessage("No records selected to delete");
+    			return false;
+    		}
+    		var row_ids = [];
+    		$(".row-checkbox:checked").each(function(){
+    			row_ids.push($(this).val());
+    		});
+    		var ids = row_ids.join(",");
+    		$.ajax({
+		        type: "POST",
+		        url: url,
+		        data:{
+		            _token:csrf_token,
+		            ids:ids,
+		        },
+		        dataType:'json',
+		        beforeSend:function(){
+		           
+		        },
+		        success: function (response) {
+		            if(response.status == true){
+		            	location.reload();
+		            }else{
+		            	errorMessage(response.message);
+		            }
+		        },
+		        error:function(){
+		        	internalError();
+		        }
+		    });
+    	}
+    })
+}
 function initEditor(id,type="full"){
  	var textarea = document.getElementById(id);
 	if(type  == 'basic'){

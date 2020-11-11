@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,28 +8,25 @@ use Illuminate\Support\Facades\Validator;
 
 use View;
 use DB;
+use App\Models\Roles;
 
-use App\Models\Leads;
-use App\Models\ProfessionalServices;
-class LeadsController extends Controller
+class RolesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('super_admin');
     }
 
-    public function newLeads(Request $request){
-    	$viewData['total_leads'] = Leads::count();
-        $viewData['new_leads'] =  Leads::count();
-        $viewData['assigned_leads'] =  Leads::count();
-       	$viewData['pageTitle'] = "New Leads";
-        return view(roleFolder().'.leads.lists',$viewData);
+    public function index(Request $request){
+
+        $viewData['pageTitle'] = "Roles";
+        return view(roleFolder().'.roles.lists',$viewData);
     }
 
     public function getNewList(Request $request)
     {
         $search = $request->input("search");
-        $records = Leads::orderBy('id',"desc")
+        $records = Roles::orderBy('id',"desc")
                         ->where(function($query) use($search){
                             if($search != ''){
                                 $query->where("first_name","LIKE","%$search%");
@@ -37,7 +34,7 @@ class LeadsController extends Controller
                         })
                         ->paginate();
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.leads.ajax-list',$viewData);
+        $view = View::make(roleFolder().'.roles.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();
@@ -48,25 +45,18 @@ class LeadsController extends Controller
 
     public function quickLead(){
         $viewData['pageTitle'] = "Quick Lead";
-        $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
+        $viewData['visa_services'] = Roles::orderBy('id',"asc")->get();
        
-        $countries = DB::table(MAIN_DATABASE.".countries")->get();
-        $viewData['countries'] = $countries;
-        $view = View::make(roleFolder().'.leads.modal.quick-lead',$viewData);
+        $view = View::make(roleFolder().'.roles.modal.roles',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['status'] = true;
         return response()->json($response);
     }
 
-    public function createQuickLead(Request $request){
+    public function save(Request $request){
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:leads',
-            'country_code' => 'required',
-            'phone_no' => 'required|unique:leads',
-            'visa_service_id'=>'required',
+            'name' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -81,23 +71,19 @@ class LeadsController extends Controller
             return response()->json($response);
         }
 
-        $object = new Leads();
-        $object->first_name = $request->input("first_name");
-        $object->last_name = $request->input("last_name");
-        $object->email = $request->input("first_name");
-        $object->country_code = $request->input("country_code");
-        $object->phone_no = $request->input("phone_no");
-        $object->visa_service_id = $request->input("visa_service_id");
+        $object = new Roles();
+        $object->name = $request->input("name");
+        $object->slug = str_slug($request->input("name"));
         $object->save();
 
         $response['status'] = true;
-        $response['message'] = "Lead added successfully";
+        $response['message'] = "Role added successfully";
         return response()->json($response);
     }
 
     public function deleteSingle($id){
         $id = base64_decode($id);
-        Leads::deleteRecord($id);
+        Roles::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
     public function deleteMultiple(Request $request){
@@ -113,9 +99,9 @@ class LeadsController extends Controller
 
     public function edit($id){
         $id = base64_decode($id);
-        $record = Leads::find($id);
+        $record = Roles::find($id);
         $viewData['record'] = $record;
-        $viewData['pageTitle'] = "Edit Lead";
-        return view(roleFolder().'.leads.edit',$viewData);
+        $viewData['pageTitle'] = "Edit Role";
+        return view(roleFolder().'.roles.edit',$viewData);
     }
 }

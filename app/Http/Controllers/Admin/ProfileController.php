@@ -111,7 +111,7 @@ class ProfileController extends Controller
         $object->city_id = $request->input("city_id");
         $object->address = $request->input("address");
         $object->zip_code = $request->input("zip_code");
-        $object->languages_known = $request->input("languages_known");
+        $object->languages_known = json_encode($request->input("languages_known"));
         if ($file = $request->file('profile_image')){
                 
             $fileName        = $file->getClientOriginalName();

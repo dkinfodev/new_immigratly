@@ -9,6 +9,7 @@ use View;
 use DB;
 
 use App\Models\ProfessionalServices;
+use App\Models\ServiceDocuments;
 
 class ServicesController extends Controller
 {
@@ -107,6 +108,22 @@ class ServicesController extends Controller
         return response()->json($response);
     }
 
+    public function deleteService($id){
+        $id = base64_decode($id);
+        ProfessionalServices::deleteRecord($id);
+        return redirect()->back()->with("success","Record has been deleted!");
+    }
+    public function deleteMultipleService(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        for($i = 0;$i < count($ids);$i++){
+            $id = base64_decode($ids[$i]);
+            ProfessionalServices::deleteRecord($id);
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Records deleted successfully'); 
+        return response()->json($response);
+    }
+
     public function selectServices(Request $request){
         $validator = Validator::make($request->all(), [
             'services' => 'required',
@@ -126,5 +143,98 @@ class ServicesController extends Controller
             }
         }
         return redirect()->back()->with("success","Services selected successfully");
+    }
+
+    public function serviceDocuments($id){
+        $id = base64_decode($id);
+        $service = ProfessionalServices::where("id",$id)->first();
+        $documents = ServiceDocuments::where("service_id",$id)->get();
+        $viewData['documents'] = $documents;
+        $viewData['service'] = $service;
+        $viewData['pageTitle'] = "Documents of ".$service->Service($service->service_id)->name;
+        return view(roleFolder().'.services.document-folders',$viewData);
+    }
+
+    public function addFolder($id,Request $request){
+        // $id = base64_decode($id);
+        $viewData['service_id'] = $id;
+        $viewData['pageTitle'] = "Add Folder";
+        $view = View::make(roleFolder().'.services.modal.add-folder',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function createFolder($id,Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+        $id = base64_decode($id);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+        $object = new ServiceDocuments();
+        $object->service_id = $id;
+        $object->name = $request->input("name");
+        $object->slug = str_slug($request->input("name"));
+        $object->save();
+        
+        $response['status'] = true;
+        $response['message'] = "Folder added successfully";
+        
+        return response()->json($response);
+    }
+
+    public function editFolder($id,Request $request){
+        $id = base64_decode($id);
+        $record = ServiceDocuments::find($id);
+        $viewData['service_id'] = $id;
+        $viewData['pageTitle'] = "Edit Folder";
+        $viewData['record'] = $record;
+        $view = View::make(roleFolder().'.services.modal.edit-folder',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function updateFolder($id,Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+        $id = base64_decode($id);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+        $object = ServiceDocuments::find($id);
+        $object->name = $request->input("name");
+        $object->slug = str_slug($request->input("name"));
+        $object->save();
+        
+        $response['status'] = true;
+        $response['message'] = "Folder edited successfully";
+        
+        return response()->json($response);
+    }
+
+    public function deleteFolder($id){
+        $id = base64_decode($id);
+        ServiceDocuments::where("id",$id)->delete();
+        return redirect()->back()->with("success","Record has been deleted!");
     }
 }

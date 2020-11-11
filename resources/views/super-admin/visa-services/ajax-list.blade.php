@@ -11,7 +11,9 @@
       {{$record->name}}
     </a>
   </td>
-  <td> <a href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; <a href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+  <td> 
+    <a href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> 
+    <a href="javascript:;" onclick="deleteRecord('{{ base64_encode($record->id) }}')" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>
 </tr>
@@ -23,13 +25,14 @@
       <label class="custom-control-label" for="sub-{{$key2}}"></label>
     </div>
   </th>
-  <td class="table-column-pl-0">
+  <td class="table-column-pl-2 text-primary">
       {{$subservice->name}}
     </a>
   </td>
-  <td> <a href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}"><i class="tio-edit"></i></a> &nbsp; <a href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
-  
-</td>
+  <td> 
+    <a href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}"><i class="tio-edit"></i></a> &nbsp; 
+    <a href="javascript:;" onclick="deleteRecord('{{ base64_encode($subservice->id) }}')" data-href="{{baseUrl('visa-services/delete/'.base64_encode($subservice->id))}}"><i class="tio-delete"></i></a> 
+  </td>
 </tr>
 @endforeach
 @endforeach

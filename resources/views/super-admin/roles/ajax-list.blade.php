@@ -6,15 +6,20 @@
       <label class="custom-control-label" for="row-{{$key}}"></label>
     </div>
   </td>
-  <td>
-      @if(!empty($record->Service($record->service_id)))
-        {{$record->Service($record->service_id)->name}}
-      @else
-        Service Removed by adminstrator
-      @endif
+  <td class="table-column-pl-0">
+    <a class="d-flex align-items-center" href="#">
+      <div class="avatar avatar-soft-primary avatar-circle">
+        <span class="avatar-initials">{{userInitial($record)}}</span>
+      </div>
+      <!-- <img class="avatar" src="assets/svg/brands/guideline.svg" alt="Image Description"> -->
+      <div class="ml-3">
+        <span class="d-block h5 text-hover-primary mb-0">{{$record->name}}</span>
+        <span class="d-block font-size-sm text-body">Created on {{ dateFormat($record->created_at) }}</span>
+      </div>
+    </a>
   </td>
-  <td>{{$record->price}}</td>
-  <td> 
+  
+  <td>
     <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
          data-hs-unfold-options='{
@@ -25,17 +30,14 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('services/edit/'.base64_encode($record->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('services/documents/'.base64_encode($record->id))}}">Document Folders</a>
+        <a class="dropdown-item" href="{{baseUrl('roles/edit/'.base64_encode($record->id))}}">Edit</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('services/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('roles/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
     </div>
   </td>
 </tr>
 @endforeach
-
-
 <script type="text/javascript">
 $(document).ready(function(){
   $('.js-hs-action').each(function () {

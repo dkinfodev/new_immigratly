@@ -79,7 +79,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'update']);
         Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'search']); 
     });
-    
+
     Route::group(array('prefix' => 'document-folder'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'getAjaxList']); 
@@ -90,6 +90,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'update']);
         Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'search']); 
     });
+
     Route::group(array('prefix' => 'professionals'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'activeProfessionals']);
         Route::post('/ajax-active', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getActiveList']);
@@ -99,6 +100,17 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
     });
+
+    Route::group(array('prefix' => 'roles'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\RolesController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\RolesController::class, 'getNewList']);
+        Route::get('/assigned', [App\Http\Controllers\SuperAdmin\RolesController::class, 'assignedLeads']);
+        Route::get('/quick-lead', [App\Http\Controllers\SuperAdmin\RolesController::class, 'quickLead']);
+        Route::post('/create-quick-lead', [App\Http\Controllers\SuperAdmin\RolesController::class, 'createQuickLead']);
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\RolesController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\RolesController::class, 'deleteMultiple']);
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\RolesController::class, 'edit']);
+        });
 });
 
 // User
@@ -133,12 +145,39 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'edit']);
             Route::post('/update/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'update']);
             Route::post('/select-services', [App\Http\Controllers\Admin\ServicesController::class, 'selectServices']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteService']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\ServicesController::class, 'deleteMultipleService']);
+            Route::get('/documents/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'serviceDocuments']);
+            Route::get('/add-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'addFolder']);
+            Route::post('/add-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'createFolder']);
+            Route::get('/edit-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'editFolder']);
+            Route::post('/edit-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'updateFolder']);
+            Route::get('/delete-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteFolder']);
+
         });
 
         Route::group(array('prefix' => 'leads'), function () {
             Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\LeadsController::class, 'getNewList']);
             Route::get('/assigned', [App\Http\Controllers\Admin\LeadsController::class, 'assignedLeads']);
+            Route::get('/quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'quickLead']);
+            Route::post('/create-quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'createQuickLead']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\LeadsController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'edit']);
+        });
+
+        Route::group(array('prefix' => 'staff'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\StaffController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\StaffController::class, 'getNewList']);
+            Route::get('/add', [App\Http\Controllers\Admin\StaffController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Admin\StaffController::class, 'save']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\StaffController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Admin\StaffController::class, 'update']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\StaffController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\StaffController::class, 'deleteMultiple']);
+            Route::get('/change-password/{id}', [App\Http\Controllers\Admin\StaffController::class, 'changePassword']);
+            Route::post('/update-password/{id}', [App\Http\Controllers\Admin\StaffController::class, 'updatePassword']);
         });
     });
 

@@ -10,6 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/roles') }}">Role</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -18,14 +19,15 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/visa-services/add') }}">
-          <i class="tio-add mr-1"></i> Add 
+        <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('leads/roles') ?>')" href="javascript:;">
+          <i class="tio-user-add mr-1"></i>Roles
         </a>
       </div>
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
+
 
   <!-- Card -->
   <div class="card">
@@ -41,7 +43,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search visa services" aria-label="Search visa service">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search " aria-label="Search ">
             </div>
             <!-- End Search -->
           </form>
@@ -56,7 +58,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('leads/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -69,25 +71,23 @@
     <!-- End Header -->
 
     <!-- Table -->
-    <div class="col-sm-6">
-      <div class="table-responsive datatable-custom">
-        <table id="tableList" class="table table-borderless">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col" class="table-column-pr-0">
-                <div class="custom-control custom-checkbox">
-                  <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
-                  <label class="custom-control-label" for="datatableCheckAll"></label>
-                </div>
-              </th>
-              <th scope="col" class="table-column-pl-0">Name</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
+    <div class="table-responsive datatable-custom">
+      <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="table-column-pr-0">
+              <div class="custom-control custom-checkbox">
+                <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
+                <label class="custom-control-label" for="datatableCheckAll"></label>
+              </div>
+            </th>
+            <th scope="col">Roles</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
     <!-- End Table -->
 
@@ -157,21 +157,35 @@ $(document).ready(function(){
       loadData();
     }
   });
+  $("#datatableCheckAll").change(function(){
+    if($(this).is(":checked")){
+      $(".row-checkbox").prop("checked",true);
+    }else{
+      $(".row-checkbox").prop("checked",false);
+    }
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").hide();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
+  });
+
 })
 loadData();
 function loadData(page=1){
-    var search = $("#datatableSearch").val();
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/visa-services/ajax-list?page='+page,
+        url: BASEURL + '/roles/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search
         },
         dataType:'json',
         beforeSend:function(){
-            // var cols = $("#tableList thead tr > th").length;
-            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            var cols = $("#tableList thead tr > th").length;
+            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
             // $("#paginate").html('');
         },
         success: function (data) {
@@ -192,16 +206,14 @@ function loadData(page=1){
                 $(".previous").addClass("disabled","disabled");
               }
               $("#pageno").attr("max",data.last_page);
+            }else{
+              $(".datatable-custom").find(".norecord").remove();
+              var html = '<div class="text-center text-danger norecord">No records available</div>';
+              $(".datatable-custom").append(html);
             }
         },
     });
 }
-
-
-function search(keyword){
-    loadData();
-}
-
 function changePage(action){
   var page = parseInt($("#pageno").val());
   if(action == 'prev'){
@@ -215,8 +227,100 @@ function changePage(action){
   }else{
     errorMessage("Invalid Page Number");
   }
- 
+  
 }
+function confirmDelete(id){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      confirmButtonClass: 'btn btn-primary',
+      cancelButtonClass: 'btn btn-danger ml-1',
+      buttonsStyling: false,
+    }).then(function(result) {
+      if (result.value) {
+        $.ajax({
+            type: "POST",
+            url: BASEURL + '/roles/delete',
+            data:{
+                _token:csrf_token,
+                user_id:id,
+            },
+            dataType:'json',
+            success: function (result) {
+                if(result.status == true){
+                    Swal.fire({
+                        type: "success",
+                        title: 'Deleted!',
+                        text: 'Your file has been deleted.',
+                        confirmButtonClass: 'btn btn-success',
+                    }).then(function () {
+
+                        window.location.href= result.redirect;
+                    });
+                }else{
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Error while deleting",
+                        type: "error",
+                        confirmButtonClass: 'btn btn-primary',
+                        buttonsStyling: false,
+                    });
+                }
+            },
+        });
+      }
+    })
+}
+
+function changeStatus(e){
+  var id = $(e).attr("data-id");
+  if($(e).is(":checked")){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/roles/status/active',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+    });
+  }else{
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/roles/status/inactive',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+        error: function(){
+          internalError();
+        }
+    });
+  }
+}
+
 
 </script>
 @endsection
