@@ -774,7 +774,7 @@ Next <i class="tio-chevron-right"></i>
                     $("input[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
                     
                     var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-                    $("input[name="+index+"]").parents(".js-form-message").append(html);
+                    $(html).insertAfter("*[name="+index+"]");
                     $("input[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
                 });
               }

@@ -111,4 +111,11 @@ class LeadsController extends Controller
         return response()->json($response);
     }
 
+    public function edit($id){
+        $id = base64_decode($id);
+        $record = Leads::find($id);
+        $viewData['record'] = $record;
+        $viewData['pageTitle'] = "Edit Lead";
+        return view(roleFolder().'.leads.edit',$viewData);
+    }
 }

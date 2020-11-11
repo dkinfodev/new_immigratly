@@ -152,6 +152,7 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/create-quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'createQuickLead']);
             Route::get('/delete/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'deleteSingle']);
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\LeadsController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'edit']);
         });
     });
 

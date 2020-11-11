@@ -42,8 +42,6 @@
           </div>
         </div>
         <!-- End Input Group -->
-
-
         <div class="form-group">
           <button type="button" class="btn update-btn btn-primary">Update</button>
         </div>
@@ -89,7 +87,7 @@
               $("input[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
 
               var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-              $("input[name="+index+"]").parents(".js-form-message").append(html);
+              $(html).insertAfter("*[name="+index+"]");
               $("input[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
             });
           }

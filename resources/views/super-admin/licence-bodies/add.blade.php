@@ -38,7 +38,7 @@
         <!-- Input Group -->
         <div class="js-form-message form-group">
           <label class="input-label">Licence Body</label>
-          <input class="form-control form-control-flush" rows=3 name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." value="" />
+          <input class="form-control form-control-flush" name="name" id="name" placeholder="Enter name of licence body..." required data-msg="Please enter a licence body name." value="" />
         </div>
         <!-- End Input Group -->
 
@@ -96,7 +96,7 @@
               $("input[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
 
               var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-              $("input[name="+index+"]").parents(".js-form-message").append(html);
+              $(html).insertAfter("*[name="+index+"]");
               $("input[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
             });
           }
