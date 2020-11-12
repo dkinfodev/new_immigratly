@@ -69,7 +69,7 @@
           <button type="submit" class="btn add-btn btn-primary">Save</button>
         </div>
         <!-- End Input Group -->
-
+      </form>
       </div><!-- End Card body-->
     </div>
     <!-- End Card -->

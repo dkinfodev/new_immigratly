@@ -6,29 +6,112 @@
       <label class="custom-control-label" for="row-{{$key}}"></label>
     </div>
   </td>
+   <td class="table-column-pl-0">
+      <a class="d-flex align-items-center" href="project.html">
+        <div class="avatar avatar-soft-primary mt-4 avatar-circle">
+          <span class="avatar-initials">{{userInitial($record)}}</span>
+        </div>
+         <!-- <img class="avatar" src="./assets/svg/brands/guideline.svg" alt="Image Description"> -->
+         <div class="ml-3">
+            <span class="d-block h5 text-hover-primary mb-0">{{$record->first_name." ".$record->last_name}}</span>
+            <span class="d-block font-size-sm text-body">Created on {{ dateFormat($record->created_at) }}</span>
+            <ul class="list-inline list-separator small file-specs">
+               <li class="list-inline-item"> 
+                  <i class="tio-attachment-diagonal"></i> 10
+               </li>
+               <li class="list-inline-item"> <i class="tio-comment-text-outlined"></i> 2</li>
+            </ul>
+         </div>
+      </a>
+   </td>
+   <td>
+      <div class="d-flex">
+         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
+         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
+         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
+         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
+         <div class="mr-1"><img src="./assets/svg/components/star-half.svg" alt="Review rating" width="14"></div>
+      </div>
+   </td>
+   <td><a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a></td>
+   <td>
+      <div class="avatar-group avatar-group-xs avatar-circle">
+         <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
+         <img class="avatar-img" src="./assets/img/160x160/img9.jpg" alt="Image Description">
+         </span>
+         <span class="avatar" data-toggle="tooltip" data-placement="top" title="David Harrison">
+         <img class="avatar-img" src="./assets/img/160x160/img3.jpg" alt="Image Description">
+         </span>
+         <span class="avatar avatar-soft-dark" data-toggle="tooltip" data-placement="top" title="Antony Taylor">
+         <span class="avatar-initials">A</span>
+         </span>
+         <span class="avatar avatar-soft-info" data-toggle="tooltip" data-placement="top" title="Sara Iwens">
+         <span class="avatar-initials">S</span>
+         </span>
+         <span class="avatar" data-toggle="tooltip" data-placement="top" title="Finch Hoot">
+         <img class="avatar-img" src="./assets/img/160x160/img5.jpg" alt="Image Description">
+         </span>
+         <span class="avatar avatar-light avatar-circle" data-toggle="tooltip" data-placement="top" title="Sam Kart, Amanda Harvey and 1 more">
+         <span class="avatar-initials">+3</span>
+         </span>
+      </div>
+   </td>
+   <td>
+      <button type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
+   </td>
+   <td>
+      <div class="hs-unfold">
+      <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
+         data-hs-unfold-options='{
+           "target": "#action-{{$key}}",
+           "type": "css-animation"
+         }'>
+              More <i class="tio-chevron-down ml-1"></i>
+      </a>
+
+      <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
+        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">Delete</a> 
+      </div>
+    </div>
+   </td>
+</tr>
+<!-- <tr>
+  <td class="table-column-pr-0">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input row-checkbox" value="{{ base64_encode($record->id) }}" id="row-{{$key}}">
+      <label class="custom-control-label" for="row-{{$key}}"></label>
+    </div>
+  </td>
   <td class="table-column-pl-0">
     <a class="d-flex align-items-center" href="#">
-      <div class="avatar avatar-soft-primary avatar-circle">
+      <div class="avatar avatar-soft-primary mt-4 avatar-circle">
         <span class="avatar-initials">{{userInitial($record)}}</span>
       </div>
-      <!-- <img class="avatar" src="assets/svg/brands/guideline.svg" alt="Image Description"> -->
       <div class="ml-3">
         <span class="d-block h5 text-hover-primary mb-0">{{$record->first_name." ".$record->last_name}}</span>
         <span class="d-block font-size-sm text-body">Created on {{ dateFormat($record->created_at) }}</span>
       </div>
     </a>
-  </td>
-  <td>
-    <div class="d-flex">
-      <div class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-      <div class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-      <div class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-      <div class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-      <div class="mr-1"><img src="assets/svg/components/star-half.svg" alt="Review rating" width="14"></div>
+
+    <div class="ml-8 d-flex">
+      <button type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
     </div>
   </td>
   <td>
-    <span class="badge badge-soft-primary p-2">{{$record->Service($record->VisaService->service_id)->name}}</span>
+    <div><i class="tio-email"></i> {{$record->email}}</div>
+    <div><i class="tio-android-phones"></i> {{$record->country_code}}{{$record->phone_no}}</div>
+  </td>
+  <td>
+   <span class="badge badge-soft-primary p-2">{{$record->Service($record->VisaService->service_id)->name}}</span>
+   <div class="quality-star">
+      <span class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></span>
+      <span class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></span>
+      <span class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></span>
+      <span class="mr-1"><img src="assets/svg/components/star.svg" alt="Review rating" width="14"></span>
+      <span class="mr-1"><img src="assets/svg/components/star-half.svg" alt="Review rating" width="14"></span>
+    </div>
   </td>
   <td>
      <div class="avatar-group avatar-group-xs avatar-circle">
@@ -52,8 +135,10 @@
       </span>
     </div>
   </td>
- <td>
-    <button type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
+  <td>
+      <a class="text-body" href="javascript:;">
+        <i class="tio-chat-outlined"></i> 2
+      </a>
   </td>
   <td>
     <div class="hs-unfold">
@@ -72,7 +157,7 @@
       </div>
     </div>
   </td>
-</tr>
+</tr> -->
 @endforeach
 <script type="text/javascript">
 $(document).ready(function(){

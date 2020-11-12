@@ -143,6 +143,19 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/delete-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteFolder']);
 
         });
+        
+        Route::group(array('prefix' => 'staff'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\StaffController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\StaffController::class, 'getNewList']);
+            Route::get('/add', [App\Http\Controllers\Admin\StaffController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Admin\StaffController::class, 'save']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\StaffController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Admin\StaffController::class, 'update']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\StaffController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\StaffController::class, 'deleteMultiple']);
+            Route::get('/change-password/{id}', [App\Http\Controllers\Admin\StaffController::class, 'changePassword']);
+            Route::post('/update-password/{id}', [App\Http\Controllers\Admin\StaffController::class, 'updatePassword']);
+        });
 
         Route::group(array('prefix' => 'leads'), function () {
             Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
@@ -153,6 +166,7 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/delete/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'deleteSingle']);
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\LeadsController::class, 'deleteMultiple']);
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'edit']);
+            Route::post('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'update']);
         });
     });
 

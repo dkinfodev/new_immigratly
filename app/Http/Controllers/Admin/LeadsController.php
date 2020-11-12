@@ -33,6 +33,9 @@ class LeadsController extends Controller
                         ->where(function($query) use($search){
                             if($search != ''){
                                 $query->where("first_name","LIKE","%$search%");
+                                $query->orWhere("last_name","LIKE","%$search%");
+                                $query->orWhere("email","LIKE","%$search%");
+                                $query->orWhere(DB::raw('concat(country_code,"",phone_no)') , 'LIKE' , "%$search%");
                             }
                         })
                         ->paginate();
@@ -84,7 +87,7 @@ class LeadsController extends Controller
         $object = new Leads();
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
-        $object->email = $request->input("first_name");
+        $object->email = $request->input("email");
         $object->country_code = $request->input("country_code");
         $object->phone_no = $request->input("phone_no");
         $object->visa_service_id = $request->input("visa_service_id");
@@ -114,8 +117,61 @@ class LeadsController extends Controller
     public function edit($id){
         $id = base64_decode($id);
         $record = Leads::find($id);
+        $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
         $viewData['record'] = $record;
         $viewData['pageTitle'] = "Edit Lead";
+        $countries = DB::table(MAIN_DATABASE.".countries")->get();
+        $viewData['countries'] = $countries;
+        $states = DB::table(MAIN_DATABASE.".states")->where("country_id",$record->country_id)->get();
+        $viewData['states'] = $states;
+        $cities = DB::table(MAIN_DATABASE.".cities")->where("state_id",$record->state_id)->get();
+        $viewData['cities'] = $cities;
         return view(roleFolder().'.leads.edit',$viewData);
+    }
+
+    public function update($id,Request $request){
+        $id = base64_decode($id);
+        $object = Leads::find($id);
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email|unique:leads,email,'.$object->id,
+            'country_code' => 'required',
+            'phone_no' => 'required|unique:leads,phone_no,'.$object->id,
+            'gender' => 'required',
+            'date_of_birth' => 'required',
+            'country_id' => 'required',
+            'state_id' => 'required',
+            'city_id' => 'required',
+            'address' => 'required',
+            'zip_code' => 'required',
+            'visa_service_id'=>'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object->first_name = $request->input("first_name");
+        $object->last_name = $request->input("last_name");
+        $object->email = $request->input("email");
+        $object->country_code = $request->input("country_code");
+        $object->phone_no = $request->input("phone_no");
+        $object->date_of_birth = $request->input("date_of_birth");
+        $object->visa_service_id = $request->input("visa_service_id");
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Lead edited successfully";
+        $response['redirect_back'] = baseUrl('leads');
+        return response()->json($response);
     }
 }
