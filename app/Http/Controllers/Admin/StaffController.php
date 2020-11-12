@@ -117,7 +117,7 @@ class StaffController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/profile/');
+            $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;
             }
@@ -215,7 +215,7 @@ class StaffController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/profile/');
+            $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;
             }
