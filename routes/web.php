@@ -146,7 +146,7 @@ Route::group(array('prefix' => 'admin'), function () {
         
         Route::group(array('prefix' => 'staff'), function () {
             Route::get('/', [App\Http\Controllers\Admin\StaffController::class, 'index']);
-            Route::post('/ajax-list', [App\Http\Controllers\Admin\StaffController::class, 'getNewList']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\StaffController::class, 'getAjaxList']);
             Route::get('/add', [App\Http\Controllers\Admin\StaffController::class, 'add']);
             Route::post('/save', [App\Http\Controllers\Admin\StaffController::class, 'save']);
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\StaffController::class, 'edit']);

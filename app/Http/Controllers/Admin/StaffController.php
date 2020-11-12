@@ -26,7 +26,15 @@ class StaffController extends Controller
 
     public function getAjaxList(Request $request)
     {
-        $records = User::where('role','!=','admin')->orderBy('id',"desc")->paginate();
+        $search = $request->input("search");
+        $records = User::orderBy('id',"desc")
+                        ->where(function($query) use($search){
+                            if($search != ''){
+                                $query->where("first_name","LIKE","%$search%");
+                            }
+                        })
+                        ->where("role","!=","admin")
+                        ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.staff.ajax-list',$viewData);
         $contents = $view->render();
@@ -226,25 +234,7 @@ class StaffController extends Controller
         return response()->json($response);
     }
 
-    public function getNewList(Request $request)
-    {
-        $search = $request->input("search");
-        $records = User::orderBy('id',"desc")
-                        ->where(function($query) use($search){
-                            if($search != ''){
-                                $query->where("first_name","LIKE","%$search%");
-                            }
-                        })
-                        ->paginate();
-        $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.staff.ajax-list',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['last_page'] = $records->lastPage();
-        $response['current_page'] = $records->currentPage();
-        $response['total_records'] = $records->total();
-        return response()->json($response);
-    }
+    
 
      public function deleteSingle($id){
         $id = base64_decode($id);

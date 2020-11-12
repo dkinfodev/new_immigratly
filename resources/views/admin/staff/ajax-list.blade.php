@@ -30,7 +30,7 @@
 
   <td>
     <div class="d-flex">
-      {{$record->phone_no}}
+      {{$record->country_code}}{{$record->phone_no}}
     </div>
   </td>
 
@@ -42,10 +42,10 @@
   </td>
   <td>
     
-    @if($record->is_verified=='1')
-    <span class="badge badge-soft-primary p-2"> Verified </span>
+    @if($record->is_active=='1')
+    <span class="badge badge-soft-primary p-2"> Active </span>
     @else
-    <span class="badge badge-soft-danger p-2"> Not Verified </span>
+    <span class="badge badge-soft-danger p-2"> Inactive </span>
     @endif
   </td>
   
