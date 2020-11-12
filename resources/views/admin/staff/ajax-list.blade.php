@@ -9,7 +9,7 @@
   <td class="table-column-pl-0">
     <a class="d-flex align-items-center" href="#">
       @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))
-      <img class="avatar" src="{{ professionalDirUrl().'/profile/'.$record->profile_image }}" alt="Profile Image">
+      <img class="avatar" src="{{ professionalProfile($record->profile_image)}}" alt="Profile Image">
       @else
       <div class="avatar avatar-soft-primary avatar-circle">
         <span class="avatar-initials">{{userInitial($record)}}</span>

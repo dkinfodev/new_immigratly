@@ -840,3 +840,13 @@ if(!function_exists("professionalDirUrl")){
         return $dir;
     }
 }
+if(!function_exists("professionalProfile")){
+    function professionalProfile($profile_image,$size='',$domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        
+        return $url;
+    }
+}
