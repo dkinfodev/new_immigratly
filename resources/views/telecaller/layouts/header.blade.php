@@ -693,19 +693,18 @@
           </div>
         </div>
 
+
         <div class="dropdown-divider"></div>
-
-
-        <a class="dropdown-item" href="#">
-          <span class="text-truncate pr-2" title="Profile &amp; account">Profile &amp; account</span>
+        <a class="dropdown-item" href="{{baseUrl('edit-profile')}}">
+          <span class="text-truncate pr-2" title="Edit profile">Edit Profile</span>
         </a>
-        <div class="dropdown-divider"></div>
-    
-        <a class="dropdown-item" href="{{baseUrl('staff')}}">
-          <span class="text-truncate pr-2" title="staff">Manage Staffs</span>
-        </a>
-        <div class="dropdown-divider"></div>
 
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{{baseUrl('/change-password/')}}">
+          <span class="text-truncate pr-2" title="change password">Change Password</span>
+        </a>
+        
+        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{ url('logout') }}">
           <span class="text-truncate pr-2" title="Sign out">Sign out</span>
         </a>

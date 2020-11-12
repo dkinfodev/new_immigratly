@@ -119,7 +119,7 @@ class ProfileController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/profile/');
+            $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;                    
             }
@@ -156,7 +156,7 @@ class ProfileController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/documents/');
+            $destinationPath = professionalDir()."/documents";
             if($file->move($destinationPath, $newName)){
                 $object2->licence_certificate = $newName;                    
             }
@@ -168,7 +168,7 @@ class ProfileController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/documents/');
+            $destinationPath = professionalDir()."/documents";
             if($file->move($destinationPath, $newName)){
                 $object2->owner_id_proof = $newName;                    
             }
@@ -181,7 +181,7 @@ class ProfileController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/documents/');
+            $destinationPath = professionalDir()."/documents";
             if($file->move($destinationPath, $newName)){
                 $object2->company_address_proof = $newName;                    
             }

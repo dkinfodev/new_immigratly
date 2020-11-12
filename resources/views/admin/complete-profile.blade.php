@@ -135,8 +135,8 @@
       <div class="col-md-4">
         <!-- Logo -->
         <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
-          @if($user->profile_image != '' && file_exists(public_path('uploads/professional/profile/'.$user->profile_image)))
-            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ asset('public/uploads/professional/profile/'.$user->profile_image) }}" alt="Profile Image">
+          @if($user->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$user->profile_image))
+            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$user->profile_image }}" alt="Profile Image">
           @else
             <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
           @endif
@@ -425,8 +425,8 @@
             <label class="custom-file-label" for="licence_certificate">Choose file</label>
           </div>
         </div>
-        @if($company_details->licence_certificate != '' && file_exists(public_path('uploads/professional/documents/'.$company_details->licence_certificate)))
-          <a class="badge badge-primary" download href="{{ asset('public/uploads/professional/documents/'.$company_details->licence_certificate) }}"><i class="fa fa-download"></i>{{$company_details->licence_certificate}}</a>
+        @if($company_details->licence_certificate != '' && file_exists(professionalDir().'/documents/'.$company_details->licence_certificate))
+          <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->licence_certificate }}"><i class="fa fa-download"></i>{{$company_details->licence_certificate}}</a>
         @endif
       </div>
   </div>
@@ -554,8 +554,8 @@ Next <i class="tio-chevron-right"></i>
           <label class="custom-file-label" for="owner_id_proof">Choose file</label>
         </div>
       </div>
-      @if($company_details->owner_id_proof != '' && file_exists(public_path('uploads/professional/documents/'.$company_details->owner_id_proof)))
-        <a class="badge badge-primary" download href="{{ asset('public/uploads/professional/documents/'.$company_details->owner_id_proof) }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+      @if($company_details->owner_id_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->owner_id_proof))
+        <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->owner_id_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
       @endif
     </div>
   </div>
@@ -575,8 +575,8 @@ Next <i class="tio-chevron-right"></i>
           <label class="custom-file-label" for="company_address_proof">Choose file</label>
         </div>
       </div>
-      @if($company_details->company_address_proof != '' && file_exists(public_path('uploads/professional/documents/'.$company_details->company_address_proof)))
-        <a class="badge badge-primary" download href="{{ asset('public/uploads/professional/documents/'.$company_details->company_address_proof) }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+      @if($company_details->company_address_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->company_address_proof))
+        <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->company_address_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
       @endif
     </div>
   </div>

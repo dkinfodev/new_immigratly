@@ -98,6 +98,21 @@ function deleteMultiple(e){
     	}
     })
 }
+function validation(errors){
+	$(".invalid-feedback").remove();
+	$(".form-control").removeClass('is-invalid');
+	$.each(errors, function (index, value) {
+	  $("*[name="+index+"]").parents(".js-form-message").find(".invalid-feedback").remove();
+	  $("*[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
+	  var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
+	  if($("[name="+index+"]").get(0).tagName == 'SELECT'){
+	  	$("*[name="+index+"]").parents(".js-form-message").append(html);
+	  }else{
+	  	$(html).insertAfter("*[name="+index+"]");
+	  }
+	  $("*[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
+	});
+}
 function initEditor(id,type="full"){
  	var textarea = document.getElementById(id);
 	if(type  == 'basic'){

@@ -27,6 +27,7 @@ class ConfigServiceProvider extends ServiceProvider
         $subdomain = explode('.', $request->getHost())[0];
 
         \Session::forget("login_to");
+        \Session::forget("subdomain");
         if($subdomain != 'localhost'){
             if($subdomain != 'immigratly'){
                 if($subdomain == 'users'){      

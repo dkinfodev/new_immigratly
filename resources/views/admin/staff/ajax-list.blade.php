@@ -8,10 +8,14 @@
   </td>
   <td class="table-column-pl-0">
     <a class="d-flex align-items-center" href="#">
+      @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))
+      <img class="avatar" src="{{ professionalProfile($record->profile_image)}}" alt="Profile Image">
+      @else
       <div class="avatar avatar-soft-primary avatar-circle">
         <span class="avatar-initials">{{userInitial($record)}}</span>
       </div>
-      <!-- <img class="avatar" src="assets/svg/brands/guideline.svg" alt="Image Description"> -->
+      @endif
+      
       <div class="ml-3">
         <span class="d-block h5 text-hover-primary mb-0">{{$record->first_name." ".$record->last_name}}</span>
         <span class="d-block font-size-sm text-body">Created on {{ dateFormat($record->created_at) }}</span>
@@ -26,7 +30,7 @@
 
   <td>
     <div class="d-flex">
-      {{$record->phone_no}}
+      {{$record->country_code}}{{$record->phone_no}}
     </div>
   </td>
 
@@ -38,10 +42,10 @@
   </td>
   <td>
     
-    @if($record->is_verified=='1')
-    <span class="badge badge-soft-primary p-2"> Verified </span>
+    @if($record->is_active=='1')
+    <span class="badge badge-soft-primary p-2"> Active </span>
     @else
-    <span class="badge badge-soft-danger p-2"> Not Verified </span>
+    <span class="badge badge-soft-danger p-2"> Inactive </span>
     @endif
   </td>
   

@@ -356,28 +356,8 @@
     // initialization of Show Password
     $('.js-toggle-password').each(function () {
         new HSTogglePassword(this).init()
-      });
+    });
 
-        // initialization of form validation
-        $('.js-validate').each(function() {
-          // $.HSCore.components.HSValidation.init($(this), {
-          //   rules: {
-          //     confirmPassword: {
-          //       equalTo: '#signupSrPassword'
-          //     }
-          //   }
-          // });
-        });
-
-        // initialization of select2
-        $('.js-select2-custom').each(function () {
-          var select2 = $.HSCore.components.HSSelect2.init($(this));
-        });
-
-
-        $('.js-validate').each(function() {
-          $.HSCore.components.HSValidation.init($(this));
-        });
 
     // initialization of quilljs editor
     $('.js-flatpickr').each(function () {
@@ -387,14 +367,15 @@
     
     $("#form").submit(function(e){
       e.preventDefault();
-      var formData = $("#form").serialize();
-      var url  = $("#form").attr('action');
-      var formData = $("#form").serialize();
+      var formData = new FormData($(this)[0]);
       var url  = $("#form").attr('action');
       $.ajax({
         url:url,
         type:"post",
         data:formData,
+        cache: false,
+        contentType: false,
+        processData: false,
         dataType:"json",
         beforeSend:function(){
           showLoader();
@@ -405,14 +386,15 @@
             successMessage(response.message);
             redirect(response.redirect_back);
           }else{
-            $.each(response.message, function (index, value) {
-              $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
-              $("[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
+            validation(response.message);
+            // $.each(response.message, function (index, value) {
+            //   $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
+            //   $("[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
               
-              var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-              $("[name="+index+"]").parents(".js-form-message").append(html);
-              $("[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
-            });
+            //   var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
+            //   $("[name="+index+"]").parents(".js-form-message").append(html);
+            //   $("[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
+            // });
               // errorMessage(response.message);
             }
           },
@@ -424,26 +406,6 @@
     });
   });
   
-  function licenceBodies(country_id){
-    $.ajax({
-      url:"{{ url('licence-bodies') }}",
-      data:{
-        country_id:country_id
-      },
-      dataType:"json",
-      beforeSend:function(){
-       $("#license_body").html('');
-     },
-     success:function(response){
-      if(response.status == true){
-        $("#license_body").html(response.options);
-      } 
-    },
-    error:function(){
-
-    }
-  });
-  }
 
   function stateList(country_id,id){
     $.ajax({

@@ -10,7 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/staff') }}">Staff</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link">{{ucwords($record->role)}}</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -32,7 +32,7 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('staff/update/'.base64_encode($record->id)) }}" method="post">
+      <form id="form" class="js-validate" action="{{ baseUrl('/update-profile') }}" method="post">
 
         @csrf
         
@@ -41,7 +41,7 @@
             <!-- Logo -->
             <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
               @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))
-              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalProfile($record->profile_image)}}" alt="Profile Image">
+              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$record->profile_image }}" alt="Profile Image">
               @else
               <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
               @endif
@@ -199,7 +199,7 @@
             <div class="col-sm-7">
               <div class="js-form-message">
                 <select name="state_id" id="state_id" aria-label="State" required data-msg="Please select your state" onchange="cityList(this.value,'city_id')" class="form-control">
-                  <option value="">Select State</option>
+                <option value="">Select State</option>
                   <option value="">Select State</option>
                   @foreach($states as $state)
                   <option {{$record->state_id == $state->id?"selected":""}} value="{{$state->id}}">{{$state->name}}</option>
@@ -247,22 +247,7 @@
             </div>
           </div>
 
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Role</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="role" class="form-control">
-                  <option value="">Select Role</option>
-                   @foreach($roles as $role)
-                  <option value="{{$role->slug}}" <?php if($role->slug==$record->role){ echo "selected";} ?>>{{$role->name}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
+          
         </div>
         <!-- End Form Group -->    
       </div>

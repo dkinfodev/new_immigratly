@@ -819,3 +819,33 @@ if(!function_exists("db_prefix")){
         return $db_prefix;
     }
 }
+if(!function_exists("professionalDir")){
+    function professionalDir($domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        $dir = public_path("uploads/professional/".$domain);
+        return $dir;
+    }
+}
+
+if(!function_exists("professionalDirUrl")){
+    function professionalDirUrl($domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        $dir = asset("public/uploads/professional/".$domain);
+        
+        return $dir;
+    }
+}
+if(!function_exists("professionalProfile")){
+    function professionalProfile($profile_image,$size='',$domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        
+        return $url;
+    }
+}

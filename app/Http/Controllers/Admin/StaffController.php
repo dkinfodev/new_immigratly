@@ -9,8 +9,7 @@ use View;
 use DB;
 
 use App\Models\ProfessionalServices;
-use App\Models\Countries;
-use App\Models\Staff;
+use App\Models\User;
 
 class StaffController extends Controller
 {
@@ -21,14 +20,21 @@ class StaffController extends Controller
 
     public function index()
     {
-        $viewData['total_bodies'] = Staff::count();
         $viewData['pageTitle'] = "Staff";
         return view(roleFolder().'.staff.lists',$viewData);
     } 
 
     public function getAjaxList(Request $request)
     {
-        $records = Staff::orderBy('id',"desc")->paginate();
+        $search = $request->input("search");
+        $records = User::orderBy('id',"desc")
+                        ->where(function($query) use($search){
+                            if($search != ''){
+                                $query->where("first_name","LIKE","%$search%");
+                            }
+                        })
+                        ->where("role","!=","admin")
+                        ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.staff.ajax-list',$viewData);
         $contents = $view->render();
@@ -84,7 +90,7 @@ class StaffController extends Controller
             return response()->json($response);
         }
         $id = \Auth::user()->id;
-        $object = new Staff();
+        $object = new User();
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -111,7 +117,7 @@ class StaffController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/profile/');
+            $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;
             }
@@ -133,7 +139,7 @@ class StaffController extends Controller
     public function edit($id,Request $request){
         $id = base64_decode($id);
         $viewData['pageTitle'] = "Edit Staff";
-        $record = Staff::where("id",$id)->first();
+        $record = User::where("id",$id)->first();
         $viewData['record'] = $record;
         $countries = DB::table(MAIN_DATABASE.".countries")->get();
         $viewData['countries'] = $countries;
@@ -157,14 +163,14 @@ class StaffController extends Controller
     public function update($id,Request $request){
         // pre($request->all());
         $id = base64_decode($id);
-        $object =  Staff::find($id);
+        $object =  User::find($id);
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email,'.$object->email,
+            'email' => 'required|email|unique:users,email,'.$object->id,
             'first_name' => 'required',
             'last_name' => 'required',
             'country_code' => 'required',
-            'phone_no' => 'required|unique:users,phone_no,'.$object->phone_no,
+            'phone_no' => 'required|unique:users,phone_no,'.$object->id,
             'gender'=>'required',
             'date_of_birth'=>'required',
             'languages_known'=>'required',
@@ -209,7 +215,7 @@ class StaffController extends Controller
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             
-            $destinationPath = public_path('/uploads/professional/profile/');
+            $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;
             }
@@ -228,36 +234,18 @@ class StaffController extends Controller
         return response()->json($response);
     }
 
-    public function getNewList(Request $request)
-    {
-        $search = $request->input("search");
-        $records = Staff::orderBy('id',"desc")
-                        ->where(function($query) use($search){
-                            if($search != ''){
-                                $query->where("first_name","LIKE","%$search%");
-                            }
-                        })
-                        ->paginate();
-        $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.staff.ajax-list',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['last_page'] = $records->lastPage();
-        $response['current_page'] = $records->currentPage();
-        $response['total_records'] = $records->total();
-        return response()->json($response);
-    }
+    
 
      public function deleteSingle($id){
         $id = base64_decode($id);
-        Staff::deleteRecord($id);
+        User::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
     public function deleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
             $id = base64_decode($ids[$i]);
-            Staff::deleteRecord($id);
+            User::deleteRecord($id);
         }
         $response['status'] = true;
         \Session::flash('success', 'Records deleted successfully'); 
@@ -268,7 +256,7 @@ class StaffController extends Controller
     public function changePassword($id)
     {
         $id = base64_decode($id);
-        $record = Staff::where("id",$id)->first();
+        $record = User::where("id",$id)->first();
         $viewData['record'] = $record;
         $viewData['pageTitle'] = "Change Password";
         return view(roleFolder().'.staff.change-password',$viewData);
@@ -277,7 +265,7 @@ class StaffController extends Controller
     public function updatePassword($id,Request $request)
     {
         $id = base64_decode($id);
-        $object =  Staff::find($id);
+        $object =  User::find($id);
 
         $validator = Validator::make($request->all(), [
             'password' => 'required|confirmed|min:4',
