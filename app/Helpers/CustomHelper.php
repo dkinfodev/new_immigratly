@@ -884,7 +884,7 @@ if(!function_exists("professionalProfile")){
 if(!function_exists("userDir")){
     function userDir($unique_id = ''){
         if($unique_id == ''){
-            $unique_id = \Auth::user()->("unique_id");
+            $unique_id = \Auth::user()->unique_id;
         }
         $dir = public_path("uploads/users/".$unique_id);
 
@@ -895,7 +895,7 @@ if(!function_exists("userDir")){
 if(!function_exists("userDirUrl")){
     function UserDirUrl($unique_id = ''){
         if($unique_id == ''){
-            $unique_id = \Auth::user()->("unique_id");
+            $unique_id = \Auth::user()->unique_id;
         }
         $dir = asset("public/uploads/users/".$unique_id);
         
@@ -905,7 +905,7 @@ if(!function_exists("userDirUrl")){
 if(!function_exists("userProfile")){
     function userProfile($profile_image,$size='r',$unique_id = ''){
         if($unique_id == ''){
-           $unique_id = \Auth::user()->("unique_id");
+           $unique_id = \Auth::user()->unique_id;
         }
         $original = asset("public/uploads/users/".$unique_id."/profile/".$profile_image);
         $url = '';
