@@ -19,18 +19,14 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('leads/quick-lead') ?>')" href="javascript:;">
-          <i class="tio-user-add mr-1"></i> Quick Lead
+        <a class="btn btn-primary" href="<?php echo baseUrl('cases/create-case') ?>">
+          <i class="tio-user-add mr-1"></i> Create Case
         </a>
       </div>
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
-
-  <!-- Stats -->
-  @include(roleFolder().".leads.leads-count")
-  <!-- End Stats -->
 
   <!-- Card -->
   <div class="card">
@@ -61,7 +57,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('leads/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -84,11 +80,13 @@
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Leads</th>
-            <th>Email/Phone no</th>
+            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Case Title</th>
+            <th>Client</th>
             <th scope="col">Visa Service</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
             <th scope="col">Assigned</th>
-            <th scope="col"></td>
+            <th scope="col">Status</td>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -184,7 +182,7 @@ function loadData(page=1){
   var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/leads/ajax-list?page='+page,
+        url: BASEURL + '/cases/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search
@@ -236,60 +234,13 @@ function changePage(action){
   }
   
 }
-function confirmDelete(id){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonClass: 'btn btn-primary',
-      cancelButtonClass: 'btn btn-danger ml-1',
-      buttonsStyling: false,
-    }).then(function(result) {
-      if (result.value) {
-        $.ajax({
-            type: "POST",
-            url: BASEURL + '/leads/delete-user',
-            data:{
-                _token:csrf_token,
-                user_id:id,
-            },
-            dataType:'json',
-            success: function (result) {
-                if(result.status == true){
-                    Swal.fire({
-                        type: "success",
-                        title: 'Deleted!',
-                        text: 'Your file has been deleted.',
-                        confirmButtonClass: 'btn btn-success',
-                    }).then(function () {
-
-                        window.location.href= result.redirect;
-                    });
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Error while deleting",
-                        type: "error",
-                        confirmButtonClass: 'btn btn-primary',
-                        buttonsStyling: false,
-                    });
-                }
-            },
-        });
-      }
-    })
-}
 
 function changeStatus(e){
   var id = $(e).attr("data-id");
   if($(e).is(":checked")){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/leads/status/active',
+        url: BASEURL + '/cases/status/active',
         data:{
             _token:csrf_token,
             id:id,
@@ -307,7 +258,7 @@ function changeStatus(e){
   }else{
     $.ajax({
         type: "POST",
-        url: BASEURL + '/leads/status/inactive',
+        url: BASEURL + '/cases/status/inactive',
         data:{
             _token:csrf_token,
             id:id,
@@ -333,7 +284,7 @@ function profileStatus(e){
   if($(e).is(":checked")){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/leads/profile-status/active',
+        url: BASEURL + '/cases/profile-status/active',
         data:{
             _token:csrf_token,
             id:id,
@@ -350,7 +301,7 @@ function profileStatus(e){
   }else{
     $.ajax({
         type: "POST",
-        url: BASEURL + '/leads/profile-status/inactive',
+        url: BASEURL + '/cases/profile-status/inactive',
         data:{
             _token:csrf_token,
             id:id,

@@ -11,7 +11,7 @@ use App\Models\DomainDetails;
 
 class MasterApiController extends Controller
 {
-	var $subdomain
+	var $subdomain;
     public function __construct(Request $request)
     {
     	$headers = $request->header();
@@ -30,7 +30,7 @@ class MasterApiController extends Controller
             if(!empty($checkExists)){
             	$response['status'] = 'error';
             	$response['error'] = "email_exists";
-            	$response['message'] = "User with email already exists";
+            	$response['message'] = "Client account with email ".$user['email']." already exists";
         		return response()->json($response);
             }
 

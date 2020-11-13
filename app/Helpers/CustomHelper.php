@@ -629,13 +629,11 @@ if(!function_exists("curlRequest")){
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
         $response = curl_exec($ch);
-        
         $info = curl_getinfo($ch);
         curl_close($ch);
        
-        $curl_response = json_decode($response);
-        pre($response);
-        exit;
+        $curl_response = json_decode($response,true);
+        
         // if($curl_response->status == 'api_error'){
         //     if($curl_response->error == 'account_disabled'){
         //         Auth::logout();

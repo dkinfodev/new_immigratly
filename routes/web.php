@@ -170,6 +170,14 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'markAsClient']);
             Route::post('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'confirmAsClient']);
         });
+
+        Route::group(array('prefix' => 'cases'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\CasesController::class, 'cases']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\CasesController::class, 'getAjaxList']);
+            Route::get('/create-case', [App\Http\Controllers\Admin\CasesController::class, 'add']);
+            Route::get('/create-client-case/{id}', [App\Http\Controllers\Admin\CasesController::class, 'createClientCases']);
+        });
+
     });
 
     

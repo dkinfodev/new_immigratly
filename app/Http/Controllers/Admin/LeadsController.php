@@ -38,6 +38,7 @@ class LeadsController extends Controller
                                 $query->orWhere(DB::raw('concat(country_code,"",phone_no)') , 'LIKE' , "%$search%");
                             }
                         })
+                        ->where("mark_as_client","0")
                         ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.leads.ajax-list',$viewData);
@@ -190,13 +191,23 @@ class LeadsController extends Controller
         $lead = Leads::select('first_name','last_name','email','country_code','phone_no','date_of_birth','gender','country_id','state_id','city_id','address','zip_code')->where("id",$id)->first();
         $postData['data'] = $lead;
         $result = curlRequest("create-client",$postData);
+       
         if($result['status'] == 'error'){
             $response['status'] = false;
             $response['message'] = $result['message'];
         }elseif($result['status'] == 'success'){
-            // $client_id = 
-        }
+            $object = Leads::find($id);
+            $object->mark_as_client = 1;
+            $object->master_id = $result['user_id'];
+            $object->save();
 
+            $response['status'] = true;
+            $response['message'] = "Lead is converted to client successfully";
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Issue while marking lead as client";
+        }
+        return response()->json($response);
     }
 
 }

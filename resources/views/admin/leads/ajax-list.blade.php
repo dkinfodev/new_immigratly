@@ -33,7 +33,13 @@
          <div class="mr-1"><img src="./assets/svg/components/star-half.svg" alt="Review rating" width="14"></div>
       </div>
    </td>
-   <td><a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a></td>
+   <td>
+    @if(!empty($record->Service($record->VisaService->service_id)))
+    <a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a>
+    @else
+    <a href="javascript:;" class="badge badge-soft-danger p-2">Service Removed</a>
+    @endif
+   </td>
    <td>
       <div class="avatar-group avatar-group-xs avatar-circle">
          <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
