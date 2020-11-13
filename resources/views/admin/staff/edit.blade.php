@@ -37,7 +37,7 @@
         @csrf
         
         <div class="row justify-content-md-between">
-          <div class="col-md-4">
+          <div class="col-md-4 js-form-message">
             <!-- Logo -->
             <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
               @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))

@@ -104,7 +104,7 @@ function validation(errors){
 	$.each(errors, function (index, value) {
 	  $("*[name="+index+"]").parents(".js-form-message").find(".invalid-feedback").remove();
 	  $("*[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
-	  var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
+	  var html = '<div id="'+index+'-error" class="invalid-feedback required-error">'+value+'</div>';
 	  if($("[name="+index+"]").get(0).tagName == 'SELECT'){
 	  	$("*[name="+index+"]").parents(".js-form-message").append(html);
 	  }else{

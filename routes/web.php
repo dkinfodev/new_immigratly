@@ -167,6 +167,8 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\LeadsController::class, 'deleteMultiple']);
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'edit']);
             Route::post('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'update']);
+            Route::get('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'markAsClient']);
+            Route::post('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'confirmAsClient']);
         });
     });
 

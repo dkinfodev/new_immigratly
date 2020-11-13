@@ -174,4 +174,29 @@ class LeadsController extends Controller
         $response['redirect_back'] = baseUrl('leads');
         return response()->json($response);
     }
+
+    public function markAsClient($id){
+        $viewData['pageTitle'] = "Mark as client";
+        $viewData['lead_id'] = base64_decode($id);
+        $view = View::make(roleFolder().'.leads.modal.mark-as-client',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+    
+    public function confirmAsClient($id,Request $request){
+        $id = base64_decode($id);
+        $lead = Leads::select('first_name','last_name','email','country_code','phone_no','date_of_birth','gender','country_id','state_id','city_id','address','zip_code')->where("id",$id)->first();
+        $postData['data'] = $lead;
+        $result = curlRequest("create-client",$postData);
+        if($result['status'] == 'error'){
+            $response['status'] = false;
+            $response['message'] = $result['message'];
+        }elseif($result['status'] == 'success'){
+            // $client_id = 
+        }
+
+    }
+
 }

@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::group(array('middleware' => 'curl_api'), function () {
+	Route::group(array('prefix' => 'main'), function () {
+		Route::post('/create-client', [App\Http\Controllers\Api\MasterApiController::class, 'createClient']);
+	});	
+});

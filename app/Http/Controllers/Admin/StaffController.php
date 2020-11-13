@@ -76,6 +76,7 @@ class StaffController extends Controller
             'role'=>'required',
             'password' => 'required|confirmed|min:4',
             'password_confirmation' => 'required|min:4',
+            'profile_image'=>'mimes:jpeg,jpg,png,gif'
         ]);
 
         if ($validator->fails()) {
@@ -116,7 +117,22 @@ class StaffController extends Controller
             $extension       = $file->getClientOriginalExtension() ?: 'png';
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
+            $path = professionalDir()."/profile";
             
+            $destinationPath = $path.'/thumb';
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $destination_url = $destinationPath.'/'.$newName;
+            resizeImage($source_url, $destination_url, 100,100,80);
+
+            $destinationPath = $path.'/medium';
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $destination_url = $destinationPath.'/'.$newName;
+            resizeImage($source_url, $destination_url, 500,500,80);
+
             $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;
@@ -180,6 +196,7 @@ class StaffController extends Controller
             'address'=>'required',
             'zip_code'=>'required',
             'role'=>'required',
+            'profile_image'=>'mimes:jpeg,jpg,png,gif'
         ]);
 
         if ($validator->fails()) {
@@ -207,14 +224,40 @@ class StaffController extends Controller
         $object->zip_code = $request->input("zip_code");
         
         $object->role = $request->input("role");
+        $path = professionalDir()."/profile";
         $object->languages_known = json_encode($request->input("languages_known"));
+        if($object->profile_image !=''){
+            if(file_exists($path.'/'.$object->profile_image))
+                unlink($path.'/'.$object->profile_image);
+
+            if(file_exists($path.'/thumb/'.$object->profile_image))
+                unlink($path.'/thumb/'.$object->profile_image);
+
+            if(file_exists($path.'/medium/'.$object->profile_image))
+                unlink($path.'/medium/'.$object->profile_image);
+        }
         if ($file = $request->file('profile_image')){
                 
             $fileName        = $file->getClientOriginalName();
             $extension       = $file->getClientOriginalExtension() ?: 'png';
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
+            // Thumb Image
             
+            $destinationPath = $path.'/thumb';
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $destination_url = $destinationPath.'/'.$newName;
+            resizeImage($source_url, $destination_url, 100,100,80);
+
+            $destinationPath = $path.'/medium';
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $destination_url = $destinationPath.'/'.$newName;
+            resizeImage($source_url, $destination_url, 500,500,80);
+
             $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;

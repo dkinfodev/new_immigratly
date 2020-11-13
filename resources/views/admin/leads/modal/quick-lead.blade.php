@@ -121,16 +121,17 @@ $(document).ready(function(){
                 closeModal();
                 location.reload();
               }else{
-                $.each(response.message, function (index, value) {
-                    $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
-                    $("*[name="+index+"]").parents(".js-form-message").find("*[name="+index+"]").removeClass('is-invalid');
+                validation(response.message);
+                // $.each(response.message, function (index, value) {
+                //     $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
+                //     $("*[name="+index+"]").parents(".js-form-message").find("*[name="+index+"]").removeClass('is-invalid');
 
                     
-                    var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-                    $("*[name="+index+"]").parents(".js-form-message").append(html);
-                    $(html).insertAfter("*[name="+index+"]");
-                    $("*[name="+index+"]").parents(".js-form-message").find("*[name="+index+"]").addClass('is-invalid');
-                });
+                //     var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
+                //     $("*[name="+index+"]").parents(".js-form-message").append(html);
+                //     $(html).insertAfter("*[name="+index+"]");
+                //     $("*[name="+index+"]").parents(".js-form-message").find("*[name="+index+"]").addClass('is-invalid');
+                // });
                 // errorMessage(response.message);
               }
             },

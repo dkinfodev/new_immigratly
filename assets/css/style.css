@@ -16,3 +16,6 @@
     margin-bottom: 30px !important;
     padding-bottom: 0px !important;
 }
+.required-error{
+    display: block !important;
+}

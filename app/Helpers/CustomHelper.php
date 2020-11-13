@@ -3,6 +3,8 @@ require dirname(__DIR__)."/../library/subdomain/init.php";
 require dirname(__DIR__)."/../library/twilio/twilio.php";
 
 use App\Models\Settings;
+use App\Models\DomainDetails;
+
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
         $file_type = array(
@@ -601,14 +603,16 @@ if(!function_exists("createSubDomain")){
 }
 if(!function_exists("curlRequest")){
     function curlRequest($url,$data=array()){
-        $client_key = ApiKeys::first();
+        $client_key = DomainDetails::first();
         // $subdomain = array_first(explode('.', request()->getHost()));
         $host = explode('.', request()->getHost());
         $subdomain = $host[0];
+        $site_url = DB::table(MAIN_DATABASE.".settings")->where("meta_key","site_url")->first();
+        $site_url = $site_url->meta_value;
         if($subdomain == 'localhost'){
-            $api_url = url('/api');
+            $api_url = url('/api/main');
         }else{
-            $api_url = "http://immigratly.com/api";
+            $api_url = $site_url."api";
         }
         $token = $client_key->client_secret;
       
@@ -630,12 +634,13 @@ if(!function_exists("curlRequest")){
         curl_close($ch);
        
         $curl_response = json_decode($response);
-        
-        if($curl_response->status == 'api_error'){
-            if($curl_response->error == 'account_disabled'){
-                Auth::logout();
-            }
-        }
+        pre($response);
+        exit;
+        // if($curl_response->status == 'api_error'){
+        //     if($curl_response->error == 'account_disabled'){
+        //         Auth::logout();
+        //     }
+        // }
         return $curl_response;
     }
 }
@@ -713,10 +718,13 @@ if(!function_exists("professionalApi")){
         $professional = ProfessionalPanel::where("user_id",$professional_id)->first();
         $host = explode('.', request()->getHost());
         $subdomain = $host[0];
+        $site_url = DB::table(MAIN_DATABASE.".settings")->where("meta_key","site_url")->first();
+        $site_url = $site_url->meta_value;
+
         if($subdomain == 'localhost'){
             $api_url = url('/api/professional');
         }else{
-            $api_url = "https://immigratly.com/api/professional";
+            $api_url = $site_url."api/professional";
         }
 
         $token = $professional->client_secret;
@@ -751,10 +759,12 @@ if(!function_exists("professionalApi")){
 }
 if(!function_exists("domain")){
     function domain(){
+        $site_url = DB::table(MAIN_DATABASE.".settings")->where("meta_key","site_url")->first();
+        $site_url = $site_url->meta_value;
         if($_SERVER['SERVER_NAME'] == 'localhost'){
             $domain = url('/');
         }else{
-            $domain = 'https://immigratly.com';
+            $domain = $site_url;
         }
         return $domain;
     }
@@ -841,12 +851,84 @@ if(!function_exists("professionalDirUrl")){
     }
 }
 if(!function_exists("professionalProfile")){
-    function professionalProfile($profile_image,$size='',$domain = ''){
+    function professionalProfile($profile_image,$size='r',$domain = ''){
         if($domain == ''){
             $domain = \Session::get("subdomain");
         }
-        $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        $original = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        $url = '';
+        if($size == 'r'){
+            $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        }
+        if($size == 'm'){
+            if(file_exists(professionalDir()."/profile/medium/".$profile_image)){
+                $url = asset("public/uploads/professional/".$domain."/profile/medium/".$profile_image);
+            }else{
+                $url = $original;
+            }
+        }
+        if($size == 't'){
+            if(file_exists(professionalDir()."/profile/thumb/".$profile_image)){
+                $url = asset("public/uploads/professional/".$domain."/profile/thumb/".$profile_image);
+            }else{
+                $url = $original;
+            }
+        }
+        if($url == ''){
+            $url = $original;
+        }
+        return $url;
+    }
+}
+
+if(!function_exists("userDir")){
+    function userDir($unique_id = ''){
+        if($unique_id == ''){
+            $unique_id = \Auth::user()->("unique_id");
+        }
+        $dir = public_path("uploads/users/".$unique_id);
+
+        return $dir;
+    }
+}
+
+if(!function_exists("userDirUrl")){
+    function UserDirUrl($unique_id = ''){
+        if($unique_id == ''){
+            $unique_id = \Auth::user()->("unique_id");
+        }
+        $dir = asset("public/uploads/users/".$unique_id);
         
+        return $dir;
+    }
+}
+if(!function_exists("userProfile")){
+    function userProfile($profile_image,$size='r',$unique_id = ''){
+        if($unique_id == ''){
+           $unique_id = \Auth::user()->("unique_id");
+        }
+        $original = asset("public/uploads/users/".$unique_id."/profile/".$profile_image);
+        $url = '';
+        if($size == 'r'){
+            $url = asset("public/uploads/users/".$unique_id."/profile/".$profile_image);
+        }
+        if($size == 'm'){
+            if(file_exists(userDir()."/profile/medium/".$profile_image)){
+                $url = asset("public/uploads/users/".$unique_id."/profile/medium/".$profile_image);
+            }else{
+                $url = $original;
+            }
+        }
+        if($size == 't'){
+            if(file_exists(userDir()."/profile/thumb/".$profile_image)){
+                $url = asset("public/uploads/users/".$unique_id."/profile/thumb/".$profile_image);
+            }else{
+                $url = $original;
+            }
+        }
+        if($url == ''){
+            $url = $original;
+        }
         return $url;
     }
 }
