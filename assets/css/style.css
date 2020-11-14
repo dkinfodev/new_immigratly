@@ -19,3 +19,10 @@
 .required-error{
     display: block !important;
 }
+.invalid-feedback {
+    position: absolute;
+    bottom: -20px;
+}
+.input-label{
+    font-weight: bold;
+}

@@ -249,5 +249,4 @@ function cityList(state_id,id){
     });
 }
 </script>
-
-  @endsection
+@endsection

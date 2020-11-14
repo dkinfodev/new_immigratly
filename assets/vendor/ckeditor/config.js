@@ -6,4 +6,3 @@
 CKEDITOR.editorConfig = function( config ) {
 	config.disallowedContent = 'span{font,font-size,font-family}';
 };
-config.baseFloatZIndex = 100001

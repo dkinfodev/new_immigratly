@@ -8,7 +8,7 @@
   </td>
   <td class="table-column-pl-0">
     <a class="d-flex align-items-center" href="javascript:;">
-      @if(count($record->Client($record->client_id)) > 0)
+      @if(!empty($record->Client($record->client_id)))
       <?php
       $client = $record->Client($record->client_id);
       ?>
@@ -28,7 +28,7 @@
     </a>
   </td>
   <td>
-    @if(count($record->Client($record->client_id)) > 0)
+    @if(!empty($record->Client($record->client_id)))
     <?php
     $client = $record->Client($record->client_id);
     ?>
@@ -38,12 +38,18 @@
     @endif
   </td>
   <td>
-    @if(count($record->Service($record->VisaService->service_id)) > 0)
+    @if(!empty($record->Service($record->VisaService->service_id)))
     <a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a>
     @else
     <a href="javascript:;" class="badge badge-soft-danger p-2">Service Removed</a>
     @endif
   </td>
+  <td>
+    <span class="text-body">
+      <i class="tio-calendar-month"></i> {{$record->start_date}}
+    </span>
+  </td>
+  
    <td>
     <!-- Avatar Group -->
     <div class="avatar-group avatar-group-xs avatar-circle">
@@ -59,16 +65,7 @@
     </div>
     <!-- End Avatar Group -->
   </td>
-  <td>
-    <span class="text-body">
-      <i class="tio-calendar-month"></i> {{$record->start_date}}
-    </span>
-  </td>
-  <td>
-    <span class="text-body">
-      <i class="tio-calendar-month"></i> {{$record->end_date}}
-    </span>
-  </td>
+  
   <td>
       <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"

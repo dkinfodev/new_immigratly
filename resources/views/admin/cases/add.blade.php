@@ -32,7 +32,7 @@
 
     <div class="card-body">
      <!-- Step Form -->
-      <form class="js-validate js-step-form"
+      <form class="js-validate js-step-form js-validate"
          data-hs-step-form-options='{
          "progressSelector": "#createProjectStepFormProgress",
          "stepsSelector": "#createProjectStepFormContent",
@@ -86,57 +86,21 @@
                   <label for="clientNewProjectLabel" class="input-label">Client</label>
                   <div class="form-row align-items-center">
                      <div class="col-12 col-md-7 mb-3">
-                        <div class="input-group input-group-merge">
-                           <div class="input-group-prepend">
-                              <div class="input-group-text">
-                                 <i class="tio-account-square-outlined"></i>
-                              </div>
-                           </div>
-                           <input class="js-tagify-avatars tagify-form-control form-control" id="clientNewProjectLabel" placeholder="Add creater name" aria-label="Add creater name"
-                              data-hs-tagify-options='{
-                              "delimiters": null,
-                              "enforceWhitelist": true,
-                              "whitelist": [
-                              {
-                              "value": "Htmlstream",
-                              "src": "./assets/svg/brands/htmlstream.svg"
-                              },{
-                              "value": "Digitalocean",
-                              "src": "./assets/svg/brands/digitalocean.svg"
-                              }, {
-                              "value": "Google",
-                              "src": "./assets/svg/brands/google.svg"
-                              }, {
-                              "value": "Mailchimp",
-                              "src": "./assets/svg/brands/mailchimp.svg"
-                              }, {
-                              "value": "Prosperops",
-                              "src": "./assets/svg/brands/prosperops.svg"
-                              }, {
-                              "value": "Spec",
-                              "src": "./assets/svg/brands/spec.svg"
-                              }, {
-                              "value": "Spotify",
-                              "src": "./assets/svg/brands/spotify.svg"
-                              }, {
-                              "value": "Frontapp",
-                              "src": "./assets/svg/brands/frontapp.svg"
-                              }, {
-                              "value": "Figma",
-                              "src": "./assets/svg/brands/figma.svg"
-                              }, {
-                              "value": "Bookingcom",
-                              "src": "./assets/svg/brands/bookingcom.svg"
-                              }
-                              ],
-                              "dropdown": {
-                              "enabled": 1,
-                              "classname": "tagify__dropdown__menu"
-                              }
-                              }'>
-                        </div>
+                        <div class="form-group js-form-message mb-0">
+                            <!-- Select -->
+                            <div class="select2-custom">
+                               <select class="js-select2-custom" required id="client_id">
+                                  @foreach($clients as $client)
+                                  <option value="{{$client->master_id}}">
+                                    {{$client->first_name." ".$client->last_name}}
+                                  </option>
+                                  @endforeach
+                               </select>
+                            </div>
+                            <!-- End Select -->
+                         </div>
                      </div>
-                     <span class="col-auto mb-3">or</span>
+                     <span class="col-auto">or</span>
                      <div class="col-md mb-md-3">
                         <a class="btn btn-white" href="javascript:;">
                         <i class="tio-add mr-1"></i>New client
@@ -158,12 +122,6 @@
                   </div>
                </div>
                <!-- End Form Group -->
-               <!-- Quill -->
-               <div class="form-group js-form-message">
-                  <label class="input-label">Description <span class="input-label-secondary">(Optional)</span></label>
-                  <textarea class="ckeditor form-control" name="description"></textarea>
-               </div>
-               <!-- End Quill -->
                <div class="row">
                   <div class="col-sm-4">
                      <!-- Form Group -->
@@ -196,26 +154,24 @@
                      <!-- End Form Group -->
                   </div>
                   <div class="col-sm-4">
-                     <!-- Form Group -->
-                     <div class="form-group">
-                        <label for="ownerNewProjectLabel" class="input-label">Owner</label>
-                        <!-- Select -->
-                        <div class="select2-custom">
-                          <select name="visa_service_id" id="visa_service_id" class="custom-select">
-                            <option value="">Select Service</option>
-                            @foreach($visa_services as $service)
-                              @if(!empty($service->Service($service->service_id)))
-                                <option value="{{$service->id}}">{{$service->Service($service->service_id)->name}} </option>
-                              @endif
-                            @endforeach
-                          </select>
-                           
-                        </div>
-                        <!-- End Select -->
-                     </div>
-                     <!-- End Form Group -->
+                     <div class="js-form-message form-group">
+                        <label class="input-label font-weight-bold">Visa Service</label>
+                        <select name="visa_service_id" id="visa_service_id" class="custom-select">
+                          <option value="">Select Service</option>
+                          @foreach($visa_services as $service)
+                            @if(!empty($service->Service($service->service_id)))
+                              <option value="{{$service->id}}">{{$service->Service($service->service_id)->name}} </option>
+                            @endif
+                          @endforeach
+                        </select>
+                      </div>
                   </div>
                </div>
+               <div class="form-group js-form-message">
+                  <label class="input-label">Description <span class="input-label-secondary">(Optional)</span></label>
+                  <textarea class="form-control" id="description" name="description"></textarea>
+               </div>
+               
               
                <!-- Footer -->
                <div class="d-flex align-items-center">
@@ -235,22 +191,15 @@
                <div class="row">
                   <div class="col-sm-6">
                       <!-- Form Group -->
-                     <div class="form-group">
-                        <label for="ownerNewProjectLabel" class="input-label">Owner</label>
-                        <!-- Select -->
-                        <div class="select2-custom">
-                          <select name="visa_service_id" id="visa_service_id" class="custom-select">
-                            <option value="">Select Team User</option>
-                            @foreach($visa_services as $service)
-                              @if(!empty($service->Service($service->service_id)))
-                                <option value="{{$service->id}}">{{$service->Service($service->service_id)->name}} </option>
-                              @endif
-                            @endforeach
-                          </select>
-                           
-                        </div>
-                        <!-- End Select -->
-                     </div>
+                      <div class="js-form-message form-group">
+                        <label class="input-label font-weight-bold">Assign Staffs</label>
+                        <select name="assign_teams[]" id="assign_teams" multiple class="custom-select">
+                          <option value="" disabled>Select Team</option>
+                          @foreach($staffs as $staff)
+                            <option value="{{$staff->id}}">{{$staff->first_name.' '.$staff->last_name}} ({{$staff->role}})</option>
+                          @endforeach
+                        </select>
+                      </div>
                      <!-- End Form Group -->
                   </div>
                </div>
@@ -346,12 +295,9 @@
 <script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
 <!-- JS Front -->
 <script type="text/javascript">
-    
+initEditor("description"); 
 $(document).on('ready', function () {
-  // initialization of quantity counter
-  $('.js-quantity-counter').each(function () {
-    var quantityCounter = new HSQuantityCounter($(this)).init();
-  });
+
   $('#start_date').datepicker({
       format: 'dd/mm/yyyy',
       autoclose: true,
@@ -366,9 +312,7 @@ $(document).on('ready', function () {
       todayHighlight: true,
       orientation: "bottom auto"
   });
-  $('.js-validate').each(function() {
-    $.HSCore.components.HSValidation.init($(this));
-  });
+  
   $('.js-step-form').each(function () {
      var stepForm = new HSStepForm($(this), {
        finish: function() {

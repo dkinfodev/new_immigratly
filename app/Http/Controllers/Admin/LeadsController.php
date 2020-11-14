@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use View;
 use DB;
 
+use App\Models\Cases;
 use App\Models\Leads;
 use App\Models\ProfessionalServices;
 class LeadsController extends Controller
@@ -19,9 +20,9 @@ class LeadsController extends Controller
     }
 
     public function newLeads(Request $request){
-    	$viewData['total_leads'] = Leads::count();
-        $viewData['new_leads'] =  Leads::count();
-        $viewData['assigned_leads'] =  Leads::count();
+        $viewData['total_leads'] = Leads::count();
+        $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
+        $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
        	$viewData['pageTitle'] = "New Leads";
         return view(roleFolder().'.leads.lists',$viewData);
     }
@@ -178,7 +179,10 @@ class LeadsController extends Controller
 
     public function markAsClient($id){
         $viewData['pageTitle'] = "Mark as client";
-        $viewData['lead_id'] = base64_decode($id);
+        $lead_id = base64_decode($id);
+        $viewData['lead_id'] = $lead_id;
+        $lead = Leads::find($lead_id);
+        $viewData['lead'] = $lead;
         $view = View::make(roleFolder().'.leads.modal.mark-as-client',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
@@ -187,6 +191,24 @@ class LeadsController extends Controller
     }
     
     public function confirmAsClient($id,Request $request){
+        $validator = Validator::make($request->all(), [
+            'case_title' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $response['error_type'] = 'validation';
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
         $id = base64_decode($id);
         $lead = Leads::select('first_name','last_name','email','country_code','phone_no','date_of_birth','gender','country_id','state_id','city_id','address','zip_code')->where("id",$id)->first();
         $postData['data'] = $lead;
@@ -194,17 +216,29 @@ class LeadsController extends Controller
        
         if($result['status'] == 'error'){
             $response['status'] = false;
+            $response['error_type'] = 'process_error';
             $response['message'] = $result['message'];
         }elseif($result['status'] == 'success'){
             $object = Leads::find($id);
+            $visa_service_id = $object->visa_service_id;
             $object->mark_as_client = 1;
             $object->master_id = $result['user_id'];
             $object->save();
 
+            $object2 = new Cases();
+            $object2->client_id = $result['user_id'];
+            $object2->case_title = $request->input("case_title");
+            $object2->start_date = $request->input("start_date");
+            $object2->end_date = $request->input("end_date");
+            $object2->visa_service_id = $visa_service_id;
+            $object2->created_by = \Auth::user()->id;
+            $object2->save();
+
             $response['status'] = true;
-            $response['message'] = "Lead is converted to client successfully";
+            $response['message'] = "Lead is converted to client and case of client is created!";
         }else{
             $response['status'] = false;
+            $response['error_type'] = 'process_error';
             $response['message'] = "Issue while marking lead as client";
         }
         return response()->json($response);

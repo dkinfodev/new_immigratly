@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Cases extends Model
 {
@@ -13,7 +14,11 @@ class Cases extends Model
     {
         return $this->belongsTo('App\Models\ProfessionalServices','visa_service_id');
     }
-
+    public function Client($id)
+    {
+        $data = DB::table(MAIN_DATABASE.".users")->where("unique_id",$id)->first();
+        return $data;
+    }
     public function Service($id)
     {
         $service = DB::table(MAIN_DATABASE.".visa_services")->where("id",$id)->first();

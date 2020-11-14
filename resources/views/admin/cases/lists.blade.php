@@ -84,7 +84,6 @@
             <th>Client</th>
             <th scope="col">Visa Service</th>
             <th scope="col">Start Date</th>
-            <th scope="col">End Date</th>
             <th scope="col">Assigned</th>
             <th scope="col">Status</td>
             <th scope="col"></th>

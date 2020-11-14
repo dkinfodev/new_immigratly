@@ -11,6 +11,8 @@ use DB;
 
 use App\Models\Cases;
 use App\Models\ProfessionalServices;
+use App\Models\Leads;
+use App\Models\User;
 
 class CasesController extends Controller
 {
@@ -47,7 +49,6 @@ class CasesController extends Controller
     public function createClientCase($id,Request $request){
         $id = base64_decode($id);
         $viewData['pageTitle'] = "Create Case";
-       
         $countries = DB::table(MAIN_DATABASE.".countries")->get();
         $viewData['countries'] = $countries;
         $view = View::make(roleFolder().'.leads.modal.quick-lead',$viewData);
@@ -69,7 +70,13 @@ class CasesController extends Controller
         $response['status'] = true;
         return response()->json($response);
     }
-
+    public function add(){
+        $viewData['pageTitle'] = "Create Case";
+        $viewData['staffs'] = User::where("role","!=","admin")->get();
+        $viewData['clients'] = Leads::where("mark_as_client","1")->get();
+        $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
+        return view(roleFolder().'.cases.add',$viewData);
+    }
     public function createQuickLead(Request $request){
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
@@ -122,11 +129,7 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
-    public function add(){
-        $viewData['pageTitle'] = "Create Case";
-        $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
-        return view(roleFolder().'.cases.add',$viewData);
-    }
+
 
     public function edit($id){
         $id = base64_decode($id);

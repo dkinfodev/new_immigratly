@@ -142,7 +142,9 @@
     </script>
     @endif
     <script>
+      initSelect();
       $(document).on('ready', function () {
+
         $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })
         $('.js-navbar-vertical-aside-toggle-invoker').click(function () {
           $('.js-navbar-vertical-aside-toggle-invoker i').tooltip('hide');

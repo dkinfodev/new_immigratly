@@ -41,7 +41,7 @@ class MasterApiController extends Controller
             	$response['message'] = "Phone no already exists";
             	return response()->json($response);
             }
-
+            $unique_id = randomNumber(5);
 	       	$object = new User();
 	        $object->first_name = $user['first_name'];
 	        $object->last_name = $user['last_name'];
@@ -50,6 +50,7 @@ class MasterApiController extends Controller
 	        $object->country_code = $user['country_code'];
 	        $object->phone_no = $user['phone_no'];
 	        $object->role = "user";
+            $object->unique_id = $unique_id;
 	        $object->is_active = 1;
 	        $object->is_verified = 1;
 	        $object->save();
@@ -62,7 +63,7 @@ class MasterApiController extends Controller
 	        $object2->status = 0;
 	        $object2->save();
 
-	        $response['user_id'] = $user_id;
+	        $response['user_id'] = $unique_id;
 	        $response['post_data'] = $postData;
 	        $response['message'] = "Client has been created successfully";
 	        $response['status'] = 'success';

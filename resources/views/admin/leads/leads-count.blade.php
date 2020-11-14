@@ -51,11 +51,11 @@
       <!-- Card -->
       <div class="card h-100">
         <div class="card-body">
-          <h6 class="card-subtitle mb-2">Assigned Leads</h6>
+          <h6 class="card-subtitle mb-2">Leads as Client</h6>
 
           <div class="row align-items-center gx-2">
             <div class="col">
-              <span class="js-counter display-4 text-dark">{{ $assigned_leads }}</span>
+              <span class="js-counter display-4 text-dark">{{ $lead_as_client }}</span>
               
               <span class="text-body font-size-sm ml-1">from {{ $total_leads }}</span>
             </div>

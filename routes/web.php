@@ -179,6 +179,28 @@ Route::group(array('prefix' => 'admin'), function () {
         });
 
     });
+});
 
-    
+// Manager of Professional Side
+Route::group(array('prefix' => 'manager'), function () {
+    Route::group(array('middleware' => 'manager'), function () {
+        Route::get('/', [App\Http\Controllers\Manager\DashboardController::class, 'dashboard']);
+         Route::get('/edit-profile', [App\Http\Controllers\Manager\DashboardController::class, 'editProfile']);
+         Route::post('/update-profile/', [App\Http\Controllers\Manager\DashboardController::class, 'updateProfile']);
+         Route::get('/change-password', [App\Http\Controllers\Manager\DashboardController::class, 'changePassword']);
+         Route::post('/update-password', [App\Http\Controllers\Manager\DashboardController::class, 'updatePassword']);
+    });
+});
+
+
+// Telecaller of Professional Side
+Route::group(array('prefix' => 'telecaller'), function () {
+    Route::group(array('middleware' => 'telecaller'), function () {
+        Route::get('/', [App\Http\Controllers\Telecaller\DashboardController::class, 'dashboard']);
+        Route::get('/edit-profile', [App\Http\Controllers\Telecaller\DashboardController::class, 'editProfile']);
+        Route::post('/update-profile', [App\Http\Controllers\Telecaller\DashboardController::class, 'updateProfile']);
+        Route::get('/change-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'changePassword']);     
+        Route::post('/update-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'updatePassword']);
+
+    });
 });

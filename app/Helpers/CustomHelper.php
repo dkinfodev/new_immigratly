@@ -535,11 +535,11 @@ if(!function_exists("randomNumber")){
     function randomNumber($n=8) { 
         $characters = '0123456789'; 
         $randomString = ''; 
-      
-        for ($i = 0; $i < $n; $i++) { 
-            $index = rand(0, strlen($characters) - 1); 
-            $randomString .= $characters[$index]; 
-        } 
+        $randomString = substr(str_shuffle($characters), 0, $n);
+        // for ($i = 0; $i < $n; $i++) { 
+        //     $index = rand(0, strlen($characters) - 1); 
+        //     $randomString .= $characters[$index]; 
+        // } 
       
         return $randomString; 
     } 
@@ -629,6 +629,7 @@ if(!function_exists("curlRequest")){
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
         $response = curl_exec($ch);
+
         $info = curl_getinfo($ch);
         curl_close($ch);
        
