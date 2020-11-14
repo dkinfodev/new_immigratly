@@ -121,28 +121,45 @@
           <div class="col-lg-6 d-flex justify-content-center align-items-center min-vh-lg-100">
             <div class="w-100 pt-10 pt-lg-7 pb-7" style="max-width: 25rem;">
 
-
-                @if (session('status'))
-                    <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
-                    </div>
-                @endif
-
               <!-- Form -->
-              <form class="js-validate" method="POST" action="{{ route('password.email') }}">
+              <form  method="POST" action="{{ route('password.update') }}">
 
                 @csrf
 
-                <div class="text-center mb-5">
-                  <h1 class="display-4">Forgot password?</h1>
-                  <p>Enter the email address you used when you joined and we'll send you instructions to reset your password.</p>
-                </div>
-
                 <!-- Form Group -->
-                <div class="js-form-message form-group">
-                  <label class="input-label" for="resetPasswordSrEmail" tabindex="0">Your email</label>
+                <div class="form-group">
+                  <label class="input-label" for="resetPasswordSrEmail" tabindex="0">{{ __('E-Mail Address') }}</label>
 
-                  <input id="email" type="email" class="form-control form-control-lg @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                  <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
+
+                    @error('email')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+
+                </div>
+                <!-- End Form Group -->
+
+                <div class="form-group">
+                  <label class="input-label" for="resetPasswordSrEmail" tabindex="0">{{ __('Password') }}</label>
+
+                  <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+
+                    @error('password')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+
+                </div>
+                <!-- End Form Group -->
+
+
+                <div class="form-group">
+                  <label class="input-label" for="resetPasswordSrEmail" tabindex="0">{{ __('Confirm Password') }}</label>
+
+                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
 
                     @error('email')
                         <span class="invalid-feedback" role="alert">
@@ -154,7 +171,7 @@
                 <!-- End Form Group -->
 
                 <button type="submit" class="btn btn-lg btn-block btn-primary">
-                    {{ __('Send Password Reset Link') }}
+                    {{ __('Reset Password') }}
                 </button>
 
                 <div class="text-center mt-2">

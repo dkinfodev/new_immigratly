@@ -22,7 +22,7 @@ class User
             if(Auth::user()->role == 'user'){
                 if(Auth::user()->is_active == 0){
                     Auth::logout();
-                    return Redirect::to('/login')->with("error_message","Your account is not inactive. Please contact the support team");
+                    return Redirect::to('/login')->with("error_message","Your account is not active. Please contact the support team");
                 }
                 if(Auth::user()->is_verified == 0){
                     Auth::logout();

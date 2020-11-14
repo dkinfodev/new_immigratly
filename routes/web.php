@@ -1,7 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -38,6 +42,10 @@ Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, '
 
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);
+
+Route::get('/forgot-password', function () {
+    return view('auth.passwords.email');
+})->middleware(['guest'])->name('password.request');
 
 
 // Super Admin
@@ -99,11 +107,29 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
     });
+
+    Route::group(array('prefix' => 'user'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\UserController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\UserController::class, 'getAjaxList']);
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\UserController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\UserController::class, 'save']);
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'edit']);
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'update']);
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\UserController::class, 'deleteMultiple']);
+        Route::get('/change-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'changePassword']);
+        Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'updatePassword']);
+        });
+
 });
 
 // User
 Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'dashboard']);
+    Route::get('/edit-profile', [App\Http\Controllers\User\DashboardController::class, 'editProfile']);
+    Route::post('/update-profile', [App\Http\Controllers\User\DashboardController::class, 'updateProfile']);
+    Route::get('/change-password', [App\Http\Controllers\User\DashboardController::class, 'changePassword']);
+    Route::post('/update-password', [App\Http\Controllers\User\DashboardController::class, 'updatePassword']);
 });
 
 // Professional Admin

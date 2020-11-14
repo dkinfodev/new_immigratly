@@ -38,7 +38,7 @@ class LeadsController extends Controller
                                 $query->orWhere(DB::raw('concat(country_code,"",phone_no)') , 'LIKE' , "%$search%");
                             }
                         })
-                        ->paginate();
+                        ->paginate(1);
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.leads.ajax-list',$viewData);
         $contents = $view->render();
