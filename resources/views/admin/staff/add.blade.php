@@ -62,7 +62,7 @@
 
             <div class="col-12">
               <div class="js-form-message">
-                <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg=" " >
+                <input type="text" class="form-control" name="first_name" id="first_name" placeholder="Firstname" aria-label="Firstname" required data-msg=" " >
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
 
             <div class="col-12">
               <div class="js-form-message">
-                <input type="text" class="form-control" name="last_name" id="validationFormLastnameLabel" placeholder="Lastname" aria-label="Lastname" required data-msg="">
+                <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Lastname" aria-label="Lastname" required data-msg="">
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@
 
             <div class="col-sm-7">
               <div class="js-form-message">
-                <input type="email" class="form-control" name="email" id="validationFormEmailLabel" placeholder="Email" aria-label="Email" required data-msg="" value="">
+                <input type="email" class="form-control" name="email" id="email" placeholder="Email" aria-label="Email" required data-msg="" value="">
               </div>
             </div>
           </div>
@@ -323,9 +323,6 @@
 @endsection
 
 @section('javascript')
-
-@section('javascript')
-<!-- JS Implementing Plugins -->
 
 <!-- JS Implementing Plugins -->
 <script src="assets/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside.min.js"></script>

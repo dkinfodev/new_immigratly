@@ -141,6 +141,7 @@
         errorMessage('{{ Session::get("error") }}');
     </script>
     @endif
+    
     <script>
       $(document).on('ready', function () {
         $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })

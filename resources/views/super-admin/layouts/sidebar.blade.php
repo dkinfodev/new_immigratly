@@ -42,6 +42,14 @@
                 </li>
                 <!-- End Pages -->
 
+                <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/user') }}" title="Professionals">
+                    <i class="tio-user-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">User</span>
+                  </a>
+                </li>
+                <!-- End list -->
+
                 <!-- Apps -->
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Apps">
