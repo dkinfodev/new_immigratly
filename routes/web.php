@@ -39,6 +39,9 @@ Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, '
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);
 
+Route::get('/forgot-password', function () {
+    return view('auth.passwords.email');
+})->middleware(['guest'])->name('password.request');
 
 // Super Admin
 Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), function () {
@@ -116,6 +119,10 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
 // User
 Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'dashboard']);
+    Route::get('/edit-profile', [App\Http\Controllers\User\DashboardController::class, 'editProfile']);
+    Route::post('/update-profile', [App\Http\Controllers\User\DashboardController::class, 'updateProfile']);
+    Route::get('/change-password', [App\Http\Controllers\User\DashboardController::class, 'changePassword']);
+    Route::post('/update-password', [App\Http\Controllers\User\DashboardController::class, 'updatePassword']);
 });
 
 // Professional Admin

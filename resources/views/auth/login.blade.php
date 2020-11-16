@@ -48,30 +48,6 @@
                 <a href="index.html">
                   <img class="w-100" src="assets/svg/logos/logo.svg" alt="Image Description" style="min-width: 7rem; max-width: 7rem;">
                 </a>
-
-                <!-- Select -->
-                <div id="languageSelect1" class="select2-custom select2-custom-right">
-                  <select class="js-select2-custom"
-                          data-hs-select2-options='{
-                            "dropdownParent": "#languageSelect1",
-                            "minimumResultsForSearch": "Infinity",
-                            "placeholder": "Select language",
-                            "customClass": "custom-select custom-select-sm custom-select-borderless bg-transparent",
-                            "dropdownAutoWidth": true,
-                            "dropdownWidth": "12rem"
-                          }'>
-                    <option label="empty"></option>
-                    <option value="language1" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/us.svg" alt="Image description" width="16"/><span>English (US)</span></span>'>English (US)</option>
-                    <option value="language2" selected data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/gb.svg" alt="Image description" width="16"/><span>English (UK)</span></span>'>English (UK)</option>
-                    <option value="language3" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/de.svg" alt="Image description" width="16"/><span>Deutsch</span></span>'>Deutsch</option>
-                    <option value="language4" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/dk.svg" alt="Image description" width="16"/><span>Dansk</span></span>'>Dansk</option>
-                    <option value="language5" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/es.svg" alt="Image description" width="16"/><span>Español</span></span>'>Español</option>
-                    <option value="language6" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/nl.svg" alt="Image description" width="16"/><span>Nederlands</span></span>'>Nederlands</option>
-                    <option value="language7" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/it.svg" alt="Image description" width="16"/><span>Italiano</span></span>'>Italiano</option>
-                    <option value="language8" data-option-template='<span class="d-flex align-items-center"><img class="avatar avatar-xss avatar-circle mr-2" src="assets/vendor/flag-icon-css/flags/1x1/cn.svg" alt="Image description" width="16"/><span>中文 (繁體)</span></span>'>中文 (繁體)</option>
-                  </select>
-                </div>
-                <!-- End Select -->
               </div>
             </div>
             <!-- End Logo & Language -->
@@ -162,7 +138,7 @@
                   <label class="input-label" for="signupSrPassword" tabindex="0">
                     <span class="d-flex justify-content-between align-items-center">
                       Password
-                      <a class="input-label-secondary" href="authentication-reset-password-cover.html">Forgot Password?</a>
+                      <a class="input-label-secondary" href="{{ url('forgot-password') }}">Forgot Password?</a>
                     </span>
                   </label>
 
