@@ -99,6 +99,18 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
     });
+    Route::group(array('prefix' => 'user'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\UserController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\UserController::class, 'getAjaxList']);
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\UserController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\UserController::class, 'save']);
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'edit']);
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'update']);
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\UserController::class, 'deleteMultiple']);
+        Route::get('/change-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'changePassword']);
+        Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'updatePassword']);
+    });
 });
 
 // User
@@ -174,8 +186,16 @@ Route::group(array('prefix' => 'admin'), function () {
         Route::group(array('prefix' => 'cases'), function () {
             Route::get('/', [App\Http\Controllers\Admin\CasesController::class, 'cases']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\CasesController::class, 'getAjaxList']);
-            Route::get('/create-case', [App\Http\Controllers\Admin\CasesController::class, 'add']);
-            Route::get('/create-client-case/{id}', [App\Http\Controllers\Admin\CasesController::class, 'createClientCases']);
+            Route::get('/add', [App\Http\Controllers\Admin\CasesController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Admin\CasesController::class, 'save']);
+            Route::get('/create-client', [App\Http\Controllers\Admin\CasesController::class, 'createClient']);
+            Route::post('/create-client', [App\Http\Controllers\Admin\CasesController::class, 'createNewClient']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\CasesController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\CasesController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\CasesController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Admin\CasesController::class, 'update']);
+            Route::get('/case-documents/{id}', [App\Http\Controllers\Admin\CasesController::class, 'caseDocuments']);
+            Route::get('/documents-files/{id}', [App\Http\Controllers\Admin\CasesController::class, 'documentFiles']);
         });
 
     });

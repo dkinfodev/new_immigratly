@@ -49,6 +49,27 @@ class MasterApiController extends Controller
 	        $object->password = bcrypt($password);
 	        $object->country_code = $user['country_code'];
 	        $object->phone_no = $user['phone_no'];
+            if(isset($user['date_of_birth'])){
+                $object->date_of_birth = $user['date_of_birth'];
+            }
+            if(isset($user['gender'])){
+                $object->gender = $user['gender'];
+            }
+            if(isset($user['country_id'])){
+                $object->country_id = $user['country_id'];
+            }
+            if(isset($user['state_id'])){
+                $object->state_id = $user['state_id'];
+            }
+            if(isset($user['city_id'])){
+                $object->city_id = $user['city_id'];
+            }
+            if(isset($user['address'])){
+                $object->address = $user['address'];
+            }
+            if(isset($user['zip_code'])){
+                $object->zip_code = $user['zip_code'];
+            }
 	        $object->role = "user";
             $object->unique_id = $unique_id;
 	        $object->is_active = 1;
@@ -60,7 +81,7 @@ class MasterApiController extends Controller
 	        $object2 = new UserWithProfessional();
 	        $object2->user_id = $user_id;
 	        $object2->professional= $this->subdomain;
-	        $object2->status = 0;
+	        $object2->status = 1;
 	        $object2->save();
 
 	        $response['user_id'] = $unique_id;

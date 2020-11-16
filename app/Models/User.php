@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use DB;
 
 class User extends Authenticatable
 {
@@ -47,5 +48,15 @@ class User extends Authenticatable
     public function ProfessionalDetail()
     {
         return $this->hasOne('App\Models\ProfessionalDetails','user_id');
+    } 
+
+    static function ProfessionalClients($domain)
+    {
+        $client = DB::table(MAIN_DATABASE.".user_with_professional as uwp")
+                    ->select("us.*")
+                    ->rightJoin(MAIN_DATABASE.".users as us","uwp.user_id","=","us.id")
+                    ->where("uwp.professional",$domain)
+                    ->get();
+        return $client;
     } 
 }

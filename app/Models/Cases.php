@@ -10,9 +10,14 @@ class Cases extends Model
 {
     use HasFactory;
     protected $table = "cases";
+    
     public function VisaService()
     {
         return $this->belongsTo('App\Models\ProfessionalServices','visa_service_id');
+    }
+    public function AssingedMember()
+    {
+        return $this->hasMany('App\Models\CaseTeams','case_id')->with(['Member']);
     }
     public function Client($id)
     {

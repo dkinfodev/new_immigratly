@@ -32,28 +32,31 @@
     <?php
     $client = $record->Client($record->client_id);
     ?>
-    <a class="badge badge-soft-primary p-2" href="#">{{$client->first_name." ".$client->last_name}}</a>
+    <span class="badge badge-soft-primary p-2">{{$client->first_name." ".$client->last_name}}</span>
     @else
-    <a href="javascript:;" class="badge badge-soft-danger p-2">Client not found</a>
+    <span class="badge badge-soft-danger p-2">Client not found</span>
     @endif
   </td>
   <td>
     @if(!empty($record->Service($record->VisaService->service_id)))
-    <a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a>
+    <span class="badge badge-soft-info p-2">{{$record->Service($record->VisaService->service_id)->name}}</span>
     @else
-    <a href="javascript:;" class="badge badge-soft-danger p-2">Service Removed</a>
+    <span class="badge badge-soft-info p-2">Service Removed</span>
     @endif
   </td>
-  <td>
+  <!-- <td>
     <span class="text-body">
       <i class="tio-calendar-month"></i> {{$record->start_date}}
     </span>
-  </td>
+  </td> -->
   
    <td>
     <!-- Avatar Group -->
     <div class="avatar-group avatar-group-xs avatar-circle">
-      <a class="avatar" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Costa Quinn">
+      <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ count($record->AssingedMember) }} assigned">
+        <span class="avatar-initials">{{ count($record->AssingedMember) }} member(s)</span>
+      </span>
+      <!-- <a class="avatar" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Costa Quinn">
         <img class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
       </a>
       <a class="avatar" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Clarice Boone">
@@ -61,7 +64,7 @@
       </a>
       <a class="avatar avatar-soft-danger" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Adam Keep">
         <span class="avatar-initials">A</span>
-      </a>
+      </a> -->
     </div>
     <!-- End Avatar Group -->
   </td>
@@ -77,6 +80,7 @@
       </a>
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         <a class="dropdown-item" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">Edit</a>
+        <a class="dropdown-item" href="{{baseUrl('cases/case-documents/'.base64_encode($record->id))}}">Case Documents</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
@@ -86,6 +90,8 @@
 @endforeach
 <script type="text/javascript">
 $(document).ready(function(){
+
+  $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })
   $('.js-hs-action').each(function () {
     var unfold = new HSUnfold($(this)).init();
   });

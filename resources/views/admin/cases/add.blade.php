@@ -32,13 +32,14 @@
 
     <div class="card-body">
      <!-- Step Form -->
-      <form class="js-validate js-step-form js-validate"
+      <form id="form" action="{{ baseUrl('cases/save') }}" class="js-validate js-step-form"
          data-hs-step-form-options='{
          "progressSelector": "#createProjectStepFormProgress",
          "stepsSelector": "#createProjectStepFormContent",
          "endSelector": "#createProjectFinishBtn",
-         "isValidate": false
+         "isValidate": true
          }'>
+         @csrf
          <!-- Step -->
          <ul id="createProjectStepFormProgress" class="js-step-progress step step-sm step-icon-sm step-inline step-item-between mb-7">
             <li class="step-item">
@@ -89,9 +90,14 @@
                         <div class="form-group js-form-message mb-0">
                             <!-- Select -->
                             <div class="select2-custom">
-                               <select class="js-select2-custom" required id="client_id">
+                               <select class="js-select2-custom" required name="client_id" id="client_id"
+                                data-hs-select2-options='{
+                                  "placeholder": "Select Client"
+                                }'
+                               >
+                                  <option value="">Select Client</option>
                                   @foreach($clients as $client)
-                                  <option value="{{$client->master_id}}">
+                                  <option value="{{$client->unique_id}}">
                                     {{$client->first_name." ".$client->last_name}}
                                   </option>
                                   @endforeach
@@ -102,7 +108,7 @@
                      </div>
                      <span class="col-auto">or</span>
                      <div class="col-md mb-md-3">
-                        <a class="btn btn-white" href="javascript:;">
+                        <a class="btn btn-white" onclick="showPopup('<?php echo baseUrl('cases/create-client') ?>')" href="javascript:;">
                         <i class="tio-add mr-1"></i>New client
                         </a>
                      </div>
@@ -111,7 +117,7 @@
                <!-- End Form Group -->
                <!-- Form Group -->
                <div class="form-group js-form-message">
-                  <label class="input-label">Case Title <i class="tio-help-outlined text-body ml-1" data-toggle="tooltip" data-placement="top" title="Displayed on public forums, such as Front."></i></label>
+                  <label class="input-label">Case Title</label>
                   <div class="input-group input-group-merge">
                      <div class="input-group-prepend">
                         <div class="input-group-text">
@@ -156,7 +162,11 @@
                   <div class="col-sm-4">
                      <div class="js-form-message form-group">
                         <label class="input-label font-weight-bold">Visa Service</label>
-                        <select name="visa_service_id" id="visa_service_id" class="custom-select">
+                        <select name="visa_service_id" required data-msg="Please select visa service" id="visa_service_id" class="custom-select"
+                          data-hs-select2-options='{
+                            "placeholder": "Select Visa Service"
+                          }'
+                        >
                           <option value="">Select Service</option>
                           @foreach($visa_services as $service)
                             @if(!empty($service->Service($service->service_id)))
@@ -193,10 +203,16 @@
                       <!-- Form Group -->
                       <div class="js-form-message form-group">
                         <label class="input-label font-weight-bold">Assign Staffs</label>
-                        <select name="assign_teams[]" id="assign_teams" multiple class="custom-select">
+                        <select name="assign_teams[]" id="assign_teams" multiple class="custom-select"
+                          data-hs-select2-options='{
+                            "minimumResultsForSearch": "Infinity",
+                            "singleMultiple": true,
+                            "placeholder": "Select Team members"
+                          }'
+                        >
                           <option value="" disabled>Select Team</option>
                           @foreach($staffs as $staff)
-                            <option value="{{$staff->id}}">{{$staff->first_name.' '.$staff->last_name}} ({{$staff->role}})</option>
+                            <option data-name="{{$staff->first_name.' '.$staff->last_name}}" data-role="{{ $staff->role }}" value="{{$staff->id}}">{{$staff->first_name.' '.$staff->last_name}} ({{$staff->role}})</option>
                           @endforeach
                         </select>
                       </div>
@@ -231,8 +247,52 @@
               
                <div class="row">
                   <div class="col-lg-12 text-center">
-                     <h2>Confirm</h2>
-                     <p>Ready to create the case</p>
+                     <h2>Confirm Details</h2>
+                     <div class="confirm-details row">
+                        <div class="col-md-6 text-left">
+                          <ul class="list-unstyled list-unstyled-py-3 text-dark mb-3">
+                            <li class="py-0">
+                              <small class="card-subtitle">Case Details</small>
+                            </li>
+                            <li>
+                              <i class="tio-user-outlined nav-icon"></i>
+                              Client: <span id="client_name_text"></span> 
+                            </li>
+                            <li>
+                              <i class="tio-briefcase-outlined nav-icon"></i>
+                              Case Title: <span id="case_title_text"></span>
+                            </li>
+                            <li>
+                              <i class="tio-date-range nav-icon"></i>
+                              Start Date: <span id="start_date_text"></span>
+                            </li>
+                            <li>
+                              <i class="tio-date-range nav-icon"></i>
+                              End Date: <span id="end_date_text"></span>
+                            </li>
+                            <li>
+                              <i class="tio-layers-outlined  nav-icon"></i> 
+                              Visa Service: <span id="visa_service_text"></span>
+                            </li>
+                          </ul>
+                        </div>
+                        <div class="col-md-6 text-left" id="assign_staff_list" style="display:none">
+                          <ul class="nav card-nav card-nav-vertical nav-pills">
+                              <li class="py-0 text-left">
+                                <small class="card-subtitle">Team Members</small>
+                              </li>
+                              <!-- <li class="text-left">
+                                <a class="nav-link media" href="#">
+                                  <i class="tio-group-senior nav-icon text-dark"></i>
+                                  <span class="media-body">
+                                    <span class="d-block text-dark">#digitalmarketing</span>
+                                    <small class="d-block text-muted">8 members</small>
+                                  </span>
+                                </a>
+                              </li> -->
+                          </ul>
+                        </div>
+                     </div>
                   </div>
                </div>
                <!-- End Toggle Switch -->
@@ -245,7 +305,7 @@
                   <i class="tio-chevron-left"></i> Previous step
                   </button>
                   <div class="d-flex justify-content-end ml-auto">
-                     <button type="button" class="btn btn-white mr-2" data-dismiss="modal" aria-label="Close">Cancel</button>
+                     <a href="{{ baseUrl('cases') }}" class="btn btn-white mr-2">Cancel</a>
                      <button id="createProjectFinishBtn" type="button" class="btn btn-primary">Create Case</button>
                   </div>
                </div>
@@ -254,27 +314,6 @@
          </div>
          <!-- End Content Step Form -->
          <!-- Message Body -->
-         <div id="createProjectStepSuccessMessage" style="display:none;">
-            <div class="text-center">
-               <img class="img-fluid mb-3" src="./assets/svg/illustrations/create.svg" alt="Image Description" style="max-width: 15rem;">
-               <div class="mb-4">
-                  <h2>Successful!</h2>
-                  <p>New project has been successfully created.</p>
-               </div>
-               <div class="row justify-content-center gy-1 gx-2">
-                  <div class="col-auto">
-                     <a class="btn btn-white" href="projects.html">
-                     <i class="tio-chevron-left ml-1"></i> Back to projects
-                     </a>
-                  </div>
-                  <div class="col-auto">
-                     <a class="btn btn-primary" href="javascript:;" data-toggle="modal" data-target="#newProjectModal">
-                     <i class="tio-city mr-1"></i> Add new project
-                     </a>
-                  </div>
-               </div>
-            </div>
-         </div>
          <!-- End Message Body -->
       </form>
       <!-- End Step Form -->
@@ -297,7 +336,66 @@
 <script type="text/javascript">
 initEditor("description"); 
 $(document).on('ready', function () {
+  $("#client_id").change(function(){
+    if($(this).val() != ''){
+      var text = $("#client_id").find("option:selected").text();
+      $("#client_name_text").html(text.trim());
+    }else{
+      $("#client_name_text").html('');
+    }
+  });
+  $("[name=case_title]").change(function(){
+    if($(this).val() != ''){
+      $("#case_title_text").html($(this).val());
+    }else{
+      $("#case_title_text").html('');
+    }
+  });
+  $("[name=start_date]").change(function(){
+    if($(this).val() != ''){
+      $("#start_date_text").html($(this).val());
+    }else{
+      $("#start_date_text").html('');
+    }
+  });
+  $("[name=end_date]").change(function(){
+    if($(this).val() != ''){
+      $("#end_date_text").html($(this).val());
+    }else{
+      $("#end_date_text").html('');
+    }
+  });
+  $("#visa_service_id").change(function(){
+    if($(this).val() != ''){
+      var text = $("#visa_service_id").find("option:selected").text();
+      $("#visa_service_text").html(text.trim());
+    }else{
+      $("#visa_service_text").html('');
+    }
+  });
+  $("#assign_teams").change(function(){
+    if($("#assign_teams").val() != ''){
+      var html = '';
+      $("#assign_staff_list").show();
+      $(".staff").remove();
+      $("#assign_teams").find("option:selected").each(function(){
+          var text = $(this).attr('data-name');
+          var role = $(this).attr('data-role');
 
+          html +='<li class="text-left staff">';
+          html +='<a class="nav-link media" href="javascript:;">';
+          html +='<i class="tio-group-senior nav-icon text-dark"></i>';
+          html +='<span class="media-body">';
+          html +='<span class="d-block text-dark">'+text.trim()+'</span>';
+          html +='<small class="d-block text-muted">'+role+'</small>';
+          html +='</span></a></li>';
+      });
+      $("#assign_staff_list ul").append(html);
+    }else{
+      $("#assign_staff_list").hide();
+      $("#assign_staff_list .staff").remove();
+    }
+  });
   $('#start_date').datepicker({
       format: 'dd/mm/yyyy',
       autoclose: true,
@@ -312,13 +410,41 @@ $(document).on('ready', function () {
       todayHighlight: true,
       orientation: "bottom auto"
   });
-  
+  $('.js-validate').each(function() {
+      $.HSCore.components.HSValidation.init($(this));
+    });
   $('.js-step-form').each(function () {
      var stepForm = new HSStepForm($(this), {
+       validate: function(){
+       },
        finish: function() {
-         $("#createProjectStepFormProgress").hide();
-         $("#createProjectStepFormContent").hide();
-         $("#createProjectStepSuccessMessage").show();
+         // $("#createProjectStepFormProgress").hide();
+         // $("#createProjectStepFormContent").hide();
+         // $("#createProjectStepSuccessMessage").show();
+        var formData = $("#form").serialize();
+        var url  = $("#form").attr('action');
+        $.ajax({
+            url:url,
+            type:"post",
+            data:formData,
+            dataType:"json",
+            beforeSend:function(){
+              showLoader();
+            },
+            success:function(response){
+              hideLoader();
+              if(response.status == true){
+                successMessage(response.message);
+                redirect(response.redirect_back);
+              }else{
+                validation(response.message);
+                // errorMessage(response.message);
+              }
+            },
+            error:function(){
+              internalError();
+            }
+        });
        }
      }).init();
    });
@@ -393,4 +519,4 @@ function cityList(state_id,id){
 }
 </script>
 
-  @endsection
+@endsection

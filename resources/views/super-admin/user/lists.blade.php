@@ -10,7 +10,6 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -19,8 +18,8 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="<?php echo baseUrl('cases/add') ?>">
-          <i class="tio-user-add mr-1"></i> Create Case
+        <a class="btn btn-primary" href="{{(baseUrl('user/add'))}}">
+          <i class="tio-user-add mr-1"></i> Add
         </a>
       </div>
     </div>
@@ -42,7 +41,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Case title" aria-label="Search Case">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search " aria-label="Search">
             </div>
             <!-- End Search -->
           </form>
@@ -57,7 +56,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('user/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -80,17 +79,15 @@
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Case Title</th>
-            <th>Client</th>
-            <th scope="col">Visa Service</th>
-            <!-- <th scope="col">Start Date</th> -->
-            <th scope="col">Assigned</th>
-            <th scope="col">Status</td>
-            <th scope="col"></th>
+            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Name</th>
+            <th scope="col" >Email</th>
+            <th scope="col">phone no</th>
+            <th scope="col">Status</th>
+            <th scope="col">action</th>
           </tr>
         </thead>
         <tbody>
-        </tbody>
+        </tbody>  
       </table>
     </div>
     <!-- End Table -->
@@ -175,13 +172,13 @@ $(document).ready(function(){
     $("#datatableCounter").html($(".row-checkbox:checked").length);
   });
 
-});
+})
 loadData();
 function loadData(page=1){
   var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/cases/ajax-list?page='+page,
+        url: BASEURL + '/user/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search
@@ -232,6 +229,140 @@ function changePage(action){
     errorMessage("Invalid Page Number");
   }
   
+}
+function confirmDelete(id){
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      confirmButtonClass: 'btn btn-primary',
+      cancelButtonClass: 'btn btn-danger ml-1',
+      buttonsStyling: false,
+    }).then(function(result) {
+      if (result.value) {
+        $.ajax({
+            type: "POST",
+            url: BASEURL + '/user/delete-user',
+            data:{
+                _token:csrf_token,
+                user_id:id,
+            },
+            dataType:'json',
+            success: function (result) {
+                if(result.status == true){
+                    Swal.fire({   
+                        type: "success",
+                        title: 'Deleted!',
+                        text: 'User has been deleted.',
+                        confirmButtonClass: 'btn btn-success',
+                    }).then(function () {
+
+                        window.location.href= result.redirect;
+                    });
+                }else{
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Error while deleting",
+                        type: "error",
+                        confirmButtonClass: 'btn btn-primary',
+                        buttonsStyling: false,
+                    });
+                }
+            },
+        });
+      }
+    })
+}
+
+function changeStatus(e){
+  var id = $(e).attr("data-id");
+  if($(e).is(":checked")){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/user/status/active',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+    });
+  }else{
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/user/status/inactive',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+        error: function(){
+          internalError();
+        }
+    });
+  }
+}
+
+function profileStatus(e){
+  var id = $(e).attr("data-id");
+  if($(e).is(":checked")){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/user/profile-status/active',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+            }else{
+                errorMessage(result.message);
+            }
+        },
+    });
+  }else{
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/user/profile-status/inactive',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+        error: function(){
+          internalError();
+        }
+    });
+  }
 }
 </script>
 @endsection

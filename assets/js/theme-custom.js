@@ -115,8 +115,9 @@ function validation(errors){
 }
 function initEditor(id,type="full"){
  	var textarea = document.getElementById(id);
+ 	var editor;
 	if(type  == 'basic'){
-		return CKEDITOR.replace(textarea, {
+		editor = CKEDITOR.replace(textarea, {
 		  toolbar: [
 		    // { name: 'document', groups: [ 'mode', 'document', 'doctools' ], items: [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
 		    // { name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -153,6 +154,10 @@ function initEditor(id,type="full"){
 		  ]
 		});
 	}else{
-		return CKEDITOR.replace(textarea);
+		editor = CKEDITOR.replace(textarea);
 	}
+	editor.on( 'change', function( evt ) {
+	    $("#"+id).val( evt.editor.getData());
+	});
+	return editor;
 }

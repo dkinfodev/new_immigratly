@@ -1,3 +1,9 @@
+<style>
+.invalid-feedback {
+    position: absolute;
+    bottom: -20px;
+}
+</style>
 <div class="modal-dialog" role="document">
   <div class="modal-content">
     <div class="modal-header">
@@ -7,7 +13,7 @@
       </button>
     </div>
     <div class="modal-body">
-      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/leads/create-quick-lead') }}">  
+      <form method="post" id="popup-form"  action="{{ baseUrl('/cases/create-client') }}">  
           @csrf
           <!-- Form Group -->
           <div class="row form-group js-form-message">
@@ -68,27 +74,6 @@
           </div>      
           <!-- End Form Group -->
 
-          <!-- Form Group -->
-          <div class="row form-group js-form-message">
-            <label class="col-sm-3 col-form-label input-label">Visa Service </label>
-            <div class="col-sm-9">
-
-              <select name="visa_service_id" id="visa_service_id" class="custom-select">
-                <option value="">Select Service</option>
-                @foreach($visa_services as $service)
-                  @if(!empty($service->Service($service->service_id)))
-                    <option value="{{$service->id}}">{{$service->Service($service->service_id)->name}} </option>
-                  @endif
-                @endforeach
-              </select>
-              @error('visa_service_id')
-              <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-              </span>
-              @enderror
-            </div>
-          </div>      
-          <!-- End Form Group -->
         </form>
     </div>
     <div class="modal-footer">
@@ -117,22 +102,11 @@ $(document).ready(function(){
             success:function(response){
               hideLoader();
               if(response.status == true){
-                successMessage(response.message);
+                $("#client_id").html(response.options);
+                $("#client_id").trigger("change");
                 closeModal();
-                location.reload();
               }else{
                 validation(response.message);
-                // $.each(response.message, function (index, value) {
-                //     $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
-                //     $("*[name="+index+"]").parents(".js-form-message").find("*[name="+index+"]").removeClass('is-invalid');
-
-                    
-                //     var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-                //     $("*[name="+index+"]").parents(".js-form-message").append(html);
-                //     $(html).insertAfter("*[name="+index+"]");
-                //     $("*[name="+index+"]").parents(".js-form-message").find("*[name="+index+"]").addClass('is-invalid');
-                // });
-                // errorMessage(response.message);
               }
             },
             error:function(){
