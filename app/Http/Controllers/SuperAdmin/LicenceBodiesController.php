@@ -121,10 +121,20 @@ class LicenceBodiesController extends Controller
         return response()->json($response);
     }
 
-    public function delete($id){
+    public function deleteSingle($id){
         $id = base64_decode($id);
-        LicenceBodies::where("id",$id)->delete();
-        return redirect()->back()->with('error',"Record deleted successfully");
+        LicenceBodies::deleteRecord($id);
+        return redirect()->back()->with('success',"Record deleted successfully");
+    }
+    public function deleteMultiple(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        for($i = 0;$i < count($ids);$i++){
+            $id = base64_decode($ids[$i]);
+            LicenceBodies::deleteRecord($id);
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Records deleted successfully'); 
+        return response()->json($response);
     }
 
     public function search($keyword){

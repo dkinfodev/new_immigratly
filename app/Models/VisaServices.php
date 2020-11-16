@@ -14,4 +14,9 @@ class VisaServices extends Model
     {
         return $this->hasMany('App\Models\VisaServices','parent_id');
     }
+
+    static function deleteRecord($id){
+        VisaServices::where("id",$id)->delete();
+        VisaServices::where("parent_id",$id)->delete();
+    }
 }

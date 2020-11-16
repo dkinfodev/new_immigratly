@@ -96,6 +96,7 @@ class VisaServicesController extends Controller
         $viewData['record'] = VisaServices::where("id",$id)->first();
         $viewData['pageTitle'] = "Edit Visa Services";
         $viewData['documents'] = DocumentFolder::get();
+        $viewData['main_services'] = VisaServices::where("parent_id",0)->get();        
         return view(roleFolder().'.visa-services.edit',$viewData);
     }
 
@@ -136,12 +137,21 @@ class VisaServicesController extends Controller
         return response()->json($response);
     }
 
-    public function delete($id){
+    public function deleteSingle($id){
         $id = base64_decode($id);
-        VisaServices::where("id",$id)->delete();
-        return redirect()->back();
+        VisaServices::deleteRecord($id);
+        return redirect()->back()->with("success","Record deleted successfully");
     }
-
+    public function deleteMultiple(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        for($i = 0;$i < count($ids);$i++){
+            $id = base64_decode($ids[$i]);
+            VisaServices::deleteRecord($id);
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Records deleted successfully'); 
+        return response()->json($response);
+    }
     public function search($keyword){
         $keyword = $keyword;
         

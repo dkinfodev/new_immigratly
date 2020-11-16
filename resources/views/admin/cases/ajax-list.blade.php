@@ -95,13 +95,13 @@ $(document).ready(function(){
   $('.js-hs-action').each(function () {
     var unfold = new HSUnfold($(this)).init();
   });
-  $(".row-checkbox").change(function(){
-    if($(".row-checkbox:checked").length > 0){
-      $("#datatableCounterInfo").show();
-    }else{
-      $("#datatableCounterInfo").show();
-    }
-    $("#datatableCounter").html($(".row-checkbox:checked").length);
-  });
+  // $(".row-checkbox").change(function(){
+  //   if($(".row-checkbox:checked").length > 0){
+  //     $("#datatableCounterInfo").show();
+  //   }else{
+  //     $("#datatableCounterInfo").show();
+  //   }
+  //   $("#datatableCounter").html($(".row-checkbox:checked").length);
+  // });
 })
 </script>

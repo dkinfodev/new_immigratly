@@ -1,3 +1,79 @@
+$(document).ready(function(){
+  // Pagination Script
+  $("#datatableCheckAll").change(function(){
+    if($(this).is(":checked")){
+      $(".row-checkbox").prop("checked",true);
+    }else{
+      $(".row-checkbox").prop("checked",false);
+    }
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").hide();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
+  });
+
+  $(".next").click(function(){
+    if(!$(this).hasClass('disabled')){
+      changePage('next');
+    }
+  });
+  $(".previous").click(function(){
+    if(!$(this).hasClass('disabled')){
+      changePage('prev');
+    }
+  });
+});
+function changePage(action){
+  var page = parseInt($("#pageno").val());
+  if(action == 'prev'){
+    page--;
+  }
+  if(action == 'next'){
+    page++;
+  }
+  if(!isNaN(page)){
+    loadData(page);
+  }else{
+    errorMessage("Invalid Page Number");
+  }
+  
+}
+// Pagination Script
+function initPagination(data,parent_class= ''){
+	$(".row-checkbox").change(function(){
+	    if($(".row-checkbox:checked").length > 0){
+	      $("#datatableCounterInfo").show();
+	    }else{
+	      $("#datatableCounterInfo").show();
+	    }
+	    $("#datatableCounter").html($(".row-checkbox:checked").length);
+  	});
+	if(parent_class != ''){
+		parent_class = parent_class+" ";
+	}
+	if(data.total_records > 0){
+      var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
+      $(parent_class+"#pageinfo").html(pageinfo);
+      $(parent_class+"#pageno").val(data.current_page);
+      if(data.current_page < data.last_page){
+        $(parent_class+".next").removeClass("disabled");
+      }else{
+        $(parent_class+".next").addClass("disabled","disabled");
+      }
+      if(data.current_page > 1){
+        $(parent_class+".previous").removeClass("disabled");
+      }else{
+        $(parent_class+".previous").addClass("disabled","disabled");
+      }
+      $(parent_class+"#pageno").attr("max",data.last_page);
+    }else{
+      $(parent_class+".datatable-custom").find(".norecord").remove();
+      var html = '<div class="text-center text-danger norecord">No records available</div>';
+      $(parent_class+".datatable-custom").append(html);
+    }
+}
 function internalError(){
 	hideLoader();
 	warningMessage("Something went wrong. Try again!")

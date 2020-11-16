@@ -9,4 +9,8 @@ class Languages extends Model
 {
     use HasFactory;
     protected $table = "languages";
+
+    static function deleteRecord($id){
+        Languages::where("id",$id)->delete();
+    }
 }

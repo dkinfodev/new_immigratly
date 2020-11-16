@@ -57,7 +57,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('languages/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -137,16 +137,7 @@ $(document).ready(function(){
   $('.js-toggle-switch').each(function () {
     var toggleSwitch = new HSToggleSwitch($(this)).init();
   });
-  $(".next").click(function(){
-    if(!$(this).hasClass('disabled')){
-      changePage('next');
-    }
-  });
-  $(".previous").click(function(){
-    if(!$(this).hasClass('disabled')){
-      changePage('prev');
-    }
-  });
+ 
 })
 loadData();
 function loadData(page=1){
@@ -158,34 +149,16 @@ function loadData(page=1){
         },
         dataType:'json',
         beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
+            showLoader();
         },
         success: function (data) {
+            hideLoader();
             $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
+            initPagination(data);
         },
+        error:function(){
+          internalError();
+        }
     });
 }
 
@@ -229,69 +202,6 @@ function search(keyword){
             }
         },
     });
-}
-
-function changePage(action){
-  var page = parseInt($("#pageno").val());
-  if(action == 'prev'){
-    page--;
-  }
-  if(action == 'next'){
-    page++;
-  }
-  if(!isNaN(page)){
-    loadData(page);
-  }else{
-    errorMessage("Invalid Page Number");
-  }
- 
-}
-
-function confirmDelete(id){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonClass: 'btn btn-primary',
-      cancelButtonClass: 'btn btn-danger ml-1',
-      buttonsStyling: false,
-    }).then(function(result) {
-      if (result.value) {
-        $.ajax({
-            type: "POST",
-            url: BASEURL + '/languages/delete',
-            data:{
-                _token:csrf_token,
-                record_id:id,
-            },
-            dataType:'json',
-            success: function (result) {
-                if(result.status == true){
-                    Swal.fire({
-                        type: "success",
-                        title: 'Deleted!',
-                        text: 'Language Body has been deleted.',
-                        confirmButtonClass: 'btn btn-success',
-                    }).then(function () {
-                        window.location.href= result.redirect;
-                    });
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Error while deleting",
-                        type: "error",
-                        confirmButtonClass: 'btn btn-primary',
-                        buttonsStyling: false,
-                    });
-                }
-            },
-        });
-      }
-    })
 }
 
 </script>

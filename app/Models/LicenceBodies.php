@@ -14,4 +14,8 @@ class LicenceBodies extends Model
     {
         return $this->belongsTo('App\Models\Countries','country_id');
     }
+
+    static function deleteRecord($id){
+        LicenceBodies::where("id",$id)->delete();
+    }
 }

@@ -703,7 +703,7 @@
         <div class="dropdown-divider"></div>
 
         <a class="dropdown-item" href="{{ url('logout') }}">
-          <span class="text-truncate pr-2" title="Sign out">Sign out</span>
+          <span class="text-truncate pr-2 text-danger" title="Sign out">Sign out</span>
         </a>
       </div>
     </div>

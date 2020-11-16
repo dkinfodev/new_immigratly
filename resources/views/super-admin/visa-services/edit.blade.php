@@ -35,6 +35,21 @@
       <form id="visaServices-form" class="js-validate" action="{{ baseUrl('/visa-services/update/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Service Under</label>
+          <div class="col-sm-10">
+            <select class="form-control" name="parent_id"
+            data-hs-select2-options='{
+              "placeholder": "Select Service"
+            }'
+            >
+              <option value="0">None</option>
+              @foreach($main_services as $service)
+              <option {{ ($record->parent_id == $service->id)?'selected':'' }} value="{{ $service->id }}">{{$service->name}}</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
         <!-- Input Group -->
         <div class="js-form-message form-group row">
           <label class="col-sm-2 col-form-label">Name</label>
@@ -49,7 +64,11 @@
             <?php
               $document_folders = explode(",",$record->document_folders);
             ?>
-            <select class="form-control" multiple name="document_folders[]">
+            <select class="form-control" multiple name="document_folders[]"
+              data-hs-select2-options='{
+                "placeholder": "Select Documents"
+              }'
+            >
               @foreach($documents as $document)
               <option {{ (in_array($document->id,$document_folders))?'selected':'' }} value="{{ $document->id }}">{{$document->name}}</option>
               @endforeach

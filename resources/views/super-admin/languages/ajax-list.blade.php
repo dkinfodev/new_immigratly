@@ -2,7 +2,7 @@
 <tr>
   <td class="table-column-pr-0">
     <div class="custom-control custom-checkbox">
-      <input type="checkbox" class="custom-control-input" id="row-{{$key}}">
+      <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ base64_encode($record->id) }}">
       <label class="custom-control-label" for="row-{{$key}}"></label>
     </div>
   </td>
@@ -13,7 +13,9 @@
     </a>
   </td>
 
-  <td> <a href="{{baseUrl('languages/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; <a href="{{baseUrl('languages/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+  <td> 
+      <a href="{{baseUrl('languages/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; 
+      <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('languages/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>
 </tr>
