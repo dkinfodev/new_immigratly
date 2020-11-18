@@ -234,4 +234,15 @@ Route::group(array('prefix' => 'telecaller'), function () {
         Route::post('/update-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'updatePassword']);
 
     });
+
+// Associate of Professional Side
+Route::group(array('prefix' => 'associate'), function () {
+    Route::group(array('middleware' => 'associate'), function () {
+        Route::get('/', [App\Http\Controllers\Associate\DashboardController::class, 'dashboard']);
+        Route::get('/edit-profile', [App\Http\Controllers\Associate\DashboardController::class, 'editProfile']);
+        Route::post('/update-profile', [App\Http\Controllers\Associate\DashboardController::class, 'updateProfile']);
+        Route::get('/change-password', [App\Http\Controllers\Associate\DashboardController::class, 'changePassword']);     
+        Route::post('/update-password', [App\Http\Controllers\Associate\DashboardController::class, 'updatePassword']);
+    });
+
 });

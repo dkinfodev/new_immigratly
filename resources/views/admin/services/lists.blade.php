@@ -282,44 +282,30 @@ $(document).ready(function(){
   });
 
 })
-loadData();
+loadData(); 
 function loadData(page=1){
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
         url: BASEURL + '/services/ajax-list?page='+page,
         data:{
-            _token:csrf_token
+            _token:csrf_token,
+            search:search
         },
         dataType:'json',
         beforeSend:function(){
             var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            showLoader();
             // $("#paginate").html('');
         },
         success: function (data) {
+            hideLoader();
             $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
+            initPagination(data);
         },
+        error:function(){
+          internalError();
+        }
     });
 }
 function changePage(action){

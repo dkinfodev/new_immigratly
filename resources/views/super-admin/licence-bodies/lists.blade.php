@@ -132,14 +132,9 @@
 @endsection
 
 @section('javascript')
-<script src="assets/vendor/hs-toggle-switch/dist/hs-toggle-switch.min.js"></script>
+
 <script type="text/javascript">
-$(document).ready(function(){
-  $('.js-toggle-switch').each(function () {
-    var toggleSwitch = new HSToggleSwitch($(this)).init();
-  });
-  
-})
+
 loadData();
 function loadData(page=1){
     $.ajax({
