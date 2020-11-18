@@ -108,12 +108,12 @@ class ServicesController extends Controller
         return response()->json($response);
     }
 
-    public function deleteService($id){
+    public function deleteSingle($id){
         $id = base64_decode($id);
         ProfessionalServices::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
-    public function deleteMultipleService(Request $request){
+    public function deleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
             $id = base64_decode($ids[$i]);
@@ -185,6 +185,7 @@ class ServicesController extends Controller
         $object->service_id = $id;
         $object->name = $request->input("name");
         $object->slug = str_slug($request->input("name"));
+        $object->unique_id = randomNumber(6);
         $object->save();
         
         $response['status'] = true;
@@ -234,7 +235,7 @@ class ServicesController extends Controller
 
     public function deleteFolder($id){
         $id = base64_decode($id);
-        ServiceDocuments::where("id",$id)->delete();
+        ServiceDocuments::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
 }

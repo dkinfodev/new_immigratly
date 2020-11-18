@@ -150,11 +150,13 @@ function loadData(page=1){
         dataType:'json',
         beforeSend:function(){
             var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
             // $("#paginate").html('');
+            showLoader();
         },
         success: function (data) {
             $("#tableList tbody").html(data.contents);
+            hideLoader();
             initPagination(data);
             
         },

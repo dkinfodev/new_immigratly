@@ -15,6 +15,9 @@ use App\Models\ServiceDocuments;
 use App\Models\Leads;
 use App\Models\User;
 use App\Models\CaseTeams;
+use App\Models\CaseDocuments;
+use App\Models\DocumentFolder;
+use App\Models\CaseFolders;
 
 class CasesController extends Controller
 {
@@ -181,8 +184,6 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
-
-
     public function edit($id){
         $id = base64_decode($id);
         $record = Cases::with('AssingedMember')->find($id);
@@ -256,27 +257,283 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
+    public function pinnedFolder(Request $request){
+        $validator = Validator::make($request->all(), [
+            'folder_id' => 'required',
+            'case_id' => 'required',
+            'doc_type' => 'required',
+        ]);
+        $case_id = $request->input("case_id");
+        $folder_id = $request->input("folder_id");
+        $doc_type =  $request->input("doc_type");
+        $case = Cases::find($case_id);
+        $pinned_folders = $case->pinned_folders;
+        if($pinned_folders != ''){
+            $pinned_folders = json_decode($pinned_folders,true);
+        }
+        if(isset($pinned_folders[$doc_type])){
+            $folders = $pinned_folders[$doc_type];
+            if(!in_array($folder_id,$folders)){
+                $folders[] = $folder_id;    
+            }
+        }else{
+            $folders[] = $folder_id;
+        }
+        $pinned_folders[$doc_type] = $folders;
+        
+        $case->pinned_folders = json_encode($pinned_folders);
+        $case->save();
+        $response['status'] = true;
+        $response['message'] = "Folder pinned!";
+        \Session::flash('success', 'Folder pinned!');
+        return response()->json($response);
+    }
+
+    public function unpinnedFolder(Request $request){
+        $validator = Validator::make($request->all(), [
+            'folder_id' => 'required',
+            'case_id' => 'required',
+            'doc_type' => 'required',
+        ]);
+        $case_id = $request->input("case_id");
+        $folder_id = $request->input("folder_id");
+        $doc_type =  $request->input("doc_type");
+        $case = Cases::find($case_id);
+        $pinned_folders = $case->pinned_folders;
+        if($pinned_folders != ''){
+            $pinned_folders = json_decode($pinned_folders,true);
+        }
+        if(isset($pinned_folders[$doc_type])){
+            $folders = $pinned_folders[$doc_type];
+            if(!in_array($folder_id,$folders)){
+                $folders[] = $folder_id;    
+            }
+            $pinned_folders[$doc_type] = $folders;
+        }
+        $case->pinned_folders = json_encode($pinned_folders);
+        $case->save();
+        $response['status'] = true;
+        $response['message'] = "Folder unpinned!";
+        \Session::flash('success', 'Folder unpinned!');
+        return response()->json($response);
+    }
+
     public function caseDocuments($id){
         $id = base64_decode($id);
         $record = Cases::find($id);
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
         $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
+        $case_folders = CaseFolders::where("case_id",$record->id)->get();
+        $pinned_folders = $record->pinned_folders;
+        if($pinned_folders != ''){
+            $pinned_folders = json_decode($pinned_folders,true);
+            $is_pinned = true;
+        }else{
+            $pinned_folders = array('default'=>array(),"other"=>array(),"extra"=>array());
+            $is_pinned = false;
+        }
+        $viewData['is_pinned'] = $is_pinned;
+        $viewData['pinned_folders'] = $pinned_folders;
         $viewData['service'] = $service;
         $viewData['documents'] = $documents;
-        $viewData['pageTitle'] = "Documents";
+        $viewData['case_folders'] = $case_folders;
+        $viewData['record'] = $record;
+        $viewData['case_id'] = $record->id;
+        $viewData['pageTitle'] = "Documents for ".$service->Service($service->service_id)->name;
 
         return view(roleFolder().'.cases.document-folders',$viewData);
     }
 
-    public function documentFiles($id){
-        $id = base64_decode($id);
-        $record = Cases::find($id);
+    public function defaultDocuments($case_id,$doc_id){
+        $case_id = base64_decode($case_id);
+        $doc_id = base64_decode($doc_id);
+        $record = Cases::find($case_id);
+        $document = DB::table(MAIN_DATABASE.".documents_folder")->where("id",$doc_id)->first();
+        $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
+        $case_documents = CaseDocuments::where("case_id",$case_id)
+                                        ->where("folder_id",$folder_id)
+                                        ->get();
         $viewData['service'] = $service;
-        $viewData['documents'] = $documents;
-        $viewData['pageTitle'] = "Documents";
-
+        $viewData['case_documents'] = $case_documents;
+        $viewData['document'] = $document;
+        $viewData['pageTitle'] = "Files List for ".$document->name;
+        $viewData['record'] = $record;
+        $viewData['doc_type'] = "default";
+        $file_url = professionalDirUrl()."/cases/".$case_id."/".$folder_id;
+        $file_dir = professionalDir()."/cases/".$case_id."/".$folder_id;
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
+    }
+    public function otherDocuments($case_id,$doc_id){
+        $case_id = base64_decode($case_id);
+        $doc_id = base64_decode($doc_id);
+        $record = Cases::find($case_id);
+        $document = ServiceDocuments::where("id",$doc_id)->first();
+        $folder_id = $document->unique_id;
+        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+        $case_documents = CaseDocuments::where("case_id",$case_id)
+                                        ->where("folder_id",$folder_id)
+                                        ->get();
+        $viewData['service'] = $service;
+        $viewData['case_documents'] = $case_documents;
+        $viewData['document'] = $document;
+        $viewData['record'] = $record;
+        $viewData['pageTitle'] = "Files List for ".$document->name;
+        $viewData['doc_type'] = "other";
+        $file_url = professionalDirUrl()."/cases/".$case_id."/".$folder_id;
+        $file_dir = professionalDir()."/cases/".$case_id."/".$folder_id;
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        return view(roleFolder().'.cases.document-files',$viewData);
+    }
+    public function extraDocuments($case_id,$doc_id){
+        $case_id = base64_decode($case_id);
+        $doc_id = base64_decode($doc_id);
+        $record = Cases::find($case_id);
+        $document = CaseFolders::where("id",$doc_id)->first();
+        $folder_id = $document->unique_id;
+        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+        $case_documents = CaseDocuments::where("case_id",$case_id)
+                                        ->where("folder_id",$folder_id)
+                                        ->get();
+        $viewData['service'] = $service;
+        $viewData['case_documents'] = $case_documents;
+        $viewData['document'] = $document;
+        $viewData['record'] = $record;
+        $viewData['pageTitle'] = "Files List for ".$document->name;
+        $viewData['doc_type'] = "extra";
+        $file_url = professionalDirUrl()."/cases/".$case_id."/".$folder_id;
+        $file_dir = professionalDir()."/cases/".$case_id."/".$folder_id;
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        return view(roleFolder().'.cases.document-files',$viewData);
+    }
+    public function uploadDocuments($id,Request $request){
+        $id = base64_decode($id);
+        $folder_id = $request->input("folder_id");
+        $record = Cases::find($id);
+        $document_type = $request->input("doc_type");
+        $failed_files = array();
+        if($file = $request->file('file'))
+        {
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension();
+            $allowed_extension = allowed_extension();
+            if(in_array($extension,$allowed_extension)){
+                $newName        =  $fileName;
+                $source_url = $file->getPathName();
+                $destinationPath = professionalDir()."/cases/".$id."/".$folder_id;
+                if($file->move($destinationPath, $newName)){
+                    $object = new CaseDocuments();
+                    $object->case_id = $id;
+                    $object->folder_id = $folder_id;
+                    $object->file_name = $fileName;
+                    $object->created_by = \Auth::user()->id;
+                    $object->document_type = $document_type;
+                    $object->save();
+                    $response['status'] = true;
+                    $response['message'] = 'File uploaded!';
+                }else{
+                    $response['status'] = false;
+                    $response['message'] = 'File not uploaded!';
+                }
+            }else{
+                $response['status'] = false;
+                $response['message'] = "File not allowed";
+            }
+            return response()->json($response);
+        }
+    }
+
+    public function removeDocuments(Request $request){
+        $files = $request->input("files");
+        pre($files);
+        exit;
+    }
+
+    public function addFolder($id,Request $request){
+        // $id = base64_decode($id);
+        $viewData['case_id'] = $id;
+        $viewData['pageTitle'] = "Add Folder";
+        $view = View::make(roleFolder().'.cases.modal.add-folder',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function createFolder($id,Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+        $id = base64_decode($id);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+        $object = new CaseFolders();
+        $object->case_id = $id;
+        $object->name = $request->input("name");
+        $object->unique_id = randomNumber(6);
+        $object->created_by = \Auth::user()->id;
+        $object->save();
+        
+        $response['status'] = true;
+        $response['message'] = "Folder added successfully";
+        
+        return response()->json($response);
+    }
+
+    public function editFolder($id,Request $request){
+        $id = base64_decode($id);
+        $record = CaseFolders::find($id);
+        $viewData['case_id'] = $id;
+        $viewData['pageTitle'] = "Edit Folder";
+        $viewData['record'] = $record;
+        $view = View::make(roleFolder().'.cases.modal.edit-folder',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function updateFolder($id,Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+        $id = base64_decode($id);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+        $object = CaseFolders::find($id);
+        $object->name = $request->input("name");
+        $object->created_by = \Auth::user()->id;
+        $object->save();
+        
+        $response['status'] = true;
+        $response['message'] = "Folder edited successfully";
+        
+        return response()->json($response);
+    }
+
+    public function deleteFolder($id){
+        $id = base64_decode($id);
+        CaseFolders::deleteRecord($id);
+        return redirect()->back()->with("success","Folder has been deleted!");
     }
 }

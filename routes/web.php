@@ -156,8 +156,8 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'edit']);
             Route::post('/update/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'update']);
             Route::post('/select-services', [App\Http\Controllers\Admin\ServicesController::class, 'selectServices']);
-            Route::get('/delete/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteService']);
-            Route::post('/delete-multiple', [App\Http\Controllers\Admin\ServicesController::class, 'deleteMultipleService']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\ServicesController::class, 'deleteMultiple']);
             Route::get('/documents/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'serviceDocuments']);
             Route::get('/add-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'addFolder']);
             Route::post('/add-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'createFolder']);
@@ -205,8 +205,22 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\CasesController::class, 'deleteMultiple']);
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\CasesController::class, 'edit']);
             Route::post('/update/{id}', [App\Http\Controllers\Admin\CasesController::class, 'update']);
-            Route::get('/case-documents/{id}', [App\Http\Controllers\Admin\CasesController::class, 'caseDocuments']);
-            Route::get('/documents-files/{id}', [App\Http\Controllers\Admin\CasesController::class, 'documentFiles']);
+            Route::post('/remove-documents', [App\Http\Controllers\Admin\CasesController::class, 'removeDocuments']);
+            
+            Route::post('/pinned-folder', [App\Http\Controllers\Admin\CasesController::class, 'pinnedFolder']);
+            Route::post('/unpinned-folder', [App\Http\Controllers\Admin\CasesController::class, 'unpinnedFolder']);
+            Route::group(array('prefix' => 'case-documents'), function () {
+                Route::get('/documents/{id}', [App\Http\Controllers\Admin\CasesController::class, 'caseDocuments']);
+                Route::get('/add-folder/{id}', [App\Http\Controllers\Admin\CasesController::class, 'addFolder']);
+                Route::post('/add-folder/{id}', [App\Http\Controllers\Admin\CasesController::class, 'createFolder']);
+                Route::get('/edit-folder/{id}', [App\Http\Controllers\Admin\CasesController::class, 'editFolder']);
+                Route::post('/edit-folder/{id}', [App\Http\Controllers\Admin\CasesController::class, 'updateFolder']);
+                Route::get('/delete-folder/{id}', [App\Http\Controllers\Admin\CasesController::class, 'deleteFolder']);
+                Route::get('/default/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'defaultDocuments']);
+                Route::get('/other/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'otherDocuments']);
+                Route::get('/extra/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'extraDocuments']);
+                Route::post('/upload-documents/{id}', [App\Http\Controllers\Admin\CasesController::class, 'uploadDocuments']);
+            });
         });
 
     });

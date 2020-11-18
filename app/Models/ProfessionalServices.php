@@ -29,7 +29,7 @@ class ProfessionalServices extends Model
     	$is_exists = ProfessionalServices::where("service_id",$service_id)->count();
     	return $is_exists;
     }
-
+    
     static function deleteRecord($id){
         ServiceDocuments::where("service_id",$id);
         ProfessionalServices::where("id",$id)->delete();

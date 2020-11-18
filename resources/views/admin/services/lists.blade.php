@@ -241,31 +241,7 @@ $(document).ready(function(){
   $('.js-toggle-switch').each(function () {
     var toggleSwitch = new HSToggleSwitch($(this)).init();
   });
-  $(".next").click(function(){
-    if(!$(this).hasClass('disabled')){
-      changePage('next');
-    }
-  });
-  $(".previous").click(function(){
-    if(!$(this).hasClass('disabled')){
-      changePage('prev');
-    }
-  });
-
-  $("#datatableCheckAll").change(function(){
-    if($(this).is(":checked")){
-      $(".row-checkbox").prop("checked",true);
-    }else{
-      $(".row-checkbox").prop("checked",false);
-    }
-    if($(".row-checkbox:checked").length > 0){
-      $("#datatableCounterInfo").show();
-    }else{
-      $("#datatableCounterInfo").hide();
-    }
-    $("#datatableCounter").html($(".row-checkbox:checked").length);
-  });
-
+  
   $(".parent_services").change(function(){
     if($(this).is(":checked")){
       $(this).parents("li").find(".child_services").prop("checked",true);
@@ -292,62 +268,22 @@ function loadData(page=1){
         },
         dataType:'json',
         beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
+            showLoader();
         },
         success: function (data) {
+            hideLoader();
             $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
+            initPagination(data);
         },
     });
 }
-function changePage(action){
-  var page = parseInt($("#pageno").val());
-  if(action == 'prev'){
-    page--;
-  }
-  if(action == 'next'){
-    page++;
-  }
-  if(!isNaN(page)){
-    loadData(page);
-  }else{
-    errorMessage("Invalid Page Number");
-  }
-  
-}
-function chooseAll(){
-  // $(".all_services input[type=checkbox]").prop("checked",true);
-  // $("#services_form").submit();
-}
+
 function chooseSelected(){
   if($(".all_services input[type=checkbox]:checked").length > 0){
     $("#services_form").submit();
   }else{
     errorMessage("Please select services!");
   }
-  
 }
 
 </script>

@@ -23,7 +23,12 @@ if (! function_exists('getFileType')) {
         return $file_ext;
     }
 }
-
+if (! function_exists('allowed_extension')) {
+    function allowed_extension(){
+        $ext = array("doc","docx","xls","xlsx","ppt","pptx","pdf","jpg","jpeg","png");
+        return $ext;
+    }
+}
 if (! function_exists('pre')) {
     function pre($value,$exists=0) {
         echo "<pre>";
@@ -139,23 +144,55 @@ if (! function_exists('dateFormat')) {
 if(!function_exists("fileIcon")){
     function fileIcon($filename){
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        $icon = "<i class='fa fa-file-code-o fa-2x'></i>";
+        $icon = '<img class="avatar avatar-xs avatar-4by3" src="assets/svg/brands/google-docs.svg" alt="Doc File">';
         if(in_array($ext,array("doc","docx"))){
-            $icon = "<i class='fa fa-file-word-o fa-2x'></i>";
+            $icon = '<img class="avatar avatar-xs avatar-4by3" src="assets/svg/brands/word.svg" alt="Doc File">';
         }
         if(in_array($ext,array("xls","xlsx"))){
-            $icon = "<i class='fa fa-file-word-o fa-2x'></i>";
+            $icon = '<img class="avatar avatar-xs avatar-4by3" src="assets/svg/brands/google-sheets.svg" alt="Doc File">';
         }
         if(in_array($ext,array("pdf"))){
-            $icon = "<i class='fa fa-file-pdf-o fa-2x'></i>";
+            $icon = '<img class="avatar avatar-xs avatar-4by3" src="assets/svg/brands/pdf.svg" alt="Image Description">';
         }
         if(in_array($ext,array("jpg","jpeg","png","gif"))){
-            $icon = "<i class='fa fa-file-image-o fa-2x'></i>";
+            $icon = '<img class="avatar avatar-xs avatar-4by3" src="assets/svg/brands/google-slides.svg" alt="Image Description">';
         }
         return $icon;
     }
 }
+if(!function_exists("file_size")){
+    function file_size($file){
+        $size = filesize($file);
+        $bytes = $size;
+        if ($size >= 1073741824)
+        {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        }
+        elseif ($bytes >= 1048576)
+        {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        }
+        elseif ($bytes >= 1024)
+        {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        }
+        elseif ($bytes > 1)
+        {
+            $bytes = $bytes . ' bytes';
+        }
+        elseif ($bytes == 1)
+        {
+            $bytes = $bytes . ' byte';
+        }
+        else
+        {
+            $bytes = '0 bytes';
+        }
 
+        $file_size = $bytes;
+        return $file_size;
+    }
+}
 if(!function_exists("companyName")){
     function companyName(){
         $company = 'Immigratly';
@@ -854,6 +891,11 @@ if(!function_exists("professionalProfile")){
         if($domain == ''){
             $domain = \Session::get("subdomain");
         }
+        $profile_dir = professionalDir()."/profile/".$profile_image;
+        if($profile_image == '' || !file_exists($profile_dir)){
+            $url = asset("public/uploads/users/default.jpg");
+            return $url;
+        }
         $original = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
         $url = '';
         if($size == 'r'){
@@ -892,7 +934,7 @@ if(!function_exists("userDir")){
 }
 
 if(!function_exists("userDirUrl")){
-    function UserDirUrl($unique_id = ''){
+    function userDirUrl($unique_id = ''){
         if($unique_id == ''){
             $unique_id = \Auth::user()->unique_id;
         }
@@ -905,6 +947,11 @@ if(!function_exists("userProfile")){
     function userProfile($profile_image,$size='r',$unique_id = ''){
         if($unique_id == ''){
            $unique_id = \Auth::user()->unique_id;
+        }
+        $profile_dir = userDir($unique_id)."/profile/".$profile_image;
+        if($profile_image == '' || !file_exists($profile_dir)){
+            $url = asset("public/uploads/users/default.jpg");
+            return $url;
         }
         $original = asset("public/uploads/users/".$unique_id."/profile/".$profile_image);
         $url = '';

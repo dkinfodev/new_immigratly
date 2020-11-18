@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceDocuments extends Model
+class CaseFolders extends Model
 {
     use HasFactory;
-    protected $table = "service_documents";
+    protected $table = "case_folders";
 
     static function deleteRecord($id){
-        ServiceDocuments::where("id",$id)->delete();
+        CaseFolders::where("id",$id)->delete();
     }
 }

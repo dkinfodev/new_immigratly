@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
+use App\Models\CaseDocuments;
+use App\Models\ServiceDocuments;
 class Cases extends Model
 {
     use HasFactory;
@@ -28,6 +30,25 @@ class Cases extends Model
     {
         $service = DB::table(MAIN_DATABASE.".visa_services")->where("id",$id)->first();
         return $service;
+    }
+
+    static function caseDocuments($case_id,$folder_id,$return='record'){
+        $documents = CaseDocuments::where("case_id",$case_id)->where("folder_id",$folder_id)->get();
+        if($return == 'count'){
+            return count($documents);
+        }
+        return $documents;
+    }
+
+    static function documentInfo($case_id,$folder_id,$type){
+        $document = array();
+        if($type == 'default'){
+            $document = DB::table(MAIN_DATABASE.".documents_folder")->where("unique_id",$folder_id)->first();
+        }
+        if($type == 'other'){
+            $document = ServiceDocuments::where("unique_id",$folder_id)->first();
+        }
+        return $document;
     }
 
     static function deleteRecord($id){

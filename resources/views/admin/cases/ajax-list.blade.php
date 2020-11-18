@@ -41,7 +41,7 @@
     @if(!empty($record->Service($record->VisaService->service_id)))
     <span class="badge badge-soft-info p-2">{{$record->Service($record->VisaService->service_id)->name}}</span>
     @else
-    <span class="badge badge-soft-info p-2">Service Removed</span>
+    <span class="badge badge-soft-info p-2">Service not found</span>
     @endif
   </td>
   <!-- <td>
@@ -53,9 +53,28 @@
    <td>
     <!-- Avatar Group -->
     <div class="avatar-group avatar-group-xs avatar-circle">
-      <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ count($record->AssingedMember) }} assigned">
-        <span class="avatar-initials">{{ count($record->AssingedMember) }} member(s)</span>
-      </span>
+      <?php 
+        $more_file = 0;
+      ?>
+      @foreach($record->AssingedMember as $key => $member)
+        <?php 
+        if($key > 1){
+          $more_file++;
+        }else{
+        ?>  
+        <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
+          <img class="avatar-img" src="{{ professionalProfile($member->Member->profile_image,'t') }}" alt="Image Description">
+        </a>
+        <!-- <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
+          <span class="avatar-initials">{{ userInitial($member->Member) }}</span>
+        </span> -->
+        <?php } ?>
+      @endforeach
+      @if($more_file > 0)
+        <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $member->first_name." ".$member->last_name }}">
+          <span class="avatar-initials">{{ $more_file }}+</span>
+        </span>
+      @endif
       <!-- <a class="avatar" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Costa Quinn">
         <img class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
       </a>
@@ -80,7 +99,7 @@
       </a>
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         <a class="dropdown-item" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('cases/case-documents/'.base64_encode($record->id))}}">Case Documents</a>
+        <a class="dropdown-item" href="{{baseUrl('cases/case-documents/documents/'.base64_encode($record->id))}}">Case Documents</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
@@ -95,13 +114,5 @@ $(document).ready(function(){
   $('.js-hs-action').each(function () {
     var unfold = new HSUnfold($(this)).init();
   });
-  // $(".row-checkbox").change(function(){
-  //   if($(".row-checkbox:checked").length > 0){
-  //     $("#datatableCounterInfo").show();
-  //   }else{
-  //     $("#datatableCounterInfo").show();
-  //   }
-  //   $("#datatableCounter").html($(".row-checkbox:checked").length);
-  // });
 })
 </script>
