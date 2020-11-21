@@ -1,51 +1,46 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Associate;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 use DB;
 
 use App\Models\User;
-use App\Models\UserDetails;
 use App\Models\Countries;
-use App\Models\Languages;
+
 class DashboardController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('user');
+        $this->middleware('associate');
     }
     public function dashboard()
     {
        	$viewData['pageTitle'] = "Dashboard";
         return view(roleFolder().'.dashboard',$viewData);
     }
-    public function editProfile(Request $request){
 
+
+    public function editProfile(Request $request){
         $id = \Auth::user()->id;
 
         $viewData['pageTitle'] = "Edit Profile";
         $record = User::where("id",$id)->first();
-        $record2 = UserDetails::where("user_id",$id)->first();
 
         $countries = DB::table(MAIN_DATABASE.".countries")->get();
         $viewData['countries'] = $countries;
-        $states = DB::table(MAIN_DATABASE.".states")->where("country_id",$record2->country_id)->get();
+        $states = DB::table(MAIN_DATABASE.".states")->where("country_id",$record->country_id)->get();
         $viewData['states'] = $states;
-        $cities = DB::table(MAIN_DATABASE.".cities")->where("state_id",$record2->state_id)->get();
+        $cities = DB::table(MAIN_DATABASE.".cities")->where("state_id",$record->state_id)->get();
         $viewData['cities'] = $cities;
-
-        $languages = Languages::get();
-        $viewData['languages'] = $languages;
-
-        $countries = Countries::get();
+        $languages = DB::table(MAIN_DATABASE.".languages")->get();
+        $viewData['languages'] = $languages;    
         $viewData['countries'] = $countries;
         
         $viewData['record'] = $record;
-        $viewData['record2'] = $record2;
-
         return view(roleFolder().'.edit-profile',$viewData);
     }
     
@@ -53,9 +48,6 @@ class DashboardController extends Controller
         // pre($request->all());
         $id = \Auth::user()->id;
         $object =  User::find($id);
-
-        $username = $object->name;
-        $object2 = UserDetails::where('user_id',$id)->first();
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email,'.$object->id,
@@ -89,48 +81,32 @@ class DashboardController extends Controller
         $object->email = $request->input("email");
         $object->country_code = $request->input("country_code");
         $object->phone_no = $request->input("phone_no");
+        $object->date_of_birth = $request->input("date_of_birth");
+        $object->gender = $request->input("gender");
+        $object->country_id = $request->input("country_id");
+        $object->state_id = $request->input("state_id");
+        $object->city_id = $request->input("city_id");
+        $object->address = $request->input("address");
+        $object->zip_code = $request->input("zip_code");
         
+        $object->languages_known = json_encode($request->input("languages_known"));
         if ($file = $request->file('profile_image')){
                 
             $fileName        = $file->getClientOriginalName();
             $extension       = $file->getClientOriginalExtension() ?: 'png';
             $newName        = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
-            $path = userDir()."/profile";
             
-            $destinationPath = $path.'/thumb';
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-            $destination_url = $destinationPath.'/'.$newName;
-            resizeImage($source_url, $destination_url, 100,100,80);
-
-            $destinationPath = $path.'/medium';
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-            $destination_url = $destinationPath.'/'.$newName;
-            resizeImage($source_url, $destination_url, 500,500,80);
-            $destinationPath = userDir()."/profile";
+            $destinationPath = professionalDir()."/profile";
             if($file->move($destinationPath, $newName)){
-                $object->profile_image = $newName;                    
+                $object->profile_image = $newName;
             }
         }
 
-        $object2->date_of_birth = $request->input("date_of_birth");
-        $object2->gender = $request->input("gender");
-        $object2->country_id = $request->input("country_id");
-        $object2->state_id = $request->input("state_id");
-        $object2->city_id = $request->input("city_id");
-        $object2->address = $request->input("address");
-        $object2->zip_code = $request->input("zip_code");
-        $object2->languages_known = json_encode($request->input("languages_known"));
-
         $object->save();
-        $object2->save();
 
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('/edit-profile');
+        $response['redirect_back'] = baseUrl('edit-profile');
         $response['message'] = "Updation sucessfully";
         
         return response()->json($response);
@@ -179,4 +155,7 @@ class DashboardController extends Controller
         
         return response()->json($response);
     }
+
+
+
 }

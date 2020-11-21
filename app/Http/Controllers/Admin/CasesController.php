@@ -18,6 +18,7 @@ use App\Models\CaseTeams;
 use App\Models\CaseDocuments;
 use App\Models\DocumentFolder;
 use App\Models\CaseFolders;
+use App\Models\Documents;
 
 class CasesController extends Controller
 {
@@ -305,8 +306,9 @@ class CasesController extends Controller
         }
         if(isset($pinned_folders[$doc_type])){
             $folders = $pinned_folders[$doc_type];
-            if(!in_array($folder_id,$folders)){
-                $folders[] = $folder_id;    
+            $key = array_search($folder_id, $folders);
+            if (false !== $key) {
+                unset($folders[$key]);
             }
             $pinned_folders[$doc_type] = $folders;
         }
@@ -351,7 +353,7 @@ class CasesController extends Controller
         $document = DB::table(MAIN_DATABASE.".documents_folder")->where("id",$doc_id)->first();
         $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$case_id)
+        $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
         $viewData['service'] = $service;
@@ -360,8 +362,8 @@ class CasesController extends Controller
         $viewData['pageTitle'] = "Files List for ".$document->name;
         $viewData['record'] = $record;
         $viewData['doc_type'] = "default";
-        $file_url = professionalDirUrl()."/cases/".$case_id."/".$folder_id;
-        $file_dir = professionalDir()."/cases/".$case_id."/".$folder_id;
+        $file_url = professionalDirUrl()."/documents";
+        $file_dir = professionalDir()."/documents";
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
@@ -382,8 +384,8 @@ class CasesController extends Controller
         $viewData['record'] = $record;
         $viewData['pageTitle'] = "Files List for ".$document->name;
         $viewData['doc_type'] = "other";
-        $file_url = professionalDirUrl()."/cases/".$case_id."/".$folder_id;
-        $file_dir = professionalDir()."/cases/".$case_id."/".$folder_id;
+        $file_url = professionalDirUrl()."/documents";
+        $file_dir = professionalDir()."/documents";
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
@@ -404,10 +406,11 @@ class CasesController extends Controller
         $viewData['record'] = $record;
         $viewData['pageTitle'] = "Files List for ".$document->name;
         $viewData['doc_type'] = "extra";
-        $file_url = professionalDirUrl()."/cases/".$case_id."/".$folder_id;
-        $file_dir = professionalDir()."/cases/".$case_id."/".$folder_id;
+        $file_url = professionalDirUrl()."/documents";
+        $file_dir = professionalDir()."/documents";
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
+
         return view(roleFolder().'.cases.document-files',$viewData);
     }
     public function uploadDocuments($id,Request $request){
@@ -422,17 +425,25 @@ class CasesController extends Controller
             $extension       = $file->getClientOriginalExtension();
             $allowed_extension = allowed_extension();
             if(in_array($extension,$allowed_extension)){
-                $newName        =  $fileName;
+                $newName        = randomNumber(5)."-".$fileName;
                 $source_url = $file->getPathName();
-                $destinationPath = professionalDir()."/cases/".$id."/".$folder_id;
+                $destinationPath = professionalDir()."/documents";
                 if($file->move($destinationPath, $newName)){
-                    $object = new CaseDocuments();
-                    $object->case_id = $id;
-                    $object->folder_id = $folder_id;
-                    $object->file_name = $fileName;
+                    $unique_id = randomNumber(10);
+                    $object = new Documents();
+                    $object->file_name = $newName;
+                    $object->original_name = $fileName;
+                    $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->id;
-                    $object->document_type = $document_type;
                     $object->save();
+
+                    $object2 = new CaseDocuments();
+                    $object2->case_id = $id;
+                    $object2->folder_id = $folder_id;
+                    $object2->file_id = $unique_id;
+                    $object2->created_by = \Auth::user()->id;
+                    $object2->document_type = $document_type;
+                    $object2->save();
                     $response['status'] = true;
                     $response['message'] = 'File uploaded!';
                 }else{
@@ -535,5 +546,63 @@ class CasesController extends Controller
         $id = base64_decode($id);
         CaseFolders::deleteRecord($id);
         return redirect()->back()->with("success","Folder has been deleted!");
+    }
+
+    public function deleteDocument($id){
+        $id = base64_decode($id);
+        CaseDocuments::deleteRecord($id);
+        return redirect()->back()->with("success","Document has been deleted!");
+    }
+    public function deleteMultipleDocuments(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        for($i = 0;$i < count($ids);$i++){
+            $id = base64_decode($ids[$i]);
+            CaseDocuments::deleteRecord($id);
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Documents deleted successfully'); 
+        return response()->json($response);
+    }
+
+    public function fileMoveTo($id,$case_id,$doc_id){
+        $id = base64_decode($id);
+        $case_id = base64_decode($case_id);
+        $doc_id = base64_decode($doc_id);
+        $case = Cases::find($case_id);
+        $documents = ServiceDocuments::where("service_id",$case->visa_service_id)->get();
+        $document = ServiceDocuments::where("id",$doc_id)->first();
+        $folder_id = $document->unique_id;
+        $service = ProfessionalServices::where("id",$case->visa_service_id)->first();
+        
+        $case_folders = CaseFolders::where("case_id",$case->id)->get();
+        $viewData['service'] = $service;
+        $viewData['case'] = $case;
+        $viewData['documents'] = $documents;
+        $viewData['case_folders'] = $case_folders;
+        $viewData['document'] = $document;
+        $record = CaseDocuments::find($id);
+        $viewData['id'] = $id;
+        $viewData['pageTitle'] = "Move File";
+        $viewData['record'] = $record;
+        $view = View::make(roleFolder().'.cases.modal.move-to',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function moveFileToFolder(Request $request){
+        $id = base64_decode($request->input("id"));
+        $folder_id = $request->input("folder_id");
+        $doc_type = $request->input("doc_type");
+
+        $data['document_type'] = $doc_type;
+        $data['folder_id'] = $folder_id;
+        CaseDocuments::where("id",$id)->update($data);
+
+        $response['status'] = true;
+        $response['message'] = "File moved to folder successfully";
+        \Session::flash('success', 'File moved to folder successfully'); 
+        return response()->json($response);       
     }
 }

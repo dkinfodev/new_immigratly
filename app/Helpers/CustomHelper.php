@@ -4,6 +4,7 @@ require dirname(__DIR__)."/../library/twilio/twilio.php";
 
 use App\Models\Settings;
 use App\Models\DomainDetails;
+use App\Models\Documents;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -25,7 +26,7 @@ if (! function_exists('getFileType')) {
 }
 if (! function_exists('allowed_extension')) {
     function allowed_extension(){
-        $ext = array("doc","docx","xls","xlsx","ppt","pptx","pdf","jpg","jpeg","png");
+        $ext = array("doc","docx","xls","xlsx","ppt","pptx","pdf","jpg","jpeg","png","gif");
         return $ext;
     }
 }

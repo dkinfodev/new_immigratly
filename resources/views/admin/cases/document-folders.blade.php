@@ -124,7 +124,6 @@
                <!-- List Item -->
                <?php
                 $default_documents = $service->DefaultDocuments($service->service_id);
-               
                ?>
                @foreach($default_documents as $key => $document)
                <li class="list-group-item">

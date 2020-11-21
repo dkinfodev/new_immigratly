@@ -22,7 +22,7 @@
                <ol class="breadcrumb breadcrumb-no-gutter">
                   <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
                   <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
-                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases/case-documents/'.base64_encode($record->id)) }}">Documents</a></li>
+                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases/case-documents/documents/'.base64_encode($record->id)) }}">Documents</a></li>
                   <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
                </ol>
             </nav>
@@ -104,7 +104,7 @@
                         <span id="datatableCounter">0</span>
                         Selected
                         </span>
-                        <a class="btn btn-sm btn-outline-danger" onclick="deleteFiles()" href="javascript:;">
+                        <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/case-documents/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                         <i class="tio-delete-outlined"></i> Delete
                         </a>
                      </div>
@@ -164,20 +164,20 @@
                <tr>
                   <td class="table-column-pr-0">
                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ $doc->id }}">
+                        <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ base64_encode($doc->id) }}">
                         <label class="custom-control-label" for="row-{{$key}}"></label>
                      </div>
                   </td>
                   <td class="table-column-pl-0">
                      <a class="d-flex align-items-center" href="javascript:;">
                         <?php 
-                           $fileicon = fileIcon($doc->file_name);
+                           $fileicon = fileIcon($doc->FileDetail->original_name);
                            echo $fileicon;
-
-                           $filesize = file_size($file_dir."/".$doc->file_name);
+                           $filesize = file_size($file_dir."/".$doc->FileDetail->file_name);
+                     
                         ?>
                         <div class="ml-3">
-                           <span class="d-block h5 text-hover-primary mb-0">{{$doc->file_name}}</span>
+                           <span class="d-block h5 text-hover-primary mb-0">{{$doc->FileDetail->original_name}}</span>
                            <ul class="list-inline list-separator small file-specs">
                               <li class="list-inline-item">Added on {{dateFormat($doc->created_at)}}</li>
                               <li class="list-inline-item">{{$filesize}}</li>
@@ -186,7 +186,7 @@
                      </a>
                   </td>
                   <!-- <td><a class="badge badge-soft-primary p-2" href="#">Marketing team</a></td> -->
-                  <td>
+                  <td width="10%">
                      <!-- Toggle -->
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker text-body" href="javascript:;"
@@ -243,7 +243,7 @@
                            <i class="tio-share dropdown-item-icon"></i>
                            Share file
                            </a>
-                           <a class="dropdown-item" href="#">
+                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.base64_encode($doc->id)).'/'.base64_encode($record->id).'/'.base64_encode($document->id) ?>')">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
                            </a>
@@ -264,7 +264,7 @@
                            <i class="tio-chat-outlined dropdown-item-icon"></i>
                            Report
                            </a>
-                           <a class="dropdown-item" href="#">
+                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.base64_encode($doc->id))}}">
                            <i class="tio-delete-outlined dropdown-item-icon"></i>
                            Delete
                            </a>
@@ -276,6 +276,12 @@
                @endforeach
             </tbody>
          </table>
+
+         @if(count($case_documents) <= 0)
+         <div class="text-danger text-center p-2">
+            No documents available
+         </div>
+         @endif
       </div>
       <!-- End Table -->
    </div>
@@ -288,9 +294,17 @@
 <script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
 <script type="text/javascript">
    $(document).ready(function(){
-     $('.js-hs-action').each(function () {
+      $('.js-hs-action').each(function () {
        var unfold = new HSUnfold($(this)).init();
-     });
+      });
+      $(".row-checkbox").change(function(){
+         if($(".row-checkbox:checked").length > 0){
+            $("#datatableCounterInfo").show();
+         }else{
+            $("#datatableCounterInfo").hide();
+         }
+         $("#datatableCounter").html($(".row-checkbox:checked").length);
+      });
    });
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
@@ -301,7 +315,7 @@
         location.reload();
       });
       
-   });
+   });      
 
    function deleteFiles(){
       if($(".row-checkbox:checked").length > 0){

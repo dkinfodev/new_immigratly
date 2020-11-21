@@ -220,6 +220,11 @@ Route::group(array('prefix' => 'admin'), function () {
                 Route::get('/other/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'otherDocuments']);
                 Route::get('/extra/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'extraDocuments']);
                 Route::post('/upload-documents/{id}', [App\Http\Controllers\Admin\CasesController::class, 'uploadDocuments']);
+                Route::get('/delete/{id}', [App\Http\Controllers\Admin\CasesController::class, 'deleteDocument']);
+                Route::post('/delete-multiple', [App\Http\Controllers\Admin\CasesController::class, 'deleteMultipleDocuments']);
+
+                Route::get('/file-move-to/{file_id}/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'fileMoveTo']);
+                Route::post('/file-move-to', [App\Http\Controllers\Admin\CasesController::class, 'moveFileToFolder']);
             });
         });
 
@@ -247,5 +252,16 @@ Route::group(array('prefix' => 'telecaller'), function () {
         Route::get('/change-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'changePassword']);     
         Route::post('/update-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'updatePassword']);
 
+    });
+});
+
+// Associate of Professional Side
+Route::group(array('prefix' => 'associate'), function () {
+    Route::group(array('middleware' => 'associate'), function () {
+        Route::get('/', [App\Http\Controllers\Associate\DashboardController::class, 'dashboard']);
+        Route::get('/edit-profile', [App\Http\Controllers\Associate\DashboardController::class, 'editProfile']);
+        Route::post('/update-profile', [App\Http\Controllers\Associate\DashboardController::class, 'updateProfile']);
+        Route::get('/change-password', [App\Http\Controllers\Associate\DashboardController::class, 'changePassword']);     
+        Route::post('/update-password', [App\Http\Controllers\Associate\DashboardController::class, 'updatePassword']);
     });
 });

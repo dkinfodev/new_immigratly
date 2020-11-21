@@ -10,7 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            
+            <li class="breadcrumb-item"><a class="breadcrumb-link">{{ucwords($record->role)}}</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -19,7 +19,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/') }}">
+        <a class="btn btn-primary" href="{{ baseUrl('/staff') }}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -40,8 +40,8 @@
           <div class="col-md-4">
             <!-- Logo -->
             <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
-              @if($record->profile_image != '' &&  file_exists(userDir().'/profile/'.$record->profile_image))
-              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ userDirUrl().'/profile/'.$record->profile_image }}" alt="Profile Image">
+              @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))
+              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$record->profile_image }}" alt="Profile Image">
               @else
               <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
               @endif
@@ -102,7 +102,8 @@
           </div>
           <!-- End Form Group -->
 
-           <!-- Form Group -->
+
+          <!-- Form Group -->
           <div class="row form-group">
             <label class="col-sm-5 col-form-label input-label">Phone Number</label>
 
@@ -123,7 +124,6 @@
             </div>
           </div>
           <!-- End Form Group -->
-
           <!-- Form Group -->
           <div class="row form-group">
             <label class="col-sm-5 col-form-label input-label">Gender</label>
@@ -132,8 +132,8 @@
               <div class="js-form-message">
                 <select name="gender" class="form-control">
                   <option value="">Select Gender</option>
-                  <option {{($record2->gender == 'male')?'selected':''}} value="male">Male</option>
-                  <option {{($record2->gender == 'female')?'selected':''}} value="female">Female</option>
+                  <option {{($record->gender == 'male')?'selected':''}} value="male">Male</option>
+                  <option {{($record->gender == 'female')?'selected':''}} value="female">Female</option>
                 </select>
               </div>
             </div>
@@ -144,7 +144,7 @@
             <label class="col-sm-5 col-form-label input-label">Date of Birth</label>
             <div class="col-sm-7">
               <div class="input-group">
-                <input type="text" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ $record2->date_of_birth }}" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
+                <input type="text" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ $record->date_of_birth }}" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
                 <div class="input-group-addon p-2">
                   <i class="tio-date-range"></i>
                 </div>
@@ -161,11 +161,11 @@
                 <select name="languages_known[]" multiple id="languages_known" class="form-control">
                   
                 <?php
-                  $language_known = json_decode($record2->languages_known,true);
-                ?> 
+                  $language_known = json_decode($record->languages_known,true);
+                ?>
 
                 @foreach($languages as $language)
-                <option value="{{$language->id}}">{{$language->name}}</option>
+                <option {{in_array($language->id,$language_known)?"selected":""}} value="{{$language->id}}">{{$language->name}}</option>
                 @endforeach
 
                 </select>
@@ -173,13 +173,12 @@
             </div>
           </div>
           <!-- End Form Group -->
-
-</div> <!-- div end -->
+        </div> <!-- div end -->
         
 
         <div class="col-md-6">
           
-           <!-- Form Group -->
+          <!-- Form Group -->
           <div class="row form-group">
             <label class="col-sm-5 col-form-label input-label">Country</label>
             <div class="col-sm-7">
@@ -187,7 +186,7 @@
                 <select name="country_id" id="country_id" onchange="stateList(this.value,'state_id')" class="form-control">
                   <option value="">Select Country</option>
                   @foreach($countries as $country)
-                  <option {{$record2->country_id == $country->id?"selected":""}} value="{{$country->id}}">{{$country->name}}</option>
+                  <option {{$record->country_id == $country->id?"selected":""}} value="{{$country->id}}">{{$country->name}}</option>
                   @endforeach
                 </select>
               </div>
@@ -200,10 +199,10 @@
             <div class="col-sm-7">
               <div class="js-form-message">
                 <select name="state_id" id="state_id" aria-label="State" required data-msg="Please select your state" onchange="cityList(this.value,'city_id')" class="form-control">
-                  <option value="">Select State</option>
+                <option value="">Select State</option>
                   <option value="">Select State</option>
                   @foreach($states as $state)
-                  <option {{$record2->state_id == $state->id?"selected":""}} value="{{$state->id}}">{{$state->name}}</option>
+                  <option {{$record->state_id == $state->id?"selected":""}} value="{{$state->id}}">{{$state->name}}</option>
                   @endforeach
                 </select>
               </div>
@@ -219,7 +218,7 @@
                 <select name="city_id" id="city_id"  aria-label="City" required data-msg="Please select your city" class="form-control">
                   <option value="">Select City</option>
                   @foreach($cities as $city)
-                  <option {{$record2->city_id == $city->id?"selected":""}} value="{{$city->id}}">{{$city->name}}</option>
+                  <option {{$record->city_id == $city->id?"selected":""}} value="{{$city->id}}">{{$city->name}}</option>
                   @endforeach
                 </select>
               </div>
@@ -232,7 +231,7 @@
             <label class="col-sm-5 col-form-label input-label">Address</label>
             <div class="col-sm-7">
               <div class="js-form-message">
-                <input type="text" class="form-control" name="address" id="address" placeholder="Address" aria-label="Address" required data-msg="Please enter your address" value="{{ $record2->address }}">
+                <input type="text" class="form-control" name="address" id="address" placeholder="Address" aria-label="Address" required data-msg="Please enter your address" value="{{ $record->address }}">
               </div>
             </div>
           </div>
@@ -243,13 +242,14 @@
             <label class="col-sm-5 col-form-label input-label">Zip Code</label>
             <div class="col-sm-7">
               <div class="js-form-message">
-                <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $record2->zip_code }}">
+                <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $record->zip_code }}">
               </div>
             </div>
           </div>
-         
-        </div> <!-- end of col -->
-        
+
+          
+        </div>
+        <!-- End Form Group -->    
       </div>
 
       <div class="form-group">
