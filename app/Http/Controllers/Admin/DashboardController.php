@@ -17,6 +17,7 @@ class DashboardController extends Controller
         return view(roleFolder().'.dashboard',$viewData);
     }
 
+
     public function profile()
     {
        	$viewData['pageTitle'] = "Profile";

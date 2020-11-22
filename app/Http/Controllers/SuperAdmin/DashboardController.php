@@ -4,7 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Response;
 use App\Models\Countries;
 use App\Models\User;
 
@@ -34,6 +34,70 @@ class DashboardController extends Controller
         $countries = Countries::get();
         $viewData['countries'] = $countries;
         return view(roleFolder().'.edit-profile',$viewData);
+    }
+
+
+    public function viewPdf($id)
+    {
+
+        $file = storage_path('app\pdfs\\') . $id . '.pdf';
+        echo $file;
+        if (file_exists($file)) {
+
+            echo "file found";
+            $headers = [
+                'Content-Type' => 'application/pdf'
+            ];
+
+            return response()->download($file, 'file.pdf', $headers, 'inline');
+            
+            /*$headers = array(
+              'Content-Type: application/pdf',
+            );
+
+            return Response::download($file, 'filename.pdf', $headers);*/
+
+        } else {
+            //abort(404, 'File not found!');
+        }
+    }
+
+    public function viewDocx($id)
+    {
+
+        $file = storage_path('app\docx\\') . $id . '.docx';
+        echo $file;
+        if (file_exists($file)) {
+
+            echo "file found";
+            $headers = [
+                'Content-Type' => 'application/docx'
+            ];
+
+            return response()->download($file, 'file.docx', $headers, 'inline');
+            
+            /*$headers = array(
+              'Content-Type: application/pdf',
+            );
+
+            return Response::download($file, 'filename.pdf', $headers);*/
+
+        } else {
+            //abort(404, 'File not found!');
+        }
+    }
+
+    public function viewImage($id)
+    {
+
+        $file = storage_path('app\docx\\') . $id . '.jpg';
+
+        $filename = $id.'.jpg';
+        $tempImage = tempnam(sys_get_temp_dir(), $filename);
+        copy($file, $tempImage);
+
+        return response()->download($tempImage, $filename);
+
     }
 
     public function updateProfile(Request $request)

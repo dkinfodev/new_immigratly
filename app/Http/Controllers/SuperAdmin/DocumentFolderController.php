@@ -98,7 +98,6 @@ class DocumentFolderController extends Controller
             return response()->json($response);
         }
 
-        
         $object->name = $request->input("name");
         $object->slug = str_slug($request->input("name"));
         $object->save();

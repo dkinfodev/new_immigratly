@@ -43,7 +43,7 @@ class DashboardController extends Controller
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email,'.$object->id,
-            'first_name' => 'required',
+            'first_name' => 'required|regex:/(^([a-zA-Z]+)(\d+)?$)/u',
             'last_name' => 'required',
             'country_code' => 'required',
             'phone_no' => 'required|unique:users,phone_no,'.$object->id,

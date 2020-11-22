@@ -44,14 +44,14 @@
                     </li>
                   </ul>
                 </li>
-                <!-- End Dashboards -->
-
+                
+                <!--
                 <li class="nav-item">
                   <small class="nav-subtitle" title="Pages">Pages</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
-                </li>
+                </li>-->
 
-                <!-- Pages -->
+                <!-- Pages 
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Pages">
                     <i class="tio-pages-outlined nav-icon"></i>
@@ -225,8 +225,8 @@
                   </ul>
                 </li>
                 <!-- End Pages -->
-
-                <!-- Apps -->
+                <!--
+                <!-- Apps --
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Apps">
                     <i class="tio-apps nav-icon"></i>
@@ -254,9 +254,9 @@
                     </li>
                   </ul>
                 </li>
-                <!-- End Apps -->
+                <!-- End Apps --
 
-                <!-- Authentication -->
+                <!-- Authentication --
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Authentication">
                     <i class="tio-lock-outlined nav-icon"></i>
@@ -396,7 +396,7 @@
                     </li>
                   </ul>
                 </li>
-                <!-- End Authentication -->
+                <!-- End Authentication --
 
                 <li class="nav-item ">
                   <a class="js-nav-tooltip-link nav-link " href="./welcome-page.html" title="Welcome page" data-placement="left">
@@ -419,20 +419,22 @@
 
                 <li class="nav-item">
                   <div class="nav-divider"></div>
-                </li>
+                </li> -->
 
                 <li class="nav-item">
-                  <small class="nav-subtitle" title="Documentation">Documentation</small>
+                  <small class="nav-subtitle" title="Documentation">Documents</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
 
+                
                 <li class="nav-item ">
-                  <a class="js-nav-tooltip-link nav-link" href="./documentation/index.html" title="Documentation" data-placement="left">
+                  <a class="js-nav-tooltip-link nav-link" href="{{baseUrl('documents/')}}" title="Documentation" data-placement="left">
                     <i class="tio-book-opened nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Documentation <span class="badge badge-primary badge-pill ml-1">v1.0</span></span>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Documents <span class="badge badge-primary badge-pill ml-1">new</span></span>
                   </a>
                 </li>
 
+                <!--
                 <li class="nav-item ">
                   <a class="js-nav-tooltip-link nav-link" href="./documentation/typography.html" title="Components" data-placement="left">
                     <i class="tio-layers-outlined nav-icon"></i>
@@ -442,7 +444,7 @@
 
                 <li class="nav-item">
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
-                </li>
+                </li>-->
 
                 <!-- Front Builder -->
                 <li class="nav-item nav-footer-item ">

@@ -81,6 +81,8 @@ class VisaServicesController extends Controller
         if($request->input("document_folders")){
             $object->document_folders = implode(",",$request->input("document_folders"));
         }
+
+        $object->unique_id = randomNumber(5);
         $object->save();
         
         $response['status'] = true;
