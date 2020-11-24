@@ -138,6 +138,7 @@ class ServicesController extends Controller
             $check_if_exists = ProfessionalServices::where("service_id",$services[$i])->count();
             if($check_if_exists <= 0){
                 $object = new ProfessionalServices();
+                $object->unique_id = randomNumber();
                 $object->service_id = $services[$i];
                 $object->save();
             }
@@ -183,9 +184,9 @@ class ServicesController extends Controller
         }
         $object = new ServiceDocuments();
         $object->service_id = $id;
+        $object->unique_id = randomNumber();
         $object->name = $request->input("name");
         $object->slug = str_slug($request->input("name"));
-        $object->unique_id = randomNumber(6);
         $object->save();
         
         $response['status'] = true;

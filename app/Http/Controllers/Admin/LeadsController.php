@@ -87,6 +87,7 @@ class LeadsController extends Controller
         }
 
         $object = new Leads();
+        $object->unique_id = randomNumber();
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -226,6 +227,7 @@ class LeadsController extends Controller
             $object->save();
 
             $object2 = new Cases();
+            $object2->unique_id = randomNumber();
             $object2->client_id = $result['user_id'];
             $object2->case_title = $request->input("case_title");
             $object2->start_date = $request->input("start_date");

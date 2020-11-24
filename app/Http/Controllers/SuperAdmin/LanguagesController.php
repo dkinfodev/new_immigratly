@@ -61,6 +61,7 @@ class LanguagesController extends Controller
         }
         $object =  new Languages;
         $object->name = $request->input("name");
+        $object->unique_id = randomNumber();
         $object->save();
         
         $response['status'] = true;

@@ -21,19 +21,11 @@
             <nav aria-label="breadcrumb">
                <ol class="breadcrumb breadcrumb-no-gutter">
                   <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
-                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases/case-documents/documents/'.base64_encode($record->id)) }}">Documents</a></li>
+                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/documents') }}">Documents</a></li>
                   <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
                </ol>
             </nav>
             <h1 class="page-header-title">{{$pageTitle}}</h1>
-            <div clas="d-block">
-               @if(!empty($service->Service($service->service_id)))
-                <h4 class="text-primary p-2">{{$service->Service($service->service_id)->name}}</h4>
-               @else
-                <h4 class="text-primary p-2">Service not found</h4>
-               @endif
-            </div>
          </div>
          <div class="col-sm-auto">
             <div class="btn-group" role="group">
@@ -46,7 +38,7 @@
           <!-- Dropzone -->
             <div id="attachFilesLabel" class="js-dropzone dropzone-custom custom-file-boxed"
                data-hs-dropzone-options='{
-                  "url": "<?php echo baseUrl('cases/case-documents/upload-documents/'.base64_encode($record->id)) ?>?_token=<?php echo csrf_token() ?>&folder_id=<?php echo $document->unique_id ?>&doc_type=<?php echo $doc_type ?>",
+                  "url": "<?php echo baseUrl('documents/files/upload-documents') ?>?_token=<?php echo csrf_token() ?>&folder_id=<?php echo $document->unique_id ?>",
                   "thumbnailWidth": 100,
                   "thumbnailHeight": 100
                }'
@@ -104,7 +96,7 @@
                         <span id="datatableCounter">0</span>
                         Selected
                         </span>
-                        <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/case-documents/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                        <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('documents/files/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                         <i class="tio-delete-outlined"></i> Delete
                         </a>
                      </div>
@@ -155,12 +147,12 @@
                   <th scope="col" class="table-column-pl-0">Document Name</th>
                   <!-- <th scope="col">Folder</th> -->
                   <th scope="col"><i class="tio-chat-outlined"></i></th>
-                  <th scope="col">Members</th>
+                  <!-- <th scope="col">Members</th> -->
                   <th scope="col"></th>
                </tr>
             </thead>
             <tbody>
-               @foreach($case_documents as $key => $doc)
+               @foreach($user_documents as $key => $doc)
                <tr>
                   <td class="table-column-pr-0">
                      <div class="custom-control custom-checkbox">
@@ -204,28 +196,6 @@
                        
                   </td>
                   <td>
-                     <div class="avatar-group avatar-group-xs avatar-circle">
-                        <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
-                        <img class="avatar-img" src="./assets/img/160x160/img9.jpg" alt="Image Description">
-                        </span>
-                        <span class="avatar" data-toggle="tooltip" data-placement="top" title="David Harrison">
-                        <img class="avatar-img" src="./assets/img/160x160/img3.jpg" alt="Image Description">
-                        </span>
-                        <span class="avatar avatar-soft-dark" data-toggle="tooltip" data-placement="top" title="Antony Taylor">
-                        <span class="avatar-initials">A</span>
-                        </span>
-                        <span class="avatar avatar-soft-info" data-toggle="tooltip" data-placement="top" title="Sara Iwens">
-                        <span class="avatar-initials">S</span>
-                        </span>
-                        <span class="avatar" data-toggle="tooltip" data-placement="top" title="Finch Hoot">
-                        <img class="avatar-img" src="./assets/img/160x160/img5.jpg" alt="Image Description">
-                        </span>
-                        <span class="avatar avatar-light avatar-circle" data-toggle="tooltip" data-placement="top" title="Sam Kart, Amanda Harvey and 1 more">
-                        <span class="avatar-initials">+3</span>
-                        </span>
-                     </div>
-                  </td>
-                  <td>
                      <!-- Unfold -->
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -237,33 +207,25 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <span class="dropdown-header">Settings</span>
-                           <a class="dropdown-item" href="#">
+                          
+                           <!-- <a class="dropdown-item" href="#">
                            <i class="tio-share dropdown-item-icon"></i>
                            Share file
-                           </a>
-                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.base64_encode($doc->id)).'/'.base64_encode($record->id).'/'.base64_encode($document->id) ?>')">
+                           </a> -->
+                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('documents/files/file-move-to/'.$doc->unique_id) ?>')">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
                            </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-star-outlined dropdown-item-icon"></i>
-                           Add to stared
-                           </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-edit dropdown-item-icon"></i>
-                           Rename
-                           </a>
-                           <a class="dropdown-item" href="#">
+                           <!-- <a class="dropdown-item" href="#">
                            <i class="tio-download-to dropdown-item-icon"></i>
                            Download
-                           </a>
+                           </a> -->
                            <div class="dropdown-divider"></div>
-                           <a class="dropdown-item" href="#">
+                           <!-- <a class="dropdown-item" href="#">
                            <i class="tio-chat-outlined dropdown-item-icon"></i>
                            Report
-                           </a>
-                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.base64_encode($doc->id))}}">
+                           </a> -->
+                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('documents/files/delete/'.base64_encode($doc->id))}}">
                            <i class="tio-delete-outlined dropdown-item-icon"></i>
                            Delete
                            </a>
@@ -276,7 +238,7 @@
             </tbody>
          </table>
 
-         @if(count($case_documents) <= 0)
+         @if(count($user_documents) <= 0)
          <div class="text-danger text-center p-2">
             No documents available
          </div>
@@ -305,13 +267,20 @@
          $("#datatableCounter").html($(".row-checkbox:checked").length);
       });
    });
+   var is_error = false;
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
-      dropzone.on("addedfile", function() {
-        console.log('File added!!!');
+      dropzone.on("success", function(response) {
+         if(response.status == false){
+            is_error = true;
+         }
       });
       dropzone.on("queuecomplete", function() {
-        location.reload();
+         if(is_error == true){
+            errorMessage("Error while upload file");
+         }else{
+            location.reload();
+         }
       });
       
    });      

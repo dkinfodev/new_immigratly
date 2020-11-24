@@ -570,15 +570,10 @@ if(!function_exists("generateString")){
     } 
 }
 if(!function_exists("randomNumber")){
-    function randomNumber($n=8) { 
+    function randomNumber($n=10) { 
         $characters = '0123456789'; 
         $randomString = ''; 
-        $randomString = substr(str_shuffle($characters), 0, $n);
-        // for ($i = 0; $i < $n; $i++) { 
-        //     $index = rand(0, strlen($characters) - 1); 
-        //     $randomString .= $characters[$index]; 
-        // } 
-      
+        $randomString = substr(str_shuffle($characters), 0, $n);     
         return $randomString; 
     } 
 }

@@ -27,18 +27,21 @@
         <div class="text-dark">{{$record->case_title}}</div>
       </div>
       <div class="col-sm-auto">
-         <a onclick="showPopup('{{ baseUrl('cases/case-documents/add-folder/'.base64_encode($record->id)) }}')" class="btn btn-primary" href="javascript:;">
+        <a class="btn btn-success" href="{{ baseUrl('cases/case-documents/documents-exchanger/'.base64_encode($record->id)) }}">
+         <i class="tio-swap-horizontal mr-1"></i> Documents Exchanger
+        </a>
+        <a onclick="showPopup('{{ baseUrl('cases/case-documents/add-folder/'.base64_encode($record->id)) }}')" class="btn btn-primary" href="javascript:;">
          <i class="tio-folder-add mr-1"></i> Add folder
-         </a>
+        </a>
       </div>
     </div>
   </div>
   <!-- Card -->
+  @if($is_pinned)
   <div class="card">
     <!-- Header -->
-
     <div class="card-body">
-      @if($is_pinned)
+      
       <h2 class="h4 mb-3">Pinned access <i class="tio-help-outlined text-muted" data-toggle="tooltip" data-placement="right" title="Pinned access to files you've been working on."></i></h2>
       <!-- Pinned Access -->
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 mb-5">
@@ -111,7 +114,13 @@
          @endforeach
          @endforeach
       </div>
-      @endif
+    
+    </div>
+  </div>
+  @endif
+  <div class="card">
+    <!-- Header -->
+    <div class="card-body">
       <!-- End Pinned Access -->
       <div class="row align-items-center mb-2">
          <div class="col">

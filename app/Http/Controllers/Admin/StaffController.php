@@ -92,6 +92,7 @@ class StaffController extends Controller
         }
         $id = \Auth::user()->id;
         $object = new User();
+        $object->unique_id = randomNumber();
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");

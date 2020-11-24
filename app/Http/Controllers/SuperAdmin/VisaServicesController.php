@@ -21,6 +21,7 @@ class VisaServicesController extends Controller
 
     public function visaServices()
     {
+        
         $viewData['pageTitle'] = "Visa Services";
         return view(roleFolder().'.visa-services.lists',$viewData);
     } 
@@ -78,6 +79,7 @@ class VisaServicesController extends Controller
         }
         $object->name = $request->input("name");
         $object->slug = str_slug($request->input("name"));
+        $object->unique_id = randomNumber();
         if($request->input("document_folders")){
             $object->document_folders = implode(",",$request->input("document_folders"));
         }

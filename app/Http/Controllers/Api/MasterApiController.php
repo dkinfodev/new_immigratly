@@ -41,7 +41,7 @@ class MasterApiController extends Controller
             	$response['message'] = "Phone no already exists";
             	return response()->json($response);
             }
-            $unique_id = randomNumber(5);
+            $unique_id = randomNumber();
 	       	$object = new User();
 	        $object->first_name = $user['first_name'];
 	        $object->last_name = $user['last_name'];

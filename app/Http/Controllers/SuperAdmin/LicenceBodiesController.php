@@ -71,6 +71,7 @@ class LicenceBodiesController extends Controller
         $object =  new LicenceBodies;
         $object->name = $request->input("name");
         $object->country_id = $request->input("country_id");
+        $object->unique_id = randomNumber();
         $object->save();
         
         $response['status'] = true;

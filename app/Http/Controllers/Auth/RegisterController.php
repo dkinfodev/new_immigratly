@@ -95,7 +95,84 @@ class RegisterController extends Controller
         $viewData['countries'] = Countries::get();
         return view('auth.professional-signup',$viewData);   
     }
+    public function registerUser(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'password' => 'required|confirmed|min:6',
+            'password_confirmation' => 'required|min:6',
+            'country_code' => 'required',
+            'phone_no' => 'required',
+            'verify_by'=>'required',
+            // 'verification_code'=>'required',
+        ]);
 
+
+        session(['redirect_back' => $request->input('redirect_back')]);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+
+        $phone = $request->input("country_code").$request->input("phone_no");
+
+        if($request->input("verify_by") == 'sms'){
+            // $res = verifyCode(\Session::get("service_code"),$request->input('verification_code'),$phone);
+
+            // if($res['status'] == false){
+            //     $response['status'] = false;
+            //     $response['message'] = 'OTP Verification code entered is invalid';
+            //     return response()->json($response);
+            // }
+        }else{
+            $date = date("Y-m-d H:i:s");
+            $match_code = VerificationCode::where("verify_by","email")
+                        ->where("match_string",$request->input("email"))
+                        ->where("verify_code",$request->input("verification_code"))
+                        ->whereDate("expiry_time","<",$date)
+                        ->count();
+            // if($request->input("verification_code") != \Session::get("verify_code")){
+           if($match_code <= 0){
+                return redirect()->back()
+                        ->with("verification_code","Verification code entered is invalid")
+                        ->withInput();
+            }
+            VerificationCode::where("match_string",$request->input("email"))->delete();
+        }
+        $object = new User();
+        $object->unique_id = randomNumber();
+        $object->first_name = $request->input("first_name");
+        $object->last_name = $request->input("last_name");
+        $object->email = $request->input("email");
+        $object->password = bcrypt($request->input("password"));
+        $object->country_code = $request->input("country_code");
+        $object->phone_no = $request->input("phone_no");
+        $object->role = "user";
+        $object->is_active = 1;
+        $object->is_verified = 1;
+
+        $object->save();
+        $user_id = $object->id;
+        \Auth::loginUsingId($user_id);
+        \Session::forget("verify_code");
+        $response['status'] = true;
+        if(!empty($request->input('redirect_back'))){
+            $response['redirect_back']= $request->input('redirect_back');    
+        }else{
+            $response['redirect_back'] = url('home');  
+        }
+
+        return response()->json($response);
+    }
     public function registerProfessional(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:professionals',
@@ -154,6 +231,7 @@ class RegisterController extends Controller
         $subdomain = strtolower(str_replace(" ","",$subdomain));
         $client_secret = generateString(50);
         $object = new Professionals();
+        $object->unique_id = randomNumber();
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -194,6 +272,7 @@ class RegisterController extends Controller
         $now = \Carbon\Carbon::now();
         $password = $request->input("password");
         $user_data = array(
+                "unique_id"=> randomNumber(),
                 "first_name"=>$request->input('first_name'),
                 "last_name"=>$request->input('last_name'),
                 "email"=>$request->input('email'),

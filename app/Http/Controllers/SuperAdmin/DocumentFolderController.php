@@ -61,7 +61,7 @@ class DocumentFolderController extends Controller
         $object =  new DocumentFolder();
         $object->name = $request->input("name");
         $object->slug = str_slug($request->input("name"));
-        $object->unique_id = randomNumber(5);
+        $object->unique_id = randomNumber();
         $object->save();
         
         $response['status'] = true;

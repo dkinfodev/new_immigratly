@@ -41,7 +41,7 @@ class CasesController extends Controller
                                 $query->where("case_title","LIKE","%$search%");
                             }
                         })
-                        ->paginate(2);
+                        ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.cases.ajax-list',$viewData);
         $contents = $view->render();
@@ -144,6 +144,7 @@ class CasesController extends Controller
         $object->client_id = $request->input("client_id");
         $object->case_title = $request->input("case_title");
         $object->start_date = $request->input("start_date");
+        $object->unique_id = randomNumber();
         if($request->input("end_date")){
             $object->end_date = $request->input("end_date");
         }
@@ -159,6 +160,7 @@ class CasesController extends Controller
         if(!empty($assign_teams)){
             for($i=0;$i < count($assign_teams);$i++){
                 $object2 = new CaseTeams();
+                $object2->unique_id = randomNumber();
                 $object2->user_id = $assign_teams[$i];
                 $object2->case_id = $case_id;
                 $object2->save();
@@ -246,6 +248,7 @@ class CasesController extends Controller
                 $checkExists = CaseTeams::where("user_id",$assign_teams[$i])->where("case_id",$case_id)->count();
                 if($checkExists == 0){
                     $object2 = new CaseTeams();
+                    $object2->unique_id = randomNumber();
                     $object2->user_id = $assign_teams[$i];
                     $object2->case_id = $case_id;
                     $object2->save();
@@ -429,7 +432,7 @@ class CasesController extends Controller
                 $source_url = $file->getPathName();
                 $destinationPath = professionalDir()."/documents";
                 if($file->move($destinationPath, $newName)){
-                    $unique_id = randomNumber(10);
+                    $unique_id = randomNumber();
                     $object = new Documents();
                     $object->file_name = $newName;
                     $object->original_name = $fileName;
@@ -439,6 +442,7 @@ class CasesController extends Controller
 
                     $object2 = new CaseDocuments();
                     $object2->case_id = $id;
+                    $object2->unique_id = randomNumber();
                     $object2->folder_id = $folder_id;
                     $object2->file_id = $unique_id;
                     $object2->created_by = \Auth::user()->id;
@@ -493,7 +497,7 @@ class CasesController extends Controller
         $object = new CaseFolders();
         $object->case_id = $id;
         $object->name = $request->input("name");
-        $object->unique_id = randomNumber(6);
+        $object->unique_id = randomNumber();
         $object->created_by = \Auth::user()->id;
         $object->save();
         
@@ -604,5 +608,54 @@ class CasesController extends Controller
         $response['message'] = "File moved to folder successfully";
         \Session::flash('success', 'File moved to folder successfully'); 
         return response()->json($response);       
+    }
+
+    public function documentsExchanger($case_id){
+        $id = base64_decode($case_id);
+        $record = Cases::find($id);
+        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+        $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
+        $case_folders = CaseFolders::where("case_id",$record->id)->get();
+        
+        $file_url = professionalDirUrl()."/documents";
+        $file_dir = professionalDir()."/documents";
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        $viewData['service'] = $service;
+        $viewData['documents'] = $documents;
+        $viewData['case_folders'] = $case_folders;
+        $viewData['record'] = $record;
+        $viewData['case_id'] = $record->id;
+        $viewData['pageTitle'] = "Documents Exchanger";
+
+        return view(roleFolder().'.cases.documents-exchanger',$viewData);
+    }
+
+    public function saveExchangeDocuments(Request $request){
+        $doc_type = $request->input("document_type");
+        $folder_id = $request->input("folder_id");
+        $case_id = base64_decode($request->input("case_id"));
+        $files = $request->input("files");
+        $existing_files = CaseDocuments::where("case_id",$case_id)
+                        ->where("document_type",$doc_type)
+                        ->where("folder_id",$folder_id)
+                        ->pluck("file_id");
+        if(!empty($existing_files)){
+            $existing_files = $existing_files->toArray();
+            $new_files = array_diff($files,$existing_files);
+            $new_files = array_values($new_files);
+        }else{
+            $new_files = $files;
+        }
+        for($i=0;$i < count($new_files);$i++){
+            $data = array();
+            $data['folder_id'] = $folder_id;
+            $data['document_type'] = $doc_type;
+            CaseDocuments::where("file_id",$new_files[$i])->update($data);
+        }
+
+        $response['status'] = true;
+        $response['message'] = "File transfered successfully";
+        return response()->json($response); 
     }
 }

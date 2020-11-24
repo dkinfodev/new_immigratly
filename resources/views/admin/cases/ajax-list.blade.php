@@ -7,7 +7,7 @@
     </div>
   </td>
   <td class="table-column-pl-0">
-    <a class="d-flex align-items-center" href="javascript:;">
+    <a class="d-flex align-items-center" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">
       @if(!empty($record->Client($record->client_id)))
       <?php
       $client = $record->Client($record->client_id);
@@ -32,9 +32,9 @@
     <?php
     $client = $record->Client($record->client_id);
     ?>
-    <span class="badge badge-soft-primary p-2">{{$client->first_name." ".$client->last_name}}</span>
+    <span class="text-primary h4">{{$client->first_name." ".$client->last_name}}</span>
     @else
-    <span class="badge badge-soft-danger p-2">Client not found</span>
+    <span class="text-danger h4">Client not found</span>
     @endif
   </td>
   <td>
@@ -97,11 +97,20 @@
          }'>
               More <i class="tio-chevron-down ml-1"></i>
       </a>
-      <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('cases/case-documents/documents/'.base64_encode($record->id))}}">Case Documents</a>
+      <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">
+         <i class="tio-edit dropdown-item-icon"></i>
+         Edit
+        </a>
+        <a class="dropdown-item" href="{{baseUrl('cases/case-documents/documents/'.base64_encode($record->id))}}">
+         <i class="tio-pages-outlined dropdown-item-icon"></i>
+         Case Documents
+        </a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/delete/'.base64_encode($record->id))}}">
+         <i class="tio-delete-outlined dropdown-item-icon"></i>
+         Delete
+        </a>
       </div>
     </div>
    </td>

@@ -93,6 +93,31 @@ function errorMessage(message){
 function warningMessage(message){
   toastr.warning(message, 'Warning');
 }
+function bottomMessage(message,type){
+  toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-bottom-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+  }
+  if(type == 'success'){
+    toastr.success(message, 'Success');
+  }else{
+    toastr.error(message, 'Success');
+  }
+  
+}
 function redirect(url){
   window.location.href = url;
 }

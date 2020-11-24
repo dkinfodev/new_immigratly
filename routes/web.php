@@ -127,6 +127,27 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::post('/update-profile', [App\Http\Controllers\User\DashboardController::class, 'updateProfile']);
     Route::get('/change-password', [App\Http\Controllers\User\DashboardController::class, 'changePassword']);
     Route::post('/update-password', [App\Http\Controllers\User\DashboardController::class, 'updatePassword']);
+
+    Route::group(array('prefix' => 'documents'), function () {
+        Route::get('/', [App\Http\Controllers\User\MyDocumentsController::class, 'myFolders']);
+        Route::get('/add-folder', [App\Http\Controllers\User\MyDocumentsController::class, 'addFolder']);
+        Route::post('/add-folder', [App\Http\Controllers\User\MyDocumentsController::class, 'createFolder']);
+        Route::get('/edit-folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'editFolder']);
+        Route::post('/edit-folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'updateFolder']);
+        Route::get('/delete-folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteFolder']);
+        Route::group(array('prefix' => 'files'), function () {
+            Route::get('/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'folderFiles']);
+            Route::post('/upload-documents', [App\Http\Controllers\User\MyDocumentsController::class, 'uploadDocuments']);
+            Route::get('/delete/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteDocument']);
+            Route::post('/delete-multiple', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteMultipleDocuments']);
+
+            Route::get('/file-move-to/{file_id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fileMoveTo']);
+            Route::post('/file-move-to', [App\Http\Controllers\User\MyDocumentsController::class, 'moveFileToFolder']);
+        });
+
+        Route::get('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'documentsExchanger']);
+        Route::post('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'saveExchangeDocuments']);
+    });
 });
 
 // Professional Admin
@@ -225,6 +246,9 @@ Route::group(array('prefix' => 'admin'), function () {
 
                 Route::get('/file-move-to/{file_id}/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'fileMoveTo']);
                 Route::post('/file-move-to', [App\Http\Controllers\Admin\CasesController::class, 'moveFileToFolder']);
+
+                Route::get('/documents-exchanger/{case_id}', [App\Http\Controllers\Admin\CasesController::class, 'documentsExchanger']);
+                Route::post('/documents-exchanger', [App\Http\Controllers\Admin\CasesController::class, 'saveExchangeDocuments']);
             });
         });
 
