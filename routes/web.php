@@ -148,6 +148,10 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::get('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'documentsExchanger']);
         Route::post('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'saveExchangeDocuments']);
     });
+
+    Route::group(array('prefix' => 'professional-cases'), function () {
+        Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'professionals']);
+    });
 });
 
 // Professional Admin

@@ -40,6 +40,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    static function deleteRecord($id){
+        User::where("id",$id)->delete();
+    }
+    
     public function ProfessionalPanel()
     {
         return $this->hasOne('App\Models\ProfessionalPanel','user_id');
@@ -59,4 +63,6 @@ class User extends Authenticatable
                     ->get();
         return $client;
     } 
+
+
 }

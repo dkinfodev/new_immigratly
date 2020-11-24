@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use App\Models\UserDetails;
 use App\Models\Professionals;
 use App\Models\Countries;
 use App\Models\VerificationCode;
@@ -149,6 +150,7 @@ class RegisterController extends Controller
             VerificationCode::where("match_string",$request->input("email"))->delete();
         }
         $object = new User();
+        $unique_id = randomNumber();
         $object->unique_id = randomNumber();
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
@@ -162,6 +164,12 @@ class RegisterController extends Controller
 
         $object->save();
         $user_id = $object->id;
+
+
+        $object2 = new UserDetails();
+        $object2->user_id = $unique_id;
+        $object2->save();
+
         \Auth::loginUsingId($user_id);
         \Session::forget("verify_code");
         $response['status'] = true;

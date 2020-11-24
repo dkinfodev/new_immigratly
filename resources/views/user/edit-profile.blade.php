@@ -165,9 +165,8 @@
                 ?> 
 
                 @foreach($languages as $language)
-                <option value="{{$language->id}}">{{$language->name}}</option>
+                <option {{ (in_array($language->id,$language_known))?'selected':'' }} value="{{$language->id}}">{{$language->name}}</option>
                 @endforeach
-
                 </select>
               </div>
             </div>
