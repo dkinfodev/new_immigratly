@@ -171,6 +171,9 @@ Route::group(array('prefix' => 'admin'), function () {
     Route::group(array('middleware' => 'auth'), function () {
         Route::get('/complete-profile', [App\Http\Controllers\Admin\ProfileController::class, 'completeProfile']);
         Route::post('/save-profile', [App\Http\Controllers\Admin\ProfileController::class, 'saveProfile']);
+
+        Route::get('/edit-profile', [App\Http\Controllers\Admin\ProfileController::class, 'EditProfile']);
+        Route::post('/update-profile', [App\Http\Controllers\Admin\ProfileController::class, 'updateProfile']);
     });
     Route::group(array('middleware' => 'admin'), function () {
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);

@@ -34,114 +34,72 @@
   <!-- End Page Header -->
 
   <div class="row">
-    <div class="col-lg-3">
-      <!-- Navbar -->
-      <div class="navbar-vertical navbar-expand-lg mb-3 mb-lg-5">
-        <!-- Navbar Toggle -->
-        <button type="button" class="navbar-toggler btn btn-block btn-white mb-3" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navbarVerticalNavMenu" data-toggle="collapse" data-target="#navbarVerticalNavMenu">
-          <span class="d-flex justify-content-between align-items-center">
-            <span class="h5 mb-0">Nav menu</span>
+    
+    <div class="col-lg-12">
+      <!-- Card -->
+      <div class="card mb-3 mb-lg-5">
+        <!-- Profile Cover -->
+        <div class="profile-cover">
+          <div class="profile-cover-img-wrapper">
+            <img id="profileCoverImg" class="profile-cover-img" src="./assets/img/1920x400/img2.jpg" alt="Image Description">
 
-            <span class="navbar-toggle-default">
-              <i class="tio-menu-hamburger"></i>
-            </span>
-
-            <span class="navbar-toggle-toggled">
-              <i class="tio-clear"></i>
-            </span>
-          </span>
-        </button>
-        <!-- End Navbar Toggle -->
-
-        <div id="navbarVerticalNavMenu" class="collapse navbar-collapse">
-          <!-- Navbar Nav -->
-          <ul id="navbarSettings" class="js-sticky-block js-scrollspy navbar-nav navbar-nav-lg nav-tabs card card-navbar-nav"
-          data-hs-sticky-block-options='{
-          "parentSelector": "#navbarVerticalNavMenu",
-          "breakpoint": "lg",
-          "startPoint": "#navbarVerticalNavMenu",
-          "endPoint": "#stickyBlockEndPoint",
-          "stickyOffsetTop": 20
-        }'>
-
-        <li class="nav-item">
-          <a class="nav-link active" href="{{baseUrl('edit-profile#content')}}">
-            <i class="tio-user-outlined nav-icon"></i>
-            Personal info
-          </a>
-        </li>
-      </ul>
-      <!-- End Navbar Nav -->
-    </div>
-  </div>
-  <!-- End Navbar -->
-</div>
-
-<div class="col-lg-9">
-  <!-- Card -->
-  <div class="card mb-3 mb-lg-5">
-    <!-- Profile Cover -->
-    <div class="profile-cover">
-      <div class="profile-cover-img-wrapper">
-        <img id="profileCoverImg" class="profile-cover-img" src="./assets/img/1920x400/img2.jpg" alt="Image Description">
-
-        <!-- Custom File Cover -->
-        <div class="profile-cover-content profile-cover-btn">
-          <div class="custom-file-btn">
-            <input type="file" class="js-file-attach custom-file-btn-input" id="profileCoverUplaoder"
-            data-hs-file-attach-options='{
-            "textTarget": "#profileCoverImg",
-            "mode": "image",
-            "targetAttr": "src"
-          }'>
-          <label class="custom-file-btn-label btn btn-sm btn-white" for="profileCoverUplaoder">
-            <i class="tio-add-photo mr-sm-1"></i>
-            <span class="d-none d-sm-inline-block">Update your header</span>
-          </label>
+            <!-- Custom File Cover -->
+            <div class="profile-cover-content profile-cover-btn">
+              <div class="custom-file-btn">
+                <input type="file" class="js-file-attach custom-file-btn-input" id="profileCoverUplaoder"
+                data-hs-file-attach-options='{
+                "textTarget": "#profileCoverImg",
+                "mode": "image",
+                "targetAttr": "src"
+              }'>
+              <label class="custom-file-btn-label btn btn-sm btn-white" for="profileCoverUplaoder">
+                <i class="tio-add-photo mr-sm-1"></i>
+                <span class="d-none d-sm-inline-block">Update your header</span>
+              </label>
+            </div>
+          </div>
+          <!-- End Custom File Cover -->
         </div>
       </div>
-      <!-- End Custom File Cover -->
+      <!-- End Profile Cover -->
+
+      <!-- Avatar -->
+      <label class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar" for="avatarUploader">
+        <img id="avatarImg" class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
+
+        <input type="file" class="js-file-attach avatar-uploader-input" id="avatarUploader"
+        data-hs-file-attach-options='{
+        "textTarget": "#avatarImg",
+        "mode": "image",
+        "targetAttr": "src"
+      }'>
+
+      <span class="avatar-uploader-trigger">
+        <i class="tio-edit avatar-uploader-icon shadow-soft"></i>
+      </span>
+    </label>
+    <!-- End Avatar -->
+
+    <!-- Body -->
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-5">
+          <span class="d-block font-size-sm mb-2">Who can see your profile photo? <i class="tio-help-outlined" data-toggle="tooltip" data-placement="top" title="Your visibility setting only applies to your profile photo. Your header image is always visible to anyone."></i></span>
+
+          <!-- Select -->
+          <div class="select2-custom">
+            <select class="js-select2-custom"
+            data-hs-select2-options='{
+            "minimumResultsForSearch": "Infinity"
+          }'>
+          <option value="privacy1" data-option-template='<span class="media"><i class="tio-earth-east tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Anyone</span><small class="select2-custom-hide">Visible to anyone who can view your content. Accessible by installed apps.</small></span></span>'>Anyone</option>
+          <option value="privacy2" data-option-template='<span class="media"><i class="tio-lock-outlined tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Only you</span><small class="select2-custom-hide">Only visible to you.</small></span></span>'>Only you</option>
+        </select>
+      </div>
+      <!-- End Select -->
     </div>
   </div>
-  <!-- End Profile Cover -->
-
-  <!-- Avatar -->
-  <label class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar" for="avatarUploader">
-    <img id="avatarImg" class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
-
-    <input type="file" class="js-file-attach avatar-uploader-input" id="avatarUploader"
-    data-hs-file-attach-options='{
-    "textTarget": "#avatarImg",
-    "mode": "image",
-    "targetAttr": "src"
-  }'>
-
-  <span class="avatar-uploader-trigger">
-    <i class="tio-edit avatar-uploader-icon shadow-soft"></i>
-  </span>
-</label>
-<!-- End Avatar -->
-
-<!-- Body -->
-<div class="card-body">
-  <div class="row">
-    <div class="col-sm-5">
-      <span class="d-block font-size-sm mb-2">Who can see your profile photo? <i class="tio-help-outlined" data-toggle="tooltip" data-placement="top" title="Your visibility setting only applies to your profile photo. Your header image is always visible to anyone."></i></span>
-
-      <!-- Select -->
-      <div class="select2-custom">
-        <select class="js-select2-custom"
-        data-hs-select2-options='{
-        "minimumResultsForSearch": "Infinity"
-      }'>
-      <option value="privacy1" data-option-template='<span class="media"><i class="tio-earth-east tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Anyone</span><small class="select2-custom-hide">Visible to anyone who can view your content. Accessible by installed apps.</small></span></span>'>Anyone</option>
-      <option value="privacy2" data-option-template='<span class="media"><i class="tio-lock-outlined tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Only you</span><small class="select2-custom-hide">Only visible to you.</small></span></span>'>Only you</option>
-    </select>
-  </div>
-  <!-- End Select -->
-</div>
-</div>
-<!-- End Row -->
+  <!-- End Row -->
 </div>
 <!-- End Body -->
 </div>
@@ -191,10 +149,10 @@
           <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Your email" value="{{$user->email}}" aria-label="Email" value="mark@example.com">
 
           @error('email')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+          <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+          </span>
+          @enderror
           
         </div>
       </div>
@@ -223,11 +181,11 @@
         <div class="col-sm-7">
           <input type="text" name="phone_no" value="{{$user->phone_no}}" id="phone_no" class="form-control @error('phone_no') is-invalid @enderror">
 
-            @error('phone_no')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+          @error('phone_no')
+          <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+          </span>
+          @enderror
 
         </div>
       </div>      
@@ -250,11 +208,11 @@
         <div class="col-sm-9">
           <input type="text" name="password" id="password" class="form-control @error('password') is-invalid @enderror">
 
-            @error('password')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+          @error('password')
+          <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+          </span>
+          @enderror
 
         </div>
 
@@ -372,4 +330,4 @@
     </script>
 
 
-@endsection
+    @endsection
