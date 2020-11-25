@@ -41,7 +41,7 @@ class ConfigServiceProvider extends ServiceProvider
                 \Session::put("login_to",'admin_panel');
             }
         }else{
-            $login_to = 'professional_panel'; // admin_panel/professional_panel
+            $login_to = 'admin_panel'; // admin_panel/professional_panel
             \Session::put("login_to",$login_to);
             if($login_to == 'professional_panel'){
                 \Session::put("subdomain",'fastzone');

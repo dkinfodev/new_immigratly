@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\Countries;
 use App\Models\User;
@@ -42,7 +43,7 @@ class DashboardController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'password' => 'required|confirmed|min:6',
+            //'password' => 'required|confirmed|min:6',
             'country_code' => 'required',
             'phone_no' => 'required',
             // 'verification_code'=>'required',
@@ -61,7 +62,6 @@ class DashboardController extends Controller
             return response()->json($response);
         }
         
-
         $id = \Auth::user()->id;
         $user = User::find($id);
         
@@ -75,7 +75,51 @@ class DashboardController extends Controller
         $object->phone_no = $request->input("phone_no");
         $object->country_code = $request->input("country_code");
         $object->save();
-        return redirect()->back()->with("success","Profile edited successfully");
+        return redirect()->back()->with("success","Profile updated successfully");
 
+    }
+
+    public function changePassword()
+    {
+        $id = \Auth::user()->id;
+        $record = User::where("id",$id)->first();
+        $viewData['record'] = $record;
+        $viewData['pageTitle'] = "Change Password";
+        return view(roleFolder().'.change-password',$viewData);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $id = \Auth::user()->id;
+        $object =  User::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|confirmed|min:4',
+            'password_confirmation' => 'required|min:4',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+        
+        if($request->input("password")){
+            $object->password = bcrypt($request->input("password"));
+        }
+
+        $object->save();
+
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('/');
+        $response['message'] = "Updation sucessfully";
+        
+        return response()->json($response);
     }
 }
