@@ -974,3 +974,20 @@ if(!function_exists("userProfile")){
         return $url;
     }
 }
+if(!function_exists("superAdminDir")){
+    function superAdminDir(){
+
+        $dir = public_path("uploads/admin");
+
+        return $dir;
+    }
+}
+
+if(!function_exists("superAdminDirUrl")){
+    function superAdminDirUrl(){
+
+        $dir = asset("public/uploads/admin");
+        
+        return $dir;
+    }
+}

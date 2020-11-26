@@ -19,7 +19,7 @@ class DashboardController extends Controller
     }
     public function dashboard()
     {
-       	$viewData['pageTitle'] = "Dashboard";
+        $viewData['pageTitle'] = "Dashboard";
         return view(roleFolder().'.dashboard',$viewData);
     }
     public function editProfile(Request $request){
@@ -32,10 +32,15 @@ class DashboardController extends Controller
 
         $countries = DB::table(MAIN_DATABASE.".countries")->get();
         $viewData['countries'] = $countries;
-        $states = DB::table(MAIN_DATABASE.".states")->where("country_id",$record2->country_id)->get();
-        $viewData['states'] = $states;
-        $cities = DB::table(MAIN_DATABASE.".cities")->where("state_id",$record2->state_id)->get();
-        $viewData['cities'] = $cities;
+
+        if(!empty($record2))
+        {
+            $states = DB::table(MAIN_DATABASE.".states")->where("country_id",$record2->country_id)->get();
+            $viewData['states'] = $states;
+            $cities = DB::table(MAIN_DATABASE.".cities")->where("state_id",$record2->state_id)->get();
+            $viewData['cities'] = $cities;
+        }
+
 
         $languages = Languages::get();
         $viewData['languages'] = $languages;
@@ -56,6 +61,11 @@ class DashboardController extends Controller
 
         $username = $object->name;
         $object2 = UserDetails::where('user_id',$id)->first();
+
+        if(empty($object2))
+        {
+            $object2 = new UserDetails();
+        }
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email,'.$object->id,
@@ -117,6 +127,7 @@ class DashboardController extends Controller
             }
         }
 
+        $object2->user_id = \Auth::user()->id;
         $object2->date_of_birth = $request->input("date_of_birth");
         $object2->gender = $request->input("gender");
         $object2->country_id = $request->input("country_id");

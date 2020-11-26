@@ -49,6 +49,9 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     Route::get('/edit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'editProfile']); 
     Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
 
+    Route::get('/change-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'changePassword']);
+    Route::post('/update-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updatePassword']);
+
     Route::group(array('prefix' => 'licence-bodies'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'licenceBodies']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'getAjaxList']); 
@@ -150,7 +153,7 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     });
 
     Route::group(array('prefix' => 'professional-cases'), function () {
-        Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'professionals']);
+        Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'cases']);
     });
 });
 
@@ -171,6 +174,9 @@ Route::group(array('prefix' => 'admin'), function () {
     Route::group(array('middleware' => 'auth'), function () {
         Route::get('/complete-profile', [App\Http\Controllers\Admin\ProfileController::class, 'completeProfile']);
         Route::post('/save-profile', [App\Http\Controllers\Admin\ProfileController::class, 'saveProfile']);
+
+        Route::get('/edit-profile', [App\Http\Controllers\Admin\ProfileController::class, 'EditProfile']);
+        Route::post('/update-profile', [App\Http\Controllers\Admin\ProfileController::class, 'updateProfile']);
     });
     Route::group(array('middleware' => 'admin'), function () {
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);

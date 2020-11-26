@@ -34,114 +34,74 @@
   <!-- End Page Header -->
 
   <div class="row">
-    <div class="col-lg-3">
-      <!-- Navbar -->
-      <div class="navbar-vertical navbar-expand-lg mb-3 mb-lg-5">
-        <!-- Navbar Toggle -->
-        <button type="button" class="navbar-toggler btn btn-block btn-white mb-3" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navbarVerticalNavMenu" data-toggle="collapse" data-target="#navbarVerticalNavMenu">
-          <span class="d-flex justify-content-between align-items-center">
-            <span class="h5 mb-0">Nav menu</span>
+    
+    <div class="col-lg-12">
+      <form method="post" id="form" class="js-validate" action="{{baseUrl('/submit-profile') }}">  
+      @csrf
+      <!-- Card -->
+      <div class="card mb-3 mb-lg-5">
+        <!-- Profile Cover -->
+        <div class="profile-cover">
+          <div class="profile-cover-img-wrapper">
+            <img id="profileCoverImg" class="profile-cover-img" src="./assets/img/1920x400/img2.jpg" alt="Image Description">
 
-            <span class="navbar-toggle-default">
-              <i class="tio-menu-hamburger"></i>
-            </span>
-
-            <span class="navbar-toggle-toggled">
-              <i class="tio-clear"></i>
-            </span>
-          </span>
-        </button>
-        <!-- End Navbar Toggle -->
-
-        <div id="navbarVerticalNavMenu" class="collapse navbar-collapse">
-          <!-- Navbar Nav -->
-          <ul id="navbarSettings" class="js-sticky-block js-scrollspy navbar-nav navbar-nav-lg nav-tabs card card-navbar-nav"
-          data-hs-sticky-block-options='{
-          "parentSelector": "#navbarVerticalNavMenu",
-          "breakpoint": "lg",
-          "startPoint": "#navbarVerticalNavMenu",
-          "endPoint": "#stickyBlockEndPoint",
-          "stickyOffsetTop": 20
-        }'>
-
-        <li class="nav-item">
-          <a class="nav-link active" href="{{baseUrl('edit-profile#content')}}">
-            <i class="tio-user-outlined nav-icon"></i>
-            Personal info
-          </a>
-        </li>
-      </ul>
-      <!-- End Navbar Nav -->
-    </div>
-  </div>
-  <!-- End Navbar -->
-</div>
-
-<div class="col-lg-9">
-  <!-- Card -->
-  <div class="card mb-3 mb-lg-5">
-    <!-- Profile Cover -->
-    <div class="profile-cover">
-      <div class="profile-cover-img-wrapper">
-        <img id="profileCoverImg" class="profile-cover-img" src="./assets/img/1920x400/img2.jpg" alt="Image Description">
-
-        <!-- Custom File Cover -->
-        <div class="profile-cover-content profile-cover-btn">
-          <div class="custom-file-btn">
-            <input type="file" class="js-file-attach custom-file-btn-input" id="profileCoverUplaoder"
-            data-hs-file-attach-options='{
-            "textTarget": "#profileCoverImg",
-            "mode": "image",
-            "targetAttr": "src"
-          }'>
-          <label class="custom-file-btn-label btn btn-sm btn-white" for="profileCoverUplaoder">
-            <i class="tio-add-photo mr-sm-1"></i>
-            <span class="d-none d-sm-inline-block">Update your header</span>
-          </label>
+            <!-- Custom File Cover -->
+            <div class="profile-cover-content profile-cover-btn">
+              <div class="custom-file-btn">
+                <input type="file" class="js-file-attach custom-file-btn-input" name="profile_image" id="profileCoverUplaoder"
+                data-hs-file-attach-options='{
+                "textTarget": "#profileCoverImg",
+                "mode": "image",
+                "targetAttr": "src"
+              }'>
+              <label class="custom-file-btn-label btn btn-sm btn-white" for="profileCoverUplaoder">
+                <i class="tio-add-photo mr-sm-1"></i>
+                <span class="d-none d-sm-inline-block">Update your header</span>
+              </label>
+            </div>
+          </div>
+          <!-- End Custom File Cover -->
         </div>
       </div>
-      <!-- End Custom File Cover -->
+      <!-- End Profile Cover -->
+
+      <!-- Avatar -->
+      <label class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar" for="avatarUploader">
+        <img id="avatarImg" class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
+
+        <input type="file" class="js-file-attach avatar-uploader-input" id="avatarUploader"
+        data-hs-file-attach-options='{
+        "textTarget": "#avatarImg",
+        "mode": "image",
+        "targetAttr": "src"
+      }'>
+
+      <span class="avatar-uploader-trigger">
+        <i class="tio-edit avatar-uploader-icon shadow-soft"></i>
+      </span>
+    </label>
+    <!-- End Avatar -->
+
+    <!-- Body -->
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-5">
+          <span class="d-block font-size-sm mb-2">Who can see your profile photo? <i class="tio-help-outlined" data-toggle="tooltip" data-placement="top" title="Your visibility setting only applies to your profile photo. Your header image is always visible to anyone."></i></span>
+
+          <!-- Select -->
+          <div class="select2-custom">
+            <select class="js-select2-custom"
+            data-hs-select2-options='{
+            "minimumResultsForSearch": "Infinity"
+          }'>
+          <option value="privacy1" data-option-template='<span class="media"><i class="tio-earth-east tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Anyone</span><small class="select2-custom-hide">Visible to anyone who can view your content. Accessible by installed apps.</small></span></span>'>Anyone</option>
+          <option value="privacy2" data-option-template='<span class="media"><i class="tio-lock-outlined tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Only you</span><small class="select2-custom-hide">Only visible to you.</small></span></span>'>Only you</option>
+        </select>
+      </div>
+      <!-- End Select -->
     </div>
   </div>
-  <!-- End Profile Cover -->
-
-  <!-- Avatar -->
-  <label class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar" for="avatarUploader">
-    <img id="avatarImg" class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
-
-    <input type="file" class="js-file-attach avatar-uploader-input" id="avatarUploader"
-    data-hs-file-attach-options='{
-    "textTarget": "#avatarImg",
-    "mode": "image",
-    "targetAttr": "src"
-  }'>
-
-  <span class="avatar-uploader-trigger">
-    <i class="tio-edit avatar-uploader-icon shadow-soft"></i>
-  </span>
-</label>
-<!-- End Avatar -->
-
-<!-- Body -->
-<div class="card-body">
-  <div class="row">
-    <div class="col-sm-5">
-      <span class="d-block font-size-sm mb-2">Who can see your profile photo? <i class="tio-help-outlined" data-toggle="tooltip" data-placement="top" title="Your visibility setting only applies to your profile photo. Your header image is always visible to anyone."></i></span>
-
-      <!-- Select -->
-      <div class="select2-custom">
-        <select class="js-select2-custom"
-        data-hs-select2-options='{
-        "minimumResultsForSearch": "Infinity"
-      }'>
-      <option value="privacy1" data-option-template='<span class="media"><i class="tio-earth-east tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Anyone</span><small class="select2-custom-hide">Visible to anyone who can view your content. Accessible by installed apps.</small></span></span>'>Anyone</option>
-      <option value="privacy2" data-option-template='<span class="media"><i class="tio-lock-outlined tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Only you</span><small class="select2-custom-hide">Only visible to you.</small></span></span>'>Only you</option>
-    </select>
-  </div>
-  <!-- End Select -->
-</div>
-</div>
-<!-- End Row -->
+  <!-- End Row -->
 </div>
 <!-- End Body -->
 </div>
@@ -156,27 +116,17 @@
   <!-- Body -->
   <div class="card-body">
     <!-- Form -->
-    <form method="post" class="js-validate" action="{{url('super-admin/submit-profile') }}">  
-      {{ csrf_field() }}
+    
       <!-- Form Group -->
       <div class="row form-group js-form-message">
         <label class="col-sm-3 col-form-label input-label">Full name <i class="tio-help-outlined text-body ml-1" data-toggle="tooltip" data-placement="top" title="Displayed on public forums, such as Front."></i></label>
 
         <div class="col-sm-9">
           <div class="input-group input-group-sm-down-break">
-            <input type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" id="first_name" value="{{$user->first_name}}" placeholder="Your first name" aria-label="Your first name" >
-            @error('first_name')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
-
-            <input type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" id="last_name" placeholder="Your last name" value="{{$user->last_name}}" aria-label="Your last name">
-            @error('last_name')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+            <input type="text" class="form-control" name="first_name" id="first_name" value="{{$user->first_name}}" placeholder="Your first name" aria-label="Your first name" >
+            
+            <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Your last name" value="{{$user->last_name}}" aria-label="Your last name">
+            
 
           </div>
         </div>
@@ -188,13 +138,7 @@
         <label class="col-sm-3 col-form-label input-label">Email</label>
 
         <div class="col-sm-9">
-          <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" id="email" placeholder="Your email" value="{{$user->email}}" aria-label="Email" value="mark@example.com">
-
-          @error('email')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+          <input type="email" class="form-control" name="email" id="email" placeholder="Your email" value="{{$user->email}}" aria-label="Email" value="mark@example.com">
           
         </div>
       </div>
@@ -221,76 +165,25 @@
         </div>
 
         <div class="col-sm-7">
-          <input type="text" name="phone_no" value="{{$user->phone_no}}" id="phone_no" class="form-control @error('phone_no') is-invalid @enderror">
-
-            @error('phone_no')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
+          <input type="text" name="phone_no" value="{{$user->phone_no}}" id="phone_no" class="form-control">
 
         </div>
       </div>      
       <!-- End Form Group -->
-
-      <!-- Form Group 
-      <div class="row form-group">
-        <label class="col-sm-3 col-form-label input-label">Current Password </label>
-
-        <div class="col-sm-9">
-          <input type="text" name="current_password" id="current_password" class="form-control">
-        </div>
-      </div>      
-      <!- End Form Group -->
-      
       <!-- Form Group -->
-      <div class="row form-group js-form-message">
-        <label class="col-sm-3 col-form-label input-label">New Password </label>
-
-        <div class="col-sm-9">
-          <input type="text" name="password" id="password" class="form-control @error('password') is-invalid @enderror">
-
-            @error('password')
-            <span class="invalid-feedback" role="alert">
-              <strong>{{ $message }}</strong>
-            </span>
-            @enderror
-
-        </div>
-
-      </div>      
-      <!-- End Form Group -->
-      
-
-      <!-- Form Group -->
-      <div class="row form-group js-form-message">
-        <label class="col-sm-3 col-form-label input-label">Retype Password </label>
-
-        <div class="col-sm-9">
-          <input type="text" name="retype_password" id="retype_password" class="form-control">
-        </div>
-      </div>      
-      <!-- End Form Group -->
-      
-
-
-      <!-- Form Group -->
-
       <div class="d-flex justify-content-end">
         <button type="submit" class="btn btn-primary">Save changes</button>
       </div>
-    </form>
+    
     <!-- End Form -->
   </div>
   <!-- End Body -->
 </div>
 <!-- End Card -->
 
-
-
-
 <!-- Sticky Block End Point -->
 <div id="stickyBlockEndPoint"></div>
+</form>
 </div>
 </div>
 <!-- End Row -->
@@ -317,59 +210,42 @@
 
 
 <!-- JS Front -->
-<script src="assets/js/theme.min.js"></script>
+<!-- <script src="assets/js/theme.min.js"></script> -->
 
 <!-- JS Plugins Init. -->
 <script>
   $(document).on('ready', function () {
 
-        // initialization of form search
-        $('.js-form-search').each(function () {
-          new HSFormSearch($(this)).init()
-        });
-
-        // initialization of file attach
-        $('.js-file-attach').each(function () {
-          var customFile = new HSFileAttach($(this)).init();
-        });
-
-        // initialization of masked input
-        $('.js-masked-input').each(function () {
-          var mask = $.HSCore.components.HSMask.init($(this));
-        });
-
-        // initialization of select2
-        $('.js-select2-custom').each(function () {
-          var select2 = $.HSCore.components.HSSelect2.init($(this));
-        });
-
-        // initialization of sticky blocks
-        $('.js-sticky-block').each(function () {
-          var stickyBlock = new HSStickyBlock($(this), {
-            targetSelector: $('#header').hasClass('navbar-fixed') ? '#header' : null
-          }).init();
-        });
-
-        // initialization of scroll nav
-        var scrollspy = new HSScrollspy($('body'), {
-          // !SETTING "resolve" PARAMETER AND RETURNING "resolve('completed')" IS REQUIRED
-          beforeScroll: function(resolve) {
-            if (window.innerWidth < 992) {
-              $('#navbarVerticalNavMenu').collapse('hide').on('hidden.bs.collapse', function () {
-                return resolve('completed');
-              });
-            } else {
-              return resolve('completed');
+    $("#form").submit(function(e){
+      e.preventDefault();
+      
+      var formData = new FormData($(this)[0]);
+      var url  = $("#form").attr('action');
+      $.ajax({
+        url:url,
+        type:"post",
+        data:formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType:"json",
+        beforeSend:function(){
+          showLoader();
+        },
+        success:function(response){
+          hideLoader();
+          if(response.status == true){
+            successMessage(response.message);
+            redirect(response.redirect_back);
+          }else{
+            validation(response.message);
             }
+          },
+          error:function(){
+            internalError();
           }
-        }).init();
-
-        // initialization of password strength module
-        $('.js-pwstrength').each(function () {
-          var pwstrength = $.HSCore.components.HSPWStrength.init($(this));
-        });
-      });
-    </script>
-
-
-@endsection
+        });    
+    });
+  });
+</script>
+ @endsection

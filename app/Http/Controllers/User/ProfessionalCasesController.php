@@ -19,10 +19,10 @@ class ProfessionalCasesController extends Controller
         $this->middleware('user');
     }
     
-    public function professionals()
+    public function cases()
     {
        	$viewData['pageTitle'] = "Professionals";
-        return view(roleFolder().'.professionals.lists',$viewData);
+        return view(roleFolder().'.cases.lists',$viewData);
     }
     
     public function getAjaxList(){
