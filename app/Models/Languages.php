@@ -13,4 +13,5 @@ class Languages extends Model
     static function deleteRecord($id){
         Languages::where("id",$id)->delete();
     }
+
 }

@@ -34,7 +34,7 @@
         <i class="tio-pages-outlined nav-icon"></i> Create Panel
       </a>
     </div>
-    <!-- <div class="d-flex justify-content-center align-items-center mb-5">
+    <div class="d-flex justify-content-center align-items-center mb-5">
       <label class="toggle-switch mx-2" for="customSwitch">
         <input type="checkbox" class="js-toggle-switch toggle-switch-input" id="customSwitch" checked
                data-hs-toggle-switch-options='{
@@ -45,7 +45,7 @@
         </span>
       </label>
       <span>Annual</span>
-    </div> -->
+    </div>
   </td>
 </tr>
 @endforeach
