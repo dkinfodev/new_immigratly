@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'manager' => \App\Http\Middleware\Manager::class,
         'telecaller' => \App\Http\Middleware\Telecaller::class,
         'curl_api' => \App\Http\Middleware\CurlApi::class,
+        'professional_curl' => \App\Http\Middleware\ProfessionalCurl::class,
     ];
 }

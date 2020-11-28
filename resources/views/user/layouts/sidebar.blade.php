@@ -47,7 +47,7 @@
                 </li>
                 
                 <li class="nav-item">
-                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/professional-cases') }}" title="Cases With Professionals" data-placement="left">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/cases') }}" title="Cases With Professionals" data-placement="left">
                     <i class="tio-account-square nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases With Professionals</span>
                   </a>

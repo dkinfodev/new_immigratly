@@ -9,8 +9,11 @@ use DB;
 
 use App\Models\User;
 use App\Models\Professionals;
+<<<<<<< HEAD
 use App\Models\Languages;
 use App\Models\LicenceBodies;
+=======
+>>>>>>> c3ff535466933d15f0cdf7c8492fbfbd4b9c7224
 use App\Models\Countries;
 use App\Models\States;
 use App\Models\Cities;

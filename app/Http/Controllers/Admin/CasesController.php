@@ -416,6 +416,7 @@ class CasesController extends Controller
 
         return view(roleFolder().'.cases.document-files',$viewData);
     }
+    
     public function uploadDocuments($id,Request $request){
         $id = base64_decode($id);
         $folder_id = $request->input("folder_id");
@@ -441,7 +442,7 @@ class CasesController extends Controller
                     $object->save();
 
                     $object2 = new CaseDocuments();
-                    $object2->case_id = $id;
+                    $object2->case_id = $record->unique_id;
                     $object2->unique_id = randomNumber();
                     $object2->folder_id = $folder_id;
                     $object2->file_id = $unique_id;

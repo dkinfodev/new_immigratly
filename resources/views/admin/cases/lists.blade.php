@@ -85,7 +85,7 @@
             <th scope="col">Visa Service</th>
             <!-- <th scope="col">Start Date</th> -->
             <th scope="col">Assigned</th>
-            <th scope="col">Status</td>
+            <!-- <th scope="col">Status</td> -->
             <th scope="col"></th>
           </tr>
         </thead>
@@ -138,7 +138,7 @@
 @section('javascript')
 <script type="text/javascript">
 $(document).ready(function(){
-  
+
   $("#datatableSearch").keyup(function(){
     var value = $(this).val();
     if(value == ''){

@@ -110,6 +110,8 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         
         Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
+
+        Route::get('/view/{id}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'viewDetail']);
     });
     Route::group(array('prefix' => 'user'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\UserController::class, 'index']);
@@ -154,8 +156,14 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'saveExchangeDocuments']);
     });
 
-    Route::group(array('prefix' => 'professional-cases'), function () {
+    Route::group(array('prefix' => 'cases'), function () {
         Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'cases']);
+        Route::get('/view/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'view']);
+        Route::get('/documents/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseDocuments']);
+        Route::get('/documents/default/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
+        Route::get('/documents/other/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'otherDocuments']);
+        Route::get('/documents/extra/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'extraDocuments']);
+        Route::post('/upload-documents/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadDocuments']);
     });
 });
 

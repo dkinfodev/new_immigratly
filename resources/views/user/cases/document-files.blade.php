@@ -22,14 +22,14 @@
                <ol class="breadcrumb breadcrumb-no-gutter">
                   <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
                   <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
-                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases/case-documents/documents/'.base64_encode($record->id)) }}">Documents</a></li>
+                  <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases/documents/'.$subdomain.'/'.$case_id) }}">Documents</a></li>
                   <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
                </ol>
             </nav>
             <h1 class="page-header-title">{{$pageTitle}}</h1>
             <div clas="d-block">
-               @if(!empty($service->Service($service->service_id)))
-                <h4 class="text-primary p-2">{{$service->Service($service->service_id)->name}}</h4>
+               @if(!empty($service['MainService']))
+                <h4 class="text-primary p-2">{{$service['MainService']['name']}}</h4>
                @else
                 <h4 class="text-primary p-2">Service not found</h4>
                @endif
@@ -46,7 +46,7 @@
           <!-- Dropzone -->
             <div id="attachFilesLabel" class="js-dropzone dropzone-custom custom-file-boxed"
                data-hs-dropzone-options='{
-                  "url": "<?php echo baseUrl('cases/case-documents/upload-documents/'.base64_encode($record->id)) ?>?_token=<?php echo csrf_token() ?>&folder_id=<?php echo $document->unique_id ?>&doc_type=<?php echo $doc_type ?>",
+                  "url": "<?php echo baseUrl('cases/upload-documents/'.$record['unique_id']) ?>?_token=<?php echo csrf_token() ?>&folder_id=<?php echo $document['unique_id'] ?>&doc_type=<?php echo $doc_type ?>&subdomain=<?php echo $subdomain ?>",
                   "thumbnailWidth": 100,
                   "thumbnailHeight": 100
                }'
@@ -84,7 +84,7 @@
       <!-- Header -->
       <div class="card-header">
          <div class="row justify-content-between align-items-center flex-grow-1">
-            <div class="col-12 col-md">
+            <!-- <div class="col-12 col-md">
                <form>
                   <div class="input-group input-group-merge input-group-borderless">
                      <div class="input-group-prepend">
@@ -95,7 +95,7 @@
                      <input id="datatableSearch" type="search" class="form-control" placeholder="Search users" aria-label="Search users">
                   </div>
                </form>
-            </div>
+            </div> -->
             <div class="col-auto">
                <div class="d-flex align-items-center">
                   <div id="datatableCounterInfo" class="mr-2" style="display: none;">
@@ -164,21 +164,21 @@
                <tr>
                   <td class="table-column-pr-0">
                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ base64_encode($doc->id) }}">
+                        <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ base64_encode($doc['id']) }}">
                         <label class="custom-control-label" for="row-{{$key}}"></label>
                      </div>
                   </td>
                   <td class="table-column-pl-0">
                      <a class="d-flex align-items-center" href="javascript:;">
                         <?php 
-                           $fileicon = fileIcon($doc->FileDetail->original_name);
+                           $fileicon = fileIcon($doc['file_detail']['original_name']);
                            echo $fileicon;
-                           $filesize = file_size($file_dir."/".$doc->FileDetail->file_name);
+                           $filesize = file_size($file_dir."/".$doc['file_detail']['file_name']);
                         ?>
                         <div class="ml-3">
-                           <span class="d-block h5 text-hover-primary mb-0">{{$doc->FileDetail->original_name}}</span>
+                           <span class="d-block h5 text-hover-primary mb-0">{{$doc['file_detail']['original_name']}}</span>
                            <ul class="list-inline list-separator small file-specs">
-                              <li class="list-inline-item">Added on {{dateFormat($doc->created_at)}}</li>
+                              <li class="list-inline-item">Added on {{dateFormat($doc['created_at'])}}</li>
                               <li class="list-inline-item">{{$filesize}}</li>
                            </ul>
                         </div>
@@ -242,7 +242,7 @@
                            <i class="tio-share dropdown-item-icon"></i>
                            Share file
                            </a>
-                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.base64_encode($doc->id)).'/'.base64_encode($record->id).'/'.base64_encode($document->id) ?>')">
+                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.$doc['unique_id'].'/'.$record['unique_id'].'/'.$document['unique_id']) ?>')">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
                            </a>
@@ -263,7 +263,7 @@
                            <i class="tio-chat-outlined dropdown-item-icon"></i>
                            Report
                            </a>
-                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.base64_encode($doc->id))}}">
+                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.$doc['unique_id'])}}">
                            <i class="tio-delete-outlined dropdown-item-icon"></i>
                            Delete
                            </a>
