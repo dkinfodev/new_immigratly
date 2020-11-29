@@ -41,7 +41,7 @@
     @if(!empty($record->Service($record->VisaService->service_id)))
     <span class="badge badge-soft-info p-2">{{$record->Service($record->VisaService->service_id)->name}}</span>
     @else
-    <span class="badge badge-soft-info p-2">Service not found</span>
+    <span class="badge badge-soft-danger p-2">Service not found</span>
     @endif
   </td>
   <!-- <td>

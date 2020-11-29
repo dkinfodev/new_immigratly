@@ -58,7 +58,7 @@ class User extends Authenticatable
     {
         $client = DB::table(MAIN_DATABASE.".user_with_professional as uwp")
                     ->select("us.*")
-                    ->rightJoin(MAIN_DATABASE.".users as us","uwp.user_id","=","us.id")
+                    ->rightJoin(MAIN_DATABASE.".users as us","uwp.user_id","=","us.unique_id")
                     ->where("uwp.professional",$domain)
                     ->get();
         return $client;

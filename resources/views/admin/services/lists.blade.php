@@ -73,8 +73,8 @@
                         @foreach($all_services as $key => $service)
                         <li>
                           <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input parent_services" value="{{ $service->unique_id }}" name="services[]" id="row-{{$key}}">
-                            <label class="custom-control-label" for="row-{{$key}}">{{$service->name}}</label>
+                            <input type="checkbox" class="custom-control-input parent_services" value="{{ $service->unique_id }}" name="services[]" id="row-{{$service->unique_id}}">
+                            <label class="custom-control-label" for="row-{{$service->unique_id}}">{{$service->name}}</label>
                           </div>
                           
                           @if(count($service->sub_services) > 0)
@@ -82,8 +82,8 @@
                             @foreach($service->sub_services as $key2 => $service2)
                               <li>
                                   <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input child_services" value="{{ $service2->unique_id }}" name="services[]" id="sub-{{$key2}}">
-                                    <label class="custom-control-label" for="sub-{{$key2}}">{{$service2->name}}</label>
+                                    <input type="checkbox" class="custom-control-input child_services" value="{{ $service2->unique_id }}" name="services[]" id="sub-{{$service2->unique_id}}">
+                                    <label class="custom-control-label" for="sub-{{$service2->unique_id}}">{{$service2->name}}</label>
                                   </div>
                               </li>
                             @endforeach
