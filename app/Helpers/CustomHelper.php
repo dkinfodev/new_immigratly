@@ -679,7 +679,7 @@ if(!function_exists("curlRequest")){
 }
 if(!function_exists("professionalCurl")){
     function professionalCurl($url,$subdomain,$data=array()){
-        
+       
         $professional = DB::table(MAIN_DATABASE.".professionals")->where("subdomain",$subdomain)->first();
         
         $rootdomain = DB::table(MAIN_DATABASE.".settings")->where("meta_key",'rootdomain')->first();

@@ -170,7 +170,7 @@
                           <option value="">Select Service</option>
                           @foreach($visa_services as $service)
                             @if(!empty($service->Service($service->service_id)))
-                              <option value="{{$service->id}}">{{$service->Service($service->service_id)->name}} </option>
+                              <option value="{{$service->unique_id}}">{{$service->Service($service->service_id)->name}} </option>
                             @endif
                           @endforeach
                         </select>

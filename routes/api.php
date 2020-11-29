@@ -35,7 +35,7 @@ Route::group(array('middleware' => 'professional_curl'), function () {
 			Route::post('/other-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'otherDocuments']);
 			Route::post('/extra-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'extraDocuments']);
 			Route::post('/upload-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'uploadDocuments']);
-			Route::post('/save-documents-exchanger', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveDocumentsExchanger']);
+			Route::post('/documents-exchanger', [App\Http\Controllers\Api\ProfessionalApiController::class, 'documentsExchanger']);
 			Route::post('/save-exchange-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveExchangeDocuments']);
 		});	
 	});	

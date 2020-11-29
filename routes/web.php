@@ -166,7 +166,7 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveExchangeDocuments']);
 
         Route::get('/my-documents-exchanger/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'myDocumentsExchanger']);
-        Route::post('/documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'exportMyDocumentsToCase']);
+        Route::post('/my-documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'exportMyDocuments']);
     });
 });
 

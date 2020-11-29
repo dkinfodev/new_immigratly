@@ -252,7 +252,7 @@ class ProfessionalApiController extends Controller
         return response()->json($response);
     }
     
-    public function saveDocumentsExchanger(Request $request){
+    public function documentsExchanger(Request $request){
         try{
             $postData = $request->input();
             $request->request->add($postData);

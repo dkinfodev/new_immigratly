@@ -327,7 +327,7 @@ class CasesController extends Controller
         $id = base64_decode($id);
         $record = Cases::find($id);
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
+        $documents = ServiceDocuments::where("service_id",$service->unique_id)->get();
         $case_folders = CaseFolders::where("case_id",$record->id)->get();
         $pinned_folders = $record->pinned_folders;
         if($pinned_folders != ''){

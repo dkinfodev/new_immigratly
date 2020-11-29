@@ -216,7 +216,7 @@ $(document).ready(function(){
           });
           $.ajax({
              type: "POST",
-             url: BASEURL + '/cases/documents-exchanger',
+             url: BASEURL + '/cases/my-documents-exchanger',
              data:{
                  _token:csrf_token,
                  files:files,

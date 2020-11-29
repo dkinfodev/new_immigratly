@@ -234,7 +234,7 @@ class ProfessionalCasesController extends Controller
         $data['case_id'] = $case_id;
         $case = professionalCurl('cases/documents-exchanger',$subdomain,$data);
         $result = $case['data'];
-
+        
         $record = $result['record'];
         $service = $result['service'];
         $documents = $result['documents'];
@@ -280,9 +280,9 @@ class ProfessionalCasesController extends Controller
     public function myDocumentsExchanger($subdomain,$case_id){
 
         $data['case_id'] = $case_id;
-        $case = professionalCurl('cases/save-documents-exchanger',$subdomain,$data);
+        $case = professionalCurl('cases/documents-exchanger',$subdomain,$data);
         $result = $case['data'];
-
+        
         $record = $result['record'];
         $service = $result['service'];
         $documents = $result['documents'];
@@ -318,7 +318,9 @@ class ProfessionalCasesController extends Controller
         $case_id = $request->input("case_id");
         $files = $request->input("files");
         $subdomain = $request->input("subdomain");
-
+        $user_files = UserFiles::whereIn("unique_id",$files)->get();
+        pre($user_files);
+        exit;
         $data['document_type'] = $doc_type;
         $data['folder_id'] = $folder_id;
         $data['case_id'] = $case_id;
