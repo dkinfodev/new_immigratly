@@ -30,7 +30,7 @@
         <a class="btn btn-success" href="{{ baseUrl('cases/case-documents/documents-exchanger/'.base64_encode($record->id)) }}">
          <i class="tio-swap-horizontal mr-1"></i> Documents Exchanger
         </a>
-        <a onclick="showPopup('{{ baseUrl('cases/case-documents/add-folder/'.base64_encode($record->id)) }}')" class="btn btn-primary" href="javascript:;">
+        <a onclick="showPopup('{{ baseUrl('cases/case-documents/add-folder/'.$record->unique_id) }}')" class="btn btn-primary" href="javascript:;">
          <i class="tio-folder-add mr-1"></i> Add folder
         </a>
       </div>
@@ -47,13 +47,13 @@
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 mb-5">
          @foreach($pinned_folders as $key => $folders)
          @foreach($folders as $folder)
-         @if(!empty($record->documentInfo($case_id,$folder,$key)))
+         @if(!empty($record->documentInfo($folder,$key)))
          <div class="col mb-3 mb-lg-5">
             <!-- Card -->
             <div class="card card-sm card-hover-shadow card-header-borderless h-100 text-center pinned-folders">
                <div class="card-header">
                   <?php
-                     $count_files = $record->caseDocuments($case_id,$folder,"count");
+                     $count_files = $record->caseDocuments($record->unique_id,$folder,"count");
                   ?>
                   <small>{{$count_files}} Files</small>
                   <!-- Checkbox -->
@@ -148,7 +148,7 @@
                            @endif
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$record->caseDocuments($record->id,$document->unique_id,'count')}} Files</li>
+                           <li class="list-inline-item">{{$record->caseDocuments($record->unique_id,$document->unique_id,'count')}} Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -195,7 +195,7 @@
                            @endif
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$record->caseDocuments($record->id,$document->unique_id,'count')}} Files</li>
+                           <li class="list-inline-item">{{$record->caseDocuments($record->unique_id,$document->unique_id,'count')}} Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -260,7 +260,7 @@
                            @endif
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$record->caseDocuments($record->id,$document->unique_id,'count')}} Files</li>
+                           <li class="list-inline-item">{{$record->caseDocuments($record->unique_id,$document->unique_id,'count')}} Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">

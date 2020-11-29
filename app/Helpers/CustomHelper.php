@@ -714,7 +714,8 @@ if(!function_exists("professionalCurl")){
         $info = curl_getinfo($ch);
         curl_close($ch);
         $curl_response = json_decode($response,true);
-        
+        // echo $response;
+        // exit;
         return $curl_response;
     }
 }

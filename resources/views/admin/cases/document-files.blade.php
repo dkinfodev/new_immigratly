@@ -307,11 +307,17 @@
    });
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
-      dropzone.on("addedfile", function() {
-        console.log('File added!!!');
+      dropzone.on("success", function(file,response) {
+        if(response.status == false){
+            is_error = true;
+         }
       });
       dropzone.on("queuecomplete", function() {
-        location.reload();
+         if(is_error == true){
+            errorMessage("Error while upload file");
+         }else{
+            location.reload();
+         }
       });
       
    });      

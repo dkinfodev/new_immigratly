@@ -184,7 +184,7 @@ $(document).ready(function(){
                  files:files,
                  document_type:document_type,
                  folder_id:folder_id,
-                 case_id:"{{ base64_encode($record->id) }}"
+                 case_id:"{{ $record->unique_id }}"
              },
              dataType:'json',
              beforeSend:function(){

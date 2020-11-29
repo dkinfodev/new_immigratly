@@ -81,7 +81,17 @@ class ProfessionalApiController extends Controller
             $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
             $case_folders = CaseFolders::where("case_id",$record->id)->get();
             $service->MainService = $service->Service($service->service_id);
-            $service->Documents = $service->DefaultDocuments($service->service_id);
+            $default_documents = $service->DefaultDocuments($service->service_id);
+            foreach($default_documents as $document){
+                $document->files_count = $record->caseDocuments($record->unique_id,$document->unique_id,'count');
+            }
+            foreach($documents as $document){
+                $document->files_count = $record->caseDocuments($record->unique_id,$document->unique_id,'count');
+            }
+            foreach($case_folders as $document){
+                $document->files_count = $record->caseDocuments($record->unique_id,$document->unique_id,'count');
+            }
+            $service->Documents = $default_documents;
             $data['service'] = $service;
             $data['documents'] = $documents;
             $data['case_folders'] = $case_folders;
@@ -129,54 +139,72 @@ class ProfessionalApiController extends Controller
         }
         return response()->json($response);
     }
-    public function otherDocuments($case_id,$doc_id){
+    public function otherDocuments(Request $request){
         try{
-            $case_id = base64_decode($case_id);
-            $doc_id = base64_decode($doc_id);
-            $record = Cases::find($case_id);
-            $document = ServiceDocuments::where("id",$doc_id)->first();
+
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $case_id = $request->input("case_id");
+            $doc_id = $request->input("doc_id");
+            $record = Cases::where("unique_id",$case_id)->first();
+
+            $document = ServiceDocuments::where("unique_id",$doc_id)->first();
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-            $case_documents = CaseDocuments::where("case_id",$case_id)
+            $service->MainService = $service->Service($service->service_id);
+            $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->get();
-            $viewData['service'] = $service;
-            $viewData['case_documents'] = $case_documents;
-            $viewData['document'] = $document;
-            $viewData['record'] = $record;
-            $viewData['pageTitle'] = "Files List for ".$document->name;
-            $viewData['doc_type'] = "other";
-            $file_url = professionalDirUrl()."/documents";
-            $file_dir = professionalDir()."/documents";
-            $viewData['file_url'] = $file_url;
-            $viewData['file_dir'] = $file_dir;
+            $data['service'] = $service;
+            $data['case_documents'] = $case_documents;
+            $data['document'] = $document;
+            $data['record'] = $record;
+            $data['doc_type'] = "other";
+            $file_url = professionalDirUrl($this->subdomain)."/documents";
+            $file_dir = professionalDir($this->subdomain)."/documents";
+            $data['file_url'] = $file_url;
+            $data['file_dir'] = $file_dir;
+
+            $response['status'] = "success";
+            $response['data'] = $data;
+
         } catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();
         }
         return response()->json($response);
     }
-    public function extraDocuments($case_id,$doc_id){
+    public function extraDocuments(Request $request){
         try{
-            $case_id = base64_decode($case_id);
-            $doc_id = base64_decode($doc_id);
-            $record = Cases::find($case_id);
+
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $case_id = $request->input("case_id");
+            $doc_id = $request->input("doc_id");
+            $record = Cases::where("unique_id",$case_id)->first();
+
             $document = CaseFolders::where("id",$doc_id)->first();
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-            $case_documents = CaseDocuments::where("case_id",$case_id)
+            $service->MainService = $service->Service($service->service_id);
+            $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->get();
-            $viewData['service'] = $service;
-            $viewData['case_documents'] = $case_documents;
-            $viewData['document'] = $document;
-            $viewData['record'] = $record;
-            $viewData['pageTitle'] = "Files List for ".$document->name;
-            $viewData['doc_type'] = "extra";
-            $file_url = professionalDirUrl()."/documents";
-            $file_dir = professionalDir()."/documents";
-            $viewData['file_url'] = $file_url;
-            $viewData['file_dir'] = $file_dir;
+            $data['service'] = $service;
+            $data['case_documents'] = $case_documents;
+            $data['document'] = $document;
+            $data['record'] = $record;
+            $data['pageTitle'] = "Files List for ".$document->name;
+            $data['doc_type'] = "extra";
+            $file_url = professionalDirUrl($this->subdomain)."/documents";
+            $file_dir = professionalDir($this->subdomain)."/documents";
+            $data['file_url'] = $file_url;
+            $data['file_dir'] = $file_dir;
+
+            $response['status'] = "success";
+            $response['data'] = $data;
 
         } catch (Exception $e) {
             $response['status'] = "error";
@@ -224,4 +252,82 @@ class ProfessionalApiController extends Controller
         return response()->json($response);
     }
     
+    public function saveDocumentsExchanger(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $case_id = $request->input("case_id");
+            $record = Cases::where("unique_id",$case_id)->first();
+            $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+            $default_documents = $service->DefaultDocuments($service->service_id);
+
+            foreach($default_documents as $document){
+                $document->files = $record->caseDocuments($record->unique_id,$document->unique_id);
+            }
+            
+
+            $service->Documents = $default_documents;
+            $service->MainService = $service->Service($service->service_id);
+            $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
+            $case_folders = CaseFolders::where("case_id",$record->unique_id)->get();
+            foreach($documents as $document){
+                $document->files = $record->caseDocuments($record->unique_id,$document->unique_id);
+            }
+            foreach($case_folders as $document){
+                $document->files = $record->caseDocuments($record->unique_id,$document->unique_id);
+            }
+            $file_url = professionalDirUrl($this->subdomain)."/documents";
+            $file_dir = professionalDir($this->subdomain)."/documents";
+            $data['file_url'] = $file_url;
+            $data['file_dir'] = $file_dir;
+            $data['service'] = $service;
+            $data['documents'] = $documents;
+            $data['case_folders'] = $case_folders;
+            $data['record'] = $record;
+            
+            $response['status'] = "success";
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function saveExchangeDocuments(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $doc_type = $request->input("document_type");
+            $folder_id = $request->input("folder_id");
+            $case_id = $request->input("case_id");
+            $files = $request->input("files");
+            $existing_files = CaseDocuments::where("case_id",$case_id)
+                            ->where("document_type",$doc_type)
+                            ->where("folder_id",$folder_id)
+                            ->pluck("file_id");
+            if(!empty($existing_files)){
+                $existing_files = $existing_files->toArray();
+                $new_files = array_diff($files,$existing_files);
+                $new_files = array_values($new_files);
+            }else{
+                $new_files = $files;
+            }
+            for($i=0;$i < count($new_files);$i++){
+                $data = array();
+                $data['folder_id'] = $folder_id;
+                $data['document_type'] = $doc_type;
+                CaseDocuments::where("file_id",$new_files[$i])->update($data);
+            }
+
+            $response['status'] = true;
+            $response['message'] = "File transfered successfully";
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
 }

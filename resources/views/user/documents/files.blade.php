@@ -270,8 +270,8 @@
    var is_error = false;
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
-      dropzone.on("success", function(response) {
-         if(response.status == false){
+      dropzone.on("success", function(file,response) {
+        if(response.status == false){
             is_error = true;
          }
       });
@@ -282,7 +282,6 @@
             location.reload();
          }
       });
-      
    });      
 
    function deleteFiles(){

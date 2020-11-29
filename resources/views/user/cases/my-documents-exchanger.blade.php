@@ -50,8 +50,45 @@
     $default_documents = $service['Documents']
   ?>
   <div class="row d-flex flex-row1">
+    <div class="col-md-6 col-sm-12 col-lg-6">
+        <div class="card mb-3">
+          <div class="card-header bg-primary">
+              <h3 class="card-title text-white">My Documents</h3>
+          </div>
+        </div>
+        @foreach($user_folders as $key => $document)
+        <div class="card mb-3 documents extra" data-file="{{$document->unique_id}}" data-type="extra">
+          <div class="card-header">
+              <h3 class="card-title">{{$document->name}}</h3>
+          </div>
+          <div class="card-body">
+            <?php
+              $files = $document->Files;
+            ?>
+            <ul class="list-group list-group-lg">
+              @foreach($files as $file)
+              <li data-id="{{ $file->FileDetail->unique_id }}" class="list-group-item document-exchange draggable">
+                <?php 
+                   $fileicon = fileIcon($file->FileDetail->original_name);
+                   echo $fileicon;
+                   $filesize = file_size($user_file_dir."/".$file->FileDetail->file_name);
+                ?>
+                 {{$file->FileDetail->original_name}}
+              </li>
+              @endforeach
+            </ul>
+          </div>
+        </div>
+      @endforeach
+    </div>
+    <div class="col-md-6 col-sm-12 col-lg-6">
+        <div class="card mb-3">
+          <div class="card-header bg-primary">
+              <h3 class="card-title text-white">Case Documents</h3>
+          </div>
+        </div>
     @foreach($default_documents as $key => $document)
-      <div class="col-md-4 card mb-3 documents default" data-file="{{$document['unique_id']}}" data-type="default">
+      <div class="card mb-3 documents default" data-file="{{$document['unique_id']}}" data-type="default">
         <div class="card-header">
             <h3 class="card-title">{{$document['name']}}</h3>
             <h6 class="card-subtitle text-primary">Default Document</h6>
@@ -78,7 +115,7 @@
       </div>
     @endforeach
     @foreach($documents as $key => $document)
-      <div class="col-md-4 card mb-3 documents other" data-file="{{$document['unique_id']}}" data-type="other">
+      <div class="card mb-3 documents other" data-file="{{$document['unique_id']}}" data-type="other">
         <div class="card-header">
             <h3 class="card-title">{{$document['name']}}</h3>
             <h6 class="card-subtitle text-primary">Other Document</h6>
@@ -106,7 +143,7 @@
       </div>
     @endforeach
     @foreach($case_folders as $key => $document)
-      <div class="col-md-4 card mb-3 documents extra" data-file="{{$document['unique_id']}}" data-type="extra">
+      <div class="card mb-3 documents extra" data-file="{{$document['unique_id']}}" data-type="extra">
         <div class="card-header">
             <h3 class="card-title">{{$document['name']}}</h3>
             <h6 class="card-subtitle text-primary">Extra Document</h6>
@@ -132,6 +169,7 @@
         </div>
       </div>
     @endforeach
+    </div>
   </div>
   <!-- End Card -->
 </div>
@@ -147,8 +185,8 @@ $(document).ready(function(){
       revert: true,
       revertDuration: 0,
       stack: ".draggable",
-      refreshPositions: false
-        //helper: 'clone'
+      refreshPositions: false,
+      helper: 'clone'
   });
   $('.droppable').droppable({
       accept: ".draggable",
@@ -159,7 +197,7 @@ $(document).ready(function(){
           var clone = draggable.clone();   
           var parent = draggable.parents(".documents").data("type");
           var id = draggable.attr("data-id");
-          $("."+parent).find("li[data-id='"+id+"']").remove();
+          
           var document_type = $(this).parents(".documents").data("type");
           var folder_id = $(this).parents(".documents").data("file");
           $(this).append(clone);

@@ -484,7 +484,6 @@ class CasesController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
-        $id = base64_decode($id);
         if ($validator->fails()) {
             $response['status'] = false;
             $error = $validator->errors()->toArray();
@@ -635,7 +634,7 @@ class CasesController extends Controller
     public function saveExchangeDocuments(Request $request){
         $doc_type = $request->input("document_type");
         $folder_id = $request->input("folder_id");
-        $case_id = base64_decode($request->input("case_id"));
+        $case_id = $request->input("case_id");
         $files = $request->input("files");
         $existing_files = CaseDocuments::where("case_id",$case_id)
                         ->where("document_type",$doc_type)

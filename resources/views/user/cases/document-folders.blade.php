@@ -27,7 +27,9 @@
         <div class="text-dark">{{$record['case_title']}}</div>
       </div>
       <div class="col-sm-auto">
-        <a class="btn btn-success" href="{{ baseUrl('cases/documents/documents-exchanger/'.base64_encode($record['id'])) }}">
+        <a class="btn btn-primary" href="{{ baseUrl('cases/my-documents-exchanger/'.$subdomain.'/'.$record['unique_id']) }}">
+         <i class="tio-swap-horizontal mr-1"></i> Export from My Documents </a>
+        <a class="btn btn-success" href="{{ baseUrl('cases/documents-exchanger/'.$subdomain.'/'.$record['unique_id']) }}">
          <i class="tio-swap-horizontal mr-1"></i> Documents Exchanger
         </a>
         
@@ -64,7 +66,7 @@
                            
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">0 Files</li>
+                           <li class="list-inline-item">{{$document['files_count']}} Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -100,7 +102,7 @@
                            {{$document['name']}}
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">0 Files</li>
+                           <li class="list-inline-item">{{$document['files_count']}} Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -154,7 +156,7 @@
                           
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">0 Files</li>
+                           <li class="list-inline-item">{{$document['files_count']}} Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">

@@ -165,10 +165,12 @@ class MyDocumentsController extends Controller
                     $response['status'] = false;
                     $response['message'] = "File not allowed";
                 } 
-
+            }else{
+                $response['status'] = false;
+                $response['message'] = 'Please select the file';
             }
         } catch (Exception $e) {
-            $response['status'] = "error";
+            $response['status'] = false;
             $response['message'] = $e->getMessage();
         }
         return response()->json($response);

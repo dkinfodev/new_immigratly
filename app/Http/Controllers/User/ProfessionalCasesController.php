@@ -12,7 +12,7 @@ use App\Models\UserDetails;
 use App\Models\Countries;
 use App\Models\Languages;
 use App\Models\UserWithProfessional;
-
+use App\Models\UserFolders;
 class ProfessionalCasesController extends Controller
 {
     public function __construct()
@@ -105,46 +105,73 @@ class ProfessionalCasesController extends Controller
         $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
     }
-    public function otherDocuments($case_id,$doc_id){
-        $case_id = base64_decode($case_id);
-        $doc_id = base64_decode($doc_id);
-        $record = Cases::find($case_id);
-        $document = ServiceDocuments::where("id",$doc_id)->first();
-        $folder_id = $document->unique_id;
-        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$case_id)
-                                        ->where("folder_id",$folder_id)
-                                        ->get();
+    public function otherDocuments($subdomain,$case_id,$doc_id){
+
+        $data['case_id'] = $case_id;
+        $data['doc_id'] = $doc_id;
+        $data['doc_type'] = "default";
+
+        $record = array();
+        $document = array();
+        $case_documents = array();
+        
+        $case = professionalCurl('cases/other-documents',$subdomain,$data);
+
+        $result = $case['data'];
+
+        $service = $result['service'];
+        $record = $result['record'];
+        $case_documents = $result['case_documents'];
+        $document = $result['document'];
+        $folder_id = $document['unique_id'];
+
+        $viewData['case_id'] = $case_id;
+        $viewData['doc_id'] = $doc_id;
+        $viewData['subdomain'] = $subdomain;
         $viewData['service'] = $service;
         $viewData['case_documents'] = $case_documents;
         $viewData['document'] = $document;
         $viewData['record'] = $record;
-        $viewData['pageTitle'] = "Files List for ".$document->name;
+        $viewData['pageTitle'] = "Files List for ".$document['name'];
         $viewData['doc_type'] = "other";
-        $file_url = professionalDirUrl()."/documents";
-        $file_dir = professionalDir()."/documents";
+        $file_url = $result['file_url'];
+        $file_dir = $result['file_dir'];
+
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
     }
-    public function extraDocuments($case_id,$doc_id){
-        $case_id = base64_decode($case_id);
-        $doc_id = base64_decode($doc_id);
-        $record = Cases::find($case_id);
-        $document = CaseFolders::where("id",$doc_id)->first();
-        $folder_id = $document->unique_id;
-        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$case_id)
-                                        ->where("folder_id",$folder_id)
-                                        ->get();
+    public function extraDocuments($subdomain,$case_id,$doc_id){
+
+        $data['case_id'] = $case_id;
+        $data['doc_id'] = $doc_id;
+        $data['doc_type'] = "default";
+
+        $record = array();
+        $document = array();
+        $case_documents = array();
+        
+        $case = professionalCurl('cases/extra-documents',$subdomain,$data);
+        
+        $result = $case['data'];
+
+        $service = $result['service'];
+        $record = $result['record'];
+        $case_documents = $result['case_documents'];
+        $document = $result['document'];
+        $folder_id = $document['unique_id'];
+
+        $viewData['case_id'] = $case_id;
+        $viewData['doc_id'] = $doc_id;
+        $viewData['subdomain'] = $subdomain;
         $viewData['service'] = $service;
         $viewData['case_documents'] = $case_documents;
         $viewData['document'] = $document;
         $viewData['record'] = $record;
-        $viewData['pageTitle'] = "Files List for ".$document->name;
+        $viewData['pageTitle'] = "Files List for ".$document['name'];
         $viewData['doc_type'] = "extra";
-        $file_url = professionalDirUrl()."/documents";
-        $file_dir = professionalDir()."/documents";
+        $file_url = $result['file_url'];
+        $file_dir = $result['file_dir'];
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
 
@@ -200,5 +227,110 @@ class ProfessionalCasesController extends Controller
             }
             return response()->json($response);
         }
+    }
+
+    public function documentsExchanger($subdomain,$case_id){
+
+        $data['case_id'] = $case_id;
+        $case = professionalCurl('cases/documents-exchanger',$subdomain,$data);
+        $result = $case['data'];
+
+        $record = $result['record'];
+        $service = $result['service'];
+        $documents = $result['documents'];
+        $case_folders = $result['case_folders'];
+        
+        $file_url = $result['file_url'];
+        $file_dir = $result['file_dir'];
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        $viewData['subdomain'] = $subdomain;
+        $viewData['service'] = $service;
+        $viewData['documents'] = $documents;
+        $viewData['case_folders'] = $case_folders;
+        $viewData['record'] = $record;
+        $viewData['case_id'] = $record['id'];
+        $viewData['pageTitle'] = "Documents Exchanger";
+
+        return view(roleFolder().'.cases.documents-exchanger',$viewData);
+    }
+
+    public function saveExchangeDocuments(Request $request){
+        $doc_type = $request->input("document_type");
+        $folder_id = $request->input("folder_id");
+        $case_id = $request->input("case_id");
+        $files = $request->input("files");
+        $subdomain = $request->input("subdomain");
+
+        $data['document_type'] = $doc_type;
+        $data['folder_id'] = $folder_id;
+        $data['case_id'] = $case_id;
+        $data['files'] = $files;
+        $result = professionalCurl('cases/save-exchange-documents',$subdomain,$data);
+        if(isset($result['status']) && $result['status'] == 'success'){
+            $response['status'] = true;
+            $response['message'] = "File transfered successfully";
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Issue in file transfer, try again";
+        }
+        return response()->json($response); 
+    }
+
+    public function myDocumentsExchanger($subdomain,$case_id){
+
+        $data['case_id'] = $case_id;
+        $case = professionalCurl('cases/save-documents-exchanger',$subdomain,$data);
+        $result = $case['data'];
+
+        $record = $result['record'];
+        $service = $result['service'];
+        $documents = $result['documents'];
+        $case_folders = $result['case_folders'];
+        
+        $file_url = $result['file_url'];
+        $file_dir = $result['file_dir'];
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        $viewData['subdomain'] = $subdomain;
+        $viewData['service'] = $service;
+        $viewData['documents'] = $documents;
+        $viewData['case_folders'] = $case_folders;
+        $viewData['record'] = $record;
+        $viewData['case_id'] = $record['id'];
+        $viewData['pageTitle'] = "Export from My Documents";
+
+        $user_id = \Auth::user()->unique_id;
+        $user_folders = UserFolders::where("user_id",$user_id)->get();
+        
+        $user_file_url = userDirUrl()."/documents";
+        $user_file_dir = userDir()."/documents";
+        $viewData['user_file_url'] = $user_file_url;
+        $viewData['user_file_dir'] = $user_file_dir;
+        $viewData['user_folders'] = $user_folders;
+
+        return view(roleFolder().'.cases.my-documents-exchanger',$viewData);
+    }
+
+    public function exportMyDocuments(Request $request){
+        $doc_type = $request->input("document_type");
+        $folder_id = $request->input("folder_id");
+        $case_id = $request->input("case_id");
+        $files = $request->input("files");
+        $subdomain = $request->input("subdomain");
+
+        $data['document_type'] = $doc_type;
+        $data['folder_id'] = $folder_id;
+        $data['case_id'] = $case_id;
+        $data['files'] = $files;
+        $result = professionalCurl('cases/save-exchange-documents',$subdomain,$data);
+        if(isset($result['status']) && $result['status'] == 'success'){
+            $response['status'] = true;
+            $response['message'] = "File transfered successfully";
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Issue in file transfer, try again";
+        }
+        return response()->json($response); 
     }
 }
