@@ -5,6 +5,7 @@ require dirname(__DIR__)."/../library/twilio/twilio.php";
 use App\Models\Settings;
 use App\Models\DomainDetails;
 use App\Models\Documents;
+use App\Models\Professionals;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -676,98 +677,32 @@ if(!function_exists("curlRequest")){
         return $curl_response;
     }
 }
+if(!function_exists("professionalCurl")){
+    function professionalCurl($url,$subdomain,$data=array()){
+        
+        $professional = DB::table(MAIN_DATABASE.".professionals")->where("subdomain",$subdomain)->first();
+        
+        $rootdomain = DB::table(MAIN_DATABASE.".settings")->where("meta_key",'rootdomain')->first();
+        $rootdomain = $rootdomain->meta_value;
 
-if(!function_exists("userApi")){
-    function userApi($url,$data=array()){
-        $client_key = ApiKeys::first();
-        $subdomain = array_first(explode('.', request()->getHost()));
-        $api_url = userPanelUrl()."/api/user";
-
-        $token = 'MlyOAzpD8JpLMFhG82Bd4eLPjkAzyLOlbrEMuHnmW0SH0ps7rl';
-        $ch = curl_init($api_url."/".$url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-           'Content-Type: application/json',
-           'Authorization:' . $token
-        ));
-        curl_setopt($ch, CURLOPT_POST, 1);
-
-        if(count($data) > 0){
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        }
-        $response = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-       
-        $curl_response = json_decode($response);
-        if($curl_response->status == 'api_error'){
-            if($curl_response->error == 'account_disabled'){
-                Auth::logout();
-            }
-        }
-        return $curl_response;
-    }
-}
-
-if(!function_exists("mainApi")){
-    function mainApi($url,$data=array()){
-        $client_key = ApiKeys::first();
-        $subdomain = array_first(explode('.', request()->getHost()));
-        $api_url = userPanelUrl()."/api/main";
-
-        $token = 'MlyOAzpD8JpLMFhG82Bd4eLPjkAzyLOlbrEMuHnmW0SH0ps7rl';
-        $ch = curl_init($api_url."/".$url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-           'Content-Type: application/json',
-           'Authorization:' . $token
-        ));
-        curl_setopt($ch, CURLOPT_POST, 1);
-
-        if(count($data) > 0){
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        }
-        $response = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-      
-        $curl_response = json_decode($response);
-        if($curl_response->status == 'api_error'){
-            if($curl_response->error == 'account_disabled'){
-                Auth::logout();
-            }
-        }else{
-            if($curl_response->status != 'success'){
-                echo $response;
-                exit;
-            }
-        }
-        return $curl_response;
-    }
-}
-if(!function_exists("professionalApi")){
-    function professionalApi($url,$professional_id,$data=array()){
-        $professional = ProfessionalPanel::where("user_id",$professional_id)->first();
+        
         $host = explode('.', request()->getHost());
-        $subdomain = $host[0];
+        $host = $host[0];
         $site_url = DB::table(MAIN_DATABASE.".settings")->where("meta_key","site_url")->first();
         $site_url = $site_url->meta_value;
-
-        if($subdomain == 'localhost'){
+        if($host == 'localhost'){
             $api_url = url('/api/professional');
         }else{
-            $api_url = $site_url."api/professional";
+            $api_url = "http://".$subdomain.".".$rootdomain."/api/professional";
         }
-
         $token = $professional->client_secret;
-    
-        $ch = curl_init($api_url."/".$url);
-
+        
+        $ch = curl_init($api_url."/".$url); 
+       
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
            'Content-Type: application/json',
-           'subdomain:'.$professional->subdomain,
-           'callfor:professional',
+           'subdomain:'.$subdomain,
            'Authorization:' . $token
         ));
         curl_setopt($ch, CURLOPT_POST, 1);
@@ -775,20 +710,15 @@ if(!function_exists("professionalApi")){
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
         $response = curl_exec($ch);
-        
+
         $info = curl_getinfo($ch);
         curl_close($ch);
-       
-        $curl_response = json_decode($response);
-       
-        if($curl_response->status == 'api_error'){
-            if($curl_response->error == 'account_disabled'){
-                Auth::logout();
-            }
-        }
+        $curl_response = json_decode($response,true);
+        
         return $curl_response;
     }
 }
+
 if(!function_exists("domain")){
     function domain(){
         $site_url = DB::table(MAIN_DATABASE.".settings")->where("meta_key","site_url")->first();

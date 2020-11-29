@@ -9,6 +9,9 @@ use DB;
 
 use App\Models\User;
 use App\Models\Professionals;
+use App\Models\Countries;
+use App\Models\States;
+use App\Models\Cities;
 
 class ProfessionalController extends Controller
 {
@@ -95,5 +98,64 @@ class ProfessionalController extends Controller
         $response['status'] = true;
         
         return response()->json($response);
+    }
+
+    public function viewDetail($id){
+
+        $id = base64_decode($id);
+
+        $record = Professionals::where("id",$id)->first();
+        $pd = $record->PersonalDetail($record->subdomain);
+        $cd = $record->CompanyDetail($record->subdomain);
+        $viewData['subdomain'] = $record->subdomain;
+
+        $viewData['record'] = $record;
+        $viewData['user'] = $pd;
+        $viewData['company_details'] = $cd;
+        $viewData['pageTitle'] = $pd->first_name;
+
+        $language_id = $pd->languages_known;
+        $language_id = json_decode($language_id);
+
+        $languages_known = "";
+        foreach ($language_id as $key => $l) {
+            $languages_known .= $record->getLanguage($l).",";
+        }
+
+        $viewData['languages'] = trim($languages_known,",");
+
+
+        $license_id = $cd->license_body;
+        $license_id = json_decode($license_id);
+
+        $license_bodies = "";
+        foreach ($license_id as $key => $l) {
+            $license_bodies .= $record->getLicenceBodies($l)."<br>";
+        }
+
+        $viewData['licenceBodies'] = $license_bodies;
+        
+        $countries = Countries::where('id',$pd->country_id)->first();
+        $viewData['countries'] = $countries;
+
+        $comp_countries = Countries::where('id',$cd->country_id)->first();
+        $viewData['comp_countries'] = $comp_countries;
+
+        $states = States::where('id',$pd->state_id)->first();
+        $viewData['states'] = $states;
+
+        $comp_states = States::where('id',$cd->state_id)->first();
+        $viewData['comp_states'] = $comp_states;
+
+        $cities = Cities::where('id',$pd->city_id)->first();
+        $viewData['cities'] = $cities;
+
+        $comp_cities = Cities::where('id',$cd->city_id)->first();
+        $viewData['comp_cities'] = $comp_cities;
+
+        $viewData['phonecode'] = $cities;
+
+        return view(roleFolder().'.professionals.view-details',$viewData);
+        
     }
 }

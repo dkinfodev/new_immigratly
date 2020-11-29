@@ -24,100 +24,18 @@
           </ol>
         </nav>
         <h1 class="page-title">{{$pageTitle}}</h1>
-        <div class="text-dark">{{$record->case_title}}</div>
+        <div class="text-dark">{{$record['case_title']}}</div>
       </div>
       <div class="col-sm-auto">
-        <a class="btn btn-success" href="{{ baseUrl('cases/case-documents/documents-exchanger/'.base64_encode($record->id)) }}">
+        <a class="btn btn-success" href="{{ baseUrl('cases/documents/documents-exchanger/'.base64_encode($record['id'])) }}">
          <i class="tio-swap-horizontal mr-1"></i> Documents Exchanger
         </a>
-        <a onclick="showPopup('{{ baseUrl('cases/case-documents/add-folder/'.base64_encode($record->id)) }}')" class="btn btn-primary" href="javascript:;">
-         <i class="tio-folder-add mr-1"></i> Add folder
-        </a>
+        
       </div>
     </div>
   </div>
   <!-- Card -->
-  @if($is_pinned)
-  <div class="card">
-    <!-- Header -->
-    <div class="card-body">
-      
-      <h2 class="h4 mb-3">Pinned access <i class="tio-help-outlined text-muted" data-toggle="tooltip" data-placement="right" title="Pinned access to files you've been working on."></i></h2>
-      <!-- Pinned Access -->
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 mb-5">
-         @foreach($pinned_folders as $key => $folders)
-         @foreach($folders as $folder)
-         @if(!empty($record->documentInfo($case_id,$folder,$key)))
-         <div class="col mb-3 mb-lg-5">
-            <!-- Card -->
-            <div class="card card-sm card-hover-shadow card-header-borderless h-100 text-center pinned-folders">
-               <div class="card-header">
-                  <?php
-                     $count_files = $record->caseDocuments($case_id,$folder,"count");
-                  ?>
-                  <small>{{$count_files}} Files</small>
-                  <!-- Checkbox -->
-                  <div class="custom-control custom-checkbox-switch card-pinned">
-                     <input type="checkbox" id="starredCheckbox45" class="custom-control-input custom-checkbox-switch-input" checked>
-                     <label class="custom-checkbox-switch-label btn-icon btn-xs rounded-circle" for="starredCheckbox45">
-                     <span class="custom-checkbox-switch-default" data-toggle="tooltip" data-placement="top" title="Pin">
-                     <i class="tio-star-outlined"></i>
-                     </span>
-                     <span class="custom-checkbox-switch-active" data-toggle="tooltip" data-placement="top" title="Pinned">
-                     <i class="tio-star"></i>
-                     </span>
-                     </label>
-                  </div>
-                  <!-- End Checkbox -->
-                  <!-- Unfold -->
-                  <div class="hs-unfold ml-auto">
-                     <a class="js-hs-unfold-invoker btn btn-icon btn-sm btn-ghost-secondary card-unfold rounded-circle" href="javascript:;"
-                        data-hs-unfold-options='{
-                        "target": "#action-pinned-{{$folder}}",
-                        "type": "css-animation"
-                        }'>
-                     <i class="tio-more-vertical"></i>
-                     </a>
-                     <div id="action-pinned-{{$folder}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                        <a class="dropdown-item" href="#">
-                        <i class="tio-share dropdown-item-icon"></i>
-                        Share file
-                        </a>
-                        <a class="dropdown-item" href="#">
-                        <i class="tio-folder-add dropdown-item-icon"></i>
-                        Move to
-                        </a>
-                        <a class="dropdown-item" href="javascript:;" onclick="unpinnedFolder('{{ $record->id }}','{{$folder}}','{{ $key }}')">
-                        <i class="tio-star dropdown-item-icon"></i>
-                        Click to unpinned
-                        </a>
-                     </div>
-                  </div>
-                  <!-- End Unfold -->
-               </div>
-               <div class="card-body">
-                  <i class="tio-folder tio-xl text-body mr-2"></i>
-                  <a class="stretched-link" href="#"></a>
-               </div>
-               <div class="card-body">
-                  <h5 class="card-title">
-                     <?php 
-                     echo $record->documentInfo($case_id,$folder,$key)->name;
-                     ?>
-                  </h5>
-                  <!-- <p class="small">Updated 2 months ago</p> -->
-               </div>
-            </div>
-            <!-- End Card -->
-         </div>
-         @endif
-         @endforeach
-         @endforeach
-      </div>
-    
-    </div>
-  </div>
-  @endif
+
   <div class="card">
     <!-- Header -->
     <div class="card-body">
@@ -132,7 +50,7 @@
             <ul class="list-group">
                <!-- List Item -->
                <?php
-                $default_documents = $service->DefaultDocuments($service->service_id);
+                $default_documents = $service['Documents'];
                ?>
                @foreach($default_documents as $key => $document)
                <li class="list-group-item">
@@ -142,13 +60,11 @@
                      </div>
                      <div class="col">
                         <h5 class="card-title text-truncate mr-2">
-                           {{$document->name}}
-                           @if(isset($pinned_folders['default']) && in_array($document->unique_id,$pinned_folders['default']))
-                           <i class="tio-star text-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Folder pinned"></i>
-                           @endif
+                           {{$document['name']}}
+                           
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$record->caseDocuments($record->id,$document->unique_id,'count')}} Files</li>
+                           <li class="list-inline-item">0 Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -161,20 +77,12 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-default-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share Folder
-                           </a>
-                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/default/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                          
+                           <a class="dropdown-item" href="<?php echo baseUrl("cases/documents/default/".$subdomain."/".$case_id."/".$document['unique_id']) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>
-                           @if(!isset($pinned_folders['default']) || !in_array($document->unique_id,$pinned_folders['default']))
-                           <a class="dropdown-item" href="javascript:;" onclick="pinnedFolder('{{ $case_id }}','{{ $document->unique_id }}','default')">
-                           <i class="tio-star-outlined dropdown-item-icon"></i>
-                           Add to stared
-                           </a>
-                           @endif
+                           
                         </div>
                      </div>
                   </div>
@@ -189,13 +97,10 @@
                      </div>
                      <div class="col">
                         <h5 class="card-title text-truncate mr-2">
-                           {{$document->name}}
-                           @if(isset($pinned_folders['other']) && in_array($document->unique_id,$pinned_folders['other']))
-                           <i class="tio-star text-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Folder pinned"></i>
-                           @endif
+                           {{$document['name']}}
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$record->caseDocuments($record->id,$document->unique_id,'count')}} Files</li>
+                           <li class="list-inline-item">0 Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -208,20 +113,11 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-other-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share Folder
-                           </a>
-                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/other/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                           
+                           <a class="dropdown-item" href="<?php echo baseUrl("cases/documents/other/".$subdomain."/".$case_id."/".$document['unique_id']) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>
-                           @if(!isset($pinned_folders['other']) || !in_array($document->unique_id,$pinned_folders['other']))
-                           <a class="dropdown-item" href="javascript:;" onclick="pinnedFolder('{{ $case_id }}','{{ $document->unique_id }}','other')">
-                           <i class="tio-star-outlined dropdown-item-icon"></i>
-                           Add to stared
-                           </a>
-                           @endif
                         </div>
                      </div>
                   </div>
@@ -254,13 +150,11 @@
                      </div>
                      <div class="col">
                         <h5 class="card-title text-truncate mr-2">
-                           {{$document->name}}
-                           @if(isset($pinned_folders['extra']) && in_array($document->unique_id,$pinned_folders['extra']))
-                           <i class="tio-star text-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Folder pinned"></i>
-                           @endif
+                           {{$document['name']}}
+                          
                         </h5>
                         <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$record->caseDocuments($record->id,$document->unique_id,'count')}} Files</li>
+                           <li class="list-inline-item">0 Files</li>
                         </ul>
                      </div>
                      <div class="hs-unfold">
@@ -273,25 +167,10 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-extra-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share Folder
-                           </a>
-                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/extra/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                           <a class="dropdown-item" href="<?php echo baseUrl("cases/documents/extra/".$subdomain."/".$case_id."/".$document['unique_id']) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>
-                           @if(!isset($pinned_folders['extra']) || !in_array($document->unique_id,$pinned_folders['extra']))
-                           <a class="dropdown-item" href="javascript:;" onclick="pinnedFolder('{{ $case_id }}','{{ $document->unique_id }}','extra')">
-                           <i class="tio-star-outlined dropdown-item-icon"></i>
-                           Add to stared
-                           </a>
-                           @endif
-                           
-                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete-folder/'.base64_encode($document->id))}}">
-                              <i class="tio-delete-outlined dropdown-item-icon"></i>
-                              Delete
-                           </a> 
                         </div>
                      </div>
                   </div>

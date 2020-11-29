@@ -23,4 +23,16 @@ Route::group(array('middleware' => 'curl_api'), function () {
 	Route::group(array('prefix' => 'main'), function () {
 		Route::post('/create-client', [App\Http\Controllers\Api\MasterApiController::class, 'createClient']);
 	});	
+
+});
+Route::group(array('middleware' => 'professional_curl'), function () {
+	Route::group(array('prefix' => 'professional'), function () {
+		Route::group(array('prefix' => 'cases'), function () {
+			Route::post('/', [App\Http\Controllers\Api\ProfessionalApiController::class, 'clientCases']);
+			Route::post('/view', [App\Http\Controllers\Api\ProfessionalApiController::class, 'caseDetail']);
+			Route::post('/documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'caseDocuments']);
+			Route::post('/default-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'defaultDocuments']);
+			Route::post('/upload-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'uploadDocuments']);
+		});	
+	});	
 });

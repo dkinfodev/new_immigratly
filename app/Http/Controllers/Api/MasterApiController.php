@@ -79,7 +79,7 @@ class MasterApiController extends Controller
 	        $user_id = $object->id;
 
 	        $object2 = new UserWithProfessional();
-	        $object2->user_id = $user_id;
+	        $object2->user_id = $unique_id;
 	        $object2->professional= $this->subdomain;
 	        $object2->status = 1;
 	        $object2->save();

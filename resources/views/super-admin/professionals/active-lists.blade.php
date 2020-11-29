@@ -89,6 +89,7 @@
             <th>Contact Number</th>
             <th>Panel Status</th>
             <th>Profile status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>

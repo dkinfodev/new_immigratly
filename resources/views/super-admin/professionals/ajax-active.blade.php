@@ -70,5 +70,8 @@
         @endif
       </div>
   </td>
+  <td>
+    <a href="{{baseUrl('/professionals/view/'.base64_encode($record->id))}}"><i class="tio-visible"></i> Details</a>
+  </td>
 </tr>
 @endforeach
