@@ -326,7 +326,8 @@ class CasesController extends Controller
     public function caseDocuments($id){
         $id = base64_decode($id);
         $record = Cases::find($id);
-        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+        
+        $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
         $documents = ServiceDocuments::where("service_id",$service->unique_id)->get();
         $case_folders = CaseFolders::where("case_id",$record->id)->get();
         $pinned_folders = $record->pinned_folders;
@@ -355,8 +356,9 @@ class CasesController extends Controller
         $record = Cases::find($case_id);
         $document = DB::table(MAIN_DATABASE.".documents_folder")->where("id",$doc_id)->first();
         $folder_id = $document->unique_id;
-        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
+        $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
+        $case_documents = CaseDocuments::with('FileDetail')
+                                        ->where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
         $viewData['service'] = $service;
@@ -378,7 +380,7 @@ class CasesController extends Controller
         $document = ServiceDocuments::where("id",$doc_id)->first();
         $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$case_id)
+        $case_documents = CaseDocuments::where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
         $viewData['service'] = $service;
@@ -400,7 +402,7 @@ class CasesController extends Controller
         $document = CaseFolders::where("id",$doc_id)->first();
         $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$case_id)
+        $case_documents = CaseDocuments::where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
         $viewData['service'] = $service;

@@ -292,6 +292,7 @@
 @section('javascript')
 <script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
 <script type="text/javascript">
+   var is_error = false;
    $(document).ready(function(){
       $('.js-hs-action').each(function () {
        var unfold = new HSUnfold($(this)).init();

@@ -83,10 +83,14 @@
                         <i class="tio-share dropdown-item-icon"></i>
                         Share file
                         </a>
-                        <a class="dropdown-item" href="#">
+                        <!-- <a class="dropdown-item" href="#">
                         <i class="tio-folder-add dropdown-item-icon"></i>
                         Move to
-                        </a>
+                        </a> -->
+                        <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/default/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                           <i class="tio-folder-add dropdown-item-icon"></i>
+                           View Documents
+                       </a>
                         <a class="dropdown-item" href="javascript:;" onclick="unpinnedFolder('{{ $record->id }}','{{$folder}}','{{ $key }}')">
                         <i class="tio-star dropdown-item-icon"></i>
                         Click to unpinned
@@ -102,7 +106,7 @@
                <div class="card-body">
                   <h5 class="card-title">
                      <?php 
-                     echo $record->documentInfo($case_id,$folder,$key)->name;
+                     echo $record->documentInfo($folder,$key)->name;
                      ?>
                   </h5>
                   <!-- <p class="small">Updated 2 months ago</p> -->
