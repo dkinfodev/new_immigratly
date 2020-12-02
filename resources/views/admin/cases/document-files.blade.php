@@ -8,6 +8,44 @@
    .sub_services li {
    border-bottom: none;
    }
+
+   .chat-log {
+      padding: 20px 14px;
+      height: auto;
+      overflow: auto;
+   }
+
+   .chat-log__item {
+      background: #fafafa;
+      padding: 10px;
+      margin: 0 auto 10px;
+      max-width: 80%;
+      float: left;
+      border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.1);
+      clear: both;
+      font-size: 14px;
+   }
+
+   .chat-log__item.chat-log__item--own {
+      float: right;
+      background: #DCF8C6;
+      text-align: right;
+   }
+   .chat-log__author {
+      margin: 0 auto .5em;
+      font-size: 12px;
+      font-weight: bold;
+   }
+
+   textarea::-webkit-scrollbar {
+      display: none;
+      resize: none;
+   }
+   textarea{
+      resize: none;
+   }
+
 </style>
 @endsection
 @section('content')
@@ -136,9 +174,68 @@
             </div>
             <!-- Body -->
             <div class="card-body sidebar-body">
-               Sidebar body...
+               
+               <div class="container" style="height:400px;overflow-y: scroll;">
+                <div class="chat-log">
+                  
+                  <div class="chat-log__item">
+                    <h3 class="chat-log__author">Felipe <small>14:30</small></h3>
+                    <div class="chat-log__message">Yo man</div>
+                  </div>
+
+                  <div class="chat-log__item chat-log__item--own">
+                    <h3 class="chat-log__author">Fabrício <small>14:30</small></h3>
+                    <div class="chat-log__message">BRB</div>
+                  </div>
+
+                  <div class="chat-log__item chat-log__item--own">
+                    <h3 class="chat-log__author">Fabrício <small>14:30</small></h3>
+                    <div class="chat-log__message">Lorem ipsum Dolor Lorem ipsum Dolor Lorem ipsum Dolor Lorem ipsum Dolor Lorem ipsum Dolor</div>
+                  </div>
+
+                  <div class="chat-log__item">
+                    <h3 class="chat-log__author">Felipe <small>14:30</small></h3>
+                    <div class="chat-log__message">Lorem ipsum Dolor Lorem ipsum Dolor Lorem ipsum Dolor Lorem ipsum Dolor Lorem ipsum Dolor</div>
+                  </div>
+
+
+                </div>
+              </div>
+                  
             </div>
             <!-- End Body -->
+            <li style="border:10px;padding:10px;list-style: none;">
+                  
+                  <form>
+                    <div class="form form-inline">
+                      <div class="col-12">
+                        <!--<input type="text" name="message" class="form-control" style="">-->
+                        <textarea class="form-control" rows=2 style="border:1px solid #377dff !important;padding: 1px 12px;border-radius:34px;"></textarea>
+
+
+
+                        <button type="button" class="btn btn-primary btn-md" style="background:#377dff;border-radius: 50%;margin-left: 10px;border:0;"><i class="tio-send"></i></button>
+                        <button id="yourBtn" type="button" class="btn btn-primary btn-md" style="background:#00c9db;border-radius: 50%;margin-left: 10px;border:0;cursor:pointer;"><i class="tio-attachment" onclick="getFile()"></i></button>
+                        <!--<input type="file" id="myFile" name="filename" class="custom-file-input" style="background:#377dff;border-radius: 50%;margin-left: 10px;" value="">-->
+<script>
+function getFile(){
+     document.getElementById("upfile").click();
+}
+</script>
+                         <!--<div id="yourBtn" style="height: 50px; width: 100px;border: 1px dashed #BBB; cursor:pointer;" >Click to upload!</div>-->
+                          
+                          <!-- this is your file input tag, so i hide it!-->
+                          <div style='height: 0px;width:0px; overflow:hidden;'><input id="upfile" type="file" value="upload"/></div>
+                          <!-- here you can have file submit button or you can write a simple script to upload the file automatically-->
+
+                      </div>
+                      <!--<div class="col-4">
+                        <button class="btn btn-primary btn-md" style="background:#377dff;border-radius: 60%;">P</button>
+                      </div>-->
+                    </div>
+                  </form>
+
+               </li>
          </div>
       </div>
       <!-- End Sidebar -->  
