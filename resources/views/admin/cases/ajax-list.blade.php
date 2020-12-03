@@ -63,8 +63,9 @@
         }else{
         ?>  
         <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
-          <img class="avatar-img" src="{{ professionalProfile($member->Member->profile_image,'t') }}" alt="Image Description">
+          <img class="avatar-img" src="{{ professionalProfile($member->Member->profile_image,'t') }}" alt="">
         </a>
+
         <!-- <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
           <span class="avatar-initials">{{ userInitial($member->Member) }}</span>
         </span> -->
@@ -86,6 +87,9 @@
       </a> -->
     </div>
     <!-- End Avatar Group -->
+  </td>
+  <td>
+    <a href="{{baseUrl('cases/chats')}}"><i class="tio-chat-outlined"></i> 21</a>
   </td>
   
   <td>

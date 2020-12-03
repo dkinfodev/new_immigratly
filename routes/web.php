@@ -240,6 +240,7 @@ Route::group(array('prefix' => 'admin'), function () {
 
         Route::group(array('prefix' => 'cases'), function () {
             Route::get('/', [App\Http\Controllers\Admin\CasesController::class, 'cases']);
+            Route::get('/chats', [App\Http\Controllers\Admin\CasesController::class, 'chats']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\CasesController::class, 'getAjaxList']);
             Route::get('/add', [App\Http\Controllers\Admin\CasesController::class, 'add']);
             Route::post('/save', [App\Http\Controllers\Admin\CasesController::class, 'save']);

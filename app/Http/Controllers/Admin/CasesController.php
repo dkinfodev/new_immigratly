@@ -32,6 +32,11 @@ class CasesController extends Controller
         return view(roleFolder().'.cases.lists',$viewData);
     }
 
+    public function chats(Request $request){
+        $viewData['pageTitle'] = "Chats";
+        return view(roleFolder().'.cases.chats',$viewData);
+    }
+
     public function getAjaxList(Request $request)
     {
         $search = $request->input("search");
