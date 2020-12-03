@@ -89,13 +89,13 @@
             <li class="white">
               <form class="form">  
                 <div class="row">
-                  <div class="col-9">
+                  <div class="col-7 col-md-9">
                     <div class="form-group basic-textarea">
                       <textarea class="form-control" rows=2 style="border:1px solid #377dff !important;padding: 1px 12px;border-radius:34px;margin-left:0px;"></textarea>
                     </div>
                   </div>
 
-                  <div class="col-3">
+                  <div class="col-5 col-md-3">
                    <button type="button" class="btn btn-primary btn-md" style="background:#377dff;border-radius: 50%;margin-left:-10px;border:0;"><i class="tio-send"></i></button>
                    <button id="yourBtn" type="button" class="btn btn-primary btn-md" style="background:#00c9db;border-radius: 50%;border:0;margin-left:10px;cursor:pointer;"><i class="tio-attachment" onclick="getFile()"></i></button>
                  </div>
