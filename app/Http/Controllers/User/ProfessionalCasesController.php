@@ -610,6 +610,7 @@ class ProfessionalCasesController extends Controller
             $chats = $api_response['data']['chats'];
         }
         $viewData['chats'] = $chats;
+        $viewData['subdomain'] = $subdomain;
         $view = View::make(roleFolder().'.cases.document-chats',$viewData);
         $contents = $view->render();
 
@@ -625,9 +626,7 @@ class ProfessionalCasesController extends Controller
         
         $data['created_by'] = \Auth::user()->unique_id;
         $subdomain = $request->input("subdomain");
-        if($request->input("type") == 'file'){
-
-        }
+        
         $data['type'] = $request->input("type");
         $api_response = professionalCurl('cases/save-document-chat',$subdomain,$data);
         if($api_response['status'] == 'success'){
@@ -637,6 +636,46 @@ class ProfessionalCasesController extends Controller
             $response['status'] = false;
             $response['message'] = "Message send failed";
         }
+        return response()->json($response);
+    }
+
+    public function saveDocumentChatFile(Request $request){
+
+        if ($file = $request->file('attachment')){
+            $data['case_id'] = $request->input("case_id");
+            $data['document_id'] = $request->input("document_id");
+            $subdomain = $request->input("subdomain");
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension() ?: 'png';
+            $newName        = mt_rand(1,99999)."-".$fileName;
+            $source_url = $file->getPathName();
+            $destinationPath = professionalDir($subdomain)."/documents";
+            
+            
+            if($file->move($destinationPath, $newName)){
+                $data['message'] = $fileName;
+                $data['created_by'] = \Auth::user()->unique_id;
+                $data['original_name'] = $fileName;
+                $data['file_name'] = $newName;
+                
+                $data['type'] = 'file';
+                $api_response = professionalCurl('cases/save-document-chat',$subdomain,$data);
+                if($api_response['status'] == 'success'){
+                    $response['status'] = true;
+                    $response['message'] = $api_response['message'];
+                }else{
+                    $response['status'] = false;
+                    $response['message'] = "File send failed, try again!";
+                }                   
+            }else{
+                $response['status'] = true;
+                $response['message'] = "File send failed, try again!";
+            }
+        }else{
+            $response['status'] = false;
+            $response['message'] = "File not selected!";
+        }
+        
         return response()->json($response);
     }
 

@@ -677,7 +677,7 @@ class CasesController extends Controller
         $data['document_id'] = $document_id;
         $subdomain = $request->input("subdomain");
         $data['type'] = $request->input("type");
-        $chats = DocumentChats::where("case_id",$case_id)->where('document_id',$document_id)->get();
+        $chats = DocumentChats::with('FileDetail')->where("case_id",$case_id)->where('document_id',$document_id)->get();
         $viewData['chats'] = $chats;
         $view = View::make(roleFolder().'.cases.document-chats',$viewData);
         $contents = $view->render();

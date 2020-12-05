@@ -8,7 +8,18 @@
       @if($chat['type'] == 'text')
       <div class="text">{{$chat['message']}}</div>
       @else
-      <div class="text">{{$chat['message']}}</div>
+      <div class="text">
+         <?php
+            $file_url = professionalDirUrl($subdomain)."/documents/".$chat['file_detail']['file_name'];
+         ?>
+         <a href="{{$file_url}}" download>
+         <?php 
+            $fileicon = fileIcon($chat['message']);
+            echo $fileicon;
+         ?>
+         {{$chat['message']}}
+         </a>
+      </div>
       @endif
    </div>
 </li>
@@ -22,7 +33,18 @@
       @if($chat['type'] == 'text')
       <div class="text">{{$chat['message']}}</div>
       @else
-      <div class="text">{{$chat['message']}}</div>
+      <div class="text">
+         <?php
+            $file_url = professionalDirUrl($subdomain)."/documents/".$chat['file_detail']['file_name'];
+         ?>
+         <a href="{{$file_url}}" download>
+         <?php 
+            $fileicon = fileIcon($chat['message']);
+            echo $fileicon;
+         ?>
+         {{$chat['message']}}
+         </a>
+      </div>
       @endif
    </div>
 </li>

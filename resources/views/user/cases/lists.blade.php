@@ -192,8 +192,9 @@
 @section('javascript')
 <script src="assets/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
 <script>
+  $('.js-nav-tooltip-link').tooltip({ boundary: 'window' });
   $(document).on('ready', function () {
-    $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })
+    
     $('.js-hs-action').each(function () {
       var unfold = new HSUnfold($(this)).init();
     });

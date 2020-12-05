@@ -168,6 +168,7 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
             Route::post('/chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'documentChats']);
             Route::post('/fetch-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchDocumentChats']);
             Route::post('/send-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveDocumentChat']);
+            Route::post('/send-chat-file', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveDocumentChatFile']);
         });
         Route::post('/upload-documents/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadDocuments']);
         Route::get('/documents-exchanger/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'documentsExchanger']);

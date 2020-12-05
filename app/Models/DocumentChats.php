@@ -15,4 +15,9 @@ class DocumentChats extends Model
     static function deleteRecord($id){
         Documents::DocumentChats("id",$id)->delete();
     }
+
+    public function FileDetail()
+    {
+        return $this->belongsTo('App\Models\Documents','file_id','unique_id');
+    }
 }

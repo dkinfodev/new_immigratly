@@ -486,7 +486,7 @@ class ProfessionalApiController extends Controller
             $postData = $request->input();
             $request->request->add($postData);
 
-            $chats = DocumentChats::where("case_id",$request->input("case_id"))
+            $chats = DocumentChats::with('FileDetail')->where("case_id",$request->input("case_id"))
                                 ->where("document_id",$request->input("document_id"))
                                 ->get();
             $data['chats'] = $chats;
@@ -510,6 +510,17 @@ class ProfessionalApiController extends Controller
             $object->document_id = $request->input("document_id");
             $object->message = $request->input("message");
             $object->type = $request->input("type");
+            if($request->input("type") == 'file'){
+                $document_id = randomNumber();
+                $object2 = new Documents();
+                $object2->file_name = $request->input("file_name");
+                $object2->original_name = $request->input("original_name");
+                $object2->unique_id = $document_id;
+                $object2->created_by = 0;
+                $object2->save();
+
+                $object->file_id = $document_id;
+            }
             $object->send_by = 'client';
             $object->created_by = $request->input("created_by");
             $object->save();
