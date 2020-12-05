@@ -45,6 +45,7 @@
       <h2 class="h4 mb-3">Pinned access <i class="tio-help-outlined text-muted" data-toggle="tooltip" data-placement="right" title="Pinned access to files you've been working on."></i></h2>
       <!-- Pinned Access -->
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 mb-5">
+        
          @foreach($pinned_folders as $key => $folders)
          @foreach($folders as $folder)
          @if(!empty($record->documentInfo($folder,$key)))
@@ -87,7 +88,7 @@
                         <i class="tio-folder-add dropdown-item-icon"></i>
                         Move to
                         </a> -->
-                        <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/default/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                        <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/".$key."/".$record->unique_id."/".$folder) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                        </a>
@@ -169,7 +170,7 @@
                            <i class="tio-share dropdown-item-icon"></i>
                            Share Folder
                            </a>
-                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/default/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/default/".$record->unique_id."/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>
@@ -216,7 +217,7 @@
                            <i class="tio-share dropdown-item-icon"></i>
                            Share Folder
                            </a>
-                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/other/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/other/".$record->unique_id."/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>
@@ -281,7 +282,7 @@
                            <i class="tio-share dropdown-item-icon"></i>
                            Share Folder
                            </a>
-                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/extra/".base64_encode($case_id)."/".base64_encode($document->id)) ?>">
+                           <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/extra/".$record->unique_id."/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>

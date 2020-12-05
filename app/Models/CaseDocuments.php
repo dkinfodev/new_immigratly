@@ -24,4 +24,9 @@ class CaseDocuments extends Model
     {
         return $this->belongsTo('App\Models\Documents','file_id','unique_id');
     }
+
+    public function Chats()
+    {
+        return $this->hasMany('App\Models\DocumentChats','document_id','unique_id');
+    }
 }

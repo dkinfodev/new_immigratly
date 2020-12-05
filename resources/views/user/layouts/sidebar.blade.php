@@ -20,7 +20,7 @@
               <ul class="navbar-nav navbar-nav-lg nav-tabs">
                 <!-- Dashboards -->
                 <li class="navbar-vertical-aside-has-menu show">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link active" href="{{ baseUrl('/') }}" title="Dashboards">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link active" href="{{ baseUrl('/') }}">
                     <i class="tio-home-vs-1-outlined nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Dashboards</span>
                   </a>
@@ -33,7 +33,7 @@
                 </li>
                 
                 <li class="nav-item ">
-                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/documents') }}" title="My Documents" data-placement="left">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/documents') }}" data-placement="left">
                     <i class="tio-documents nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Documents</span>
                   </a>
@@ -47,7 +47,7 @@
                 </li>
                 
                 <li class="nav-item">
-                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/cases') }}" title="Cases With Professionals" data-placement="left">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/cases') }}" data-placement="left">
                     <i class="tio-account-square nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases With Professionals</span>
                   </a>

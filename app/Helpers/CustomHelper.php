@@ -27,7 +27,7 @@ if (! function_exists('getFileType')) {
 }
 if (! function_exists('allowed_extension')) {
     function allowed_extension(){
-        $ext = array("doc","docx","xls","xlsx","ppt","pptx","pdf","jpg","jpeg","png","gif");
+        $ext = array("doc","docx","xls","xlsx","csv","ppt","pptx","pdf","jpg","jpeg","png","gif");
         return $ext;
     }
 }
@@ -160,6 +160,25 @@ if(!function_exists("fileIcon")){
             $icon = '<img class="avatar avatar-xs avatar-4by3" src="assets/svg/brands/google-slides.svg" alt="Image Description">';
         }
         return $icon;
+    }
+}
+if(!function_exists("fileExtension")){
+    function fileExtension($filename){
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $type = '';
+        if(in_array($ext,array("doc","docx"))){
+            $type = 'doc';
+        }
+        if(in_array($ext,array("xls","xlsx"))){
+            $type = 'xls';
+        }
+        if(in_array($ext,array("pdf"))){
+            $type = 'pdf';
+        }
+        if(in_array($ext,array("jpg","jpeg","png","gif"))){
+            $type = 'image';
+        }
+        return $type;
     }
 }
 if(!function_exists("file_size")){
@@ -572,7 +591,7 @@ if(!function_exists("generateString")){
 }
 if(!function_exists("randomNumber")){
     function randomNumber($n=10) { 
-        $characters = '0123456789'; 
+        $characters = '1123456789'; 
         $randomString = ''; 
         $randomString = substr(str_shuffle($characters), 0, $n);     
         return $randomString; 
@@ -715,7 +734,6 @@ if(!function_exists("professionalCurl")){
         curl_close($ch);
         $curl_response = json_decode($response,true);
         // echo $response;
-        // exit;
         return $curl_response;
     }
 }
@@ -814,11 +832,16 @@ if(!function_exists("professionalDirUrl")){
     }
 }
 if(!function_exists("professionalProfile")){
-    function professionalProfile($profile_image,$size='r',$domain = ''){
+    function professionalProfile($unique_id = '',$size='r',$domain = ''){
         if($domain == ''){
             $domain = \Session::get("subdomain");
         }
-        $profile_dir = professionalDir()."/profile/".$profile_image;
+        if($unique_id != ''){
+            $unique_id = \Auth::user()->unique_id;
+        }
+        $user = DB::table(PROFESSIONAL_DATABASE.$domain.".users")->where("unique_id",$unique_id)->first();
+        $profile_image = $user->profile_image;
+        $profile_dir = professionalDir($domain)."/profile/".$profile_image;
         if($profile_image == '' || !file_exists($profile_dir)){
             $url = asset("public/uploads/users/default.jpg");
             return $url;
@@ -829,14 +852,14 @@ if(!function_exists("professionalProfile")){
             $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
         }
         if($size == 'm'){
-            if(file_exists(professionalDir()."/profile/medium/".$profile_image)){
+            if(file_exists(professionalDir($domain)."/profile/medium/".$profile_image)){
                 $url = asset("public/uploads/professional/".$domain."/profile/medium/".$profile_image);
             }else{
                 $url = $original;
             }
         }
         if($size == 't'){
-            if(file_exists(professionalDir()."/profile/thumb/".$profile_image)){
+            if(file_exists(professionalDir($domain)."/profile/thumb/".$profile_image)){
                 $url = asset("public/uploads/professional/".$domain."/profile/thumb/".$profile_image);
             }else{
                 $url = $original;
@@ -871,13 +894,18 @@ if(!function_exists("userDirUrl")){
     }
 }
 if(!function_exists("userProfile")){
-    function userProfile($profile_image,$size='r',$unique_id = ''){
+    function userProfile($unique_id = '',$size='r'){
+        
         if($unique_id == ''){
            $unique_id = \Auth::user()->unique_id;
         }
+        $user = DB::table(MAIN_DATABASE.".users")
+                ->where("unique_id",$unique_id)
+                ->first();
+        $profile_image = $user->profile_image;
         $profile_dir = userDir($unique_id)."/profile/".$profile_image;
         if($profile_image == '' || !file_exists($profile_dir)){
-            $url = asset("public/uploads/users/default.jpg");
+            $url = asset("public/uploads/users/default.jpg?u=".$unique_id);
             return $url;
         }
         $original = asset("public/uploads/users/".$unique_id."/profile/".$profile_image);
@@ -886,14 +914,14 @@ if(!function_exists("userProfile")){
             $url = asset("public/uploads/users/".$unique_id."/profile/".$profile_image);
         }
         if($size == 'm'){
-            if(file_exists(userDir()."/profile/medium/".$profile_image)){
+            if(file_exists(userDir($unique_id)."/profile/medium/".$profile_image)){
                 $url = asset("public/uploads/users/".$unique_id."/profile/medium/".$profile_image);
             }else{
                 $url = $original;
             }
         }
         if($size == 't'){
-            if(file_exists(userDir()."/profile/thumb/".$profile_image)){
+            if(file_exists(userDir($unique_id)."/profile/thumb/".$profile_image)){
                 $url = asset("public/uploads/users/".$unique_id."/profile/thumb/".$profile_image);
             }else{
                 $url = $original;

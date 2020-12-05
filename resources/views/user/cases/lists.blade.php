@@ -128,7 +128,7 @@
                 }else{
                 ?>  
                 <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member['member']['first_name']." ".$member['member']['last_name'] }}">
-                  <img class="avatar-img" src="{{ professionalProfile($member['member']['profile_image'],'t',$professional->professional) }}" alt="Image Description">
+                  <img class="avatar-img" src="{{ professionalProfile($member['member']['unique_id'],'t',$professional->professional) }}" alt="Image Description">
                 </a>
 
                 <?php } ?>

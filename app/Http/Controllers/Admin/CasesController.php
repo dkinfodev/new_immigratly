@@ -19,6 +19,7 @@ use App\Models\CaseDocuments;
 use App\Models\DocumentFolder;
 use App\Models\CaseFolders;
 use App\Models\Documents;
+use App\Models\DocumentChats;
 
 class CasesController extends Controller
 {
@@ -351,13 +352,13 @@ class CasesController extends Controller
     }
 
     public function defaultDocuments($case_id,$doc_id){
-        $case_id = base64_decode($case_id);
-        $doc_id = base64_decode($doc_id);
-        $record = Cases::find($case_id);
-        $document = DB::table(MAIN_DATABASE.".documents_folder")->where("id",$doc_id)->first();
+        // $case_id = base64_decode($case_id);
+        // $doc_id = base64_decode($doc_id);
+        $record = Cases::where("unique_id",$case_id)->first();
+        $document = DB::table(MAIN_DATABASE.".documents_folder")->where("unique_id",$doc_id)->first();
         $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::with('FileDetail')
+        $case_documents = CaseDocuments::with(['FileDetail','Chats'])
                                         ->where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
@@ -374,13 +375,14 @@ class CasesController extends Controller
         return view(roleFolder().'.cases.document-files',$viewData);
     }
     public function otherDocuments($case_id,$doc_id){
-        $case_id = base64_decode($case_id);
-        $doc_id = base64_decode($doc_id);
-        $record = Cases::find($case_id);
-        $document = ServiceDocuments::where("id",$doc_id)->first();
+        
+        // $doc_id = base64_decode($doc_id);
+        $record = Cases::where("unique_id",$case_id)->first();
+        $document = ServiceDocuments::where("unique_id",$doc_id)->first();
         $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$record->unique_id)
+        $case_documents = CaseDocuments::with(['FileDetail','Chats'])
+                                        ->where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
         $viewData['service'] = $service;
@@ -396,13 +398,14 @@ class CasesController extends Controller
         return view(roleFolder().'.cases.document-files',$viewData);
     }
     public function extraDocuments($case_id,$doc_id){
-        $case_id = base64_decode($case_id);
-        $doc_id = base64_decode($doc_id);
-        $record = Cases::find($case_id);
-        $document = CaseFolders::where("id",$doc_id)->first();
+        
+        // $doc_id = base64_decode($doc_id);
+        $record = Cases::where("unique_id",$case_id)->first();
+        $document = CaseFolders::where("unique_id",$doc_id)->first();
         $folder_id = $document->unique_id;
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
-        $case_documents = CaseDocuments::where("case_id",$record->unique_id)
+        $case_documents = CaseDocuments::with(['FileDetail','Chats'])
+                                        ->where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
                                         ->get();
         $viewData['service'] = $service;
@@ -448,6 +451,7 @@ class CasesController extends Controller
                     $object2->unique_id = randomNumber();
                     $object2->folder_id = $folder_id;
                     $object2->file_id = $unique_id;
+                    $object2->added_by = \Auth::user()->role;
                     $object2->created_by = \Auth::user()->id;
                     $object2->document_type = $document_type;
                     $object2->save();
@@ -659,5 +663,53 @@ class CasesController extends Controller
         $response['status'] = true;
         $response['message'] = "File transfered successfully";
         return response()->json($response); 
+    }
+
+    public function fetchDocumentChats(Request $request){
+        $case_id = $request->input("case_id");
+        $document_id = $request->input("document_id");
+        $subdomain = $request->input("subdomain");
+        $viewData['case_id'] = $case_id;
+        $viewData['document_id'] = $document_id;
+
+        $data = array();
+        $data['case_id'] = $case_id;
+        $data['document_id'] = $document_id;
+        $subdomain = $request->input("subdomain");
+        $data['type'] = $request->input("type");
+        $chats = DocumentChats::where("case_id",$case_id)->where('document_id',$document_id)->get();
+        $viewData['chats'] = $chats;
+        $view = View::make(roleFolder().'.cases.document-chats',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['html'] = $contents;
+        return response()->json($response);
+    }
+
+    public function saveDocumentChat(Request $request){
+        $data['case_id'] = $request->input("case_id");
+        $data['document_id'] = $request->input("document_id");
+        $data['message'] = $request->input("message");
+        
+        $data['created_by'] = \Auth::user()->unique_id;
+        $subdomain = $request->input("subdomain");
+        if($request->input("type") == 'file'){
+
+        }
+
+        $object = new DocumentChats();
+        $object->case_id = $request->input("case_id");
+        $object->document_id = $request->input("document_id");
+        $object->message = $request->input("message");
+        $object->type = $request->input("type");
+        $object->send_by = \Auth::user()->role;
+        $object->created_by = \Auth::user()->unique_id;
+        $object->save();
+    
+        $response['status'] = true;
+        $response['message'] = "Message send successfully";
+        
+        return response()->json($response);
     }
 }

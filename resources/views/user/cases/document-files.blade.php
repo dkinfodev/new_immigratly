@@ -104,7 +104,7 @@
                         <span id="datatableCounter">0</span>
                         Selected
                         </span>
-                        <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/case-documents/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                        <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/documents/delete-multiple') }}" onclick="deleteMultipleDocuments(this)" href="javascript:;">
                         <i class="tio-delete-outlined"></i> Delete
                         </a>
                      </div>
@@ -119,7 +119,7 @@
       <div id="activitySidebar" class="hs-unfold-content sidebar sidebar-bordered sidebar-box-shadow">
          <div class="card card-lg sidebar-card sidebar-scrollbar">
             <div class="card-header">
-               <h4 class="card-header-title">Sidebar title</h4>
+               <h4 class="card-header-title">Document Chats</h4>
                <!-- Toggle Button -->
                <a class="js-hs-unfold-invoker btn btn-icon btn-xs btn-ghost-dark ml-2" href="javascript:;"
                   data-hs-unfold-options='{
@@ -136,10 +136,36 @@
             </div>
             <!-- Body -->
             <div class="card-body sidebar-body">
-               Sidebar body...
+               <div class="chat_window">
+                  <ul class="messages">
+                     
+                  </ul>
+                  <div class="doc_chat_input bottom_wrapper clearfix">
+                     <div class="message_input_wrapper">
+                        <input class="form-control msg_textbox" id="message_input" placeholder="Type your message here..." />
+                     </div>
+                     <div class="btn-group send-btn">
+                        <button type="button" class="btn btn-primary btn-pill send-message">
+                          <i class="tio-send"></i>
+                        </button>
+                        <button type="button" class="btn btn-info btn-pill send-attachment">
+                          <i class="tio-attachment"></i>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               <div class="message_template">
+                  <li class="message">
+                     <div class="avatar"></div>
+                     <div class="text_wrapper">
+                        <div class="text"></div>
+                     </div>
+                  </li>
+               </div>
             </div>
             <!-- End Body -->
          </div>
+
       </div>
       <!-- End Sidebar -->  
       <div class="table-responsive datatable-custom">
@@ -169,7 +195,11 @@
                      </div>
                   </td>
                   <td class="table-column-pl-0">
-                     <a class="d-flex align-items-center" href="javascript:;">
+                     <?php 
+                        $doc_url = $file_url."/".$doc['file_detail']['file_name']; 
+                        $url = baseUrl('cases/view-document/'.$case_id.'/'.$doc_id.'?url='.$doc_url.'&file_name='.$doc['file_detail']['file_name']);
+                     ?>
+                     <a class="d-flex align-items-center" href="{{ $url }}">
                         <?php 
                            $fileicon = fileIcon($doc['file_detail']['original_name']);
                            echo $fileicon;
@@ -188,7 +218,7 @@
                   <td width="10%">
                      <!-- Toggle -->
                      <div class="hs-unfold">
-                        <a class="js-hs-unfold-invoker text-body" href="javascript:;"
+                        <a onclick="fetchChats('{{ $doc['case_id'] }}','{{ $doc['unique_id'] }}')" class="js-hs-unfold-invoker text-body" href="javascript:;"
                            data-hs-unfold-options='{
                            "target": "#activitySidebar",
                            "type": "css-animation",
@@ -197,11 +227,10 @@
                            "hasOverlay": true,
                            "smartPositionOff": true
                            }'>
-                        <i class="tio-chat-outlined"></i> 21
+                        <i class="tio-chat-outlined"></i> {{count($doc['chats'])}}
                         </a>
                      </div>
                      <!-- End Toggle -->
-                       
                   </td>
                   <td>
                      <div class="avatar-group avatar-group-xs avatar-circle">
@@ -237,36 +266,25 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <span class="dropdown-header">Settings</span>
-                           <a class="dropdown-item" href="#">
+                           <!-- <span class="dropdown-header">Settings</span> -->
+                           <!-- <a class="dropdown-item" href="#">
                            <i class="tio-share dropdown-item-icon"></i>
                            Share file
+                           </a> -->
+                           <!-- <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/documents/file-move-to/'.$doc['unique_id'].'/'.$record['unique_id'].'/'.$document['unique_id']) ?>')">
+                              <i class="tio-folder-add dropdown-item-icon"></i>
+                              Move to
+                           </a> -->
+                           <a class="dropdown-item" download href="{{ $doc_url }}">
+                              <i class="tio-download-to dropdown-item-icon"></i>
+                              Download
                            </a>
-                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.$doc['unique_id'].'/'.$record['unique_id'].'/'.$document['unique_id']) ?>')">
-                           <i class="tio-folder-add dropdown-item-icon"></i>
-                           Move to
+                           @if($doc['created_by'] == Auth::user()->unique_id)
+                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/documents/delete/'.$subdomain.'/'.$doc['unique_id'])}}">
+                              <i class="tio-delete-outlined dropdown-item-icon"></i>
+                              Delete
                            </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-star-outlined dropdown-item-icon"></i>
-                           Add to stared
-                           </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-edit dropdown-item-icon"></i>
-                           Rename
-                           </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-download-to dropdown-item-icon"></i>
-                           Download
-                           </a>
-                           <div class="dropdown-divider"></div>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-chat-outlined dropdown-item-icon"></i>
-                           Report
-                           </a>
-                           <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.$doc['unique_id'])}}">
-                           <i class="tio-delete-outlined dropdown-item-icon"></i>
-                           Delete
-                           </a>
+                           @endif
                         </div>
                      </div>
                      <!-- End Unfold -->
@@ -290,9 +308,14 @@
 <!-- End Content -->
 @endsection
 @section('javascript')
+<link rel="stylesheet" href="assets/vendor/mCustomScrollbar/jquery.mCustomScrollbar.css" />
+<script src="assets/vendor/mCustomScrollbar/jquery.mCustomScrollbar.min.js"></script>
 <script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
 <script type="text/javascript">
+   var case_id;
+   var document_id;
    $(document).ready(function(){
+      
       $('.js-hs-action').each(function () {
        var unfold = new HSUnfold($(this)).init();
       });
@@ -304,10 +327,53 @@
          }
          $("#datatableCounter").html($(".row-checkbox:checked").length);
       });
+
+      $(".send-message").click(function(){
+         
+         var message = $("#message_input").val();
+         if(message != ''){
+            $.ajax({
+              type: "POST",
+              url: "{{ baseUrl('cases/documents/send-chats') }}",
+              data:{
+                  _token:csrf_token,
+                  case_id:case_id,
+                  document_id:document_id,
+                  message:message,
+                  type:"text",
+                  subdomain:"{{$subdomain}}"
+              },
+              dataType:'json',
+              beforeSend:function(){
+                 // var html = '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
+                 // $("#activitySidebar .messages").html(html);
+                 $("#message_input,.send-message,.send-attachment").attr('disabled','disabled');
+              },
+              success: function (response) {
+                  if(response.status == true){
+                     $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+                     $("#message_input").val('');
+                     $("#activitySidebar .messages").html(response.html);
+                     $(".messages").mCustomScrollbar();
+                     $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+                     $(".doc_chat_input").show();
+                     fetchChats(case_id,document_id);
+                  }else{
+                     errorMessage(response.message);
+                  }
+              },
+              error:function(){
+               $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+               internalError();
+              }
+            });
+         }
+      })
    });
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
       dropzone.on("success", function(file,response) {
+         alert(response.status);
         if(response.status == false){
             is_error = true;
          }
@@ -322,37 +388,99 @@
       
    });      
 
-   function deleteFiles(){
-      if($(".row-checkbox:checked").length > 0){
-         var files = [];
-         $(".row-checkbox:checked").each(function(){
-            files.push($(this).val());
-         })
-         $.ajax({
-           type: "POST",
-           url: BASEURL + '/cases/remove-documents',
-           data:{
-               _token:csrf_token,
-               files:files,
-           },
-           dataType:'json',
-           beforeSend:function(){
-               showLoader();
-           },
-           success: function (data) {
-               if(data.status == true){
-                  location.reload();
-               }else{
-                  errorMessage('Error while pin the folder');
-               }
-           },
-           error:function(){
-             internalError();
-           }
-         });
-      }else{
-         errorMessage("No files selected");
+   function deleteMultipleDocuments(e){
+      var url = $(e).attr("data-href");
+      if($(".row-checkbox:checked").length <= 0){
+         warningMessage("No records selected to delete");
+         return false;
       }
+      Swal.fire({
+         title: 'Are you sure to delete?',
+         text: "You won't be able to revert this!",
+         type: 'warning',
+         showCancelButton: true,
+         confirmButtonColor: '#3085d6',
+         cancelButtonColor: '#d33',
+         confirmButtonText: 'Yes',
+         confirmButtonClass: 'btn btn-primary',
+         cancelButtonClass: 'btn btn-danger ml-1',
+         buttonsStyling: false,
+       }).then(function(result) {
+         if(result.value){
+            if($(".row-checkbox:checked").length <= 0){
+               warningMessage("No records selected to delete");
+               return false;
+            }
+            var row_ids = [];
+            $(".row-checkbox:checked").each(function(){
+               row_ids.push($(this).val());
+            });
+            var ids = row_ids.join(",");
+            $.ajax({
+              type: "POST",
+              url: url,
+              data:{
+                  _token:csrf_token,
+                  ids:ids,
+                  subdomain:"{{$subdomain}}"
+              },
+              dataType:'json',
+              beforeSend:function(){
+                 showLoader();
+              },
+              success: function (response) {
+                  if(response.status == true){
+                     location.reload();
+                  }else{
+                     errorMessage(response.message);
+                  }
+              },
+              error:function(){
+               internalError();
+              }
+            });
+         }
+       })
+   }
+
+
+   function fetchChats(c_id,d_id){
+      case_id = c_id;
+      document_id = d_id;
+      $.ajax({
+        type: "POST",
+        url: "{{ baseUrl('cases/documents/fetch-chats') }}",
+        data:{
+            _token:csrf_token,
+            case_id:case_id,
+            document_id:document_id,
+            subdomain:"{{$subdomain}}"
+        },
+        dataType:'json',
+        beforeSend:function(){
+           // var html = '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
+           // $("#activitySidebar .messages").html(html);
+           $("#message_input").val('');
+           $("#message_input,.send-message,.send-attachment").attr('disabled','disabled');
+        },
+        success: function (response) {
+            if(response.status == true){
+               $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+               $("#activitySidebar .messages").html(response.html);
+               setTimeout(function(){
+                  $(".messages").mCustomScrollbar();
+                  $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+               },800);
+               
+               $(".doc_chat_input").show();
+            }else{
+               errorMessage(response.message);
+            }
+        },
+        error:function(){
+         internalError();
+        }
+      });
    }
 </script>
 @endsection

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use DB;
+use View;
 
 use App\Models\User;
 use App\Models\UserDetails;
@@ -13,6 +14,10 @@ use App\Models\Countries;
 use App\Models\Languages;
 use App\Models\UserWithProfessional;
 use App\Models\UserFolders;
+use App\Models\UserFiles;
+use App\Models\FilesManager;
+
+
 class ProfessionalCasesController extends Controller
 {
     public function __construct()
@@ -47,7 +52,7 @@ class ProfessionalCasesController extends Controller
 
         $data['case_id'] = $case_id;
         $case = professionalCurl('cases/documents',$subdomain,$data);
-        
+
         $record = array();
         $service = array();
         $case_folders = array();
@@ -80,9 +85,8 @@ class ProfessionalCasesController extends Controller
         $document = array();
         $case_documents = array();
         
-        $case = professionalCurl('cases/default-documents',$subdomain,$data);
-        
-        $result = $case['data'];
+        $api_response = professionalCurl('cases/default-documents',$subdomain,$data);
+        $result = $api_response['data'];
 
         $service = $result['service'];
         $record = $result['record'];
@@ -151,9 +155,9 @@ class ProfessionalCasesController extends Controller
         $document = array();
         $case_documents = array();
         
-        $case = professionalCurl('cases/extra-documents',$subdomain,$data);
+        $api_response = professionalCurl('cases/extra-documents',$subdomain,$data);
         
-        $result = $case['data'];
+        $result = $api_response['data'];
 
         $service = $result['service'];
         $record = $result['record'];
@@ -232,8 +236,8 @@ class ProfessionalCasesController extends Controller
     public function documentsExchanger($subdomain,$case_id){
 
         $data['case_id'] = $case_id;
-        $case = professionalCurl('cases/documents-exchanger',$subdomain,$data);
-        $result = $case['data'];
+        $api_response = professionalCurl('cases/documents-exchanger',$subdomain,$data);
+        $result = $api_response['data'];
         
         $record = $result['record'];
         $service = $result['service'];
@@ -280,9 +284,16 @@ class ProfessionalCasesController extends Controller
     public function myDocumentsExchanger($subdomain,$case_id){
 
         $data['case_id'] = $case_id;
-        $case = professionalCurl('cases/documents-exchanger',$subdomain,$data);
-        $result = $case['data'];
+        $api_response = professionalCurl('cases/documents-exchanger',$subdomain,$data);
+        $result = $api_response['data'];
         
+        if(!isset($api_response['status'])){
+            return redirect()->back()->with("success","Some issue while fetching data try again");
+        }else{
+            if($api_response['status'] != 'success'){
+                return redirect()->back()->with("success",$api_response['message']);
+            }
+        }
         $record = $result['record'];
         $service = $result['service'];
         $documents = $result['documents'];
@@ -318,15 +329,22 @@ class ProfessionalCasesController extends Controller
         $case_id = $request->input("case_id");
         $files = $request->input("files");
         $subdomain = $request->input("subdomain");
-        $user_files = UserFiles::whereIn("unique_id",$files)->get();
-        pre($user_files);
-        exit;
+        
+        $user_files = FilesManager::select("unique_id","original_name","file_name","user_id")->whereIn("unique_id",$files)->get();
+        if(!empty($user_files)){
+            $user_files = $user_files->toArray();
+        }else{
+            $user_files = array();
+        }
         $data['document_type'] = $doc_type;
         $data['folder_id'] = $folder_id;
         $data['case_id'] = $case_id;
         $data['files'] = $files;
-        $result = professionalCurl('cases/save-exchange-documents',$subdomain,$data);
-        if(isset($result['status']) && $result['status'] == 'success'){
+        $data['user_files'] = $user_files;
+        $data['created_by'] = \Auth::user()->unique_id;
+        
+        $api_response = professionalCurl('cases/exchange-user-documents',$subdomain,$data);
+        if(isset($api_response['status']) && $api_response['status'] == 'success'){
             $response['status'] = true;
             $response['message'] = "File transfered successfully";
         }else{
@@ -335,4 +353,291 @@ class ProfessionalCasesController extends Controller
         }
         return response()->json($response); 
     }
+
+    public function removeCaseDocument(Request $request){
+        $doc_type = $request->input("document_type");
+        $folder_id = $request->input("folder_id");
+        $case_id = $request->input("case_id");
+        $file_id = $request->input("file_id");
+        $subdomain = $request->input("subdomain");
+
+        $data['document_type'] = $doc_type;
+        $data['folder_id'] = $folder_id;
+        $data['case_id'] = $case_id;
+        $data['file_id'] = $file_id;
+        
+        $api_response = professionalCurl('cases/remove-case-document',$subdomain,$data);
+
+        if(isset($api_response['status']) && $api_response['status'] == 'success'){
+            $response['status'] = true;
+            $response['message'] = "File removed successfully";
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Issue in file removed, try again";
+        }
+        return response()->json($response); 
+    }
+
+    public function viewDocument($case_id,$doc_id,Request $request){
+        $url = $request->get("url");
+        $filename = $request->get("file_name");
+        $ext = fileExtension($filename);
+
+        $viewData['url'] = $url;
+        $viewData['extension'] = $ext;
+        $viewData['case_id'] = $case_id;
+        $viewData['doc_id'] = $doc_id;
+        $viewData['pageTitle'] = "View Documents";
+        return view(roleFolder().'.cases.view-documents',$viewData);
+    }
+
+    public function fileMoveTo($subdomain,$id,$case_id,$doc_id){
+        $id = base64_decode($id);
+        $case_id = base64_decode($case_id);
+        $doc_id = base64_decode($doc_id);
+        $case = Cases::find($case_id);
+
+        $data['case_id'] = $case_id;
+        $api_response = professionalCurl('cases/documents-exchanger',$subdomain,$data);
+        $result = $api_response['data'];
+
+        $documents = ServiceDocuments::where("service_id",$case->visa_service_id)->get();
+        $document = ServiceDocuments::where("id",$doc_id)->first();
+        $folder_id = $document->unique_id;
+        $service = ProfessionalServices::where("id",$case->visa_service_id)->first();
+        
+        $case_folders = CaseFolders::where("case_id",$case->id)->get();
+        $viewData['service'] = $service;
+        $viewData['case'] = $case;
+        $viewData['documents'] = $documents;
+        $viewData['case_folders'] = $case_folders;
+        $viewData['document'] = $document;
+        $record = CaseDocuments::find($id);
+        $viewData['id'] = $id;
+        $viewData['pageTitle'] = "Move File";
+        $viewData['record'] = $record;
+        $view = View::make(roleFolder().'.cases.modal.move-to',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function deleteDocument($subdomain,$id){
+        $data = array();
+        $data['document_id'] = $id;   
+
+        $api_response = professionalCurl('cases/case-document-detail',$subdomain,$data);
+        $result = $api_response['data'];
+        $document = $result['record'];
+       
+        $data = array();
+        $data['document_type'] = $document['document_type'];
+        $data['folder_id'] = $document['folder_id'];
+        $data['case_id'] = $document['case_id'];
+        $data['file_id'] = $document['file_detail']['shared_id'];
+        
+        $api_response = professionalCurl('cases/remove-case-document',$subdomain,$data);
+       
+        if(isset($api_response['status']) && $api_response['status'] == 'success'){
+            return redirect()->back()->with("success","File removed successfully");
+        }else{
+            return redirect()->back()->with("error","Issue in file removed, try again");
+        }
+    }
+    public function deleteMultipleDocuments(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        $subdomain = $request->input("subdomain");
+        for($i = 0;$i < count($ids);$i++){
+            $data = array();
+            $data['document_id'] = $ids[$i];       
+            $api_response = professionalCurl('cases/case-document-detail',$subdomain,$data);
+            $result = $api_response['data'];
+            $document = $result['record'];
+            $data = array();
+            $data['document_type'] = $document['document_type'];
+            $data['folder_id'] = $document['folder_id'];
+            $data['case_id'] = $document['case_id'];
+            $data['file_id'] = $document['file_id'];
+            
+            $api_response = professionalCurl('cases/remove-case-document',$subdomain,$data);
+
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Documents deleted successfully'); 
+        return response()->json($response);
+    }
+
+    public function importToMyDocuments($subdomain,$case_id){
+
+        $data['case_id'] = $case_id;
+        $api_response = professionalCurl('cases/documents-exchanger',$subdomain,$data);
+        $result = $api_response['data'];
+        
+        
+
+        if(!isset($api_response['status'])){
+            return redirect()->back()->with("success","Some issue while fetching data try again");
+        }else{
+            if($api_response['status'] != 'success'){
+                return redirect()->back()->with("success",$api_response['message']);
+            }
+        }
+        $record = $result['record'];
+        $service = $result['service'];
+        $documents = $result['documents'];
+        $case_folders = $result['case_folders'];
+     
+
+        $file_url = $result['file_url'];
+        $file_dir = $result['file_dir'];
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        $viewData['subdomain'] = $subdomain;
+        $viewData['service'] = $service;
+        $viewData['documents'] = $documents;
+        $viewData['case_folders'] = $case_folders;
+        $viewData['record'] = $record;
+        $viewData['case_id'] = $record['id'];
+        $viewData['pageTitle'] = "Import from case to My Documents";
+
+        $user_id = \Auth::user()->unique_id;
+        $user_folders = UserFolders::where("user_id",$user_id)->get();
+        
+        $user_file_url = userDirUrl()."/documents";
+        $user_file_dir = userDir()."/documents";
+        $viewData['user_file_url'] = $user_file_url;
+        $viewData['user_file_dir'] = $user_file_dir;
+        $viewData['user_folders'] = $user_folders;
+
+        return view(roleFolder().'.cases.import-documents',$viewData);
+    }
+
+    public function saveImportDocuments(Request $request){
+
+        $folder_id = $request->input("folder_id");
+        $subdomain = $request->input("subdomain");
+        $files = $request->input("files");
+        for($i=0;$i < count($files);$i++){
+            $data['document_id'] = $files[$i];
+            $api_response = professionalCurl('cases/document-detail',$subdomain,$data);
+            
+            $result = $api_response['data'];
+            $document = $result['record'];
+           
+            $file_dir = $result['file_dir'];
+            $file_check = FilesManager::where("user_id",\Auth::user()->unique_id)
+                                    ->where("is_shared",1)
+                                    ->where("shared_id",$document['unique_id'])
+                                    ->where("shared_from",$subdomain)
+                                    ->first();
+            $source = $file_dir."/".$document['file_name'];
+            $destination = $file_dir."/".$document['file_name'];
+            $new_name = randomNumber(5)."-".$document['original_name'];
+            $destination = userDir()."/documents/".$new_name;
+            if(!empty($file_check)){
+                $unique_id = $file_check->unique_id;
+            }else{
+                copy($source, $destination);
+                $unique_id = randomNumber();
+                $object = new FilesManager();
+                $object->file_name = $new_name;
+                $object->original_name = $document['original_name'];
+                $object->user_id = \Auth::user()->unique_id;
+                $object->unique_id = $unique_id;
+                $object->is_shared = 1;
+                $object->shared_id = $document['unique_id'];
+                $object->shared_from = $subdomain;
+                $object->created_by = \Auth::user()->unique_id;
+                $object->save();
+            }
+
+            $check_user_file = UserFiles::where("folder_id",$folder_id)->where("file_id",$unique_id)->count();
+            if($check_user_file <= 0){
+                $object2 = new UserFiles();
+                $object2->user_id = \Auth::user()->unique_id;
+                $object2->folder_id = $folder_id;
+                $object2->file_id = $unique_id;
+                $object2->unique_id = randomNumber();
+                $object2->save(); 
+            }
+        }
+        $response['status'] = true;
+        $response['message'] = "File uploaded!";
+        return response()->json($response);
+    }
+
+    public function removeUserDocument(Request $request){
+
+        $file_id = $request->input("file_id");
+        $folder_id = $request->input("folder_id");
+        $file = FilesManager::where("shared_id",$file_id)->first();
+
+        UserFiles::where("file_id",$file->unique_id)->where("folder_id",$folder_id)->delete();
+
+        $check = UserFiles::where("file_id",$file_id)->count();
+        
+        $dir = userDir()."/documents/".$file->file_name;
+        if($check <= 0){
+            
+            if(file_exists($dir)){
+                unlink($dir);
+                FilesManager::where("unique_id",$file->unique_id)->delete();
+            }
+        }
+
+        $response['status'] = true;
+        $response['dir'] = $dir;
+        $response['message'] = "File removed succcessfully!";
+        return response()->json($response);
+    }
+
+    public function fetchDocumentChats(Request $request){
+        $case_id = $request->input("case_id");
+        $document_id = $request->input("document_id");
+        $subdomain = $request->input("subdomain");
+        $viewData['case_id'] = $case_id;
+        $viewData['document_id'] = $document_id;
+
+        $data = array();
+        $data['case_id'] = $case_id;
+        $data['document_id'] = $document_id;
+        $subdomain = $request->input("subdomain");
+        $data['type'] = $request->input("type");
+        $api_response = professionalCurl('cases/fetch-document-chats',$subdomain,$data);
+        $chats = array();
+        if($api_response['status'] == 'success'){
+            $chats = $api_response['data']['chats'];
+        }
+        $viewData['chats'] = $chats;
+        $view = View::make(roleFolder().'.cases.document-chats',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['html'] = $contents;
+        return response()->json($response);
+    }
+
+    public function saveDocumentChat(Request $request){
+        $data['case_id'] = $request->input("case_id");
+        $data['document_id'] = $request->input("document_id");
+        $data['message'] = $request->input("message");
+        
+        $data['created_by'] = \Auth::user()->unique_id;
+        $subdomain = $request->input("subdomain");
+        if($request->input("type") == 'file'){
+
+        }
+        $data['type'] = $request->input("type");
+        $api_response = professionalCurl('cases/save-document-chat',$subdomain,$data);
+        if($api_response['status'] == 'success'){
+            $response['status'] = true;
+            $response['message'] = $api_response['message'];
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Message send failed";
+        }
+        return response()->json($response);
+    }
+
 }

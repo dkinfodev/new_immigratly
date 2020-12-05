@@ -4,9 +4,6 @@
 .ui-droppable {
     left: 0px !important;
 }
-.ui-draggable-dragging {
-  z-index: 9999 !important;
-}
 .del_icon {
     margin-right: 15px;
 }
@@ -91,12 +88,12 @@
       @endforeach
     </div>
     <div class="col-md-6 col-sm-12 col-lg-6">
-      <div class="card mb-3">
-        <div class="card-header bg-primary">
-            <h3 class="card-title text-white">Case Documents</h3>
+        <div class="card mb-3">
+          <div class="card-header bg-primary">
+              <h3 class="card-title text-white">Case Documents</h3>
+          </div>
         </div>
-      </div>
-      @foreach($default_documents as $key => $document)
+    @foreach($default_documents as $key => $document)
       <div class="card mb-3 documents default" data-file="{{$document['unique_id']}}" data-type="default">
         <div class="card-header">
             <h3 class="card-title">{{$document['name']}}</h3>
@@ -144,20 +141,13 @@
           ?>
           <ul class="list-group list-group-lg">
             @foreach($files as $file)
-            @if($file['file_detail']['is_shared'] == 1)
-            <li data-id="{{ $file['file_detail']['shared_id'] }}" class="list-group-item document-exchange">
-            @else
-            <li class="list-group-item document-exchange">
-            @endif
+            <li class="list-group-item document-exchange draggable">
               <?php 
                  $fileicon = fileIcon($file['file_detail']['original_name']);
                  echo $fileicon;
                  $filesize = file_size($file_dir."/".$file['file_detail']['file_name']);
               ?>
                {{$file['file_detail']['original_name']}}
-               @if($file["file_detail"]["is_shared"] == 1)
-                <a href="javascript:;" class="float-right del_icon text-danger"><i class="tio-delete"></i></a><div class="clearfix"></div>
-               @endif
             </li>
             @endforeach
           </ul>
@@ -178,20 +168,13 @@
           ?>
           <ul class="list-group list-group-lg">
             @foreach($files as $file)
-            @if($file['file_detail']['is_shared'] == 1)
-            <li data-id="{{ $file['file_detail']['shared_id'] }}" class="list-group-item document-exchange">
-            @else
-            <li class="list-group-item document-exchange">
-            @endif
+            <li class="list-group-item document-exchange draggable">
               <?php 
                  $fileicon = fileIcon($file['file_detail']['original_name']);
                  echo $fileicon;
                  $filesize = file_size($file_dir."/".$file['file_detail']['file_name']);
               ?>
                {{$file['file_detail']['original_name']}}
-               @if($file["file_detail"]["is_shared"] == 1)
-                <a href="javascript:;" class="float-right del_icon text-danger"><i class="tio-delete"></i></a><div class="clearfix"></div>
-               @endif
             </li>
             @endforeach
           </ul>
@@ -199,7 +182,7 @@
           </ul>
         </div>
       </div>
-    @endforeach
+      @endforeach
     </div>
   </div>
   <!-- End Card -->

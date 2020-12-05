@@ -107,7 +107,7 @@
                     <div class="card-body text-center">
                       <!-- Avatar -->
                       <div class="avatar avatar-xl avatar-circle avatar-border-lg avatar-centered mb-3">
-                        <img class="avatar-img" src="{{ professionalProfile($member['member']['profile_image'],'t',$subdomain) }}" alt="Image Description">
+                        <img class="avatar-img" src="{{ professionalProfile($member['member']['unique_id'],'t',$subdomain) }}" alt="Image Description">
                         
                       </div>
                       <!-- End Avatar -->

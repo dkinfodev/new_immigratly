@@ -16,6 +16,7 @@ use App\Models\CaseDocuments;
 use App\Models\DocumentFolder;
 use App\Models\CaseFolders;
 use App\Models\Documents;
+use App\Models\DocumentChats;
 
 class ProfessionalApiController extends Controller
 {
@@ -77,9 +78,9 @@ class ProfessionalApiController extends Controller
             $request->request->add($postData);
             $id = $request->input("case_id");
             $record = Cases::where("unique_id",$id)->first();
-            $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+            $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
             $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
-            $case_folders = CaseFolders::where("case_id",$record->id)->get();
+            $case_folders = CaseFolders::where("case_id",$record->unique_id)->get();
             $service->MainService = $service->Service($service->service_id);
             $default_documents = $service->DefaultDocuments($service->service_id);
             foreach($default_documents as $document){
@@ -116,9 +117,9 @@ class ProfessionalApiController extends Controller
             $record = Cases::where("unique_id",$case_id)->first();
             $document = DB::table(MAIN_DATABASE.".documents_folder")->where("unique_id",$doc_id)->first();
             $folder_id = $document->unique_id;
-            $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+            $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
-            $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
+            $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->get();
             $data['service'] = $service;
@@ -153,7 +154,7 @@ class ProfessionalApiController extends Controller
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
-            $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
+            $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->get();
             $data['service'] = $service;
@@ -189,7 +190,7 @@ class ProfessionalApiController extends Controller
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
-            $case_documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)
+            $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->get();
             $data['service'] = $service;
@@ -259,7 +260,7 @@ class ProfessionalApiController extends Controller
 
             $case_id = $request->input("case_id");
             $record = Cases::where("unique_id",$case_id)->first();
-            $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+            $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
             $default_documents = $service->DefaultDocuments($service->service_id);
 
             foreach($default_documents as $document){
@@ -322,8 +323,200 @@ class ProfessionalApiController extends Controller
                 CaseDocuments::where("file_id",$new_files[$i])->update($data);
             }
 
-            $response['status'] = true;
+            $response['status'] = "success";
             $response['message'] = "File transfered successfully";
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function exchangeUserDocuments(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $document_type = $request->input("document_type");
+            $folder_id = $request->input("folder_id");
+            $case_id = $request->input("case_id");
+            $files = $request->input("files");
+            $created_by = $request->input("created_by");
+            $user_files = $request->input("user_files");
+            $case_doc_id = array();
+            foreach($user_files as $file){
+
+                $check_document = Documents::where("is_shared",1)
+                                ->where("shared_id",$file['unique_id'])
+                                ->first();
+
+                $source = userDir($file['user_id'])."/documents/".$file['file_name'];
+                $new_name = randomNumber(5)."-".$file['original_name'];
+                $destination = professionalDir($this->subdomain)."/documents/".$new_name;
+                if(empty($check_document)){
+                    copy($source, $destination);
+                    $document_id = randomNumber();
+                    $object = new Documents();
+                    $object->file_name = $new_name;
+                    $object->original_name = $file['original_name'];
+                    $object->unique_id = $document_id;
+                    $object->is_shared = 1;
+                    $object->shared_id = $file['unique_id'];
+                    $object->created_by = $created_by;
+
+                    $object->save();
+                }else{
+                    $document_id = $check_document->unique_id;
+                    if(!file_exists(professionalDir($this->subdomain)."/documents/".$check_document->file_name)){
+                        $destination = professionalDir($this->subdomain)."/documents/".$check_document->file_name;
+                        copy($source, $destination);
+                    }
+                }
+                $case_document = CaseDocuments::where("case_id",$case_id)
+                                            ->where("file_id",$document_id)
+                                            ->first();
+                if(empty($case_document)){
+                    $object2 = new CaseDocuments();
+                    $object2->case_id = $case_id;
+                    $object2->unique_id = randomNumber();
+                }else{
+                    $object2 = CaseDocuments::find($case_document->id);
+                }
+                
+                $object2->folder_id = $folder_id;
+                $object2->file_id = $document_id;
+                $object2->document_type = $document_type;
+                $object2->created_by = $created_by;
+                $object2->added_by = "client";
+                $object2->save();
+            }
+            $response['status'] = "success";
+            $response['message'] = "File transfered successfully";
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function removeCaseDocument(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $case_id = $request->input("case_id");
+            $file_id = $request->input("file_id");
+            $document_type = $request->input("document_type");
+
+            $check_document = Documents::where("is_shared",1)
+                                ->where("shared_id",$file_id)
+                                ->first();
+            if(!empty($check_document)){
+                $record = CaseDocuments::where("case_id",$case_id)
+                    ->where("file_id",$check_document->unique_id)
+                    ->where("document_type",$document_type)
+                    ->first();  
+                CaseDocuments::deleteRecord($record->id);
+
+                $check_count = CaseDocuments::where("case_id",$case_id)
+                        ->where("file_id",$check_document->unique_id)
+                        ->count();  
+
+                if($check_count <= 0){
+                    $destination = professionalDir($this->subdomain)."/documents/".$check_document->file_name;
+                    unlink($destination);
+                }
+                $response['status'] = "success";
+                $response['message'] = "File removed successfully"; 
+            }else{
+                $response['status'] = "error";
+                $response['message'] = "Issue in file removing"; 
+            }     
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function caseDocumentDetail(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $document_id = $request->input("document_id");
+            $record = CaseDocuments::with('FileDetail')->where("unique_id",$document_id)->first();  
+            $file_url = professionalDirUrl($this->subdomain)."/documents";
+            $file_dir = professionalDir($this->subdomain)."/documents";
+            $data['file_url'] = $file_url;
+            $data['file_dir'] = $file_dir;
+            $data['record'] = $record;
+            $response['status'] = "success";
+            $response['data'] = $data; 
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function documentDetail(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $document_id = $request->input("document_id");
+            $record = Documents::where("unique_id",$document_id)->first();  
+            $file_url = professionalDirUrl($this->subdomain)."/documents";
+            $file_dir = professionalDir($this->subdomain)."/documents";
+            $data['file_url'] = $file_url;
+            $data['file_dir'] = $file_dir;
+            $data['record'] = $record;
+            $response['status'] = "success";
+            $response['data'] = $data; 
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function fetchDocumentChats(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $chats = DocumentChats::where("case_id",$request->input("case_id"))
+                                ->where("document_id",$request->input("document_id"))
+                                ->get();
+            $data['chats'] = $chats;
+            $response['status'] = "success";
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function saveDocumentChat(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $object = new DocumentChats();
+            $object->case_id = $request->input("case_id");
+            $object->document_id = $request->input("document_id");
+            $object->message = $request->input("message");
+            $object->type = $request->input("type");
+            $object->send_by = 'client';
+            $object->created_by = $request->input("created_by");
+            $object->save();
+
+            $response['status'] = "success";
+            $response['message'] = "Message send successfully";
+
         } catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();

@@ -27,8 +27,12 @@
         <div class="text-dark">{{$record['case_title']}}</div>
       </div>
       <div class="col-sm-auto">
+        <a class="btn btn-info" href="{{ baseUrl('cases/import-to-my-documents/'.$subdomain.'/'.$record['unique_id']) }}">
+         <i class="tio-swap-horizontal mr-1"></i> Import to My Documents 
+        </a>
         <a class="btn btn-primary" href="{{ baseUrl('cases/my-documents-exchanger/'.$subdomain.'/'.$record['unique_id']) }}">
-         <i class="tio-swap-horizontal mr-1"></i> Export from My Documents </a>
+         <i class="tio-swap-horizontal mr-1"></i> Export from My Documents 
+        </a>
         <a class="btn btn-success" href="{{ baseUrl('cases/documents-exchanger/'.$subdomain.'/'.$record['unique_id']) }}">
          <i class="tio-swap-horizontal mr-1"></i> Documents Exchanger
         </a>

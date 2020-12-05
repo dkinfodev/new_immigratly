@@ -56,14 +56,14 @@
       <?php 
         $more_file = 0;
       ?>
-      @foreach($record->AssingedMember as $key => $member)
+      @foreach($record->AssingedMember as $key2 => $member)
         <?php 
-        if($key > 1){
+        if($key2 > 1){
           $more_file++;
         }else{
         ?>  
         <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
-          <img class="avatar-img" src="{{ professionalProfile($member->Member->profile_image,'t') }}" alt="Image Description">
+          <img class="avatar-img" src="{{ professionalProfile($member->Member->unique_id,'t') }}" alt="Image Description">
         </a>
         <!-- <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
           <span class="avatar-initials">{{ userInitial($member->Member) }}</span>
@@ -94,8 +94,7 @@
          data-hs-unfold-options='{
            "target": "#action-{{$key}}",
            "type": "css-animation"
-         }'>
-              More <i class="tio-chevron-down ml-1"></i>
+         }'>More  <i class="tio-chevron-down ml-1"></i>
       </a>
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right">
         <a class="dropdown-item" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">

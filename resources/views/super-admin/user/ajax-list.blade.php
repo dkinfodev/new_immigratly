@@ -8,8 +8,8 @@
   </td>
   <td class="table-column-pl-0">
     <a class="d-flex align-items-center" href="#">
-      @if($record->profile_image != '' &&  file_exists(UserDir().'/profile/'.$record->profile_image))
-      <img class="avatar" src="{{ professionalProfile($record->profile_image)}}" alt="Profile Image">
+      @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))
+      <img class="avatar" src="{{ professionalProfile($record->unique_id)}}" alt="Profile Image">
       @else
       <div class="avatar avatar-soft-primary avatar-circle">
         <span class="avatar-initials">{{userInitial($record)}}</span>

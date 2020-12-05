@@ -37,6 +37,14 @@ Route::group(array('middleware' => 'professional_curl'), function () {
 			Route::post('/upload-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'uploadDocuments']);
 			Route::post('/documents-exchanger', [App\Http\Controllers\Api\ProfessionalApiController::class, 'documentsExchanger']);
 			Route::post('/save-exchange-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveExchangeDocuments']);
+			Route::post('/exchange-user-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'exchangeUserDocuments']);
+			Route::post('/remove-case-document', [App\Http\Controllers\Api\ProfessionalApiController::class, 'removeCaseDocument']);
+			Route::post('/case-document-detail', [App\Http\Controllers\Api\ProfessionalApiController::class, 'caseDocumentDetail']);
+			Route::post('/document-detail', [App\Http\Controllers\Api\ProfessionalApiController::class, 'documentDetail']);
+			Route::post('/fetch-document-chats', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchDocumentChats']);
+			Route::post('/save-document-chat', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveDocumentChat']);
+
+			
 		});	
 	});	
 });

@@ -157,16 +157,34 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::group(array('prefix' => 'cases'), function () {
         Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'cases']);
         Route::get('/view/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'view']);
-        Route::get('/documents/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseDocuments']);
-        Route::get('/documents/default/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
-        Route::get('/documents/other/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'otherDocuments']);
-        Route::get('/documents/extra/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'extraDocuments']);
+        Route::group(array('prefix' => 'documents'), function () {
+            Route::get('/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseDocuments']);
+            Route::get('/default/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
+            Route::get('/other/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'otherDocuments']);
+            Route::get('/extra/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'extraDocuments']);
+            Route::get('/file-move-to/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fileMoveTo']);
+            Route::get('/delete/{subdomain}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteDocument']);
+            Route::get('/delete-multiple', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteMultipleDocument']);
+            Route::post('/chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'documentChats']);
+            Route::post('/fetch-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchDocumentChats']);
+            Route::post('/send-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveDocumentChat']);
+        });
         Route::post('/upload-documents/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadDocuments']);
         Route::get('/documents-exchanger/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'documentsExchanger']);
         Route::post('/documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveExchangeDocuments']);
 
         Route::get('/my-documents-exchanger/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'myDocumentsExchanger']);
+
+        
         Route::post('/my-documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'exportMyDocuments']);
+        Route::post('/remove-case-document', [App\Http\Controllers\User\ProfessionalCasesController::class, 'removeCaseDocument']);
+
+        Route::get('/import-to-my-documents/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'importToMyDocuments']);
+        Route::post('/import-documents', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveImportDocuments']);
+        Route::post('/remove-user-document', [App\Http\Controllers\User\ProfessionalCasesController::class, 'removeUserDocument']);
+        
+
+        Route::get('/view-document/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'viewDocument']);
     });
 });
 
@@ -272,6 +290,9 @@ Route::group(array('prefix' => 'admin'), function () {
 
                 Route::get('/documents-exchanger/{case_id}', [App\Http\Controllers\Admin\CasesController::class, 'documentsExchanger']);
                 Route::post('/documents-exchanger', [App\Http\Controllers\Admin\CasesController::class, 'saveExchangeDocuments']);
+
+                Route::post('/fetch-chats', [App\Http\Controllers\Admin\CasesController::class, 'fetchDocumentChats']);
+                Route::post('/send-chats', [App\Http\Controllers\Admin\CasesController::class, 'saveDocumentChat']);
             });
         });
 

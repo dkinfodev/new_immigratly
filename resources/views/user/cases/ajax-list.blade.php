@@ -58,7 +58,7 @@
                   }else{
                   ?>  
                   <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
-                    <img class="avatar-img" src="{{ professionalProfile($member->Member->profile_image,'t') }}" alt="Image Description">
+                    <img class="avatar-img" src="{{ professionalProfile($member->Member->unique_id,'t',$subdomain) }}" alt="Image Description">
                   </a>
                   <?php } ?>
                 @endforeach

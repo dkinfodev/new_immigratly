@@ -119,7 +119,7 @@
       <div id="activitySidebar" class="hs-unfold-content sidebar sidebar-bordered sidebar-box-shadow">
          <div class="card card-lg sidebar-card sidebar-scrollbar">
             <div class="card-header">
-               <h4 class="card-header-title">Sidebar title</h4>
+               <h4 class="card-header-title">Document Chats</h4>
                <!-- Toggle Button -->
                <a class="js-hs-unfold-invoker btn btn-icon btn-xs btn-ghost-dark ml-2" href="javascript:;"
                   data-hs-unfold-options='{
@@ -136,7 +136,32 @@
             </div>
             <!-- Body -->
             <div class="card-body sidebar-body">
-               Sidebar body...
+               <div class="chat_window">
+                  <ul class="messages">
+                     
+                  </ul>
+                  <div class="doc_chat_input bottom_wrapper clearfix">
+                     <div class="message_input_wrapper">
+                        <input class="form-control msg_textbox" id="message_input" placeholder="Type your message here..." />
+                     </div>
+                     <div class="btn-group send-btn">
+                        <button type="button" class="btn btn-primary btn-pill send-message">
+                          <i class="tio-send"></i>
+                        </button>
+                        <button type="button" class="btn btn-info btn-pill send-attachment">
+                          <i class="tio-attachment"></i>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               <div class="message_template">
+                  <li class="message">
+                     <div class="avatar"></div>
+                     <div class="text_wrapper">
+                        <div class="text"></div>
+                     </div>
+                  </li>
+               </div>
             </div>
             <!-- End Body -->
          </div>
@@ -188,7 +213,7 @@
                   <td width="10%">
                      <!-- Toggle -->
                      <div class="hs-unfold">
-                        <a class="js-hs-unfold-invoker text-body" href="javascript:;"
+                        <a onclick="fetchChats('{{ $doc->case_id }}','{{ $doc->unique_id }}')" class="js-hs-unfold-invoker text-body" href="javascript:;"
                            data-hs-unfold-options='{
                            "target": "#activitySidebar",
                            "type": "css-animation",
@@ -197,7 +222,7 @@
                            "hasOverlay": true,
                            "smartPositionOff": true
                            }'>
-                        <i class="tio-chat-outlined"></i> 21
+                        <i class="tio-chat-outlined"></i> {{count($doc->Chats)}}
                         </a>
                      </div>
                      <!-- End Toggle -->
@@ -290,9 +315,13 @@
 <!-- End Content -->
 @endsection
 @section('javascript')
+<link rel="stylesheet" href="assets/vendor/mCustomScrollbar/jquery.mCustomScrollbar.css" />
+<script src="assets/vendor/mCustomScrollbar/jquery.mCustomScrollbar.min.js"></script>
 <script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
 <script type="text/javascript">
    var is_error = false;
+   var case_id = '';
+   var document_id = '';
    $(document).ready(function(){
       $('.js-hs-action').each(function () {
        var unfold = new HSUnfold($(this)).init();
@@ -305,6 +334,48 @@
          }
          $("#datatableCounter").html($(".row-checkbox:checked").length);
       });
+      $(".send-message").click(function(){
+         // var case_id = $("#activitySidebar").data("case-id");
+         // var document_id = $("#activitySidebar").data("document-id");
+         var message = $("#message_input").val();
+         if(message != ''){
+            $.ajax({
+              type: "POST",
+              url: "{{ baseUrl('cases/case-documents/send-chats') }}",
+              data:{
+                  _token:csrf_token,
+                  case_id:case_id,
+                  document_id:document_id,
+                  message:message,
+                  type:"text",
+              },
+              dataType:'json',
+              beforeSend:function(){
+                 // var html = '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
+                 // $("#activitySidebar .messages").html(html);
+                 $("#message_input,.send-message,.send-attachment").attr('disabled','disabled');
+              },
+              success: function (response) {
+                  if(response.status == true){
+                     $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+                     $("#message_input").val('');
+                     $("#activitySidebar .messages").html(response.html);
+                     $(".messages").mCustomScrollbar();
+                     $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+                     $(".doc_chat_input").show();
+                     fetchChats(case_id,document_id);
+                  }else{
+                     errorMessage(response.message);
+                  }
+              },
+              error:function(){
+
+               $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+               internalError();
+              }
+            });
+         }
+      })
    });
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
@@ -354,6 +425,48 @@
       }else{
          errorMessage("No files selected");
       }
+   }
+   function fetchChats(c_id,d_id){
+      case_id = c_id;
+      document_id = d_id;
+      $("#activitySidebar").attr("data-case-id",'');
+      $("#activitySidebar").attr("data-document-id",'');
+      $.ajax({
+        type: "POST",
+        url: "{{ baseUrl('cases/case-documents/fetch-chats') }}",
+        data:{
+            _token:csrf_token,
+            case_id:case_id,
+            document_id:document_id,
+        },
+        dataType:'json',
+        beforeSend:function(){
+         $("#activitySidebar").attr("data-case-id",case_id);
+         $("#activitySidebar").attr("data-document-id",document_id);
+           // var html = '<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>';
+           // $("#activitySidebar .messages").html(html);
+           $("#message_input").val('');
+           $("#message_input,.send-message,.send-attachment").attr('disabled','disabled');
+        },
+        success: function (response) {
+            if(response.status == true){
+               $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+               $("#activitySidebar .messages").html(response.html);
+               setTimeout(function(){
+                  $(".messages").mCustomScrollbar();
+                  $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+               },800);
+               
+               $(".doc_chat_input").show();
+            }else{
+               errorMessage(response.message);
+            }
+        },
+        error:function(){
+         $("#activitySidebar .messages").html('');
+         internalError();
+        }
+      });
    }
 </script>
 @endsection
