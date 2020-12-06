@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\CaseDocuments;
+use App\Models\User;
+
 class DocumentChats extends Model
 {
     use HasFactory;

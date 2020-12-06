@@ -383,7 +383,6 @@
    });
    $("#chat-attachment").change(function(){
       var formData = new FormData();
-      alert($('#chat-attachment')[0].files[0]);
       formData.append("_token",csrf_token);
       formData.append("case_id",case_id);
       formData.append("document_id",document_id);

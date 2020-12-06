@@ -199,7 +199,7 @@
                   <td class="table-column-pl-0">
                      <?php 
                         $doc_url = $file_url."/".$doc['file_detail']['file_name']; 
-                        $url = baseUrl('cases/view-document/'.$case_id.'/'.$doc_id.'?url='.$doc_url.'&file_name='.$doc['file_detail']['file_name']);
+                        $url = baseUrl('cases/view-document/'.$case_id.'/'.$doc['unique_id'].'?url='.$doc_url.'&file_name='.$doc['file_detail']['file_name'].'&p='.$subdomain);
                      ?>
                      <a class="d-flex align-items-center" href="{{ $url }}">
                         <?php 
@@ -376,7 +376,6 @@
 
       $("#chat-attachment").change(function(){
          var formData = new FormData();
-         alert($('#chat-attachment')[0].files[0]);
          formData.append("_token",csrf_token);
          formData.append("case_id",case_id);
          formData.append("document_id",document_id);
@@ -417,7 +416,7 @@
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
       dropzone.on("success", function(file,response) {
-         alert(response.status);
+
         if(response.status == false){
             is_error = true;
          }

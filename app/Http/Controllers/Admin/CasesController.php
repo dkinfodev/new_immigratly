@@ -153,7 +153,7 @@ class CasesController extends Controller
             $object->description = $request->input("description");
         }
         $object->visa_service_id = $request->input("visa_service_id");
-        $object->created_by = \Auth::user()->id;
+        $object->created_by = \Auth::user()->unique_id;
         $object->save();
 
         $case_id = $object->id;
@@ -671,7 +671,7 @@ class CasesController extends Controller
         $subdomain = $request->input("subdomain");
         $viewData['case_id'] = $case_id;
         $viewData['document_id'] = $document_id;
-
+        $viewData['subdomain'] = \Session::get("subdomain");
         $data = array();
         $data['case_id'] = $case_id;
         $data['document_id'] = $document_id;

@@ -183,34 +183,38 @@ if(!function_exists("fileExtension")){
 }
 if(!function_exists("file_size")){
     function file_size($file){
-        $size = filesize($file);
-        $bytes = $size;
-        if ($size >= 1073741824)
-        {
-            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
-        }
-        elseif ($bytes >= 1048576)
-        {
-            $bytes = number_format($bytes / 1048576, 2) . ' MB';
-        }
-        elseif ($bytes >= 1024)
-        {
-            $bytes = number_format($bytes / 1024, 2) . ' KB';
-        }
-        elseif ($bytes > 1)
-        {
-            $bytes = $bytes . ' bytes';
-        }
-        elseif ($bytes == 1)
-        {
-            $bytes = $bytes . ' byte';
-        }
-        else
-        {
-            $bytes = '0 bytes';
-        }
+        if(file_exists($file)){
+            $size = filesize($file);
+            $bytes = $size;
+            if ($size >= 1073741824)
+            {
+                $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+            }
+            elseif ($bytes >= 1048576)
+            {
+                $bytes = number_format($bytes / 1048576, 2) . ' MB';
+            }
+            elseif ($bytes >= 1024)
+            {
+                $bytes = number_format($bytes / 1024, 2) . ' KB';
+            }
+            elseif ($bytes > 1)
+            {
+                $bytes = $bytes . ' bytes';
+            }
+            elseif ($bytes == 1)
+            {
+                $bytes = $bytes . ' byte';
+            }
+            else
+            {
+                $bytes = '0 bytes';
+            }
 
-        $file_size = $bytes;
+            $file_size = $bytes;
+        }else{
+            $file_size = '0 bytes';
+        }
         return $file_size;
     }
 }
@@ -948,5 +952,19 @@ if(!function_exists("superAdminDirUrl")){
         $dir = asset("public/uploads/admin");
         
         return $dir;
+    }
+}
+
+if(!function_exists("docChatSendBy")){
+    function docChatSendBy($send_by,$user_id,$subdomain=''){
+        if($send_by == 'client'){
+            $user = DB::table(MAIN_DATABASE.".users")->where("unique_id",$user_id)->first();
+        }else{
+            if($subdomain == ''){
+                $subdomain = \Session::get("subdomain");
+            }
+            $user = DB::table(PROFESSIONAL_DATABASE.$subdomain.".users")->where("unique_id",$user_id)->first();
+        }
+        return $user;
     }
 }

@@ -54,7 +54,7 @@
           <th>Professional</th>
           <th scope="col" class="table-column-pl-0">Visa Service</th>
           <th scope="col" class="table-column-pl-0">Assigned</th>
-          <!-- <th scope="col">Status</td> -->
+          <th scope="col">Status</td>
           <th></th>
         </tr>
       </thead>
@@ -141,6 +141,13 @@
               
             </div>
             <!-- End Avatar Group -->
+          </td>
+          <td width="10%">
+             <div class="hs-unfold">
+                <a href="{{ baseUrl('cases/chats/'.$professional->professional.'/'.$record['unique_id']) }}" class="js-hs-unfold-invoker text-body">
+                <i class="tio-chat-outlined"></i> 0
+                </a>
+             </div>
           </td>
           <td>
               <div class="hs-unfold">

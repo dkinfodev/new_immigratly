@@ -195,3 +195,14 @@
     top: 4px;
     position: relative;
 }
+.text img {
+    width: 25px !important;
+}
+.file-msg img {
+    float: left !important;
+}
+.file-msg .text-msg {
+    float: left !important;
+    margin-left: 9px;
+    margin-top: 12px;
+}

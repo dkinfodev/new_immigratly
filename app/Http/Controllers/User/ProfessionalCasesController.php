@@ -382,11 +382,13 @@ class ProfessionalCasesController extends Controller
         $url = $request->get("url");
         $filename = $request->get("file_name");
         $ext = fileExtension($filename);
+        $subdomain = $request->get("p");
 
         $viewData['url'] = $url;
         $viewData['extension'] = $ext;
+        $viewData['subdomain'] = $subdomain;
         $viewData['case_id'] = $case_id;
-        $viewData['doc_id'] = $doc_id;
+        $viewData['document_id'] = $doc_id;
         $viewData['pageTitle'] = "View Documents";
         return view(roleFolder().'.cases.view-documents',$viewData);
     }
@@ -602,8 +604,8 @@ class ProfessionalCasesController extends Controller
         $data = array();
         $data['case_id'] = $case_id;
         $data['document_id'] = $document_id;
-        $subdomain = $request->input("subdomain");
         $data['type'] = $request->input("type");
+        $data['subdomain'] = $subdomain;
         $api_response = professionalCurl('cases/fetch-document-chats',$subdomain,$data);
         $chats = array();
         if($api_response['status'] == 'success'){
@@ -677,6 +679,27 @@ class ProfessionalCasesController extends Controller
         }
         
         return response()->json($response);
+    }
+
+    public function chats($subdomain,$case_id){
+
+        $data['case_id'] = $case_id;
+        $api_response = professionalCurl('cases/view',$subdomain,$data);
+        $result = $api_response['data'];
+        
+        
+
+        if(!isset($api_response['status'])){
+            return redirect()->back()->with("success","Some issue while fetching data try again");
+        }else{
+            if($api_response['status'] != 'success'){
+                return redirect()->back()->with("success",$api_response['message']);
+            }
+        }
+        
+        $viewData['pageTitle'] = "Chats";
+
+        return view(roleFolder().'.cases.chats',$viewData);
     }
 
 }
