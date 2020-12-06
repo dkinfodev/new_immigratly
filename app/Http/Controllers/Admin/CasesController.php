@@ -694,10 +694,7 @@ class CasesController extends Controller
         
         $data['created_by'] = \Auth::user()->unique_id;
         $subdomain = $request->input("subdomain");
-        if($request->input("type") == 'file'){
-
-        }
-
+        
         $object = new DocumentChats();
         $object->case_id = $request->input("case_id");
         $object->document_id = $request->input("document_id");
@@ -709,6 +706,54 @@ class CasesController extends Controller
     
         $response['status'] = true;
         $response['message'] = "Message send successfully";
+        
+        return response()->json($response);
+    }
+
+    public function saveDocumentChatFile(Request $request){
+
+        if ($file = $request->file('attachment')){
+            $data['case_id'] = $request->input("case_id");
+            $data['document_id'] = $request->input("document_id");
+
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension() ?: 'png';
+            $newName        = mt_rand(1,99999)."-".$fileName;
+            $source_url = $file->getPathName();
+            $destinationPath = professionalDir()."/documents";
+            
+            
+            if($file->move($destinationPath, $newName)){
+               
+                $file_id = randomNumber();
+                $object2 = new Documents();
+                $object2->file_name = $newName;
+                $object2->original_name = $fileName;
+                $object2->unique_id = $file_id;
+                $object2->created_by = 0;
+                $object2->save();
+
+                $object = new DocumentChats();
+                $object->case_id = $request->input("case_id");
+                $object->document_id = $request->input("document_id");
+                $object->message = $fileName;
+                $object->type = 'file';
+                $object->file_id = $file_id;
+                $object->send_by = \Auth::user()->role;
+                $object->created_by = \Auth::user()->unique_id;
+                $object->save();
+            
+                $response['status'] = true;
+                $response['message'] = "File send successfully";
+                                 
+            }else{
+                $response['status'] = true;
+                $response['message'] = "File send failed, try again!";
+            }
+        }else{
+            $response['status'] = false;
+            $response['message'] = "File not selected!";
+        }
         
         return response()->json($response);
     }

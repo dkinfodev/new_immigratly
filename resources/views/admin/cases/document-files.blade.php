@@ -143,6 +143,7 @@
                   <div class="doc_chat_input bottom_wrapper clearfix">
                      <div class="message_input_wrapper">
                         <input class="form-control msg_textbox" id="message_input" placeholder="Type your message here..." />
+                        <input type="file" name="chat_file" id="chat-attachment" style="display:none" />
                      </div>
                      <div class="btn-group send-btn">
                         <button type="button" class="btn btn-primary btn-pill send-message">
@@ -376,6 +377,47 @@
             });
          }
       })
+   });
+   $(".send-attachment").click(function(){
+      document.getElementById('chat-attachment').click();
+   });
+   $("#chat-attachment").change(function(){
+      var formData = new FormData();
+      alert($('#chat-attachment')[0].files[0]);
+      formData.append("_token",csrf_token);
+      formData.append("case_id",case_id);
+      formData.append("document_id",document_id);
+      formData.append('attachment', $('#chat-attachment')[0].files[0]);
+      var url  = "{{ baseUrl('cases/case-documents/send-chat-file') }}";
+      $.ajax({
+         url:url,
+         type:"post",
+         data:formData,
+         cache: false,
+         contentType: false,
+         processData: false,
+         dataType:"json",
+         beforeSend:function(){
+            $("#message_input,.send-message,.send-attachment").attr('disabled','disabled');
+         },
+         success: function (response) {
+            if(response.status == true){
+               $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+               $("#chat-attachment").val('');
+               $("#activitySidebar .messages").html(response.html);
+               $(".messages").mCustomScrollbar();
+               $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+               $(".doc_chat_input").show();
+               fetchChats(case_id,document_id);
+            }else{
+               errorMessage(response.message);
+            }
+         },
+         error:function(){
+            $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
+            internalError();
+         }
+      });
    });
    $('.dropzone-custom').each(function () {
       var dropzone = $.HSCore.components.HSDropzone.init('#' + $(this).attr('id'));
