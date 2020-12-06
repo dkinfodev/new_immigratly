@@ -56,7 +56,9 @@ class ProfessionalApiController extends Controller
         try{
             $postData = $request->input();
             $request->request->add($postData);
-            $record = Cases::with(['AssingedMember','VisaService'])->where("unique_id",$request->input("case_id"))->first();
+            $record = Cases::with(['AssingedMember','VisaService'])
+                    ->where("unique_id",$request->input("case_id"))
+                    ->first();
             
             $temp = $record;
             $temp->MainService = $record->Service($record->VisaService->service_id);

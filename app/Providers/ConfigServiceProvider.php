@@ -40,7 +40,7 @@ class ConfigServiceProvider extends ServiceProvider
             }else{
                 \Session::put("login_to",'admin_panel');
             }
-        }else{
+        }else {
             $login_to = 'professional_panel'; // admin_panel/professional_panel
             \Session::put("login_to",$login_to);
             if($login_to == 'professional_panel'){
