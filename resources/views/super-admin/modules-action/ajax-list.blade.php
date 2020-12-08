@@ -12,11 +12,10 @@
       </div>
     </a>
   </td>
-  
 
   <td> 
 
-      <a href="{{baseUrl('professional-modules/action/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; 
+      <a href="{{baseUrl('professional-modules/action/'.base64_encode($moduleId).'/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; 
       <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('professional-modules/action/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>

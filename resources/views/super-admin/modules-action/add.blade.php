@@ -10,6 +10,8 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/professional-modules') }}">Professional Modules</a></li>
+            <li class="breadcrumb-item" aria-current="page">Professional Modules</li>
+            <li class="breadcrumb-item" aria-current="page">{{$moduleName}}</li>
             <li class="breadcrumb-item active" aria-current="page">Add</li>
           </ol>
         </nav>
@@ -17,7 +19,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('professional-modules/')}}">
+        <a class="btn btn-primary" href="{{baseUrl('professional-modules/action/'.base64_encode($moduleId))}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -30,7 +32,7 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('/professional-modules/save') }}" method="post">
+      <form id="form" class="js-validate" action="{{ baseUrl('/professional-modules/action/save') }}" method="post">
 
         @csrf
         <!-- Input Group -->
@@ -38,10 +40,10 @@
           <label class="col-sm-2 col-form-label">Name</label>
           <div class="col-sm-10">
            <input type="text" name="name" id="name" placeholder="Enter name" class="form-control">
+           <input type="hidden" name="module_id" id="module_id" value="{{base64_encode($moduleId)}}">
          </div>
        </div>
        <!-- End Input Group -->
-
 
       <div class="form-group">
         <button type="submit" class="btn add-btn btn-primary">Add</button>

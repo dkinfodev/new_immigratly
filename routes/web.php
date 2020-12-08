@@ -91,12 +91,11 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
                 Route::get('/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'index']);
                 Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'getAjaxList']); 
                 Route::get('/{id}/add', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'add']);
-                Route::post('/{id}/save', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'save']); 
-                Route::get('/{id}/delete/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'deleteSingle']); 
-                Route::post('/{id}/delete-multiple', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'deleteMultiple']); 
-                Route::get('/{id}/edit/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'edit']); 
-                Route::post('/{id}/update/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'update']);
-                Route::post('/{id}/search/{key}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'search']); 
+                Route::post('/save', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'save']); 
+                Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'deleteSingle']); 
+                Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'deleteMultiple']); 
+                Route::get('/{mid}/edit/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'edit']); 
+                Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\ModulesActionController::class, 'update']);
             });
     });
 

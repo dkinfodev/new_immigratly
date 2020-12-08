@@ -11,6 +11,6 @@ class ModulesAction extends Model
     protected $table = "professional_modules_action";
 
     static function deleteRecord($id){
-        Languages::where("id",$id)->delete();
+        ModulesAction::where("id",$id)->delete();
     }
 }

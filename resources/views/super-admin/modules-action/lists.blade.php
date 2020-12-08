@@ -20,7 +20,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/professional-modules/add') }}">
+        <a class="btn btn-primary" href="{{ baseUrl('/professional-modules/action/'.base64_encode($moduleId).'/add') }}">
           <i class="tio-add mr-1"></i> Add 
         </a>
       </div>
@@ -135,77 +135,44 @@
 <script src="assets/vendor/hs-toggle-switch/dist/hs-toggle-switch.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-  $('.js-toggle-switch').each(function () {
-    var toggleSwitch = new HSToggleSwitch($(this)).init();
+
+  $("#datatableSearch").keyup(function(){
+    var value = $(this).val();
+    if(value == ''){
+      loadData();
+    }
+    if(value.length > 3){
+      loadData();
+    }
   });
-   
-})
+  
+});
 loadData();
 function loadData(page=1){
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        //url: BASEURL + '/professional-modules/ajax-list/?page='+page,
         url: BASEURL + '/professional-modules/action/ajax-list?page='+page,
         data:{
             _token:csrf_token,
-            id:"{{base64_encode($moduleId)}}",
+            search:search,
+            id:'{{base64_encode($moduleId)}}',
         },
         dataType:'json',
         beforeSend:function(){
+            var cols = $("#tableList thead tr > th").length;
             showLoader();
         },
         success: function (data) {
             hideLoader();
             $("#tableList tbody").html(data.contents);
             initPagination(data);
+            
         },
         error:function(){
           internalError();
         }
     });
 }
-
-
-
-function search(keyword){
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/professional-modules/search/'+keyword,
-        data:{
-            _token:csrf_token
-        },
-        dataType:'json',
-        beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
-        },
-        success: function (data) {
-            $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
-        },
-    });
-}
-
 </script>
 @endsection
