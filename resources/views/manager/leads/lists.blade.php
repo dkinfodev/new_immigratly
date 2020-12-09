@@ -10,7 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/leads') }}">Leads</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -19,14 +19,18 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="<?php echo baseUrl('cases/add') ?>">
-          <i class="tio-user-add mr-1"></i> Create Case
+        <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('leads/quick-lead') ?>')" href="javascript:;">
+          <i class="tio-user-add mr-1"></i> Quick Lead
         </a>
       </div>
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
+
+  <!-- Stats -->
+  @include(roleFolder().".leads.leads-count")
+  <!-- End Stats -->
 
   <!-- Card -->
   <div class="card">
@@ -42,7 +46,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Case title" aria-label="Search Case">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Lead" aria-label="Search Lead">
             </div>
             <!-- End Search -->
           </form>
@@ -57,7 +61,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('leads/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -80,12 +84,11 @@
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Case Title</th>
-            <th>Client</th>
+            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Leads</th>
+            <th>Email/Phone no</th>
             <th scope="col">Visa Service</th>
-            <!-- <th scope="col">Start Date</th> -->
             <th scope="col">Assigned</th>
-            <th scope="col"><i class="tio-chat-outlined"></i></td>
+            <th scope="col"></td>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -136,9 +139,13 @@
 @endsection
 
 @section('javascript')
+<script src="assets/vendor/hs-toggle-switch/dist/hs-toggle-switch.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-
+  $('.js-toggle-switch').each(function () {
+    var toggleSwitch = new HSToggleSwitch($(this)).init();
+  });
+  
   $("#datatableSearch").keyup(function(){
     var value = $(this).val();
     if(value == ''){
@@ -148,14 +155,14 @@ $(document).ready(function(){
       loadData();
     }
   });
-  
-});
+
+})
 loadData();
 function loadData(page=1){
   var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/cases/ajax-list?page='+page,
+        url: BASEURL + '/leads/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search
@@ -163,15 +170,13 @@ function loadData(page=1){
         dataType:'json',
         beforeSend:function(){
             var cols = $("#tableList thead tr > th").length;
-            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
             showLoader();
+            // $("#paginate").html('');
         },
         success: function (data) {
             hideLoader();
             $("#tableList tbody").html(data.contents);
             initPagination(data);
-            
         },
         error:function(){
           internalError();

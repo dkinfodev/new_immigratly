@@ -263,17 +263,32 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           
-                           <!-- <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.base64_encode($doc->id)).'/'.base64_encode($record->id).'/'.base64_encode($document->id) ?>')">
+                           <span class="dropdown-header">Settings</span>
+                           <a class="dropdown-item" href="#">
+                           <i class="tio-share dropdown-item-icon"></i>
+                           Share file
+                           </a>
+                           <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.base64_encode($doc->id)).'/'.base64_encode($record->id).'/'.base64_encode($document->id) ?>')">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
-                           </a> -->
+                           </a>
+                           <a class="dropdown-item" href="#">
+                           <i class="tio-star-outlined dropdown-item-icon"></i>
+                           Add to stared
+                           </a>
+                           <a class="dropdown-item" href="#">
+                           <i class="tio-edit dropdown-item-icon"></i>
+                           Rename
+                           </a>
                            <a class="dropdown-item" href="#">
                            <i class="tio-download-to dropdown-item-icon"></i>
                            Download
                            </a>
                            <div class="dropdown-divider"></div>
-                           
+                           <a class="dropdown-item" href="#">
+                           <i class="tio-chat-outlined dropdown-item-icon"></i>
+                           Report
+                           </a>
                            <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.base64_encode($doc->id))}}">
                            <i class="tio-delete-outlined dropdown-item-icon"></i>
                            Delete

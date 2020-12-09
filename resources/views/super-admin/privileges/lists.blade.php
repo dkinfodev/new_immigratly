@@ -10,7 +10,6 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -19,8 +18,8 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="<?php echo baseUrl('cases/add') ?>">
-          <i class="tio-user-add mr-1"></i> Create Case
+        <a class="btn btn-primary" href="{{ baseUrl('/privileges/add') }}">
+          <i class="tio-add mr-1"></i> Add 
         </a>
       </div>
     </div>
@@ -34,18 +33,16 @@
     <div class="card-header">
       <div class="row justify-content-between align-items-center flex-grow-1">
         <div class="col-sm-6 col-md-4 mb-3 mb-sm-0">
-          <form>
-            <!-- Search -->
+          <!-- <form>
             <div class="input-group input-group-merge input-group-flush">
               <div class="input-group-prepend">
                 <div class="input-group-text">
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Case title" aria-label="Search Case">
+              <input id="datatableSearch" onchange="search(this.value)" type="search" class="form-control" placeholder="Search " aria-label="Search">
             </div>
-            <!-- End Search -->
-          </form>
+          </form> -->
         </div>
 
         <div class="col-sm-6">
@@ -57,7 +54,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('privileges/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -74,19 +71,15 @@
       <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
         <thead class="thead-light">
           <tr>
-            <th scope="col" class="table-column-pr-0">
+            <th class="table-column-pr-0">
               <div class="custom-control custom-checkbox">
                 <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Case Title</th>
-            <th>Client</th>
-            <th scope="col">Visa Service</th>
-            <!-- <th scope="col">Start Date</th> -->
-            <th scope="col">Assigned</th>
-            <th scope="col"><i class="tio-chat-outlined"></i></td>
-            <th scope="col"></th>
+            <th class="table-column-pl-0">Name</th>
+            <th class="table-column-pl-0">Keyword</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -136,46 +129,76 @@
 @endsection
 
 @section('javascript')
+<script src="assets/vendor/hs-toggle-switch/dist/hs-toggle-switch.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-
-  $("#datatableSearch").keyup(function(){
-    var value = $(this).val();
-    if(value == ''){
-      loadData();
-    }
-    if(value.length > 3){
-      loadData();
-    }
+  $('.js-toggle-switch').each(function () {
+    var toggleSwitch = new HSToggleSwitch($(this)).init();
   });
-  
-});
+ 
+})
 loadData();
 function loadData(page=1){
-  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/cases/ajax-list?page='+page,
+        url: BASEURL + '/privileges/ajax-list?page='+page,
         data:{
-            _token:csrf_token,
-            search:search
+            _token:csrf_token
         },
         dataType:'json',
         beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
             showLoader();
         },
         success: function (data) {
             hideLoader();
             $("#tableList tbody").html(data.contents);
             initPagination(data);
-            
         },
         error:function(){
           internalError();
         }
+    });
+}
+
+
+
+function search(keyword){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/privileges/search/'+keyword,
+        data:{
+            _token:csrf_token
+        },
+        dataType:'json',
+        beforeSend:function(){
+            var cols = $("#tableList thead tr > th").length;
+            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            // $("#paginate").html('');
+        },
+        success: function (data) {
+            $("#tableList tbody").html(data.contents);
+            
+            if(data.total_records > 0){
+              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
+              $("#pageinfo").html(pageinfo);
+              $("#pageno").val(data.current_page);
+              if(data.current_page < data.last_page){
+                $(".next").removeClass("disabled");
+              }else{
+                $(".next").addClass("disabled","disabled");
+              }
+              if(data.current_page > 1){
+                $(".previous").removeClass("disabled");
+              }else{
+                $(".previous").addClass("disabled","disabled");
+              }
+              $("#pageno").attr("max",data.last_page);
+            }else{
+              $(".datatable-custom").find(".norecord").remove();
+              var html = '<div class="text-center text-danger norecord">No records available</div>';
+              $(".datatable-custom").append(html);
+            }
+        },
     });
 }
 

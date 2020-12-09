@@ -111,6 +111,28 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
 
         Route::get('/view/{id}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'viewDetail']);
     });
+    Route::group(array('prefix' => 'privileges'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'update']);
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'search']); 
+
+        Route::group(array('prefix' => 'action'), function () {  
+            Route::get('/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'getAjaxList']); 
+            Route::get('/{id}/add', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'save']); 
+            Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'deleteSingle']); 
+            Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'deleteMultiple']); 
+            Route::get('/{mid}/edit/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'edit']); 
+            Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\PrivilegesActionsController::class, 'update']);
+        });
+    });
     Route::group(array('prefix' => 'user'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\UserController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\UserController::class, 'getAjaxList']);
@@ -158,6 +180,10 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'cases']);
         Route::get('/view/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'view']);
         Route::get('/chats/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'chats']);
+        Route::post('/fetch-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchChats']);
+        Route::post('/save-chat', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveChat']);
+        Route::post('/save-chat-file', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveChatFile']);
+        Route::get('/chat-demo', [App\Http\Controllers\User\ProfessionalCasesController::class, 'chatdemo']);
         Route::group(array('prefix' => 'documents'), function () {
             Route::get('/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseDocuments']);
             Route::get('/default/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
@@ -270,7 +296,10 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\CasesController::class, 'edit']);
             Route::post('/update/{id}', [App\Http\Controllers\Admin\CasesController::class, 'update']);
             Route::post('/remove-documents', [App\Http\Controllers\Admin\CasesController::class, 'removeDocuments']);
-            
+            Route::get('/chats/{id}', [App\Http\Controllers\Admin\CasesController::class, 'chats']);
+            Route::post('/fetch-chats', [App\Http\Controllers\Admin\CasesController::class, 'fetchChats']);
+            Route::post('/save-chat', [App\Http\Controllers\Admin\CasesController::class, 'saveChat']);
+            Route::post('/save-chat-file', [App\Http\Controllers\Admin\CasesController::class, 'saveChatFile']);
             Route::post('/pinned-folder', [App\Http\Controllers\Admin\CasesController::class, 'pinnedFolder']);
             Route::post('/unpinned-folder', [App\Http\Controllers\Admin\CasesController::class, 'unpinnedFolder']);
             Route::group(array('prefix' => 'case-documents'), function () {
@@ -310,6 +339,64 @@ Route::group(array('prefix' => 'manager'), function () {
          Route::post('/update-profile/', [App\Http\Controllers\Manager\DashboardController::class, 'updateProfile']);
          Route::get('/change-password', [App\Http\Controllers\Manager\DashboardController::class, 'changePassword']);
          Route::post('/update-password', [App\Http\Controllers\Manager\DashboardController::class, 'updatePassword']);
+
+         Route::group(array('prefix' => 'leads'), function () {
+            Route::get('/', [App\Http\Controllers\User\LeadsController::class, 'newLeads']);
+            Route::post('/ajax-list', [App\Http\Controllers\User\LeadsController::class, 'getNewList']);
+            Route::get('/assigned', [App\Http\Controllers\User\LeadsController::class, 'assignedLeads']);
+            Route::get('/quick-lead', [App\Http\Controllers\User\LeadsController::class, 'quickLead']);
+            Route::post('/create-quick-lead', [App\Http\Controllers\User\LeadsController::class, 'createQuickLead']);
+            Route::get('/delete/{id}', [App\Http\Controllers\User\LeadsController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\User\LeadsController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\User\LeadsController::class, 'edit']);
+            Route::post('/edit/{id}', [App\Http\Controllers\User\LeadsController::class, 'update']);
+            Route::get('/mark-as-client/{id}', [App\Http\Controllers\User\LeadsController::class, 'markAsClient']);
+            Route::post('/mark-as-client/{id}', [App\Http\Controllers\User\LeadsController::class, 'confirmAsClient']);
+        });
+
+        Route::group(array('prefix' => 'cases'), function () {
+            Route::get('/', [App\Http\Controllers\Manager\CasesController::class, 'cases']);
+            Route::post('/ajax-list', [App\Http\Controllers\Manager\CasesController::class, 'getAjaxList']);
+            Route::get('/add', [App\Http\Controllers\Manager\CasesController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Manager\CasesController::class, 'save']);
+            Route::get('/create-client', [App\Http\Controllers\Manager\CasesController::class, 'createClient']);
+            Route::post('/create-client', [App\Http\Controllers\Manager\CasesController::class, 'createNewClient']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Manager\CasesController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Manager\CasesController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Manager\CasesController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Manager\CasesController::class, 'update']);
+            Route::post('/remove-documents', [App\Http\Controllers\Manager\CasesController::class, 'removeDocuments']);
+            Route::get('/chats/{id}', [App\Http\Controllers\Manager\CasesController::class, 'chats']);
+            Route::post('/fetch-chats', [App\Http\Controllers\Manager\CasesController::class, 'fetchChats']);
+            Route::post('/save-chat', [App\Http\Controllers\Manager\CasesController::class, 'saveChat']);
+            Route::post('/save-chat-file', [App\Http\Controllers\Manager\CasesController::class, 'saveChatFile']);
+            Route::post('/pinned-folder', [App\Http\Controllers\Manager\CasesController::class, 'pinnedFolder']);
+            Route::post('/unpinned-folder', [App\Http\Controllers\Manager\CasesController::class, 'unpinnedFolder']);
+            Route::group(array('prefix' => 'case-documents'), function () {
+                Route::get('/documents/{id}', [App\Http\Controllers\Manager\CasesController::class, 'caseDocuments']);
+                Route::get('/add-folder/{id}', [App\Http\Controllers\Manager\CasesController::class, 'addFolder']);
+                Route::post('/add-folder/{id}', [App\Http\Controllers\Manager\CasesController::class, 'createFolder']);
+                Route::get('/edit-folder/{id}', [App\Http\Controllers\Manager\CasesController::class, 'editFolder']);
+                Route::post('/edit-folder/{id}', [App\Http\Controllers\Manager\CasesController::class, 'updateFolder']);
+                Route::get('/delete-folder/{id}', [App\Http\Controllers\Manager\CasesController::class, 'deleteFolder']);
+                Route::get('/default/{case_id}/{doc_id}', [App\Http\Controllers\Manager\CasesController::class, 'defaultDocuments']);
+                Route::get('/other/{case_id}/{doc_id}', [App\Http\Controllers\Manager\CasesController::class, 'otherDocuments']);
+                Route::get('/extra/{case_id}/{doc_id}', [App\Http\Controllers\Manager\CasesController::class, 'extraDocuments']);
+                Route::post('/upload-documents/{id}', [App\Http\Controllers\Manager\CasesController::class, 'uploadDocuments']);
+                Route::get('/delete/{id}', [App\Http\Controllers\Manager\CasesController::class, 'deleteDocument']);
+                Route::post('/delete-multiple', [App\Http\Controllers\Manager\CasesController::class, 'deleteMultipleDocuments']);
+
+                Route::get('/file-move-to/{file_id}/{case_id}/{doc_id}', [App\Http\Controllers\Manager\CasesController::class, 'fileMoveTo']);
+                Route::post('/file-move-to', [App\Http\Controllers\Manager\CasesController::class, 'moveFileToFolder']);
+
+                Route::get('/documents-exchanger/{case_id}', [App\Http\Controllers\Manager\CasesController::class, 'documentsExchanger']);
+                Route::post('/documents-exchanger', [App\Http\Controllers\Manager\CasesController::class, 'saveExchangeDocuments']);
+
+                Route::post('/fetch-chats', [App\Http\Controllers\Manager\CasesController::class, 'fetchDocumentChats']);
+                Route::post('/send-chats', [App\Http\Controllers\Manager\CasesController::class, 'saveDocumentChat']);
+                Route::post('/send-chat-file', [App\Http\Controllers\Manager\CasesController::class, 'saveDocumentChatFile']);
+            });
+        });
     });
 });
 

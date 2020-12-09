@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\CaseDocuments;
 use App\Models\User;
 
-class DocumentChats extends Model
+class Chats extends Model
 {
     use HasFactory;
 
-    protected $table = "document_chats";
+    protected $table = "chats";
 
     static function deleteRecord($id){
-        DocumentChats::where("id",$id)->delete();
+        Chats::where("id",$id)->delete();
     }
 
     public function FileDetail()

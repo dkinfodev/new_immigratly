@@ -12,7 +12,7 @@ class CaseTeams extends Model
 
     public function Member()
     {
-        return $this->belongsTo('App\Models\User','user_id');
+        return $this->belongsTo('App\Models\User','user_id','unique_id');
     }
 
     static function deleteRecord($id){

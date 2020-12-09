@@ -60,7 +60,12 @@
                     </li>
                   </ul>
                 </li>
-
+                <li class="navbar-vertical-aside-has-menu">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/cases') }}" title="Cases">
+                    <i class="tio-book-opened nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases</span>
+                  </a>
+                </li>
               </ul>
             </div>
             <!-- End Content -->

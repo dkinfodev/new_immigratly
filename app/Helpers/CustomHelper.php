@@ -843,6 +843,7 @@ if(!function_exists("professionalProfile")){
         if($unique_id == ''){
             $unique_id = \Auth::user()->unique_id;
         }
+        
         $user = DB::table(PROFESSIONAL_DATABASE.$domain.".users")->where("unique_id",$unique_id)->first();
         $profile_image = $user->profile_image;
         $profile_dir = professionalDir($domain)."/profile/".$profile_image;

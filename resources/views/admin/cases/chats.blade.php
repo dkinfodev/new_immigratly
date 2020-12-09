@@ -70,34 +70,18 @@
                        "stickyOffsetTop": 20
                      }'>
                     <li class="nav-item">
-                      <a class="nav-link {{ ($chat_type == 'general')?'active':'' }}" href="{{ baseUrl('cases/chats/'.$subdomain.'/'.$case_id) }}">
+                      <a class="nav-link {{ ($chat_type == 'general')?'active':'' }}" href="{{ baseUrl('cases/chats/'.$case_id) }}">
                         <i class="tio-chat-outlined nav-icon"></i>
                         General Chats
                       </a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link {{ ($chat_type == 'case_chat')?'active':'' }}" href="{{ baseUrl('cases/chats/'.$subdomain.'/'.$case_id.'?type=case_chat') }}">
+                      <a class="nav-link {{ ($chat_type == 'case_chat')?'active':'' }}" href="{{ baseUrl('cases/chats/'.$case_id.'?type=case_chat') }}">
                         <i class="tio-chat-outlined nav-icon"></i>
                         Case Chats
                       </a>
                     </li>
-                    <!-- <li class="nav-item">
-                      <a class="nav-link nav-link-toggle {{ ($chat_type == 'document')?'active':'' }}" href="#documentDropdown" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="documentDropdown">
-                        <i class="tio-chat-outlined nav-icon"></i> Documents Chat
-                      </a>
-
-                      <div class="collapse" id="documentDropdown">
-                        <ul class="nav flex-column">
-                          @foreach($documents as $doc)
-                          <li class="nav-item">
-                            <a class="nav-link" href="{{ baseUrl('cases/chats/'.$subdomain.'/'.$case_id.'?type=document&doc_id='.$doc['unique_id']) }}">
-                              <span class="nav-dot"></span> {{$doc['file_detail']['original_name']}}
-                            </a>
-                          </li>
-                          @endforeach
-                        </ul>
-                      </div>
-                    </li> -->
+                    
                   </ul>
                 </div>
                 <!-- End Navbar Collapse -->
@@ -155,6 +139,7 @@ $(document).ready(function(){
     $(".send-attachment").click(function(){
        document.getElementById('chat-attachment').click();
     });
+    $(".chat").mCustomScrollbar();
     $(".send-message").click(function(){
        
        var message = $("#message_input").val();
@@ -166,9 +151,9 @@ $(document).ready(function(){
                 _token:csrf_token,
                 case_id:"{{$case_id}}",
                 chat_type:"{{ $chat_type }}",
+                client_id:"{{$client_id}}",
                 message:message,
                 type:"text",
-                subdomain:"{{$subdomain}}"
             },
             dataType:'json',
             beforeSend:function(){
@@ -179,7 +164,7 @@ $(document).ready(function(){
                    $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
                    $("#message_input").val('');
                    $(".chat").html(response.html);
-                   $(".chat").mCustomScrollbar();
+                   // $(".chat").mCustomScrollbar();
                    $(".chat").animate({ scrollTop: $(".chat")[0].scrollHeight}, 1000);
                    $(".doc_chat_input").show();
                    fetchChats();
@@ -200,7 +185,7 @@ $(document).ready(function(){
        formData.append("_token",csrf_token);
        formData.append("case_id","{{$case_id}}");
        formData.append("chat_type","{{$chat_type}}");
-       formData.append("subdomain","{{$subdomain}}");
+       formData.append("client_id","{{$client_id}}");
        formData.append('attachment', $('#chat-attachment')[0].files[0]);
        var url  = "{{ baseUrl('cases/save-chat-file') }}";
        $.ajax({
@@ -219,7 +204,7 @@ $(document).ready(function(){
              if(response.status == true){
                 $("#chat-attachment").val('');
                 $(".chat").html(response.html);
-                $(".chat").mCustomScrollbar();
+                // $(".chat").mCustomScrollbar();
                 $(".chat").animate({ scrollTop: $(".chat")[0].scrollHeight}, 1000);
                 $(".doc_chat_input").show();
                 fetchChats();
@@ -262,7 +247,7 @@ function fetchChats(){
         _token:csrf_token,
         case_id:"{{$case_id}}",
         chat_type:"{{ $chat_type }}",
-        subdomain:"{{$subdomain}}"
+        client_id:"{{$client_id}}"
     },
     dataType:'json',
     beforeSend:function(){
@@ -274,7 +259,7 @@ function fetchChats(){
         if(response.status == true){
            $(".chat").html(response.html);
            setTimeout(function(){
-              $(".chat").mCustomScrollbar();
+              
               $(".chat").animate({ scrollTop: $(".chat")[0].scrollHeight}, 1000);
            },800);
            

@@ -19,7 +19,7 @@ class Cases extends Model
     }
     public function AssingedMember()
     {
-        return $this->hasMany('App\Models\CaseTeams','case_id')->with(['Member']);
+        return $this->hasMany('App\Models\CaseTeams','case_id','unique_id')->with(['Member']);
     }
     public function Client($id)
     {
@@ -53,5 +53,10 @@ class Cases extends Model
 
     static function deleteRecord($id){
         Cases::where("id",$id)->delete();
+    }
+
+    public function Chats()
+    {
+        return $this->hasMany('App\Models\Chats','case_id')->where("chat_type","case_chat");
     }
 }

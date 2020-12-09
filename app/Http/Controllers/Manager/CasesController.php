@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class CasesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('manager');
     }
 
     public function cases(Request $request){
@@ -36,12 +36,16 @@ class CasesController extends Controller
 
     public function getAjaxList(Request $request)
     {
+        $user_id = \Auth::user()->unique_id;
         $search = $request->input("search");
         $records = Cases::withCount('Chats')->orderBy('id',"desc")
                         ->where(function($query) use($search){
                             if($search != ''){
                                 $query->where("case_title","LIKE","%$search%");
                             }
+                        })
+                        ->whereHas("AssingedMember",function($query) use($user_id){
+                                
                         })
                         ->paginate();
         $viewData['records'] = $records;
@@ -141,12 +145,12 @@ class CasesController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-        $case_unique_id = randomNumber();
+
         $object = new Cases();
         $object->client_id = $request->input("client_id");
         $object->case_title = $request->input("case_title");
         $object->start_date = $request->input("start_date");
-        $object->unique_id = $case_unique_id;
+        $object->unique_id = randomNumber();
         if($request->input("end_date")){
             $object->end_date = $request->input("end_date");
         }
@@ -157,7 +161,7 @@ class CasesController extends Controller
         $object->created_by = \Auth::user()->unique_id;
         $object->save();
 
-        $case_id = $case_unique_id;
+        $case_id = $object->id;
         $assign_teams = $request->input("assign_teams");
         if(!empty($assign_teams)){
             for($i=0;$i < count($assign_teams);$i++){
@@ -237,7 +241,7 @@ class CasesController extends Controller
         $object->created_by = \Auth::user()->id;
         $object->save();
 
-        $case_id = $object->unique_id;
+        $case_id = $object->id;
         $assign_teams = $request->input("assign_teams");
         if(!empty($assign_teams)){
             $checkRemoved = CaseTeams::whereNotIn("user_id",$assign_teams)->where("case_id",$case_id)->get();
@@ -331,7 +335,7 @@ class CasesController extends Controller
         
         $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
         $documents = ServiceDocuments::where("service_id",$service->unique_id)->get();
-        $case_folders = CaseFolders::where("case_id",$record->unique_id)->get();
+        $case_folders = CaseFolders::where("case_id",$record->id)->get();
         $pinned_folders = $record->pinned_folders;
         if($pinned_folders != ''){
             $pinned_folders = json_decode($pinned_folders,true);
@@ -404,7 +408,7 @@ class CasesController extends Controller
         $record = Cases::where("unique_id",$case_id)->first();
         $document = CaseFolders::where("unique_id",$doc_id)->first();
         $folder_id = $document->unique_id;
-        $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
+        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
         $case_documents = CaseDocuments::with(['FileDetail','Chats'])
                                         ->where("case_id",$record->unique_id)
                                         ->where("folder_id",$folder_id)
@@ -580,11 +584,10 @@ class CasesController extends Controller
         $case_id = base64_decode($case_id);
         $doc_id = base64_decode($doc_id);
         $case = Cases::find($case_id);
-        echo $doc_id;
         $documents = ServiceDocuments::where("service_id",$case->visa_service_id)->get();
         $document = ServiceDocuments::where("id",$doc_id)->first();
         $folder_id = $document->unique_id;
-        $service = ProfessionalServices::where("unique_id",$case->visa_service_id)->first();
+        $service = ProfessionalServices::where("id",$case->visa_service_id)->first();
         
         $case_folders = CaseFolders::where("case_id",$case->id)->get();
         $viewData['service'] = $service;

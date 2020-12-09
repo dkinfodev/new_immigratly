@@ -43,7 +43,9 @@ Route::group(array('middleware' => 'professional_curl'), function () {
 			Route::post('/document-detail', [App\Http\Controllers\Api\ProfessionalApiController::class, 'documentDetail']);
 			Route::post('/fetch-document-chats', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchDocumentChats']);
 			Route::post('/save-document-chat', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveDocumentChat']);
-
+			Route::post('/fetch-case-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchCaseDocuments']);
+			Route::post('/fetch-chats', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchChats']);
+			Route::post('/save-chat', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveChat']);
 			
 		});	
 	});	

@@ -17,7 +17,7 @@ class Professional
     public function handle($request, Closure $next)
     {
         if(Auth::check()){
-            if(Auth::user()->role == 'professional'){
+            if(Auth::user()->role != 'super_admin' && Auth::user()->role != 'user'){
                 return $next($request);
             }
             else{

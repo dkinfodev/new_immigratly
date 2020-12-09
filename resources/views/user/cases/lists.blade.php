@@ -54,7 +54,7 @@
           <th>Professional</th>
           <th scope="col" class="table-column-pl-0">Visa Service</th>
           <th scope="col" class="table-column-pl-0">Assigned</th>
-          <th scope="col">Status</td>
+          <th scope="col"><i class="tio-chat-outlined"></i></td>
           <th></th>
         </tr>
       </thead>

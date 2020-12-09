@@ -17,6 +17,7 @@ use App\Models\DocumentFolder;
 use App\Models\CaseFolders;
 use App\Models\Documents;
 use App\Models\DocumentChats;
+use App\Models\Chats;
 
 class ProfessionalApiController extends Controller
 {
@@ -523,6 +524,81 @@ class ProfessionalApiController extends Controller
             }
             $object->send_by = 'client';
             $object->created_by = $request->input("created_by");
+            $object->save();
+
+            $response['status'] = "success";
+            $response['message'] = "Message send successfully";
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function fetchCaseDocuments(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$request->input("case_id"))->get();
+
+            $response['status'] = "success";
+            $response['data'] = $documents;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function fetchChats(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $chats = Chats::with('FileDetail')
+                                ->where("chat_type",$request->input("chat_type"))
+                                ->where("chat_client_id",$request->input("client_id"))
+                                ->get();
+            $data['chats'] = $chats;
+            $response['status'] = "success";
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function saveChat(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $object = new Chats();
+            if($request->input("chat_type") == 'chat_type'){
+                $object->case_id = $request->input("case_id");
+            }
+            $object->message = $request->input("message");
+            $object->type = $request->input("type");
+            $object->chat_type = $request->input("chat_type");
+            
+            if($request->input("type") == 'file'){
+                $document_id = randomNumber();
+                $object2 = new Documents();
+                $object2->file_name = $request->input("file_name");
+                $object2->original_name = $request->input("original_name");
+                $object2->unique_id = $document_id;
+                $object2->created_by = 0;
+                $object2->save();
+
+                $object->file_id = $document_id;
+            }
+            $object->send_by = 'client';
+            $object->created_by = $request->input("client_id");
+            $object->chat_client_id = $request->input("client_id");
             $object->save();
 
             $response['status'] = "success";

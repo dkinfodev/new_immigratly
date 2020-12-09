@@ -206,3 +206,7 @@
     margin-left: 9px;
     margin-top: 12px;
 }
+.chat {
+    height: 370px;
+    overflow-x: auto;
+}

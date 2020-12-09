@@ -681,13 +681,27 @@ class ProfessionalCasesController extends Controller
         return response()->json($response);
     }
 
-    public function chats($subdomain,$case_id){
-
+    public function chats($subdomain,$case_id,Request $request){
         $data['case_id'] = $case_id;
         $api_response = professionalCurl('cases/view',$subdomain,$data);
-        $result = $api_response['data'];
-        
-        
+        $case = $api_response['data'];
+
+        if($request->get("type")){
+            $chat_type = $request->get("type");
+            $sub_title = $case['case_title'];
+        }else{
+            $chat_type = 'general';
+            $sub_title = "General Chats";
+        }
+        $viewData['chat_type'] = $chat_type;
+        $viewData['sub_title'] = $sub_title;
+        $data['case_id'] = $case_id;
+        $api_response = professionalCurl('cases/fetch-case-documents',$subdomain,$data);
+        if(isset($api_response['data'])){
+            $documents = $api_response['data'];
+        }else{
+            $documents = array();
+        }
 
         if(!isset($api_response['status'])){
             return redirect()->back()->with("success","Some issue while fetching data try again");
@@ -697,9 +711,103 @@ class ProfessionalCasesController extends Controller
             }
         }
         
+        $viewData['documents'] = $documents;
+        $viewData['case'] = $case;
         $viewData['pageTitle'] = "Chats";
-
+        $viewData['case_id'] = $case_id;
+        $viewData['subdomain'] = $subdomain;
         return view(roleFolder().'.cases.chats',$viewData);
+    }
+
+    public function fetchChats(Request $request){
+        $case_id = $request->input("case_id");
+        $chat_type = $request->input("chat_type");
+        $subdomain = $request->input("subdomain");
+        $viewData['case_id'] = $case_id;
+        $viewData['chat_type'] = $chat_type;
+
+        $data = array();
+        if($request->input("chat_type") == 'case_chat'){
+            $data['case_id'] = $case_id;
+        }
+        $data['client_id'] = \Auth::user()->unique_id;
+        $data['chat_type'] = $chat_type;
+        $data['subdomain'] = $subdomain;
+        $api_response = professionalCurl('cases/fetch-chats',$subdomain,$data);
+        $chats = array();
+        if($api_response['status'] == 'success'){
+            $chats = $api_response['data']['chats'];
+        }
+        $viewData['chats'] = $chats;
+        $viewData['subdomain'] = $subdomain;
+        $view = View::make(roleFolder().'.cases.chat-list',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['html'] = $contents;
+        return response()->json($response);
+    }
+
+    public function saveChat(Request $request){
+        $data['case_id'] = $request->input("case_id");
+        $data['chat_type'] = $request->input("chat_type");
+        $data['message'] = $request->input("message");
+        $data['type'] = "text";
+        $data['client_id'] = \Auth::user()->unique_id;
+        $subdomain = $request->input("subdomain");
+        $api_response = professionalCurl('cases/save-chat',$subdomain,$data);
+        if($api_response['status'] == 'success'){
+            $response['status'] = true;
+            $response['message'] = $api_response['message'];
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Message send failed";
+        }
+        return response()->json($response);
+    }
+
+    public function saveChatFile(Request $request){
+
+        if ($file = $request->file('attachment')){
+            $data['case_id'] = $request->input("case_id");
+            $subdomain = $request->input("subdomain");
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension() ?: 'png';
+            $newName        = mt_rand(1,99999)."-".$fileName;
+            $source_url = $file->getPathName();
+            $destinationPath = professionalDir($subdomain)."/documents";
+            
+            
+            if($file->move($destinationPath, $newName)){
+                $data['message'] = $fileName;
+                $data['client_id'] = \Auth::user()->unique_id;
+                $data['original_name'] = $fileName;
+                $data['file_name'] = $newName;
+                $data['chat_type'] = $request->input("chat_type");
+                $data['type'] = 'file';
+                $api_response = professionalCurl('cases/save-chat',$subdomain,$data);
+                if($api_response['status'] == 'success'){
+                    $response['status'] = true;
+                    $response['message'] = $api_response['message'];
+                }else{
+                    $response['status'] = false;
+                    $response['message'] = "File send failed, try again!";
+                }                   
+            }else{
+                $response['status'] = true;
+                $response['message'] = "File send failed, try again!";
+            }
+        }else{
+            $response['status'] = false;
+            $response['message'] = "File not selected!";
+        }
+        
+        return response()->json($response);
+    }
+
+    public function chatdemo(){
+        $viewData['pageTitle'] = "Chats";
+        return view(roleFolder().'.cases.chat-demo',$viewData);
     }
 
 }
