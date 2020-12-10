@@ -30,24 +30,7 @@ class ModulesActionController extends Controller
         return view(roleFolder().'.modules-action.lists',$viewData);
     } 
 
-    /*
-    public function getAjaxList(Request $request)
-    {
-        $id = $request->input('id');
-        $id = base64_decode($id);
-        $viewData['moduleId'] = $id;
-
-        $records = ModulesAction::where('module_id',$id)->orderBy('id',"desc")->paginate();
-        $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.modules-action.ajax-list',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['last_page'] = $records->lastPage();
-        $response['current_page'] = $records->currentPage();
-        $response['total_records'] = $records->total();
-        return response()->json($response);
-    }*/
-
+    
     public function getAjaxList(Request $request)
     {
 
