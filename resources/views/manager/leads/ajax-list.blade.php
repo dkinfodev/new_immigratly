@@ -7,7 +7,7 @@
     </div>
   </td>
    <td class="table-column-pl-0">
-      <a class="d-flex align-items-center" href="project.html">
+      <a class="d-flex align-items-center" href="javascript:;">
         <div class="avatar avatar-soft-primary mt-4 avatar-circle">
           <span class="avatar-initials">{{userInitial($record)}}</span>
         </div>
@@ -35,7 +35,7 @@
    </td>
    <td>
     @if(!empty($record->Service($record->VisaService->service_id)))
-    <a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a>
+    <a class="badge badge-soft-primary p-2" href="javascript:;">{{$record->Service($record->VisaService->service_id)->name}}</a>
     @else
     <a href="javascript:;" class="badge badge-soft-danger p-2">Service Removed</a>
     @endif
@@ -62,9 +62,9 @@
          </span>
       </div>
    </td>
-   @if(role_permission('leads','recommend-as-client'))
+   @if(role_permission('leads','mark-as-client'))
    <td>
-      <button onclick="showPopup('<?php echo baseUrl('leads/recommend-as-client/'.base64_encode($record->id)) ?>')" type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Recommend as Client</button>
+      <button onclick="showPopup('<?php echo baseUrl('leads/mark-as-client/'.base64_encode($record->id)) ?>')" type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
    </td>
    @endif
    <td>
@@ -79,6 +79,9 @@
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         @if(role_permission('leads','edit-lead'))
+        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
+        @endif
+        @if(role_permission('leads','recommend-as-client'))
         <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
         @endif
         @if(role_permission('leads','delete-lead'))

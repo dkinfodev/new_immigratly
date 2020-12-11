@@ -254,7 +254,11 @@
           <div class="js-form-message">
             <select name="languages_known[]" multiple id="languages_known" class="form-control">
               <?php
-                $language_known = json_decode($user->languages_known,true);
+                if($user->languages_known != ''){
+                  $language_known = json_decode($user->languages_known,true);
+                }else{
+                  $language_known = array();
+                }
               ?>
               @foreach($languages as $language)
               <option {{in_array($language->id,$language_known)?"selected":""}} value="{{$language->id}}">{{$language->name}}</option>

@@ -86,7 +86,7 @@
             <th>Email/Phone no</th>
             <th scope="col">Visa Service</th>
             <th scope="col">Assigned</th>
-            @if(role_permission('leads','recommend-as-client'))
+            @if(role_permission('leads','mark-as-client'))
             <th scope="col"></td>
             @endif
             <th scope="col"></th>

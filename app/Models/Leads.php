@@ -20,7 +20,7 @@ class Leads extends Model
 
     public function Service($id)
     {
-        $service = DB::table(MAIN_DATABASE.".visa_services")->where("id",$id)->first();
+        $service = DB::table(MAIN_DATABASE.".visa_services")->where("unique_id",$id)->first();
         return $service;
     }
 

@@ -35,20 +35,11 @@
                 </li>
 
                 @if(role_permission('leads','view-leads'))
-                <li class="navbar-vertical-aside-has-menu ">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Leads">
+                <li class="navbar-vertical-aside-has-menu">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/leads') }}">
                     <i class="tio-apps nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Leads</span>
                   </a>
-
-                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                    <li class="nav-item">
-                      <a class="nav-link " href="{{ baseUrl('/leads') }}" title="New Leads">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Leads</span>
-                      </a>
-                    </li>
-                  </ul>
                 </li>
                 @endif
                 @if(role_permission('cases','view-cases'))

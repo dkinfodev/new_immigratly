@@ -7,7 +7,7 @@
     </div>
   </td>
    <td class="table-column-pl-0">
-      <a class="d-flex align-items-center" href="project.html">
+      <a class="d-flex align-items-center" href="javascript:;">
         <div class="avatar avatar-soft-primary mt-4 avatar-circle">
           <span class="avatar-initials">{{userInitial($record)}}</span>
         </div>
@@ -35,7 +35,7 @@
    </td>
    <td>
     @if(!empty($record->Service($record->VisaService->service_id)))
-    <a class="badge badge-soft-primary p-2" href="#">{{$record->Service($record->VisaService->service_id)->name}}</a>
+    <a class="badge badge-soft-primary p-2" href="javascript:;">{{$record->Service($record->VisaService->service_id)->name}}</a>
     @else
     <a href="javascript:;" class="badge badge-soft-danger p-2">Service Removed</a>
     @endif
