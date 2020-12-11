@@ -33,12 +33,8 @@
                   <small class="nav-subtitle" title="Pages">Pages</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
-                <li class="navbar-vertical-aside-has-menu">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/services') }}" title="Services">
-                    <i class="tio-pages-outlined nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Services</span>
-                  </a>
-                </li>
+
+                @if(role_permission('leads','view-leads'))
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;" title="Leads">
                     <i class="tio-apps nav-icon"></i>
@@ -49,23 +45,20 @@
                     <li class="nav-item">
                       <a class="nav-link " href="{{ baseUrl('/leads') }}" title="New Leads">
                         <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">New Leads</span>
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link " href="{{ baseUrl('/leads/assigned') }}" title="Assigned Leads">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Assigned Leads</span>
+                        <span class="text-truncate">Leads</span>
                       </a>
                     </li>
                   </ul>
                 </li>
+                @endif
+                @if(role_permission('cases','view-cases'))
                 <li class="navbar-vertical-aside-has-menu">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/cases') }}" title="Cases">
                     <i class="tio-book-opened nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases</span>
                   </a>
                 </li>
+                @endif
               </ul>
             </div>
             <!-- End Content -->

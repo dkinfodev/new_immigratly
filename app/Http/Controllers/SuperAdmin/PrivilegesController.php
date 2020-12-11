@@ -44,7 +44,7 @@ class PrivilegesController extends Controller
 
     public function save(Request $request){
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'name' => 'required|unique:professional_privileges,name',
         ]);
         
         if ($validator->fails()) {
@@ -85,7 +85,7 @@ class PrivilegesController extends Controller
         $id = base64_decode($id);
         $object =  ProfessionalPrivileges::find($id);
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'name' => 'required|unique:professional_privileges,name,'.$object->id,
             
         ]);
 

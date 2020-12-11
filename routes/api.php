@@ -22,6 +22,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(array('middleware' => 'curl_api'), function () {
 	Route::group(array('prefix' => 'main'), function () {
 		Route::post('/create-client', [App\Http\Controllers\Api\MasterApiController::class, 'createClient']);
+		Route::post('/privileges', [App\Http\Controllers\Api\MasterApiController::class, 'privilegesList']);
+		Route::post('/roles', [App\Http\Controllers\Api\MasterApiController::class, 'roles']);
 	});	
 
 });

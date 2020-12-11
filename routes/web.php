@@ -236,8 +236,10 @@ Route::group(array('prefix' => 'admin'), function () {
 
         Route::get('/edit-profile', [App\Http\Controllers\Admin\ProfileController::class, 'EditProfile']);
         Route::post('/update-profile', [App\Http\Controllers\Admin\ProfileController::class, 'updateProfile']);
-    });
+    }); 
     Route::group(array('middleware' => 'admin'), function () {
+        Route::get('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'rolePrivileges']);
+        Route::post('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'savePrivileges']);
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);
         Route::get('/profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile']);
         Route::group(array('prefix' => 'services'), function () {
@@ -341,17 +343,17 @@ Route::group(array('prefix' => 'manager'), function () {
          Route::post('/update-password', [App\Http\Controllers\Manager\DashboardController::class, 'updatePassword']);
 
          Route::group(array('prefix' => 'leads'), function () {
-            Route::get('/', [App\Http\Controllers\User\LeadsController::class, 'newLeads']);
-            Route::post('/ajax-list', [App\Http\Controllers\User\LeadsController::class, 'getNewList']);
-            Route::get('/assigned', [App\Http\Controllers\User\LeadsController::class, 'assignedLeads']);
-            Route::get('/quick-lead', [App\Http\Controllers\User\LeadsController::class, 'quickLead']);
-            Route::post('/create-quick-lead', [App\Http\Controllers\User\LeadsController::class, 'createQuickLead']);
-            Route::get('/delete/{id}', [App\Http\Controllers\User\LeadsController::class, 'deleteSingle']);
-            Route::post('/delete-multiple', [App\Http\Controllers\User\LeadsController::class, 'deleteMultiple']);
-            Route::get('/edit/{id}', [App\Http\Controllers\User\LeadsController::class, 'edit']);
-            Route::post('/edit/{id}', [App\Http\Controllers\User\LeadsController::class, 'update']);
-            Route::get('/mark-as-client/{id}', [App\Http\Controllers\User\LeadsController::class, 'markAsClient']);
-            Route::post('/mark-as-client/{id}', [App\Http\Controllers\User\LeadsController::class, 'confirmAsClient']);
+            Route::get('/', [App\Http\Controllers\Manager\LeadsController::class, 'newLeads']);
+            Route::post('/ajax-list', [App\Http\Controllers\Manager\LeadsController::class, 'getNewList']);
+            Route::get('/assigned', [App\Http\Controllers\Manager\LeadsController::class, 'assignedLeads']);
+            Route::get('/quick-lead', [App\Http\Controllers\Manager\LeadsController::class, 'quickLead']);
+            Route::post('/create-quick-lead', [App\Http\Controllers\Manager\LeadsController::class, 'createQuickLead']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Manager\LeadsController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'edit']);
+            Route::post('/edit/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'update']);
+            Route::get('/mark-as-client/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'markAsClient']);
+            Route::post('/mark-as-client/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'confirmAsClient']);
         });
 
         Route::group(array('prefix' => 'cases'), function () {
@@ -410,6 +412,63 @@ Route::group(array('prefix' => 'telecaller'), function () {
         Route::get('/change-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'changePassword']);     
         Route::post('/update-password', [App\Http\Controllers\Telecaller\DashboardController::class, 'updatePassword']);
 
+        Route::group(array('prefix' => 'leads'), function () {
+            Route::get('/', [App\Http\Controllers\Telecaller\LeadsController::class, 'newLeads']);
+            Route::post('/ajax-list', [App\Http\Controllers\Telecaller\LeadsController::class, 'getNewList']);
+            Route::get('/assigned', [App\Http\Controllers\Telecaller\LeadsController::class, 'assignedLeads']);
+            Route::get('/quick-lead', [App\Http\Controllers\Telecaller\LeadsController::class, 'quickLead']);
+            Route::post('/create-quick-lead', [App\Http\Controllers\Telecaller\LeadsController::class, 'createQuickLead']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Telecaller\LeadsController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Telecaller\LeadsController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Telecaller\LeadsController::class, 'edit']);
+            Route::post('/edit/{id}', [App\Http\Controllers\Telecaller\LeadsController::class, 'update']);
+            Route::get('/mark-as-client/{id}', [App\Http\Controllers\Telecaller\LeadsController::class, 'markAsClient']);
+            Route::post('/mark-as-client/{id}', [App\Http\Controllers\Telecaller\LeadsController::class, 'confirmAsClient']);
+        });
+
+        Route::group(array('prefix' => 'cases'), function () {
+            Route::get('/', [App\Http\Controllers\Telecaller\CasesController::class, 'cases']);
+            Route::post('/ajax-list', [App\Http\Controllers\Telecaller\CasesController::class, 'getAjaxList']);
+            Route::get('/add', [App\Http\Controllers\Telecaller\CasesController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Telecaller\CasesController::class, 'save']);
+            Route::get('/create-client', [App\Http\Controllers\Telecaller\CasesController::class, 'createClient']);
+            Route::post('/create-client', [App\Http\Controllers\Telecaller\CasesController::class, 'createNewClient']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Telecaller\CasesController::class, 'deleteMultiple']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'update']);
+            Route::post('/remove-documents', [App\Http\Controllers\Telecaller\CasesController::class, 'removeDocuments']);
+            Route::get('/chats/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'chats']);
+            Route::post('/fetch-chats', [App\Http\Controllers\Telecaller\CasesController::class, 'fetchChats']);
+            Route::post('/save-chat', [App\Http\Controllers\Telecaller\CasesController::class, 'saveChat']);
+            Route::post('/save-chat-file', [App\Http\Controllers\Telecaller\CasesController::class, 'saveChatFile']);
+            Route::post('/pinned-folder', [App\Http\Controllers\Telecaller\CasesController::class, 'pinnedFolder']);
+            Route::post('/unpinned-folder', [App\Http\Controllers\Telecaller\CasesController::class, 'unpinnedFolder']);
+            Route::group(array('prefix' => 'case-documents'), function () {
+                Route::get('/documents/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'caseDocuments']);
+                Route::get('/add-folder/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'addFolder']);
+                Route::post('/add-folder/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'createFolder']);
+                Route::get('/edit-folder/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'editFolder']);
+                Route::post('/edit-folder/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'updateFolder']);
+                Route::get('/delete-folder/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'deleteFolder']);
+                Route::get('/default/{case_id}/{doc_id}', [App\Http\Controllers\Telecaller\CasesController::class, 'defaultDocuments']);
+                Route::get('/other/{case_id}/{doc_id}', [App\Http\Controllers\Telecaller\CasesController::class, 'otherDocuments']);
+                Route::get('/extra/{case_id}/{doc_id}', [App\Http\Controllers\Telecaller\CasesController::class, 'extraDocuments']);
+                Route::post('/upload-documents/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'uploadDocuments']);
+                Route::get('/delete/{id}', [App\Http\Controllers\Telecaller\CasesController::class, 'deleteDocument']);
+                Route::post('/delete-multiple', [App\Http\Controllers\Telecaller\CasesController::class, 'deleteMultipleDocuments']);
+
+                Route::get('/file-move-to/{file_id}/{case_id}/{doc_id}', [App\Http\Controllers\Telecaller\CasesController::class, 'fileMoveTo']);
+                Route::post('/file-move-to', [App\Http\Controllers\Telecaller\CasesController::class, 'moveFileToFolder']);
+
+                Route::get('/documents-exchanger/{case_id}', [App\Http\Controllers\Telecaller\CasesController::class, 'documentsExchanger']);
+                Route::post('/documents-exchanger', [App\Http\Controllers\Telecaller\CasesController::class, 'saveExchangeDocuments']);
+
+                Route::post('/fetch-chats', [App\Http\Controllers\Telecaller\CasesController::class, 'fetchDocumentChats']);
+                Route::post('/send-chats', [App\Http\Controllers\Telecaller\CasesController::class, 'saveDocumentChat']);
+                Route::post('/send-chat-file', [App\Http\Controllers\Telecaller\CasesController::class, 'saveDocumentChatFile']);
+            });
+        });
     });
 });
 

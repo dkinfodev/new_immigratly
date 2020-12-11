@@ -210,3 +210,6 @@
     height: 370px;
     overflow-x: auto;
 }
+.custom-control-label::before {
+    border-color: #888;
+}

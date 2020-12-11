@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use DB;
+
+use App\Models\RolePrivileges;
 
 class DashboardController extends Controller
 {
@@ -68,5 +71,57 @@ class DashboardController extends Controller
         $user = User::where("id",\Auth::user()->id)->first();
         $viewData['user'] = $user;
         return view(roleFolder().'.profile.complete-profile',$viewData);
+    }
+
+    public function rolePrivileges()
+    {
+        $viewData['pageTitle'] = "Role Privileges";
+       
+        $api_response = curlRequest("roles");
+        $roles = array();
+        if(isset($api_response['status']) && $api_response['status'] == 'success'){
+            $roles = $api_response['data'];
+        }
+
+        $viewData['roles'] = $roles;
+        $api_response = curlRequest("privileges");
+        $privileges = array();
+        if(isset($api_response['status']) && $api_response['status'] == 'success'){
+            $privileges = $api_response['data'];
+        }
+        $role_privileges = RolePrivileges::get();
+        $temp = array();
+        foreach($role_privileges as $value){
+            $temp[$value->role][$value->module][] = $value->action;
+        }
+        
+        $viewData['role_privileges'] = $temp;
+        $viewData['privileges'] = $privileges;
+        return view(roleFolder().'.role-privileges',$viewData);
+    }
+
+    public function savePrivileges(Request $request){
+        
+        RolePrivileges::truncate();
+        if($request->input("privileges")){
+            $privileges = $request->input("privileges");
+            foreach($privileges as $role => $values){
+                foreach($values as $module => $actions){
+                   for($i=0;$i < count($actions);$i++){
+                        $object = new RolePrivileges();
+                        $object->role = $role;       
+                        $object->module = $module;
+                        $object->action = $actions[$i];
+                        $object->save();
+                    }     
+                }
+            }
+            $response['status'] = true;
+            $response['message'] = "Privileges added to roles";
+        }else{
+            $response['status'] = 'error';
+            $response['message'] = 'No privileges selected';
+        }
+        return response()->json($response);
     }
 }

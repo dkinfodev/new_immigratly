@@ -17,20 +17,18 @@
 
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
-
+      @if(role_permission('leads','quick-lead'))
       <div class="col-sm-auto">
         <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('leads/quick-lead') ?>')" href="javascript:;">
           <i class="tio-user-add mr-1"></i> Quick Lead
         </a>
       </div>
+      @endif
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
 
-  <!-- Stats -->
-  @include(roleFolder().".leads.leads-count")
-  <!-- End Stats -->
 
   <!-- Card -->
   <div class="card">
@@ -88,7 +86,9 @@
             <th>Email/Phone no</th>
             <th scope="col">Visa Service</th>
             <th scope="col">Assigned</th>
+            @if(role_permission('leads','recommend-as-client'))
             <th scope="col"></td>
+            @endif
             <th scope="col"></th>
           </tr>
         </thead>

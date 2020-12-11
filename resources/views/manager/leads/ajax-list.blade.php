@@ -62,9 +62,11 @@
          </span>
       </div>
    </td>
+   @if(role_permission('leads','recommend-as-client'))
    <td>
-      <button onclick="showPopup('<?php echo baseUrl('leads/mark-as-client/'.base64_encode($record->id)) ?>')" type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
+      <button onclick="showPopup('<?php echo baseUrl('leads/recommend-as-client/'.base64_encode($record->id)) ?>')" type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Recommend as Client</button>
    </td>
+   @endif
    <td>
       <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
@@ -76,9 +78,13 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
+        @if(role_permission('leads','edit-lead'))
         <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
+        @endif
+        @if(role_permission('leads','delete-lead'))
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">Delete</a> 
+        @endif
       </div>
     </div>
    </td>

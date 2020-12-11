@@ -123,8 +123,7 @@ class PrivilegesActionsController extends Controller
         $id = base64_decode($id);
         $object =  PrivilegesActions::find($id);
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            
+            'name' => 'required|unique:privileges_actions,name,'.$object->id,            
         ]);
 
      if ($validator->fails()) {

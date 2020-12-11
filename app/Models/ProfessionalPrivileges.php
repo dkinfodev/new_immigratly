@@ -13,4 +13,9 @@ class ProfessionalPrivileges extends Model
     static function deleteRecord($id){
         ProfessionalPrivileges::where("id",$id)->delete();
     }
+
+    public function Actions()
+    {
+        return $this->hasMany('App\Models\PrivilegesActions','module_id');
+    }
 }

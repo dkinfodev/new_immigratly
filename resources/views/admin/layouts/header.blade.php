@@ -697,14 +697,17 @@
 
 
         <a class="dropdown-item" href="{{ baseUrl('/edit-profile') }}">
-          <span class="text-truncate pr-2" title="Profile &amp; account">Profile &amp; account</span>
+          <span class="text-truncate pr-2">Profile &amp; account</span>
         </a>
         <a class="dropdown-item" href="{{baseUrl('staff')}}">
-          <span class="text-truncate pr-2" title="staff">Manage Staffs</span>
+          <span class="text-truncate pr-2">Manage Staffs</span>
+        </a>
+        <a class="dropdown-item" href="{{baseUrl('role-privileges')}}">
+          <span class="text-truncate pr-2">Role Privileges</span>
         </a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{ url('logout') }}">
-          <span class="text-truncate pr-2 text-danger" title="Sign out">Sign out</span>
+          <span class="text-truncate pr-2 text-danger">Sign out</span>
         </a>
       </div>
     </div>

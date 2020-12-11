@@ -6,6 +6,7 @@ use App\Models\Settings;
 use App\Models\DomainDetails;
 use App\Models\Documents;
 use App\Models\Professionals;
+use App\Models\RolePrivileges;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -967,5 +968,19 @@ if(!function_exists("docChatSendBy")){
             $user = DB::table(PROFESSIONAL_DATABASE.$subdomain.".users")->where("unique_id",$user_id)->first();
         }
         return $user;
+    }
+}
+
+if(!function_exists("role_permission")){
+    function role_permission($module,$action,$role=''){
+        if($role == ''){
+            $role = \Auth::user()->role;
+        }
+        $check_exists = RolePrivileges::where("role",$role)->where("module",$module)->where("action",$action)->count();
+        if($check_exists > 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

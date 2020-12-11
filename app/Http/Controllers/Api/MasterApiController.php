@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserWithProfessional;
 use App\Models\DomainDetails;
+use App\Models\ProfessionalPrivileges;
+use App\Models\PrivilegesActions;
+use App\Models\Roles;
 
 class MasterApiController extends Controller
 {
@@ -89,6 +92,39 @@ class MasterApiController extends Controller
 	        $response['message'] = "Client has been created successfully";
 	        $response['status'] = 'success';
        	} catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function roles(Request $request){
+        try{
+            $avoid = array("admin","user");
+            $roles = Roles::whereNotIn("slug",$avoid)->get();
+            $data = $roles;
+
+            $response['status'] = 'success';
+            $response['data'] = $data;
+
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function privilegesList(Request $request){
+        try{
+            $privileges = ProfessionalPrivileges::with("Actions")->get();
+            $data = $privileges;
+
+            $response['status'] = 'success';
+            $response['data'] = $data;
+
+
+        } catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();
         }
