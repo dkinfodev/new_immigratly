@@ -55,8 +55,7 @@ class User extends Authenticatable
     } 
 
     static function ProfessionalClients($domain)
-    {
-        $client = DB::table(MAIN_DATABASE.".user_with_professional as uwp")
+    {   $client = DB::table(MAIN_DATABASE.".user_with_professional as uwp")
                     ->select("us.*")
                     ->rightJoin(MAIN_DATABASE.".users as us","uwp.user_id","=","us.unique_id")
                     ->where("uwp.professional",$domain)
