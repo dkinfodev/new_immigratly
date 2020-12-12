@@ -110,7 +110,12 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
 
         Route::get('/view/{id}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'viewDetail']);
+
+        Route::get('/add-notes/{id}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'addNotes']);
+
+        Route::post('/save-notes', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'saveNotes']);
     });
+
     Route::group(array('prefix' => 'privileges'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'getAjaxList']); 
@@ -276,7 +281,7 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\LeadsController::class, 'getNewList']);
             Route::get('/assigned', [App\Http\Controllers\Admin\LeadsController::class, 'assignedLeads']);
-            Route::get('/quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'quickLead']);
+            Route::get('/quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'quickLead']); 
             Route::post('/create-quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'createQuickLead']);
             Route::get('/delete/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'deleteSingle']);
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\LeadsController::class, 'deleteMultiple']);

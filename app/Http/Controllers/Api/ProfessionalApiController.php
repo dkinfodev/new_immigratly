@@ -19,6 +19,7 @@ use App\Models\Documents;
 use App\Models\DocumentChats;
 use App\Models\Chats;
 
+
 class ProfessionalApiController extends Controller
 {
     var $subdomain;
@@ -571,7 +572,7 @@ class ProfessionalApiController extends Controller
         }
         return response()->json($response); 
     }
-
+ 
     public function saveChat(Request $request){
         try{
             $postData = $request->input();
@@ -609,5 +610,25 @@ class ProfessionalApiController extends Controller
             $response['message'] = $e->getMessage();
         }
         return response()->json($response); 
+    }
+
+    public function adminNotes(Request $request){
+        try{
+
+            $postData = $request->input();
+            $id = $request->input("id");
+
+            if(!empty($request->input("id")))
+            {
+                $object = DomainDetails::find($id);    
+                $object->admin_notes = $request->input("notes");
+                $object->save();
+            }
+        }
+        catch(Exception $e){
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);    
     }
 }

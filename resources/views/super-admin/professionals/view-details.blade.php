@@ -73,6 +73,11 @@
             @endif
           </div>
         </div>
+
+        <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('professionals/add-notes/'.base64_encode($record->id)) ?>')" href="javascript:;">
+          <i class="tio-add mr-1"></i> Add Notes
+        </a>
+      
       </div>
     </div>
     <!-- End Row -->
@@ -97,7 +102,7 @@
           <a class="nav-link active" href="javascript:;">Details</a>
         </li>
       </ul>
-      <!-- End Nav -->
+      !-- End Nav -->
     </div>
     <!-- End Nav Scroller -->
   </div>
