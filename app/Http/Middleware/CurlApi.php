@@ -24,6 +24,7 @@ class CurlApi
         if(isset($headers['subdomain'][0])){
             $subdomain = $headers['subdomain'][0];
             $authorization = $headers['authorization'][0];
+           
             $data = Professionals::where("subdomain",$subdomain)->first();
             if(!empty($data)){
                 if($data->client_secret != $authorization){

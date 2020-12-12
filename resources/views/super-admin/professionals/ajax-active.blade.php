@@ -12,7 +12,10 @@
         <span class="avatar-initials">{{userInitial($record)}}</span>
       </div>
       <div class="ml-3">
-        <span class="d-block h5 text-hover-primary mb-0">{{$record->first_name." ".$record->last_name}}</span>
+        <span class="d-block h5 text-hover-primary mb-0">
+          {{$record->first_name." ".$record->last_name}}
+
+        </span>
         <span class="d-block h5 mb-0 font-size-sm text-body">{{$record->email}}</span>
       </div>
     </a>
@@ -41,6 +44,13 @@
   </td>
   <td>{{$record->country_code}}{{$record->phone_no}}</td>
   <td>
+    @if($record->panel_status == 1)
+    <span class="legend-indicator bg-success"></span>Active
+    @else
+    <span class="legend-indicator bg-danger"></span>Inactive
+    @endif
+  </td>
+  <!-- <td>
     <div class="d-flex justify-content-center align-items-center mt-5 mb-5">
       <label class="toggle-switch mx-2" for="customSwitch-{{$key}}">
         <input type="checkbox" data-id="{{ $record->id }}" onchange="changeStatus(this)" class="js-toggle-switch toggle-switch-input" id="customSwitch-{{$key}}" {{($record->panel_status == 1)?'checked':''}} >
@@ -69,7 +79,7 @@
         <span>Inactive</span>
         @endif
       </div>
-  </td>
+  </td> -->
   <td>
     <a href="{{baseUrl('/professionals/view/'.base64_encode($record->id))}}"><i class="tio-visible"></i> Details</a>
   </td>

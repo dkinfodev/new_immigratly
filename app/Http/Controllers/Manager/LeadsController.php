@@ -20,6 +20,15 @@ class LeadsController extends Controller
     }
 
     public function newLeads(Request $request){
+        if(!role_permission('leads','view-leads')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['total_leads'] = Leads::count();
         $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
         $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
@@ -29,6 +38,15 @@ class LeadsController extends Controller
 
     public function getNewList(Request $request)
     {
+        if(!role_permission('leads','view-leads')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $search = $request->input("search");
         $records = Leads::orderBy('id',"desc")
                         ->where(function($query) use($search){
@@ -51,7 +69,16 @@ class LeadsController extends Controller
         return response()->json($response);
     }
 
-    public function quickLead(){
+    public function quickLead(Request $request){
+        if(!role_permission('leads','quick-lead')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['pageTitle'] = "Quick Lead";
         $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
        
@@ -65,6 +92,15 @@ class LeadsController extends Controller
     }
 
     public function createQuickLead(Request $request){
+        if(!role_permission('leads','quick-lead')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -101,12 +137,30 @@ class LeadsController extends Controller
         return response()->json($response);
     }
 
-    public function deleteSingle($id){
+    public function deleteSingle($id,Request $request){
+        if(!role_permission('leads','delete-lead')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         Leads::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
     public function deleteMultiple(Request $request){
+        if(!role_permission('leads','delete-lead')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
             $id = base64_decode($ids[$i]);
@@ -117,7 +171,16 @@ class LeadsController extends Controller
         return response()->json($response);
     }
 
-    public function edit($id){
+    public function edit($id,Request $request){
+        if(!role_permission('leads','edit-lead')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $record = Leads::find($id);
         $viewData['visa_services'] = ProfessionalServices::orderBy('id',"asc")->get();
@@ -133,6 +196,15 @@ class LeadsController extends Controller
     }
 
     public function update($id,Request $request){
+        if(!role_permission('leads','edit-lead')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $object = Leads::find($id);
         $validator = Validator::make($request->all(), [
@@ -178,7 +250,16 @@ class LeadsController extends Controller
         return response()->json($response);
     }
 
-    public function markAsClient($id){
+    public function markAsClient($id,Request $request){
+        if(!role_permission('leads','mark-as-client')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['pageTitle'] = "Mark as client";
         $lead_id = base64_decode($id);
         $viewData['lead_id'] = $lead_id;
@@ -192,6 +273,15 @@ class LeadsController extends Controller
     }
     
     public function confirmAsClient($id,Request $request){
+        if(!role_permission('leads','mark-as-client')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'case_title' => 'required',
             'start_date' => 'required',

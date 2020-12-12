@@ -30,12 +30,30 @@ class CasesController extends Controller
     }
 
     public function cases(Request $request){
+        if(!role_permission('cases','view-cases')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['pageTitle'] = "Cases";
         return view(roleFolder().'.cases.lists',$viewData);
     }
 
     public function getAjaxList(Request $request)
     {
+        if(!role_permission('cases','view-cases')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $search = $request->input("search");
         $user_id = \Auth::user()->unique_id;
         $records = Cases::withCount('Chats')->orderBy('id',"desc")
@@ -59,7 +77,15 @@ class CasesController extends Controller
     }
 
     public function createClient(Request $request){
-       
+        if(!role_permission('cases','create-client')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['pageTitle'] = "Create Client";
         $countries = DB::table(MAIN_DATABASE.".countries")->get();
         $viewData['countries'] = $countries;
@@ -71,6 +97,15 @@ class CasesController extends Controller
     }
 
     public function createNewClient(Request $request){
+        if(!role_permission('cases','create-client')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -120,6 +155,15 @@ class CasesController extends Controller
         return response()->json($response);
     }
     public function add(){
+        if(!role_permission('cases','add-case')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['pageTitle'] = "Create Case";
         $viewData['staffs'] = User::where("role","!=","admin")->get();
         $viewData['clients'] = User::ProfessionalClients(\Session::get('subdomain'));
@@ -127,6 +171,15 @@ class CasesController extends Controller
         return view(roleFolder().'.cases.add',$viewData);
     } 
     public function save(Request $request){
+        if(!role_permission('cases','add-case')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'client_id' => 'required',
             'case_title' => 'required',
@@ -177,12 +230,30 @@ class CasesController extends Controller
         $response['redirect_back'] = baseUrl('cases');
         return response()->json($response);
     }
-    public function deleteSingle($id){
+    public function deleteSingle($id,Request $request){
+        if(!role_permission('cases','delete-case')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         Cases::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
     public function deleteMultiple(Request $request){
+        if(!role_permission('cases','delete-case')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
             $id = base64_decode($ids[$i]);
@@ -193,7 +264,16 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
-    public function edit($id){
+    public function edit($id,Request $request){
+        if(!role_permission('cases','edit-case')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $record = Cases::with('AssingedMember')->find($id);
         $assignedMember = $record->AssingedMember;
@@ -207,6 +287,15 @@ class CasesController extends Controller
     }
 
     public function update($id,Request $request){
+        if(!role_permission('cases','edit-case')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $validator = Validator::make($request->all(), [
             'client_id' => 'required',
@@ -268,6 +357,15 @@ class CasesController extends Controller
     }
 
     public function pinnedFolder(Request $request){
+        if(!role_permission('cases','add-to-starred')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'folder_id' => 'required',
             'case_id' => 'required',
@@ -329,7 +427,16 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
-    public function caseDocuments($id){
+    public function caseDocuments($id,Request $request){
+        if(!role_permission('cases','view-documents')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $record = Cases::find($id);
         
@@ -356,7 +463,16 @@ class CasesController extends Controller
         return view(roleFolder().'.cases.document-folders',$viewData);
     }
 
-    public function defaultDocuments($case_id,$doc_id){
+    public function defaultDocuments($case_id,$doc_id,Request $request){
+        if(!role_permission('cases','view-documents')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         // $case_id = base64_decode($case_id);
         // $doc_id = base64_decode($doc_id);
         $record = Cases::where("unique_id",$case_id)->first();
@@ -379,8 +495,16 @@ class CasesController extends Controller
         $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
     }
-    public function otherDocuments($case_id,$doc_id){
-        
+    public function otherDocuments($case_id,$doc_id,Request $request){
+        if(!role_permission('cases','view-documents')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         // $doc_id = base64_decode($doc_id);
         $record = Cases::where("unique_id",$case_id)->first();
         $document = ServiceDocuments::where("unique_id",$doc_id)->first();
@@ -402,8 +526,16 @@ class CasesController extends Controller
         $viewData['file_dir'] = $file_dir;
         return view(roleFolder().'.cases.document-files',$viewData);
     }
-    public function extraDocuments($case_id,$doc_id){
-        
+    public function extraDocuments($case_id,$doc_id,Request $request){
+        if(!role_permission('cases','view-documents')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         // $doc_id = base64_decode($doc_id);
         $record = Cases::where("unique_id",$case_id)->first();
         $document = CaseFolders::where("unique_id",$doc_id)->first();
@@ -428,6 +560,15 @@ class CasesController extends Controller
     }
     
     public function uploadDocuments($id,Request $request){
+        if(!role_permission('cases','upload-files')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $folder_id = $request->input("folder_id");
         $record = Cases::find($id);
@@ -482,6 +623,15 @@ class CasesController extends Controller
 
     public function addFolder($id,Request $request){
         // $id = base64_decode($id);
+        if(!role_permission('cases','add-folder')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $viewData['case_id'] = $id;
         $viewData['pageTitle'] = "Add Folder";
         $view = View::make(roleFolder().'.cases.modal.add-folder',$viewData);
@@ -492,6 +642,15 @@ class CasesController extends Controller
     }
 
     public function createFolder($id,Request $request){
+        if(!role_permission('cases','add-folder')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -519,6 +678,15 @@ class CasesController extends Controller
     }
 
     public function editFolder($id,Request $request){
+        if(!role_permission('cases','edit-folder')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $record = CaseFolders::find($id);
         $viewData['case_id'] = $id;
@@ -532,6 +700,15 @@ class CasesController extends Controller
     }
 
     public function updateFolder($id,Request $request){
+        if(!role_permission('cases','edit-folder')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
@@ -557,18 +734,45 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
-    public function deleteFolder($id){
+    public function deleteFolder($id,Request $request){
+        if(!role_permission('cases','delete-folder')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         CaseFolders::deleteRecord($id);
         return redirect()->back()->with("success","Folder has been deleted!");
     }
 
-    public function deleteDocument($id){
+    public function deleteDocument($id,Request $request){
+        if(!role_permission('cases','delete-file')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         CaseDocuments::deleteRecord($id);
         return redirect()->back()->with("success","Document has been deleted!");
     }
     public function deleteMultipleDocuments(Request $request){
+        if(!role_permission('cases','delete-file')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
             $id = base64_decode($ids[$i]);
@@ -579,12 +783,21 @@ class CasesController extends Controller
         return response()->json($response);
     }
 
-    public function fileMoveTo($id,$case_id,$doc_id){
+    public function fileMoveTo($id,$case_id,$doc_id,Request $request){
+        if(!role_permission('cases','move-to')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($id);
         $case_id = base64_decode($case_id);
         $doc_id = base64_decode($doc_id);
         $case = Cases::find($case_id);
-        echo $doc_id;
+        
         $documents = ServiceDocuments::where("service_id",$case->visa_service_id)->get();
         $document = ServiceDocuments::where("id",$doc_id)->first();
         $folder_id = $document->unique_id;
@@ -608,6 +821,15 @@ class CasesController extends Controller
     }
 
     public function moveFileToFolder(Request $request){
+        if(!role_permission('cases','move-to')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($request->input("id"));
         $folder_id = $request->input("folder_id");
         $doc_type = $request->input("doc_type");
@@ -622,7 +844,16 @@ class CasesController extends Controller
         return response()->json($response);       
     }
 
-    public function documentsExchanger($case_id){
+    public function documentsExchanger($case_id,Request $request){
+        if(!role_permission('cases','documents-exchanger')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $id = base64_decode($case_id);
         $record = Cases::find($id);
         $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
@@ -644,6 +875,15 @@ class CasesController extends Controller
     }
 
     public function saveExchangeDocuments(Request $request){
+        if(!role_permission('cases','documents-exchanger')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $doc_type = $request->input("document_type");
         $folder_id = $request->input("folder_id");
         $case_id = $request->input("case_id");
@@ -672,6 +912,15 @@ class CasesController extends Controller
     }
 
     public function fetchDocumentChats(Request $request){
+        if(!role_permission('cases','chat-on-document')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $case_id = $request->input("case_id");
         $document_id = $request->input("document_id");
         $subdomain = $request->input("subdomain");
@@ -694,6 +943,15 @@ class CasesController extends Controller
     }
 
     public function saveDocumentChat(Request $request){
+        if(!role_permission('cases','chat-on-document')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $data['case_id'] = $request->input("case_id");
         $data['document_id'] = $request->input("document_id");
         $data['message'] = $request->input("message");
@@ -717,7 +975,15 @@ class CasesController extends Controller
     }
 
     public function saveDocumentChatFile(Request $request){
-
+        if(!role_permission('cases','chat-on-document')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         if ($file = $request->file('attachment')){
             $data['case_id'] = $request->input("case_id");
             $data['document_id'] = $request->input("document_id");
@@ -765,6 +1031,15 @@ class CasesController extends Controller
     }
 
     public function chats($case_id,Request $request){
+        if(!role_permission('cases','case-chat')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $case = Cases::where("unique_id",$case_id)->first();
         $viewData['client_id'] = $case->client_id;
         if($request->get("type")){
@@ -784,6 +1059,15 @@ class CasesController extends Controller
     }
 
     public function fetchChats(Request $request){
+        if(!role_permission('cases','case-chat')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $case_id = $request->input("case_id");
         $chat_type = $request->input("chat_type");
         $client_id = $request->input("client_id");
@@ -811,6 +1095,15 @@ class CasesController extends Controller
     }
 
     public function saveChat(Request $request){
+        if(!role_permission('cases','case-chat')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         $data['case_id'] = $request->input("case_id");
         $data['document_id'] = $request->input("document_id");
         $data['message'] = $request->input("message");
@@ -837,7 +1130,15 @@ class CasesController extends Controller
     }
 
     public function saveChatFile(Request $request){
-
+        if(!role_permission('cases','case-chat')){
+            if($request->ajax()){
+                $response['status'] = "error";
+                $response['message'] = ACCESS_DENIED_MSG;
+                return response()->json($response);
+            }else{
+                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
+            }
+        }
         if ($file = $request->file('attachment')){
            
 

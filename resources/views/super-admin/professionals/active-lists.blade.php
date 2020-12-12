@@ -88,7 +88,7 @@
             <th>Subdomain Handler</th>
             <th>Contact Number</th>
             <th>Panel Status</th>
-            <th>Profile status</th>
+            <!-- <th>Profile status</th> -->
             <th>Action</th>
           </tr>
         </thead>

@@ -27,12 +27,16 @@
         <div class="text-dark">{{$record->case_title}}</div>
       </div>
       <div class="col-sm-auto">
+        @if(role_permission('cases','documents-exchanger'))
         <a class="btn btn-success" href="{{ baseUrl('cases/case-documents/documents-exchanger/'.base64_encode($record->id)) }}">
          <i class="tio-swap-horizontal mr-1"></i> Documents Exchanger
         </a>
+        @endif
+        @if(role_permission('cases','add-folder'))
         <a onclick="showPopup('{{ baseUrl('cases/case-documents/add-folder/'.$record->unique_id) }}')" class="btn btn-primary" href="javascript:;">
          <i class="tio-folder-add mr-1"></i> Add folder
         </a>
+        @endif
       </div>
     </div>
   </div>
@@ -88,14 +92,18 @@
                         <i class="tio-folder-add dropdown-item-icon"></i>
                         Move to
                         </a> -->
+                        @if(role_permission('cases','view-documents'))
                         <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/".$key."/".$record->unique_id."/".$folder) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                        </a>
+                       @endif
+                       @if(role_permission('cases','add-to-starred'))
                         <a class="dropdown-item" href="javascript:;" onclick="unpinnedFolder('{{ $record->id }}','{{$folder}}','{{ $key }}')">
                         <i class="tio-star dropdown-item-icon"></i>
                         Click to unpinned
                         </a>
+                      @endif
                      </div>
                   </div>
                   <!-- End Unfold -->

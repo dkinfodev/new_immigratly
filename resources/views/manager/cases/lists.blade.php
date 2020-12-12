@@ -85,7 +85,9 @@
             <th scope="col">Visa Service</th>
             <!-- <th scope="col">Start Date</th> -->
             <th scope="col">Assigned</th>
+            @if(role_permission('cases','case-chat'))
             <th scope="col"><i class="tio-chat-outlined"></i></td>
+            @endif
             <th scope="col"></th>
           </tr>
         </thead>

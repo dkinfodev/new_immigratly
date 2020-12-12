@@ -115,27 +115,36 @@ class ProfessionalController extends Controller
         $viewData['pageTitle'] = $pd->first_name;
 
         $language_id = $pd->languages_known;
-        $language_id = json_decode($language_id);
-
-        $languages_known = "";
-        foreach ($language_id as $key => $l) {
-            $languages_known .= $record->getLanguage($l).",";
+        if($language_id != ''){
+            $language_id = json_decode($language_id,true);
+        }else{
+            $language_id = array();    
         }
 
-        $viewData['languages'] = trim($languages_known,",");
+        $languages_known = array();
+        foreach ($language_id as $key => $l) {
+            $languages_known[] = $record->getLanguage($l);
+        }
+
+        $viewData['languages'] = implode(",",$languages_known);
 
 
         $license_id = $cd->license_body;
-        $license_id = json_decode($license_id);
-
-        $license_bodies = "";
-        foreach ($license_id as $key => $l) {
-            $license_bodies .= $record->getLicenceBodies($l)."<br>";
+        if($license_id != ''){
+            $license_id = json_decode($license_id,true);
+        }else{
+            $license_id = array();
         }
 
-        $viewData['licenceBodies'] = $license_bodies;
+        $license_bodies = array();
+        foreach ($license_id as $key => $l) {
+            $license_bodies[] = $record->getLicenceBodies($l);
+        }
+
+        $viewData['licenceBodies'] = implode("<br>",$license_bodies);
         
         $countries = Countries::where('id',$pd->country_id)->first();
+
         $viewData['countries'] = $countries;
 
         $comp_countries = Countries::where('id',$cd->country_id)->first();

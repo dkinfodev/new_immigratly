@@ -95,16 +95,22 @@ class CasesController extends Controller
         $data['phone_no'] = $request->input('phone_no');
         $postData['data'] = $data;
         $result = curlRequest("create-client",$postData);
-       
+        
         if($result['status'] == 'error'){
             $response['status'] = false;
             $response['error_type'] = 'process_error';
             $response['message'] = $result['message'];
-        }elseif($result['status'] == 'success'){
-            $clients = User::ProfessionalClients(\Session::get("subdomain"));
+        }else if($result['status'] == 'success'){
+            $clients = DB::table(MAIN_DATABASE.".user_with_professional as uwp")
+                    ->select("us.*")
+                    ->rightJoin(MAIN_DATABASE.".users as us","uwp.user_id","=","us.unique_id")
+                    ->where("uwp.professional",\Session::get("subdomain"))
+                    ->get();
+            // User::ProfessionalClients(\Session::get("subdomain"));
             $options = '<option value="">Select Client</option>';
             foreach($clients as $client){
-                $options .='<option '.($client->email == $request->input('email'))?'selected':''.' value="'.$client->unique_id.'">'.$client->first_name.' '.$client->last_name.'</option>';
+                $selected = ($client->email == $request->input("email"))?'selcted':'';
+                $options .='<option '.$selected.' value="'.$client->unique_id.'">'.$client->first_name.' '.$client->last_name.'</option>';
             }
             $response['status'] = true;
             $response['options'] = $options;

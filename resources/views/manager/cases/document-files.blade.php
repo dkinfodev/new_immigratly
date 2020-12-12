@@ -36,11 +36,14 @@
             </div>
          </div>
          <div class="col-sm-auto">
+            @if(role_permission('cases','upload-files'))
             <div class="btn-group" role="group">
                <a class="btn btn-primary"  href="javascript:;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><i class="tio-upload-on-cloud mr-1"></i> Upload</a>
             </div>
+            @endif
          </div>
       </div>
+      @if(role_permission('cases','upload-files'))
       <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
         <div class="card-body">
           <!-- Dropzone -->
@@ -61,6 +64,7 @@
             <!-- End Dropzone -->
         </div>
       </div>
+      @endif
       <!-- End Row -->
       <!-- Nav -->
       <!-- Nav -->
@@ -180,7 +184,9 @@
                   </th>
                   <th scope="col" class="table-column-pl-0">Document Name</th>
                   <!-- <th scope="col">Folder</th> -->
+                  @if(role_permission('cases','chat-on-document'))
                   <th scope="col"><i class="tio-chat-outlined"></i></th>
+                  @endif
                   <th scope="col">Members</th>
                   <th scope="col"></th>
                </tr>
@@ -199,6 +205,7 @@
                         <?php 
                            $fileicon = fileIcon($doc->FileDetail->original_name);
                            echo $fileicon;
+                           $doc_url = $file_url."/".$doc->FileDetail->file_name;
                            $filesize = file_size($file_dir."/".$doc->FileDetail->file_name);
                         ?>
                         <div class="ml-3">
@@ -211,6 +218,7 @@
                      </a>
                   </td>
                   <!-- <td><a class="badge badge-soft-primary p-2" href="#">Marketing team</a></td> -->
+                  @if(role_permission('cases','chat-on-document'))
                   <td width="10%">
                      <!-- Toggle -->
                      <div class="hs-unfold">
@@ -229,6 +237,7 @@
                      <!-- End Toggle -->
                        
                   </td>
+                  @endif
                   <td>
                      <div class="avatar-group avatar-group-xs avatar-circle">
                         <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
@@ -263,36 +272,23 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <span class="dropdown-header">Settings</span>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share file
-                           </a>
+                           @if(role_permission('cases','move-to'))
                            <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('cases/case-documents/file-move-to/'.base64_encode($doc->id)).'/'.base64_encode($record->id).'/'.base64_encode($document->id) ?>')">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
                            </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-star-outlined dropdown-item-icon"></i>
-                           Add to stared
-                           </a>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-edit dropdown-item-icon"></i>
-                           Rename
-                           </a>
-                           <a class="dropdown-item" href="#">
+                           @endif
+                           @if(role_permission('cases','download-file'))
+                           <a class="dropdown-item" href="{{$doc_url}}" download>
                            <i class="tio-download-to dropdown-item-icon"></i>
                            Download
                            </a>
-                           <div class="dropdown-divider"></div>
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-chat-outlined dropdown-item-icon"></i>
-                           Report
-                           </a>
+                           @endif
+                           <!-- 
                            <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.base64_encode($doc->id))}}">
                            <i class="tio-delete-outlined dropdown-item-icon"></i>
                            Delete
-                           </a>
+                           </a> -->
                         </div>
                      </div>
                      <!-- End Unfold -->

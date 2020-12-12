@@ -156,9 +156,8 @@
     <div class="col-md-7 justify-content-md-end">
 
       <div class="row form-group">
-        <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
-
         <div class="col-12">
+          <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
           <div class="js-form-message">
             <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg="Please enter your first name." value="{{ $user->first_name }}">
           </div>
@@ -167,9 +166,8 @@
       <!-- End Form Group -->
 
       <div class="row form-group">
-        <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
-
         <div class="col-12">
+          <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
           <div class="js-form-message">
             <input type="text" class="form-control" name="last_name" id="validationFormLastnameLabel" placeholder="Lastname" aria-label="Lastname" required data-msg="Please enter your last name." value="{{ $user->last_name }}">
           </div>

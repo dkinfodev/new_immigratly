@@ -76,9 +76,15 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
+        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">
+          <i class="tio-edit dropdown-item-icon"></i>
+          Edit
+        </a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">
+          <i class="tio-delete-outlined dropdown-item-icon"></i>
+          Delete
+        </a> 
       </div>
     </div>
    </td>

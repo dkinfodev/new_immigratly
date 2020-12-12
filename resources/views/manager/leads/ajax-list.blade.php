@@ -79,14 +79,23 @@
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         @if(role_permission('leads','edit-lead'))
-        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
+        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">
+          <i class="tio-edit dropdown-item-icon"></i>
+          Edit
+        </a>
         @endif
         @if(role_permission('leads','recommend-as-client'))
-        <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">Edit</a>
+        <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('leads/recommend-as-client/'.base64_encode($record->id)) ?>')">
+          <i class="tio-bookmark dropdown-item-icon"></i>
+          Recommend as Client
+        </a>
         @endif
         @if(role_permission('leads','delete-lead'))
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">
+          <i class="tio-delete-outlined dropdown-item-icon"></i>
+          Delete
+        </a> 
         @endif
       </div>
     </div>

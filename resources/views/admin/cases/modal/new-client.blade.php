@@ -106,7 +106,11 @@ $(document).ready(function(){
                 $("#client_id").trigger("change");
                 closeModal();
               }else{
-                validation(response.message);
+                if(response.error_type == 'validation'){
+                  validation(response.message);
+                }else{
+                  errorMessage(response.message);
+                }
               }
             },
             error:function(){

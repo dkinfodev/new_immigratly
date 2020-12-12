@@ -106,12 +106,14 @@
                             <!-- End Select -->
                          </div>
                      </div>
+                     @if(role_permission('cases','create-client'))
                      <span class="col-auto">or</span>
                      <div class="col-md mb-md-3">
                         <a class="btn btn-white" onclick="showPopup('<?php echo baseUrl('cases/create-client') ?>')" href="javascript:;">
                         <i class="tio-add mr-1"></i>New client
                         </a>
                      </div>
+                     @endif
                   </div>
                </div>
                <!-- End Form Group -->

@@ -77,7 +77,7 @@
 
                         <div class="custom-control custom-checkbox">
                           <input type="checkbox" id="customCheck-{{$role_index.'-'.$module_index.'-'.$action_index}}" name="privileges[{{$role['slug']}}][{{$privilege['slug']}}][]" value="{{ $action['slug'] }}" {{(isset($role_privileges[$role['slug']][$privilege['slug']]) && in_array($action['slug'],$role_privileges[$role['slug']][$privilege['slug']]))?"checked":"" }} class="custom-control-input">
-                          <label class="custom-control-label" for="customCheck-{{$role_index.'-'.$module_index.'-'.$action_index}}">{{$action['name']}}</label>
+                          <label class="custom-control-label" for="customCheck-{{$role_index.'-'.$module_index.'-'.$action_index}}">{{$action['name']}} <div class="text-danger">{{$action['slug']}}</div></label>
                         </div>
                       </div>
                     @endforeach

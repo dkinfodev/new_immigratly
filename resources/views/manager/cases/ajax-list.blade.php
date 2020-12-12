@@ -7,7 +7,11 @@
     </div>
   </td>
   <td class="table-column-pl-0">
+    @if(role_permission('cases','edit-case'))
     <a class="d-flex align-items-center" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">
+    @else
+    <a class="d-flex align-items-center" href="javascript:;">
+    @endif
       @if(!empty($record->Client($record->client_id)))
       <?php
       $client = $record->Client($record->client_id);
@@ -87,6 +91,7 @@
     </div>
     <!-- End Avatar Group -->
   </td>
+  @if(role_permission('cases','case-chat'))
   <td width="10%">
    <div class="hs-unfold">
       <a href="{{ baseUrl('cases/chats/'.$record->unique_id) }}" class="js-hs-unfold-invoker text-body">
@@ -94,6 +99,7 @@
       </a>
    </div>
  </td>
+ @endif
   <td>
       <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
@@ -103,19 +109,25 @@
          }'>More  <i class="tio-chevron-down ml-1"></i>
       </a>
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right">
+        @if(role_permission('cases','edit-case'))
         <a class="dropdown-item" href="{{baseUrl('cases/edit/'.base64_encode($record->id))}}">
          <i class="tio-edit dropdown-item-icon"></i>
          Edit
         </a>
+        @endif
+        @if(role_permission('cases','view-documents'))
         <a class="dropdown-item" href="{{baseUrl('cases/case-documents/documents/'.base64_encode($record->id))}}">
          <i class="tio-pages-outlined dropdown-item-icon"></i>
          Case Documents
         </a>
+        @endif
+        @if(role_permission('cases','delete-case'))
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/delete/'.base64_encode($record->id))}}">
          <i class="tio-delete-outlined dropdown-item-icon"></i>
          Delete
         </a>
+        @endif
       </div>
     </div>
    </td>

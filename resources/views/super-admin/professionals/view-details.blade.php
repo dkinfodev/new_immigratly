@@ -17,14 +17,13 @@
     <!-- Page Header -->
     <div class="page-header page-header-light">
       <div class="row align-items-center">
-        <div class="col-9">
+        <div class="col-6">
           <h1 class="page-header-title">{{$pageTitle}}</h1>
         </div>
-        <div class="col-3" style="">
+        <div class="col-6" style="">
 
-          <div class="form-inline float-right">
+          <div class="form-inline float-right ml-2">
             <lable><span class="text-white" style="font-size:16px;">Profile Status </span></lable>
-
             <?php
             $check_profile = checkProfileStatus($record->subdomain);
             $profile_checked = '';
@@ -170,20 +169,20 @@
       <div class="col-md-4">
         <!-- Logo -->
         <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
-          @if($user->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$user->profile_image))
-          <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$user->profile_image }}" alt="Profile Image">
+          @if($user->profile_image != '' &&  file_exists(professionalDir($subdomain).'/profile/'.$user->profile_image))
+          <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl($subdomain).'/profile/'.$user->profile_image }}" alt="Profile Image">
           @else
           <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
           @endif
 
-          <span class="d-block">Upload your Image here</span>
+          <!-- <span class="d-block">Upload your Image here</span> -->
 
-          <input type="file" class="js-file-attach custom-file-boxed-input" name="profile_image" id="logoUploader"
+          <!-- <input type="file" class="js-file-attach custom-file-boxed-input" name="profile_image" id="logoUploader"
           data-hs-file-attach-options='{
           "textTarget": "#logoImg",
           "mode": "image",
           "targetAttr": "src"
-        }'>
+        }'> -->
       </label>
       <!-- End Logo -->
     </div>
@@ -191,9 +190,8 @@
     <div class="col-md-7 justify-content-md-end">
 
       <div class="row form-group">
-        <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
-
         <div class="col-12">
+          <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
           <div class="js-form-message">
             <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg="Please enter your first name." value="{{ $user->first_name }}" disabled="true">
           </div>
@@ -202,9 +200,8 @@
       <!-- End Form Group -->
 
       <div class="row form-group">
-        <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
-
         <div class="col-12">
+           <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
           <div class="js-form-message">
             <input type="text" class="form-control" name="last_name" id="validationFormLastnameLabel" placeholder="Lastname" aria-label="Lastname" required data-msg="Please enter your last name." value="{{ $user->last_name }}" disabled="true">
           </div>
@@ -298,7 +295,7 @@
       <label class="col-sm-5 col-form-label input-label">Country</label>
       <div class="col-sm-7">
         <div class="js-form-message">
-          <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{$countries->name}}" disabled="true">
+          <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{(!empty($countries))?$countries->name:''}}" disabled="true">
         </div>
       </div>
     </div>
@@ -308,7 +305,7 @@
       <label class="col-sm-5 col-form-label input-label">State</label>
       <div class="col-sm-7">
         <div class="js-form-message">
-          <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{$states->name}}" disabled="true">
+          <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{!empty($states)?$states->name:''}}" disabled="true">
         </div>
       </div>
     </div>
@@ -319,7 +316,7 @@
       <label class="col-sm-5 col-form-label input-label">City</label>
       <div class="col-sm-7">
         <div class="js-form-message">
-          <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{$cities->name}}" disabled="true">
+          <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{!empty($cities)?$cities->name:''}}" disabled="true">
         </div>
       </div>
     </div>
@@ -370,7 +367,7 @@
     <label class="col-sm-5 col-form-label input-label">Country</label>
     <div class="col-sm-7">
       <div class="js-form-message">
-        <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $comp_countries->name }}" disabled="true">
+        <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ !empty($comp_countries)?$comp_countries->name:'' }}" disabled="true">
       </div>
     </div>
   </div>
@@ -410,7 +407,13 @@
     <label class="col-sm-5 col-form-label input-label">License certificate</label>
     <div class="col-sm-7">
       <div class="js-form-message">
-       <a href="{{url('professional/'.$subdomain.'/documents/'.$company_details->licence_certificate)}}" download="true">{{$company_details->licence_certificate}}</a>
+       @if($company_details->licence_certificate != '')
+       <a class="h4 text-success" href="{{professionalDirUrl($subdomain).'/documents/'.$company_details->licence_certificate}}" download="true">
+        <i class="tio-download"></i> {{$company_details->licence_certificate}}
+      </a>
+       @else
+       <span class="legend-indicator bg-danger"></span> No document to preview
+       @endif
      </div>
    </div>
  </div>
@@ -521,9 +524,13 @@ Next <i class="tio-chevron-right"></i>
 
       <div class="col-sm-7">
         <div class="js-form-message">
-
-         <a href="{{url('professional/'.$subdomain.'/documents/'.$company_details->owner_id_proof)}}" download="true">{{$company_details->owner_id_proof}}</a>
-
+         @if($company_details->owner_id_proof != '')
+         <a class="h4 text-success" href="{{professionalDirUrl($subdomain).'/documents/'.$company_details->owner_id_proof}}" download="true">
+          <i class="tio-download"></i> {{$company_details->owner_id_proof}}
+        </a>
+         @else
+         <span class="legend-indicator bg-danger"></span> No document to preview
+         @endif
        </div>
 
      </div>
@@ -536,9 +543,13 @@ Next <i class="tio-chevron-right"></i>
 
     <div class="col-sm-7">
       <div class="js-form-message">
-
-       <a href="{{url('professional/'.$subdomain.'/documents/'.$company_details->company_address_proof)}}" download="true">{{$company_details->company_address_proof}}</a>
-
+       @if($company_details->company_address_proof != '')
+       <a class="h4 text-success" href="{{professionalDirUrl($subdomain).'/documents/'.$company_details->company_address_proof}}" download="true">
+        <i class="tio-download"></i> {{$company_details->company_address_proof}}
+       </a>
+       @else
+       <span class="legend-indicator bg-danger"></span> No document to preview
+       @endif
      </div>
 
    </div>
@@ -554,7 +565,7 @@ Next <i class="tio-chevron-right"></i>
     <label class="col-sm-5 col-form-label input-label">State</label>
     <div class="col-sm-7">
       <div class="js-form-message">
-        <input type="text" class="form-control" name="cp_zip_code" id="cp_zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $comp_states->name }}" disabled="true">
+        <input type="text" class="form-control" name="cp_zip_code" id="cp_zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ !empty($comp_states)?$comp_states->name:'' }}" disabled="true">
       </div>
     </div>
   </div>
@@ -565,7 +576,7 @@ Next <i class="tio-chevron-right"></i>
     <label class="col-sm-5 col-form-label input-label">City</label>
     <div class="col-sm-7">
       <div class="js-form-message">
-        <input type="text" class="form-control" name="cp_zip_code" id="cp_zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $comp_cities->name }}" disabled="true">
+        <input type="text" class="form-control" name="cp_zip_code" id="cp_zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ !empty($comp_cities)?$comp_cities->name:'' }}" disabled="true">
       </div>
     </div>
   </div>
