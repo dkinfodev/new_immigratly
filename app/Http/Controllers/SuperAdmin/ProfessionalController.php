@@ -167,4 +167,43 @@ class ProfessionalController extends Controller
         return view(roleFolder().'.professionals.view-details',$viewData);
         
     }
+
+    public function addNotes($id){
+    
+        $id = base64_decode($id);        
+        $db_prefix = db_prefix();
+        $record = Professionals::where("id",$id)->first();
+        $subdomain = $record->subdomain;
+        $database = $db_prefix.$subdomain;
+        $notes = DB::table($database.".domain_details")->first();
+        $viewData['notes'] = $notes->admin_notes;
+        $viewData['notes_updated_on'] = $notes->notes_updated_on;
+        $viewData['record'] = $record;
+        $viewData['pageTitle'] = "Add Notes";
+        $view = View::make(roleFolder().'.professionals.modal.add-notes',$viewData);
+        
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+
+    public function saveNotes(Request $request){
+        $id = $request->input("id");
+        $db_prefix = db_prefix();
+        $professional = Professionals::where("id",$id)->first();
+        $subdomain = $professional->subdomain;
+        $database = $db_prefix.$subdomain;
+        $professional_status = DB::table($database.".domain_details")->first();
+
+        if(!empty($request->input('notes'))){
+            $upData['admin_notes'] = $request->input('notes');
+            $upData['notes_updated_on'] = date('d-m-Y H:m:s');
+        }
+
+        DB::table($database.".domain_details")->where('id',$professional_status->id)->update($upData);
+        $response['status'] = true;
+        
+        return response()->json($response);
+    }
 }

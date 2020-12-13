@@ -28,6 +28,8 @@ class ProfileController extends Controller
         $viewData['profile_status'] = $setting->profile_status;
         $viewData['pageTitle'] = "Complete Profile";
         $viewData['active_tab'] = "personal_tab";
+        $viewData['admin_notes'] = $setting->admin_notes;
+        $viewData['notes_updated_on'] = $setting->notes_updated_on;
 
         $user = User::where("id",\Auth::user()->id)->first();
         $company_details = ProfessionalDetails::first();

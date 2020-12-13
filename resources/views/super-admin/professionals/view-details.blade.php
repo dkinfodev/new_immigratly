@@ -72,7 +72,11 @@
             @endif
           </div>
         </div>
+      
       </div>
+      <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('professionals/add-notes/'.base64_encode($record->id)) ?>')" href="javascript:;">
+          <i class="tio-add mr-1"></i> Add Notes
+        </a>
     </div>
     <!-- End Row -->
 

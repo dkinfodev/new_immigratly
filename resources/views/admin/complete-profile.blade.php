@@ -684,10 +684,20 @@ Next <i class="tio-chevron-right"></i>
   <div class="text-center">
     <img class="img-fluid mb-3" src="assets/svg/illustrations/create.svg" alt="Image Description" style="max-width: 15rem;">
 
-    <div class="mb-4">
-      <h2>Awaiting Verification!</h2>
-      <p>Your profile have been successfully saved. Waiting for admin approval!!</p>
-    </div>
+    
+    @if(!empty($admin_notes)) 
+      <div class="mb-4" style="background:#fcf36a;padding: 30px;">
+        <h2>Admin notes</h2>
+        <p style="">{{$admin_notes}}</p>
+        <span class="float-right"><small>Notes Added On {{$notes_updated_on}}</small></span>
+      </div>
+    @else
+      <div class="mb-4">
+        <h2>Awaiting Verification!</h2>
+        <p>Your profile have been successfully saved. Waiting for admin approval!!</p>
+      </div>
+    @endif
+
   </div>
 </div>
 @endif
