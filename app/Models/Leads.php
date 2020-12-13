@@ -15,7 +15,7 @@ class Leads extends Model
 
     public function VisaService()
     {
-        return $this->belongsTo('App\Models\ProfessionalServices','visa_service_id');
+        return $this->belongsTo('App\Models\ProfessionalServices','visa_service_id','unique_id');
     }
 
     public function Service($id)

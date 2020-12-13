@@ -28,7 +28,7 @@ class DashboardController extends Controller
 
         $viewData['pageTitle'] = "Edit Profile";
         $record = User::where("id",$id)->first();
-        $record2 = UserDetails::where("user_id",$id)->first();
+        $record2 = UserDetails::where("user_id",$record->unique_id)->first();
 
         $countries = DB::table(MAIN_DATABASE.".countries")->get();
         $viewData['countries'] = $countries;
@@ -60,7 +60,7 @@ class DashboardController extends Controller
         $object =  User::find($id);
 
         $username = $object->name;
-        $object2 = UserDetails::where('user_id',$id)->first();
+        $object2 = UserDetails::where('user_id',$object->unique_id)->first();
 
         if(empty($object2))
         {

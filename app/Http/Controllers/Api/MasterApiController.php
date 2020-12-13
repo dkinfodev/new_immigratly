@@ -11,7 +11,7 @@ use App\Models\DomainDetails;
 use App\Models\ProfessionalPrivileges;
 use App\Models\PrivilegesActions;
 use App\Models\Roles;
-
+use App\Models\UserDetails;
 class MasterApiController extends Controller
 {
 	var $subdomain;
@@ -52,6 +52,17 @@ class MasterApiController extends Controller
 	        $object->password = bcrypt($password);
 	        $object->country_code = $user['country_code'];
 	        $object->phone_no = $user['phone_no'];
+            
+	        $object->role = "user";
+            $object->unique_id = $unique_id;
+	        $object->is_active = 1;
+	        $object->is_verified = 1;
+	        $object->save();
+
+	        $user_id = $object->id;
+
+            $object = new UserDetails();
+            $object->user_id = $unique_id;
             if(isset($user['date_of_birth'])){
                 $object->date_of_birth = $user['date_of_birth'];
             }
@@ -73,13 +84,7 @@ class MasterApiController extends Controller
             if(isset($user['zip_code'])){
                 $object->zip_code = $user['zip_code'];
             }
-	        $object->role = "user";
-            $object->unique_id = $unique_id;
-	        $object->is_active = 1;
-	        $object->is_verified = 1;
-	        $object->save();
-
-	        $user_id = $object->id;
+            $object->save();
 
 	        $object2 = new UserWithProfessional();
 	        $object2->user_id = $unique_id;
