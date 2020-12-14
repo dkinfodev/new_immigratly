@@ -36,8 +36,11 @@
 <div class="navbar-brand-wrapper">
 <!-- Logo -->
 <a class="navbar-brand" href="./index.html" aria-label="Front">
-  <img class="navbar-brand-logo" src="assets/svg/logos/logo.svg" alt="Logo">
-  <img class="navbar-brand-logo-mini" src="assets/svg/logos/logo-short.svg" alt="Logo">
+  
+  <img class="navbar-brand-logo" src="public/uploads/dashboard/logo/99974-a2cc95ccbcb4ce2ea4f9794645198f2a.jpg" alt="Logo">
+
+  <img class="navbar-brand-logo-mini" src="public/uploads/dashboard/logo/99974-a2cc95ccbcb4ce2ea4f9794645198f2a.jpg" alt="Logo">
+  
 </a>
 <!-- End Logo -->
 </div>

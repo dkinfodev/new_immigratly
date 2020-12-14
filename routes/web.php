@@ -52,6 +52,14 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     Route::get('/change-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'changePassword']);
     Route::post('/update-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updatePassword']);
 
+
+    Route::group(array('prefix' => 'dashboard-setting'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboardSetting']);
+
+        Route::post('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboardSettingUpdate']);
+        
+    });
+
     Route::group(array('prefix' => 'licence-bodies'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'licenceBodies']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\LicenceBodiesController::class, 'getAjaxList']); 

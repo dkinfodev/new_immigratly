@@ -826,6 +826,14 @@ if(!function_exists("professionalDir")){
     }
 }
 
+if(!function_exists("DashboardSettingDir")){
+    function DashboardSettingDir(){
+        
+        $dir = public_path("uploads/dashboard");
+        return $dir;
+    }
+}
+
 if(!function_exists("professionalDirUrl")){
     function professionalDirUrl($domain = ''){
         if($domain == ''){

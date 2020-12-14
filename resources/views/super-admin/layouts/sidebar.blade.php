@@ -85,6 +85,14 @@
                         <span class="text-truncate">Professional Privileges</span>
                       </a>
                     </li>
+
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('dashboard-setting') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Dashboard Setting</span>
+                      </a>
+                    </li>
+
                   </ul>
                 </li>
                 <!-- End Apps -->
