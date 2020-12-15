@@ -23,7 +23,14 @@ class Cases extends Model
     }
     public function Client($id)
     {
-        $data = DB::table(MAIN_DATABASE.".users")->where("unique_id",$id)->first();
+        $data = DB::table(MAIN_DATABASE.".users as us")
+                ->leftJoin(MAIN_DATABASE.".user_details as ud","ud.user_id","=","us.unique_id")
+                ->leftJoin(MAIN_DATABASE.".countries as ct","ct.id","=","ud.country_id")
+                ->leftJoin(MAIN_DATABASE.".states as st","st.id","=","ud.state_id")
+                ->leftJoin(MAIN_DATABASE.".cities as cty","cty.id","=","ud.city_id")
+                ->where("unique_id",$id)
+                ->select("us.*","ud.gender","ud.country_id","ud.state_id","ud.city_id","ud.address","ud.zip_code","ud.languages_known","ud.date_of_birth","ct.name as country_name","st.name as state_name","cty.name as city_name")
+                ->first();
         return $data;
     }
     public function Service($id)

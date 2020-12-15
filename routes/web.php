@@ -328,6 +328,16 @@ Route::group(array('prefix' => 'admin'), function () {
                 Route::post('/send-chats', [App\Http\Controllers\Admin\CasesController::class, 'saveDocumentChat']);
                 Route::post('/send-chat-file', [App\Http\Controllers\Admin\CasesController::class, 'saveDocumentChatFile']);
             });
+        
+            Route::group(array('prefix' => 'invoices'), function () {
+                Route::get('/list/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'caseInvoices']);
+                Route::post('/case-invoices', [App\Http\Controllers\Admin\InvoiceController::class, 'getCaseInvoice']);
+                Route::get('/add/{case_id}', [App\Http\Controllers\Admin\InvoiceController::class, 'addCaseInvoice']);
+                Route::post('/add/{case_id}', [App\Http\Controllers\Admin\InvoiceController::class, 'saveCaseInvoice']);
+                Route::get('/edit/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'editCaseInvoice']);
+                Route::post('/edit/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'updateCaseInvoice']);
+            });
+    
         });
 
     });

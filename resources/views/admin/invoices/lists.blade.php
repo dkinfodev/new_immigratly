@@ -18,7 +18,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{(baseUrl('staff/add'))}}">
+        <a class="btn btn-primary" href="{{(baseUrl('invoices/add'))}}">
           <i class="tio-user-add mr-1"></i> Add
         </a>
       </div>
@@ -56,7 +56,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('staff/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('invoices/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -79,11 +79,10 @@
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Phone no</th>
-            <th scope="col">Role</th>
-            <th scope="col">Status</th>
+            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Invoice ID</th>
+            <th scope="col" >Client</th>
+            <th scope="col">Total Amount</th>
+            <th scope="col">Payment Status</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -179,7 +178,7 @@ function loadData(page=1){
   var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/staff/ajax-list?page='+page,
+        url: BASEURL + '/invoices/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search
@@ -247,7 +246,7 @@ function confirmDelete(id){
       if (result.value) {
         $.ajax({
             type: "POST",
-            url: BASEURL + '/staff/delete-user',
+            url: BASEURL + '/invoices/delete-user',
             data:{
                 _token:csrf_token,
                 user_id:id,
@@ -284,7 +283,7 @@ function changeStatus(e){
   if($(e).is(":checked")){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/staff/status/active',
+        url: BASEURL + '/invoices/status/active',
         data:{
             _token:csrf_token,
             id:id,
@@ -302,7 +301,7 @@ function changeStatus(e){
   }else{
     $.ajax({
         type: "POST",
-        url: BASEURL + '/staff/status/inactive',
+        url: BASEURL + '/invoices/status/inactive',
         data:{
             _token:csrf_token,
             id:id,
@@ -328,7 +327,7 @@ function profileStatus(e){
   if($(e).is(":checked")){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/staff/profile-status/active',
+        url: BASEURL + '/invoices/profile-status/active',
         data:{
             _token:csrf_token,
             id:id,
@@ -345,7 +344,7 @@ function profileStatus(e){
   }else{
     $.ajax({
         type: "POST",
-        url: BASEURL + '/staff/profile-status/inactive',
+        url: BASEURL + '/invoices/profile-status/inactive',
         data:{
             _token:csrf_token,
             id:id,

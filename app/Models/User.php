@@ -63,5 +63,21 @@ class User extends Authenticatable
         return $client;
     } 
 
+    static function Country($id)
+    {
+        $data = DB::table(MAIN_DATABASE.".countries")->where("id",$id)->first();
+        return $data;
+    }
 
+    static function State($id)
+    {
+        $data = DB::table(MAIN_DATABASE.".states")->where("id",$id)->first();
+        return $data;
+    }
+
+    static function City($id)
+    {
+        $data = DB::table(MAIN_DATABASE.".cities")->where("id",$id)->first();
+        return $data;
+    }
 }

@@ -320,6 +320,7 @@
     </div>
     <!-- End Card -->
   </div>
+</div>
   <!-- End Content -->
   @endsection
 
