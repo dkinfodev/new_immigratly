@@ -16,6 +16,14 @@ class DashboardController extends Controller
     {
         $this->middleware('super_admin');
     }
+    
+    public function sendNotification(){
+        $data['otherdata'] = "otherdata";
+        $data['otherdata2'] = "othr data 2";
+        //setNotification();
+        sendNotification("type","title","comment",1,"url");
+    }
+
     public function dashboard()
     {
         $viewData['pageTitle'] = "Dashboard";

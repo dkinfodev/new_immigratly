@@ -48,6 +48,8 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
     Route::get('/edit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'editProfile']); 
     Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
+ 
+    Route::get('/send-notification', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'sendNotification']); 
 
     Route::get('/change-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'changePassword']);
     Route::post('/update-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updatePassword']);

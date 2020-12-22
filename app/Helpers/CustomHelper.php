@@ -701,6 +701,94 @@ if(!function_exists("curlRequest")){
         return $curl_response;
     }
 }
+
+
+if(!function_exists("sendNotification")){
+    function sendNotification($type,$title,$comment,$user_id,$url = '',$otherData = array())
+    {
+        try{
+            $db = PROFESSIONAL_DATABASE;
+            $subdomain = "fastzone";
+            $database_name = $db.$subdomain;
+            
+            $notification_data = array(                
+                "type"=>$type,
+                "title"=>$title,
+                "comment"=>$comment,
+                "user_id"=>$user_id,
+                "url"=>$url,
+                "is_read"=>0,
+                "created_at"=>date("Y-m-d H:i:s"),
+                "updated_at"=>date("Y-m-d H:i:s"),
+            );
+        
+            DB::table($database_name.'.notifications')->insert($notification_data);
+
+            $id = DB::getPDO()->lastInsertId();
+
+            /*if(count($otherData) > 0){
+
+                foreach($otherData as $data){
+                
+                    $object2 = new NotificationData();
+                    $object2->notification_id = $id;
+                    $object2->user_id = $user_id;
+                    $object2->meta_key = $data['meta_key'];
+                    $object2->meta_value = $data['meta_value'];
+                    $object2->save();
+                }
+            }*/
+
+            $response['status'] = true;
+            $response['message'] = "Notification added successfully";
+
+        } catch (Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+        }
+        return $response;
+        
+        
+    }
+}
+
+if(! function_exists('setNotification')){
+    function setNotification($type,$title,$comment,$user_id,$url = '',$otherData = array()){
+        try{
+
+            $object = new Notifications();
+            $object->type = $type;
+            $object->title = $title;
+            $object->comment = $comment;
+            $object->user_id = $user_id;
+            $object->url = $url;
+            $object->is_read=0;
+            $object->save();
+            $id = $object->id;
+            if(count($otherData) > 0){
+
+                foreach($otherData as $data){
+                
+                    $object2 = new NotificationData();
+                    $object2->notification_id = $id;
+                    $object2->user_id = $user_id;
+                    $object2->meta_key = $data['meta_key'];
+                    $object2->meta_value = $data['meta_value'];
+                    $object2->save();
+                }
+            }
+            $response['status'] = true;
+            $response['message'] = "Notification added successfully";
+
+        } catch (Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+        }
+        return $response;
+        
+    }
+}
+
 if(!function_exists("professionalCurl")){
     function professionalCurl($url,$subdomain,$data=array()){
        
