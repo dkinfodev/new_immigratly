@@ -334,6 +334,8 @@ class ProfileController extends Controller
                 $object->profile_image = $newName;                    
             }
         }
+
+
         $object->save();
 
         $id = $object->id;
@@ -382,6 +384,32 @@ class ProfileController extends Controller
             if($file->move($destinationPath, $newName)){
                 $object2->owner_id_proof = $newName;                    
             }
+        }
+
+        if ($file = $request->file('company_logo')){
+                    
+                $fileName        = $file->getClientOriginalName();
+                $extension       = $file->getClientOriginalExtension() ?: 'png';
+                $newName        = mt_rand(1,99999)."-".$fileName;
+                $source_url = $file->getPathName();
+                
+                $destinationPath = professionalDir()."/documents";
+                if($file->move($destinationPath, $newName)){
+                    $object2->company_logo = $newName;                    
+                }
+        }
+
+        if ($file = $request->file('company_banner')){
+                    
+                $fileName        = $file->getClientOriginalName();
+                $extension       = $file->getClientOriginalExtension() ?: 'png';
+                $newName        = mt_rand(1,99999)."-".$fileName;
+                $source_url = $file->getPathName();
+                
+                $destinationPath = professionalDir()."/documents";
+                if($file->move($destinationPath, $newName)){
+                    $object2->company_banner = $newName;                    
+                }
         }
 
         if ($file = $request->file('company_address_proof')){

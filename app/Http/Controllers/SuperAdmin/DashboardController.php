@@ -17,6 +17,10 @@ class DashboardController extends Controller
         $this->middleware('super_admin');
     }
     
+    public function professionalProfile(){
+        return view(roleFolder().'.professionalProfile',$viewData);
+    }
+
     public function sendNotification(){
         $data['otherdata'] = "otherdata";
         $data['otherdata2'] = "othr data 2";

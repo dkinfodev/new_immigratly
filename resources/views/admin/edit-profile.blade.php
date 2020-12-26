@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="assets/vendor/quill/dist/quill.snow.css">
 <style type="text/css">
 .page-header-tabs {
-    margin-bottom: 0px !important;
+  margin-bottom: 0px !important;
 }
 </style>
 @endsection
@@ -117,9 +117,9 @@
         <!-- Logo -->
         <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
           @if($user->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$user->profile_image))
-            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$user->profile_image }}" alt="Profile Image">
+          <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$user->profile_image }}" alt="Profile Image">
           @else
-            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
+          <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
           @endif
 
           <span class="d-block">Upload your Image here</span>
@@ -217,10 +217,10 @@
         <label class="col-sm-5 col-form-label input-label">Date of Birth</label>
         <div class="col-sm-7">
           <div class="input-group">
-              <input type="text" name="date_of_birth" id="date_of_birth" value="{{ $user->date_of_birth }}" class="form-control" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
-              <div class="input-group-addon p-2">
-                  <i class="tio-date-range"></i>
-              </div>
+            <input type="text" name="date_of_birth" id="date_of_birth" value="{{ $user->date_of_birth }}" class="form-control" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
+            <div class="input-group-addon p-2">
+              <i class="tio-date-range"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -250,10 +250,10 @@
       
 
     </div> <!-- div end -->
- 
+
 
     <div class="col-md-6">
-      
+
       <!-- Form Group -->
       <div class="row form-group">
         <label class="col-sm-5 col-form-label input-label">Country</label>
@@ -331,11 +331,11 @@
       <button type="button" class="btn btn-primary"
       data-hs-step-form-next-options='{
       "targetSelector": "#validationFormAboutMe"
-      }'>
-      Next <i class="tio-chevron-right"></i>
-      </button>
-    </div>
-  </div>
+    }'>
+    Next <i class="tio-chevron-right"></i>
+  </button>
+</div>
+</div>
 <!-- End Footer -->
 </div>
 
@@ -365,7 +365,7 @@
         <select name="license_body[]" multiple id="license_body" class="form-control">
           <option value="">Select Licence Body</option>
           <?php
-            $license_body = json_decode($company_details->license_body,true);
+          $license_body = json_decode($company_details->license_body,true);
           ?>
           @foreach($licence_bodies as $bodies)
           <option {{in_array($bodies->id,$license_body)?"selected":""}} value="{{$bodies->id}}">{{$bodies->name}}</option>
@@ -397,47 +397,47 @@
   <!-- End Form Group -->
   <!-- Form Group -->
   <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Upload your license certificate</label>
-      <div class="col-sm-7">
-          <div class="js-form-message">
-            <div class="custom-file">
-              <input type="file" class="js-file-attach custom-file-input" name="licence_certificate" id="licence_certificate"
-              data-hs-file-attach-options='{
-              "textTarget": "[for=\"licence_certificate\"]"
-            }'>
-            <label class="custom-file-label" for="licence_certificate">Choose file</label>
-          </div>
-        </div>
-        @if($company_details->licence_certificate != '' && file_exists(professionalDir().'/documents/'.$company_details->licence_certificate))
-          <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->licence_certificate }}"><i class="fa fa-download"></i>{{$company_details->licence_certificate}}</a>
-        @endif
-      </div>
-  </div>
-  <!-- End Form Group -->
-  <div class="row form-group">
-    <label class="col-sm-5 col-form-label input-label">Years of Expirence</label>
+    <label class="col-sm-5 col-form-label input-label">Upload your license certificate</label>
     <div class="col-sm-7">
       <div class="js-form-message">
-        <select name="years_of_expirences" aria-label="Years of Expirence" required data-msg="Please select your expirence" class="form-control">
-          <option>Select</option>
-          <option {{($company_details->years_of_expirences == 'less then 2 years')?'selected':''}} value="less then 2 years">Less then 2 years</option>
-          <option {{($company_details->years_of_expirences == '2 to 5 years')?'selected':''}} value="2 to 5 years">2 to 5 years</option>
-          <option {{($company_details->years_of_expirences == '5 to 10 years')?'selected':''}} value="5 to 10 years">5 to 10 years</option>
-          <option {{($company_details->years_of_expirences == '10+ years')?'selected':''}} value="10+ years">10+ years</option>
-        </select>
+        <div class="custom-file">
+          <input type="file" class="js-file-attach custom-file-input" name="licence_certificate" id="licence_certificate"
+          data-hs-file-attach-options='{
+          "textTarget": "[for=\"licence_certificate\"]"
+        }'>
+        <label class="custom-file-label" for="licence_certificate">Choose file</label>
       </div>
     </div>
+    @if($company_details->licence_certificate != '' && file_exists(professionalDir().'/documents/'.$company_details->licence_certificate))
+    <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->licence_certificate }}"><i class="fa fa-download"></i>{{$company_details->licence_certificate}}</a>
+    @endif
   </div>
-   <!-- Form Group -->
-  <div class="row form-group">
-    <label class="col-sm-5 col-form-label input-label">Member of any other designated body</label>
-    <div class="col-sm-7">
-      <div class="js-form-message">
-        <input type="text" class="form-control" name="member_of_other_designated_body" id="member_of_other_designated_body" placeholder="Member of any other designated body" aria-label="Member of any other designated body" data-msg="Please enter your licence number" value="{{ $company_details->member_of_other_designated_body }}">
-      </div>
+</div>
+<!-- End Form Group -->
+<div class="row form-group">
+  <label class="col-sm-5 col-form-label input-label">Years of Expirence</label>
+  <div class="col-sm-7">
+    <div class="js-form-message">
+      <select name="years_of_expirences" aria-label="Years of Expirence" required data-msg="Please select your expirence" class="form-control">
+        <option>Select</option>
+        <option {{($company_details->years_of_expirences == 'less then 2 years')?'selected':''}} value="less then 2 years">Less then 2 years</option>
+        <option {{($company_details->years_of_expirences == '2 to 5 years')?'selected':''}} value="2 to 5 years">2 to 5 years</option>
+        <option {{($company_details->years_of_expirences == '5 to 10 years')?'selected':''}} value="5 to 10 years">5 to 10 years</option>
+        <option {{($company_details->years_of_expirences == '10+ years')?'selected':''}} value="10+ years">10+ years</option>
+      </select>
     </div>
   </div>
-  <!-- End Form Group -->
+</div>
+<!-- Form Group -->
+<div class="row form-group">
+  <label class="col-sm-5 col-form-label input-label">Member of any other designated body</label>
+  <div class="col-sm-7">
+    <div class="js-form-message">
+      <input type="text" class="form-control" name="member_of_other_designated_body" id="member_of_other_designated_body" placeholder="Member of any other designated body" aria-label="Member of any other designated body" data-msg="Please enter your licence number" value="{{ $company_details->member_of_other_designated_body }}">
+    </div>
+  </div>
+</div>
+<!-- End Form Group -->
 
 <!-- End Quill -->
 
@@ -465,110 +465,151 @@ Next <i class="tio-chevron-right"></i>
 
 <div id="validationFormCompanyInfo" style="display: none;">
  <div class="row justify-content-md-between">
-  <div class="col-md-6">
-    <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Company Name</label>
 
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <input type="text" class="form-control" name="company_name" id="validationFormCompanyCompanyNameLabel" placeholder="Company" aria-label="Company Name" required data-msg="Please enter your company name." value="{{$company_details->company_name}}">
-        </div>
-      </div>
-    </div>
-    <!-- End Form Group -->
 
-    <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Website URL</label>
 
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <input type="text" class="form-control" name="website_url" id="website_url" placeholder="Website URL" aria-label="Website URL" required data-msg="Please enter your website." value="{{$company_details->website_url}}">
-        </div>
-      </div>
-    </div>
-    <!-- End Form Group -->
-
-    <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Email</label>
-
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <input type="email" class="form-control" name="cp_email" id="cp_email" placeholder="Email" aria-label="Email" required data-msg="Please enter your email." value="{{$company_details->email}}">
-        </div>
-      </div>
-    </div>
-    <!-- End Form Group -->
-
-    <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Phone Number</label>
-      <div class="col-sm-3">
-        <div class="js-form-message">
-          <select name="cp_country_code" id="cp_country_code" class="form-control">
-            <option>Select</option>
-            @foreach($countries as $country)
-            <option {{$company_details->country_code == $country->phonecode?"selected":""}} value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="js-form-message">
-          <input type="text" class="form-control" name="cp_phone_no" id="cp_phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{$company_details->phone_no}}">
-        </div>
-      </div>
-    </div>
-    <!-- End Form Group -->
-
-    <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Owner ID Proof</label>
-
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <div class="custom-file">
-            <input type="file" class="js-file-attach custom-file-input" name="owner_id_proof" id="owner_id_proof"
-            data-hs-file-attach-options='{
-            "textTarget": "[for=\"owner_id_proof\"]"
-          }'>
-          <label class="custom-file-label" for="owner_id_proof">Choose file</label>
-        </div>
-      </div>
-      @if($company_details->owner_id_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->owner_id_proof))
-        <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->owner_id_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+<div class="col-md-6">
+  
+  <label class="col-sm-5 col-form-label input-label">Company Logo</label>
+  <label class="custom-file-boxed custom-file-boxed-sm" for="companyLg">
+      @if($company_details->company_logo != '' && file_exists(professionalDir().'/documents/'.$company_details->company_logo))
+      <img id="companyLogo" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/documents/'.$company_details->company_logo  }}" alt="Profile Image">
+      @else
+      <img id="companyLogo" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
       @endif
+
+      <span class="d-block">Upload your Image here</span>
+
+      <input type="file" class="js-file-attach custom-file-boxed-input" name="company_logo" id="companyLg"
+      data-hs-file-attach-options='{
+      "textTarget": "#companyLogo",
+      "mode": "image",
+      "targetAttr": "src"
+    }'>
+  </label>
+  <!-- End Logo -->
+
+  <!-- Form Group -->
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Company Name</label>
+
+    <div class="col-sm-7">
+      <div class="js-form-message">
+        <input type="text" class="form-control" name="company_name" id="validationFormCompanyCompanyNameLabel" placeholder="Company" aria-label="Company Name" required data-msg="Please enter your company name." value="{{$company_details->company_name}}">
+      </div>
     </div>
   </div>
   <!-- End Form Group -->
 
- <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Company Address Proof</label>
+  <!-- Form Group -->
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Website URL</label>
 
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <div class="custom-file">
-            <input type="file" class="js-file-attach custom-file-input" name="company_address_proof" id="company_address_proof"
-            data-hs-file-attach-options='{
-            "textTarget": "[for=\"company_address_proof\"]"
-          }'>
-          <label class="custom-file-label" for="company_address_proof">Choose file</label>
-        </div>
+    <div class="col-sm-7">
+      <div class="js-form-message">
+        <input type="text" class="form-control" name="website_url" id="website_url" placeholder="Website URL" aria-label="Website URL" required data-msg="Please enter your website." value="{{$company_details->website_url}}">
       </div>
-      @if($company_details->company_address_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->company_address_proof))
-        <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->company_address_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
-      @endif
     </div>
   </div>
   <!-- End Form Group -->
+
+  <!-- Form Group -->
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Email</label>
+
+    <div class="col-sm-7">
+      <div class="js-form-message">
+        <input type="email" class="form-control" name="cp_email" id="cp_email" placeholder="Email" aria-label="Email" required data-msg="Please enter your email." value="{{$company_details->email}}">
+      </div>
+    </div>
+  </div>
+  <!-- End Form Group -->
+
+  <!-- Form Group -->
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Phone Number</label>
+    <div class="col-sm-3">
+      <div class="js-form-message">
+        <select name="cp_country_code" id="cp_country_code" class="form-control">
+          <option>Select</option>
+          @foreach($countries as $country)
+          <option {{$company_details->country_code == $country->phonecode?"selected":""}} value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="js-form-message">
+        <input type="text" class="form-control" name="cp_phone_no" id="cp_phone_no" placeholder="Phone number" aria-label="Email" required data-msg="Please enter your phone number." value="{{$company_details->phone_no}}">
+      </div>
+    </div>
+  </div>
+  <!-- End Form Group -->
+
+  <!-- Form Group -->
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Owner ID Proof</label>
+
+    <div class="col-sm-7">
+      <div class="js-form-message">
+        <div class="custom-file">
+          <input type="file" class="js-file-attach custom-file-input" name="owner_id_proof" id="owner_id_proof"
+          data-hs-file-attach-options='{
+          "textTarget": "[for=\"owner_id_proof\"]"
+        }'>
+        <label class="custom-file-label" for="owner_id_proof">Choose file</label>
+      </div>
+    </div>
+    @if($company_details->owner_id_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->owner_id_proof))
+    <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->owner_id_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+    @endif
+  </div>
+</div>
+<!-- End Form Group -->
+
+<!-- Form Group -->
+<div class="row form-group">
+  <label class="col-sm-5 col-form-label input-label">Company Address Proof</label>
+
+  <div class="col-sm-7">
+    <div class="js-form-message">
+      <div class="custom-file">
+        <input type="file" class="js-file-attach custom-file-input" name="company_address_proof" id="company_address_proof"
+        data-hs-file-attach-options='{
+        "textTarget": "[for=\"company_address_proof\"]"
+      }'>
+      <label class="custom-file-label" for="company_address_proof">Choose file</label>
+    </div>
+  </div>
+  @if($company_details->company_address_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->company_address_proof))
+  <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->company_address_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+  @endif
+</div>
+</div>
+<!-- End Form Group -->
 
 </div> <!-- div end -->
 
 
 <div class="col-md-6">
+<label class="col-sm-5 col-form-label input-label">Company Banner</label>
+  <label class="custom-file-boxed custom-file-boxed-sm" for="companyBan">
+    @if($company_details->company_banner != '' && file_exists(professionalDir().'/documents/'.$company_details->company_banner))
+    <img id="companyBanner" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/documents/'.$company_details->company_banner }}" alt="Company Banner">
+    @else
+    <img id="companyBanner" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Company Banner">
+    @endif
+
+    <span class="d-block">Upload your Image here</span>
+
+    <input type="file" class="js-file-attach custom-file-boxed-input" name="company_banner" id="companyBan"
+    data-hs-file-attach-options='{
+    "textTarget": "#companyBanner",
+    "mode": "image",
+    "targetAttr": "src"
+  }'>
+</label>
+
   <!-- Form Group -->
   <div class="row form-group">
     <label class="col-sm-5 col-form-label input-label">State</label>
@@ -605,10 +646,10 @@ Next <i class="tio-chevron-right"></i>
 
     <div class="col-sm-7">
       <div class="input-group">
-          <input type="text" name="date_of_register" id="date_of_register" class="form-control" placeholder="Date of Register" aria-label="Date of Register" required data-msg="Enter date of register" value="{{ $company_details->date_of_register }}">
-          <div class="input-group-addon p-2">
-              <i class="tio-date-range"></i>
-          </div>
+        <input type="text" name="date_of_register" id="date_of_register" class="form-control" placeholder="Date of Register" aria-label="Date of Register" required data-msg="Enter date of register" value="{{ $company_details->date_of_register }}">
+        <div class="input-group-addon p-2">
+          <i class="tio-date-range"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -636,6 +677,9 @@ Next <i class="tio-chevron-right"></i>
       </div>
     </div>
   </div>
+  <!-- End form group -->
+
+
 </div>
 </div>
 
@@ -688,11 +732,11 @@ Next <i class="tio-chevron-right"></i>
 <script>
   $(document).on('ready', function () {
     $('#date_of_birth,#date_of_register').datepicker({
-        format: 'dd/mm/yyyy',
-        autoclose: true,
-        maxDate:(new Date()).getDate(),
-        todayHighlight: true,
-        orientation: "bottom auto"
+      format: 'dd/mm/yyyy',
+      autoclose: true,
+      maxDate:(new Date()).getDate(),
+      todayHighlight: true,
+      orientation: "bottom auto"
     });
     
     $('.js-validate').each(function() {
@@ -712,8 +756,8 @@ Next <i class="tio-chevron-right"></i>
             contentType: false,
             processData: false,
             beforeSend:function(){
-                $("#validationFormFinishBtn").html("Processing...");
-                $("#validationFormFinishBtn").attr("disabled","disabled");
+              $("#validationFormFinishBtn").html("Processing...");
+              $("#validationFormFinishBtn").attr("disabled","disabled");
             },
             success:function(response){
               $("#validationFormFinishBtn").html("Save Data");
@@ -721,28 +765,28 @@ Next <i class="tio-chevron-right"></i>
               if(response.status == true){
                 successMessage(response.message);
                 setTimeout(function(){
-                      window.location.href=window.location.href;
+                  window.location.href=window.location.href;
                 },2000);
                 
               }else{
                 $("#err_response").html('<h4><b>*Field required</b></h4>');
                 $.each(response.message, function (index, value) {
-                    $("#err_response").append("<p>"+value+"</p>");
-                    $("input[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
-                    $("input[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
-                    
-                    var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-                    $(html).insertAfter("*[name="+index+"]");
-                    $("input[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
+                  $("#err_response").append("<p>"+value+"</p>");
+                  $("input[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
+                  $("input[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
+
+                  var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
+                  $(html).insertAfter("*[name="+index+"]");
+                  $("input[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
                 });
               }
             },
             error:function(){
-                $("#validationFormFinishBtn").html("Save Data");
-                $("#validationFormFinishBtn").removeAttr("disabled");
-                internalError();
+              $("#validationFormFinishBtn").html("Save Data");
+              $("#validationFormFinishBtn").removeAttr("disabled");
+              internalError();
             }
-        });
+          });
         }
       }).init();
     });
@@ -754,64 +798,64 @@ Next <i class="tio-chevron-right"></i>
     // initEditor("about_professional");
   });
   function licenceBodies(country_id){
-      $.ajax({
-          url:"{{ url('licence-bodies') }}",
-          data:{
-            country_id:country_id
-          },
-          dataType:"json",
-          beforeSend:function(){
-             $("#license_body").html('');
-          },
-          success:function(response){
-            if(response.status == true){
-              $("#license_body").html(response.options);
-            } 
-          },
-          error:function(){
-             
-          }
-      });
+    $.ajax({
+      url:"{{ url('licence-bodies') }}",
+      data:{
+        country_id:country_id
+      },
+      dataType:"json",
+      beforeSend:function(){
+       $("#license_body").html('');
+     },
+     success:function(response){
+      if(response.status == true){
+        $("#license_body").html(response.options);
+      } 
+    },
+    error:function(){
+
+    }
+  });
   }
   function stateList(country_id,id){
-      $.ajax({
-          url:"{{ url('states') }}",
-          data:{
-            country_id:country_id
-          },
-          dataType:"json",
-          beforeSend:function(){
-             $("#"+id).html('');
-          },
-          success:function(response){
-            if(response.status == true){
-              $("#"+id).html(response.options);
-            } 
-          },
-          error:function(){
-             
-          }
-      });
+    $.ajax({
+      url:"{{ url('states') }}",
+      data:{
+        country_id:country_id
+      },
+      dataType:"json",
+      beforeSend:function(){
+       $("#"+id).html('');
+     },
+     success:function(response){
+      if(response.status == true){
+        $("#"+id).html(response.options);
+      } 
+    },
+    error:function(){
+
+    }
+  });
   }
   function cityList(state_id,id){
-      $.ajax({
-          url:"{{ url('cities') }}",
-          data:{
-            state_id:state_id
-          },
-          dataType:"json",
-          beforeSend:function(){
-             $("#"+id).html('');
-          },
-          success:function(response){
-            if(response.status == true){
-              $("#"+id).html(response.options);
-            } 
-          },
-          error:function(){
-             
-          }
-      });
+    $.ajax({
+      url:"{{ url('cities') }}",
+      data:{
+        state_id:state_id
+      },
+      dataType:"json",
+      beforeSend:function(){
+       $("#"+id).html('');
+     },
+     success:function(response){
+      if(response.status == true){
+        $("#"+id).html(response.options);
+      } 
+    },
+    error:function(){
+
+    }
+  });
   }
 </script>
 @endsection

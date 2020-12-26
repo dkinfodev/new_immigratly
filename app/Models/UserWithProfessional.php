@@ -22,6 +22,7 @@ class UserWithProfessional extends Model
     	$cases = professionalCurl("cases",$subdomain,$data);
     	return $cases;
     }
+    
     public function Professional($subdomain)
     {
         $personal = DB::table(PROFESSIONAL_DATABASE.$subdomain.".users")->where("role","admin")->first();

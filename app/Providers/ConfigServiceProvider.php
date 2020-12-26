@@ -44,8 +44,8 @@ class ConfigServiceProvider extends ServiceProvider
             $login_to = 'admin_panel'; // admin_panel/professional_panel
             \Session::put("login_to",$login_to);
             if($login_to == 'professional_panel'){
-                \Session::put("subdomain",'dkimmi');
-                \Config::set('database.connections.mysql.database', 'immigrat_immigratly_dkimmi');
+                \Session::put("subdomain",'fastzone');
+                \Config::set('database.connections.mysql.database', 'immigrat_immigratly_fastzone');
             }
         }
     }

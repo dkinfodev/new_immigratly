@@ -25,7 +25,7 @@ class ProfessionalCasesController extends Controller
         $this->middleware('user');
     }
     
-    public function cases()
+    public function cases() 
     {
        	$viewData['pageTitle'] = "Cases";
         $professionals = UserWithProfessional::where('user_id',\Auth::user()->unique_id)->get();
@@ -808,6 +808,26 @@ class ProfessionalCasesController extends Controller
     public function chatdemo(){
         $viewData['pageTitle'] = "Chats";
         return view(roleFolder().'.cases.chat-demo',$viewData);
+    }
+
+    public function professionalProfile($subdomain){
+        $data['subdomain'] = $subdomain;
+        $api_data = professionalCurl('information',$subdomain,$data);
+        if(isset($api_data['status']) && $api_data['status'] == 'success'){
+            $data = $api_data['data'];
+            $company = $data['company'];
+            $admin = $data['admin'];
+            $services = $data['services'];
+        }else{
+            return redirect()->back()->with("error","Professional profile not found");
+        }
+        //print_r($company);
+        //print_r($admin);
+        //exit;
+        $viewData['services'] = $services;
+        $viewData['company'] = $company;
+        $viewData['admin'] = $admin;
+        return view(roleFolder().'.cases.professional-profile',$viewData);
     }
 
 }

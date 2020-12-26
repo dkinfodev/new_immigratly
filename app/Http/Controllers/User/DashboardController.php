@@ -17,6 +17,11 @@ class DashboardController extends Controller
     {
         $this->middleware('user');
     }
+
+    public function professionalProfile(){
+        return view(roleFolder().'.professional-profile');
+    }
+
     public function dashboard()
     {
         $viewData['pageTitle'] = "Dashboard";

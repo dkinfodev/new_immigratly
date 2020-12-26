@@ -45,6 +45,8 @@ Route::get('/forgot-password', function () {
 
 // Super Admin
 Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), function () {
+
+
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
     Route::get('/edit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'editProfile']); 
     Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
@@ -136,6 +138,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         });
     });
     Route::group(array('prefix' => 'user'), function () {
+
         Route::get('/', [App\Http\Controllers\SuperAdmin\UserController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\UserController::class, 'getAjaxList']);
         Route::get('/add', [App\Http\Controllers\SuperAdmin\UserController::class, 'add']);
@@ -151,6 +154,10 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
 
 // User
 Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
+
+
+    Route::get('/professional/{subdomain}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'professionalProfile']);
+
     Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'dashboard']);
     Route::get('/edit-profile', [App\Http\Controllers\User\DashboardController::class, 'editProfile']);
     Route::post('/update-profile', [App\Http\Controllers\User\DashboardController::class, 'updateProfile']);
@@ -172,7 +179,7 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
 
             Route::get('/file-move-to/{file_id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fileMoveTo']);
             Route::post('/file-move-to', [App\Http\Controllers\User\MyDocumentsController::class, 'moveFileToFolder']);
-        });
+        }); 
 
         Route::get('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'documentsExchanger']);
         Route::post('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'saveExchangeDocuments']);

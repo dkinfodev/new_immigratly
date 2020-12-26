@@ -19,6 +19,8 @@ class UserController extends Controller
         $this->middleware('super_admin');
     }
 
+   
+
     public function index()
     {
         $viewData['pageTitle'] = "Users";
