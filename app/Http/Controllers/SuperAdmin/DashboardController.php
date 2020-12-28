@@ -17,6 +17,12 @@ class DashboardController extends Controller
         $this->middleware('super_admin');
     }
     
+    public function staticNotification(){
+        $viewData['pageTitle'] = "Hello";
+        return view(roleFolder().'.static-notification',$viewData);
+    }
+
+
     public function professionalProfile(){
         return view(roleFolder().'.professionalProfile',$viewData);
     }
