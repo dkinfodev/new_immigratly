@@ -29,6 +29,7 @@ Route::group(array('middleware' => 'curl_api'), function () {
 });
 Route::group(array('middleware' => 'professional_curl'), function () {
 	Route::group(array('prefix' => 'professional'), function () {
+		Route::post('/information', [App\Http\Controllers\Api\ProfessionalApiController::class, 'professionalInfo']);
 		Route::group(array('prefix' => 'cases'), function () {
 			Route::post('/', [App\Http\Controllers\Api\ProfessionalApiController::class, 'clientCases']);
 			Route::post('/view', [App\Http\Controllers\Api\ProfessionalApiController::class, 'caseDetail']);

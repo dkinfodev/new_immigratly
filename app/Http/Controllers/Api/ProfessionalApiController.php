@@ -707,5 +707,26 @@ class ProfessionalApiController extends Controller
         }
         return response()->json($response); 
     }
+    public function professionalInfo(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $company = ProfessionalDetails::first();
+            $admin = User::where("role","admin")->first();
+            $services = ProfessionalServices::orderBy('id',"desc")->get();
+            foreach ($services as $value) {
+                 $value->service_info = $value->Service($value->service_id);
+            }
 
+            $data['company'] = $company;
+            $data['admin'] = $admin;
+            $data['services'] = $services;
+            $response['status'] = 'success';
+            $response['data'] = $data;  
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
 }

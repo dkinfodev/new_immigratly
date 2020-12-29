@@ -8,7 +8,9 @@ use App\Models\Documents;
 use App\Models\Professionals;
 use App\Models\RolePrivileges;
 use App\Models\Notifications;
-
+use App\Models\Cities;
+use App\Models\States;
+use App\Models\Countries;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -986,5 +988,25 @@ if(!function_exists("otherNotifications")){
                         ->get();
         }
         return $notifications;
+    }
+}
+if (! function_exists('getCityName')) {
+    function getCityName($id) {
+        $cityName = Cities::where('id',$id)->first();
+        return $cityName->name;
+    }
+}
+
+if (! function_exists('getStateName')) {
+    function getStateName($id) {
+        $stateName = States::where('id',$id)->first();
+        return $stateName->name;
+    }
+}
+
+if (! function_exists('getCountryName')) {
+    function getCountryName($id) {
+        $countryName = Countries::where('id',$id)->first();
+        return $countryName->name;
     }
 }

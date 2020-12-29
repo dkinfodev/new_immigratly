@@ -137,11 +137,12 @@ class InvoiceController extends Controller
         $not_data['notification_type'] = "invoice";
         $not_data['title'] = $professional->company_name." send you the invoice";
         $not_data['comment'] = "Invoice created for case id ".$case->unique_id;
-        $not_data['url'] = "cases/".$subdomain."/invoices/view/".$inv_unique_id;
+        $not_data['url'] = "cases/".$subdomain."/invoices/view/".$cinv_unique_id;
         
 
         $other_data[] = array("key"=>"case_id","value"=>$case->unique_id);
         $other_data[] = array("key"=>"invoice_id","value"=>$inv_unique_id);
+        $other_data[] = array("key"=>"case_invoice_id","value"=>$cinv_unique_id);
         
         $not_data['other_data'] = $other_data;
         

@@ -981,4 +981,24 @@ class ProfessionalCasesController extends Controller
         $viewData['pageTitle'] = "Pay Now";
         return view(roleFolder().'.pay-now',$viewData);   
     }
+
+    public function professionalProfile($subdomain){
+        $data['subdomain'] = $subdomain;
+        $api_data = professionalCurl('information',$subdomain,$data);
+        if(isset($api_data['status']) && $api_data['status'] == 'success'){
+            $data = $api_data['data'];
+            $company = $data['company'];
+            $admin = $data['admin'];
+            $services = $data['services'];
+        }else{
+            return redirect()->back()->with("error","Professional profile not found");
+        }
+        //print_r($company);
+        //print_r($admin);
+        //exit;
+        $viewData['services'] = $services;
+        $viewData['company'] = $company;
+        $viewData['admin'] = $admin;
+        return view(roleFolder().'.cases.professional-profile',$viewData);
+    }
 }

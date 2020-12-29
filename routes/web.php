@@ -164,6 +164,8 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::post('/payment-success', [App\Http\Controllers\User\TransactionController::class, 'paymentSuccess']);
     Route::post('/payment-failed', [App\Http\Controllers\User\TransactionController::class, 'paymentFailed']);
 
+    Route::get('/professional/{subdomain}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'professionalProfile']);
+    
     Route::group(array('prefix' => 'documents'), function () {
         Route::get('/', [App\Http\Controllers\User\MyDocumentsController::class, 'myFolders']);
         Route::get('/add-folder', [App\Http\Controllers\User\MyDocumentsController::class, 'addFolder']);

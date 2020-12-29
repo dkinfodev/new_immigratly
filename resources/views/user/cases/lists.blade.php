@@ -101,7 +101,7 @@
             <?php
             $profess = $professional_info['personal'];
             ?>
-            <span class="text-primary h4">{{$profess->first_name." ".$profess->last_name}}</span>
+            <a href="{{ baseUrl('professional/'.$professional->professional) }}" class="text-primary h4">{{$profess->first_name." ".$profess->last_name}}</a>
             @else
             <span class="text-danger h4">Professional not found</span>
             @endif
