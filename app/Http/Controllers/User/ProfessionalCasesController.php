@@ -29,6 +29,7 @@ class ProfessionalCasesController extends Controller
     {
        	$viewData['pageTitle'] = "Cases";
         $professionals = UserWithProfessional::where('user_id',\Auth::user()->unique_id)->get();
+        
         $viewData['professionals'] = $professionals;
         return view(roleFolder().'.cases.lists',$viewData);
     }
@@ -149,7 +150,7 @@ class ProfessionalCasesController extends Controller
 
         $data['case_id'] = $case_id;
         $data['doc_id'] = $doc_id;
-        $data['doc_type'] = "default";
+        $data['doc_type'] = "extra";
 
         $record = array();
         $document = array();
@@ -162,6 +163,7 @@ class ProfessionalCasesController extends Controller
         $service = $result['service'];
         $record = $result['record'];
         $case_documents = $result['case_documents'];
+
         $document = $result['document'];
         $folder_id = $document['unique_id'];
 
@@ -622,16 +624,47 @@ class ProfessionalCasesController extends Controller
     }
 
     public function saveDocumentChat(Request $request){
+        $subdomain = $request->input("subdomain");
+        $data['document_id'] = $request->input("document_id");
+        $api_data = professionalCurl('cases/case-document-detail',$subdomain,$data);
+        $result = $api_data['data'];
+        $document = $result['record'];
+        $folder_id = $document['folder_id'];
+
+        $data = array();
         $data['case_id'] = $request->input("case_id");
         $data['document_id'] = $request->input("document_id");
         $data['message'] = $request->input("message");
-        
         $data['created_by'] = \Auth::user()->unique_id;
-        $subdomain = $request->input("subdomain");
+       
         
         $data['type'] = $request->input("type");
         $api_response = professionalCurl('cases/save-document-chat',$subdomain,$data);
         if($api_response['status'] == 'success'){
+            $not_data['send_by'] = 'client';
+            $not_data['added_by'] = \Auth::user()->unique_id;
+            $not_data['type'] = "chat";
+            $not_data['notification_type'] = "document_chat";
+            $not_data['title'] = "Message on document by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+            $not_data['comment'] = $request->input("message");
+            if($request->input("doc_type") == 'extra'){
+                $not_data['url'] = "cases/case-documents/extra/".$request->input("case_id")."/".$folder_id;
+            }
+            if($request->input("doc_type") == 'other'){
+                $not_data['url'] = "cases/case-documents/other/".$request->input("case_id")."/".$folder_id;
+            }
+            if($request->input("doc_type") == 'default'){
+                $not_data['url'] = "cases/case-documents/default/".$request->input("case_id")."/".$folder_id;
+            }
+            
+            $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
+            $other_data[] = array("key"=>"doc_type","value"=>$request->input("doc_type"));
+            $other_data[] = array("key"=>"document_id","value"=>$request->input("document_id"));
+            
+            $not_data['other_data'] = $other_data;
+            
+            sendNotification($not_data,"professional",$subdomain);
+            
             $response['status'] = true;
             $response['message'] = $api_response['message'];
         }else{
@@ -644,12 +677,20 @@ class ProfessionalCasesController extends Controller
     public function saveDocumentChatFile(Request $request){
 
         if ($file = $request->file('attachment')){
+            $subdomain = $request->input("subdomain");
+            $data['document_id'] = $request->input("document_id");
+            $api_data = professionalCurl('cases/case-document-detail',$subdomain,$data);
+            $result = $api_data['data'];
+            $document = $result['record'];
+            $folder_id = $document['folder_id'];
+
+            $data = array();
             $data['case_id'] = $request->input("case_id");
             $data['document_id'] = $request->input("document_id");
-            $subdomain = $request->input("subdomain");
-            $fileName        = $file->getClientOriginalName();
-            $extension       = $file->getClientOriginalExtension() ?: 'png';
-            $newName        = mt_rand(1,99999)."-".$fileName;
+            
+            $fileName  = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension() ?: 'png';
+            $newName = mt_rand(1,99999)."-".$fileName;
             $source_url = $file->getPathName();
             $destinationPath = professionalDir($subdomain)."/documents";
             
@@ -663,6 +704,31 @@ class ProfessionalCasesController extends Controller
                 $data['type'] = 'file';
                 $api_response = professionalCurl('cases/save-document-chat',$subdomain,$data);
                 if($api_response['status'] == 'success'){
+
+                    $not_data['send_by'] = 'client';
+                    $not_data['added_by'] = \Auth::user()->unique_id;
+                    $not_data['type'] = "chat";
+                    $not_data['notification_type'] = "document_chat";
+                    $not_data['title'] = "Message on document by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+                    $not_data['comment'] = "Document sent by client";
+                    if($request->input("doc_type") == 'extra'){
+                        $not_data['url'] = "cases/case-documents/extra/".$request->input("case_id")."/".$folder_id;
+                    }
+                    if($request->input("doc_type") == 'other'){
+                        $not_data['url'] = "cases/case-documents/other/".$request->input("case_id")."/".$folder_id;
+                    }
+                    if($request->input("doc_type") == 'default'){
+                        $not_data['url'] = "cases/case-documents/default/".$request->input("case_id")."/".$folder_id;
+                    }
+                    
+                    $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
+                    $other_data[] = array("key"=>"doc_type","value"=>$request->input("doc_type"));
+                    $other_data[] = array("key"=>"document_id","value"=>$request->input("document_id"));
+                    
+                    $not_data['other_data'] = $other_data;
+                    
+                    sendNotification($not_data,"professional",$subdomain);
+                    
                     $response['status'] = true;
                     $response['message'] = $api_response['message'];
                 }else{
@@ -755,8 +821,32 @@ class ProfessionalCasesController extends Controller
         $data['type'] = "text";
         $data['client_id'] = \Auth::user()->unique_id;
         $subdomain = $request->input("subdomain");
+
+
         $api_response = professionalCurl('cases/save-chat',$subdomain,$data);
         if($api_response['status'] == 'success'){
+            $not_data['send_by'] = 'client';
+            $not_data['added_by'] = \Auth::user()->unique_id;
+            $not_data['type'] = "chat";
+            $not_data['notification_type'] = "case_chat";
+            $not_data['title'] = "Message by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+            $not_data['comment'] = $request->input("message");
+            if($request->input("chat_type") == 'general'){
+                $not_data['notification_type'] = "general";
+                $not_data['url'] = "cases/chats/".$request->input("case_id");
+            }else{
+                $not_data['notification_type'] = "case_chat";
+                $not_data['url'] = "cases/chats/".$request->input("case_id")."?chat_type=case_chat";
+            }
+            
+            $other_data[] = array("key"=>"chat_type","value"=>$request->input("chat_type"));
+            if($request->input("chat_type") == 'case_chat'){
+                $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
+            }
+            $not_data['other_data'] = $other_data;
+            
+            sendNotification($not_data,"professional",$subdomain);
+            
             $response['status'] = true;
             $response['message'] = $api_response['message'];
         }else{
@@ -787,6 +877,24 @@ class ProfessionalCasesController extends Controller
                 $data['type'] = 'file';
                 $api_response = professionalCurl('cases/save-chat',$subdomain,$data);
                 if($api_response['status'] == 'success'){
+                    $not_data['send_by'] = 'client';
+                    $not_data['added_by'] = \Auth::user()->unique_id;
+                    $not_data['type'] = "chat";
+                    $not_data['notification_type'] = "case_chat";
+                    $not_data['title'] = "Message by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+                    $not_data['comment'] = "Document sent in chat";
+                    if($request->input("chat_type") == 'general'){
+                        $not_data['url'] = "cases/chats/".$request->input("case_id");
+                    }else{
+                        $not_data['url'] = "cases/chats/".$request->input("case_id")."?chat_type=case_chat";
+                    }
+                    $other_data[] = array("key"=>"chat_type","value"=>$request->input("chat_type"));
+                    if($request->input("chat_type") == 'case_chat'){
+                        $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
+                    }
+                    $not_data['other_data'] = $other_data;                   
+                    sendNotification($not_data,"professional",$subdomain);
+                    
                     $response['status'] = true;
                     $response['message'] = $api_response['message'];
                 }else{
@@ -794,7 +902,7 @@ class ProfessionalCasesController extends Controller
                     $response['message'] = "File send failed, try again!";
                 }                   
             }else{
-                $response['status'] = true;
+                $response['status'] = false;
                 $response['message'] = "File send failed, try again!";
             }
         }else{
@@ -810,4 +918,67 @@ class ProfessionalCasesController extends Controller
         return view(roleFolder().'.cases.chat-demo',$viewData);
     }
 
+    public function caseInvoices($subdomain,$case_id)
+    {   $data['case_id'] = $case_id;
+        $api_response = professionalCurl('cases/view',$subdomain,$data);
+        $case = $api_response['data'];
+        $viewData['case'] = $case;
+        $viewData['pageTitle'] = "Case Invoices";
+        $viewData['subdomain'] = $subdomain;
+        return view(roleFolder().'.cases.invoices',$viewData);
+    } 
+
+    public function getCaseInvoice($subdomain,Request $request)
+    {
+        $data = $request->input();
+        $api_response = professionalCurl('cases/fetch-case-invoices',$subdomain,$data);
+
+        if($api_response['status'] != 'success'){
+            $response['status'] = "error";
+            $response['message'] = "Issue while finding invoice";
+            return response()->json($response);
+        }
+        $data = $api_response['data'];
+        $viewData['records'] = $data['records'];
+        $viewData['subdomain'] = $subdomain;
+        $view = View::make(roleFolder().'.cases.invoices-list',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['last_page'] = $data['last_page'];
+        $response['current_page'] = $data['current_page'];
+        $response['total_records'] = $data['total_records'];
+        return response()->json($response);
+    }
+
+    public function viewCaseInvoice($subdomain,$invoice_id){
+
+        $data['invoice_id'] = $invoice_id;
+        $api_response = professionalCurl('cases/view-case-invoice',$subdomain,$data);
+
+        if($api_response['status'] != 'success'){
+            $response['status'] = "error";
+            return redirect()->back()->with("error","Issue while finding invoice");
+        }
+        $data = $api_response['data'];
+        $id = base64_decode($invoice_id);
+        $invoice = $data['invoice'];
+        $case = $data['case'];
+        $client = $data['client'];
+        if($client['unique_id'] != \Auth::user()->unique_id){
+            return redirect(baseUrl('/'));
+        }
+        $professional = $data['professional'];
+        $viewData['professional'] = $professional;
+        $viewData['case'] = $case;
+        $viewData['client'] = $client;
+        $viewData['record'] = $invoice;
+        $viewData['subdomain'] = $subdomain;
+        $viewData['pageTitle'] = "View Invoice";
+        return view(roleFolder().'.cases.view-invoice',$viewData);
+    }
+
+    public function payNow(Request $request){
+        $viewData['pageTitle'] = "Pay Now";
+        return view(roleFolder().'.pay-now',$viewData);   
+    }
 }

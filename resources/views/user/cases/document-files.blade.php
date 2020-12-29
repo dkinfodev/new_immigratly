@@ -344,6 +344,7 @@
                   case_id:case_id,
                   document_id:document_id,
                   message:message,
+                  doc_type:"{{ $doc_type}}",
                   type:"text",
                   subdomain:"{{$subdomain}}"
               },

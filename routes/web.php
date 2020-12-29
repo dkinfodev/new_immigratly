@@ -38,7 +38,7 @@ Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, '
 
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);
-
+Route::get('/view-notification/{id}', [App\Http\Controllers\CommonController::class, 'readNotification']);
 Route::get('/forgot-password', function () {
     return view('auth.passwords.email');
 })->middleware(['guest'])->name('password.request');
@@ -110,6 +110,8 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
 
         Route::get('/view/{id}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'viewDetail']);
+        Route::get('/add-notes/{id}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'addNotes']);
+        Route::post('/save-notes', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'saveNotes']);
     });
     Route::group(array('prefix' => 'privileges'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\PrivilegesController::class, 'index']);
@@ -150,10 +152,17 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
 // User
 Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'dashboard']);
+    Route::get('/notifications', [App\Http\Controllers\User\DashboardController::class, 'notifications']);
     Route::get('/edit-profile', [App\Http\Controllers\User\DashboardController::class, 'editProfile']);
     Route::post('/update-profile', [App\Http\Controllers\User\DashboardController::class, 'updateProfile']);
     Route::get('/change-password', [App\Http\Controllers\User\DashboardController::class, 'changePassword']);
     Route::post('/update-password', [App\Http\Controllers\User\DashboardController::class, 'updatePassword']);
+
+    Route::get('/pay-now/{subdomain}/{transaction_id}', [App\Http\Controllers\User\TransactionController::class, 'payNow']);
+    Route::post('/pay-now', [App\Http\Controllers\User\TransactionController::class, 'submitPayNow']);
+    Route::post('/validate-pay-now', [App\Http\Controllers\User\TransactionController::class, 'validatePayNow']);
+    Route::post('/payment-success', [App\Http\Controllers\User\TransactionController::class, 'paymentSuccess']);
+    Route::post('/payment-failed', [App\Http\Controllers\User\TransactionController::class, 'paymentFailed']);
 
     Route::group(array('prefix' => 'documents'), function () {
         Route::get('/', [App\Http\Controllers\User\MyDocumentsController::class, 'myFolders']);
@@ -200,19 +209,20 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/upload-documents/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadDocuments']);
         Route::get('/documents-exchanger/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'documentsExchanger']);
         Route::post('/documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveExchangeDocuments']);
-
         Route::get('/my-documents-exchanger/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'myDocumentsExchanger']);
-
-        
         Route::post('/my-documents-exchanger', [App\Http\Controllers\User\ProfessionalCasesController::class, 'exportMyDocuments']);
         Route::post('/remove-case-document', [App\Http\Controllers\User\ProfessionalCasesController::class, 'removeCaseDocument']);
-
         Route::get('/import-to-my-documents/{subdomain}/{case_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'importToMyDocuments']);
         Route::post('/import-documents', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveImportDocuments']);
         Route::post('/remove-user-document', [App\Http\Controllers\User\ProfessionalCasesController::class, 'removeUserDocument']);
-        
-
         Route::get('/view-document/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'viewDocument']);
+
+        Route::group(array('prefix' => '{subdomain}/invoices'), function () {
+            Route::get('/list/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseInvoices']);
+            Route::post('/case-invoices', [App\Http\Controllers\User\ProfessionalCasesController::class, 'getCaseInvoice']);
+            Route::get('/view/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'viewCaseInvoice']);
+        });
+
     });
 });
 
@@ -242,6 +252,15 @@ Route::group(array('prefix' => 'admin'), function () {
         Route::post('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'savePrivileges']);
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);
         Route::get('/profile', [App\Http\Controllers\Admin\DashboardController::class, 'profile']);
+
+        Route::get('/add-reminder-note', [App\Http\Controllers\Admin\DashboardController::class, 'addReminderNote']);
+        Route::post('/fetch-reminder-notes', [App\Http\Controllers\Admin\DashboardController::class, 'fetchReminderNotes']);
+        Route::post('/add-reminder-note', [App\Http\Controllers\Admin\DashboardController::class, 'saveReminderNote']);
+
+        Route::get('/edit-reminder-note/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'editReminderNote']);
+        Route::post('/edit-reminder-note/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'updateReminderNote']);
+        Route::get('/delete-reminder-note/{id}', [App\Http\Controllers\Admin\DashboardController::class, 'deleteReminderNote']);
+
         Route::group(array('prefix' => 'services'), function () {
             Route::get('/', [App\Http\Controllers\Admin\ServicesController::class, 'index']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\ServicesController::class, 'getAjaxList']); 
@@ -336,6 +355,9 @@ Route::group(array('prefix' => 'admin'), function () {
                 Route::post('/add/{case_id}', [App\Http\Controllers\Admin\InvoiceController::class, 'saveCaseInvoice']);
                 Route::get('/edit/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'editCaseInvoice']);
                 Route::post('/edit/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'updateCaseInvoice']);
+                Route::get('/view/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'viewCaseInvoice']);
+                Route::get('/delete/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'deleteSingle']);
+                Route::post('/delete-multiple', [App\Http\Controllers\Admin\InvoiceController::class, 'deleteMultiple']);
             });
     
         });

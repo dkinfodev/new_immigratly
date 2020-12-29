@@ -14,14 +14,7 @@
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
-
         <h1 class="page-title">{{$pageTitle}}</h1>
-      </div>
-
-      <div class="col-sm-auto">
-        <a class="btn btn-primary" href="<?php echo baseUrl('cases/invoices/add/'.base64_encode($case->id)) ?>">
-          <i class="tio-add mr-1"></i> Create Invoice
-        </a>
       </div>
     </div>
     <!-- End Row -->
@@ -33,6 +26,9 @@
     <!-- Header -->
     <div class="card-header">
       <div class="row justify-content-between align-items-center flex-grow-1">
+        <div class="text-right col-md-12">
+          <div class="text-right text-danger"><b>Case Id:</b>{{$case['unique_id']}}</div>
+        </div>
         <!-- <div class="col-sm-6 col-md-4 mb-3 mb-sm-0">
           <form>
             <div class="input-group input-group-merge input-group-flush">
@@ -49,7 +45,7 @@
         <div class="col-sm-12">
           <div class="d-sm-flex justify-content-sm-end align-items-sm-center">
             <!-- Datatable Info -->
-            <div id="datatableCounterInfo" class="mr-2 mb-2 mb-sm-0" style="display: none;">
+            <!-- <div id="datatableCounterInfo" class="mr-2 mb-2 mb-sm-0" style="display: none;">
               <div class="d-flex align-items-center">
                 <span class="font-size-sm mr-3">
                   <span id="datatableCounter">0</span>
@@ -59,7 +55,7 @@
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -72,12 +68,7 @@
       <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
         <thead class="thead-light">
           <tr>
-            <th scope="col" class="table-column-pr-0">
-              <div class="custom-control custom-checkbox">
-                <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
-                <label class="custom-control-label" for="datatableCheckAll"></label>
-              </div>
-            </th>
+            
             <th scope="col">Invoice ID</th>
             <th scope="col">Amount</th>
             <th scope="col">Payment Status</th>
@@ -152,10 +143,10 @@ function loadData(page=1){
   var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/cases/invoices/case-invoices?page='+page,
+        url: BASEURL + '/cases/{{$subdomain}}/invoices/case-invoices?page='+page,
         data:{
             _token:csrf_token,
-            case_id:"{{$case->unique_id}}"
+            case_id:"{{$case['unique_id']}}"
         },
         dataType:'json',
         beforeSend:function(){

@@ -10,6 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/cases') }}">Cases</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -18,9 +19,9 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{(baseUrl('invoices/add'))}}">
-          <i class="tio-user-add mr-1"></i> Add
-        </a>
+        <!-- <a class="btn btn-primary" href="<?php echo baseUrl('cases/invoices/add/'.base64_encode($case->id)) ?>">
+          <i class="tio-add mr-1"></i> Create Invoice
+        </a> -->
       </div>
     </div>
     <!-- End Row -->
@@ -32,22 +33,20 @@
     <!-- Header -->
     <div class="card-header">
       <div class="row justify-content-between align-items-center flex-grow-1">
-        <div class="col-sm-6 col-md-4 mb-3 mb-sm-0">
+        <!-- <div class="col-sm-6 col-md-4 mb-3 mb-sm-0">
           <form>
-            <!-- Search -->
             <div class="input-group input-group-merge input-group-flush">
               <div class="input-group-prepend">
                 <div class="input-group-text">
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search " aria-label="Search">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Invoice" aria-label="Search Case">
             </div>
-            <!-- End Search -->
           </form>
-        </div>
+        </div> -->
 
-        <div class="col-sm-6">
+        <div class="col-sm-12">
           <div class="d-sm-flex justify-content-sm-end align-items-sm-center">
             <!-- Datatable Info -->
             <div id="datatableCounterInfo" class="mr-2 mb-2 mb-sm-0" style="display: none;">
@@ -56,7 +55,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('invoices/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('cases/invoices/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -79,11 +78,13 @@
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Invoice ID</th>
-            <th scope="col" >Client</th>
-            <th scope="col">Total Amount</th>
+            <th scope="col">Invoice ID</th>
+            <th scope="col">Client</th>
+            <th scope="col">Amount</th>
             <th scope="col">Payment Status</th>
-            <th scope="col">Action</th>
+            <th scope="col">Link To</th>
+            <th scope="col">Created Date</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -133,22 +134,9 @@
 @endsection
 
 @section('javascript')
-<script src="assets/vendor/hs-toggle-switch/dist/hs-toggle-switch.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-  $('.js-toggle-switch').each(function () {
-    var toggleSwitch = new HSToggleSwitch($(this)).init();
-  });
-  $(".next").click(function(){
-    if(!$(this).hasClass('disabled')){
-      changePage('next');
-    }
-  });
-  $(".previous").click(function(){
-    if(!$(this).hasClass('disabled')){
-      changePage('prev');
-    }
-  });
+
   $("#datatableSearch").keyup(function(){
     var value = $(this).val();
     if(value == ''){
@@ -158,21 +146,8 @@ $(document).ready(function(){
       loadData();
     }
   });
-  $("#datatableCheckAll").change(function(){
-    if($(this).is(":checked")){
-      $(".row-checkbox").prop("checked",true);
-    }else{
-      $(".row-checkbox").prop("checked",false);
-    }
-    if($(".row-checkbox:checked").length > 0){
-      $("#datatableCounterInfo").show();
-    }else{
-      $("#datatableCounterInfo").hide();
-    }
-    $("#datatableCounter").html($(".row-checkbox:checked").length);
-  });
-
-})
+  
+});
 loadData();
 function loadData(page=1){
   var search = $("#datatableSearch").val();
@@ -181,188 +156,25 @@ function loadData(page=1){
         url: BASEURL + '/invoices/ajax-list?page='+page,
         data:{
             _token:csrf_token,
-            search:search
         },
         dataType:'json',
         beforeSend:function(){
             var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
             // $("#paginate").html('');
+            showLoader();
         },
         success: function (data) {
+            hideLoader();
             $("#tableList tbody").html(data.contents);
+            initPagination(data);
             
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
         },
-    });
-}
-function changePage(action){
-  var page = parseInt($("#pageno").val());
-  if(action == 'prev'){
-    page--;
-  }
-  if(action == 'next'){
-    page++;
-  }
-  if(!isNaN(page)){
-    loadData(page);
-  }else{
-    errorMessage("Invalid Page Number");
-  }
-  
-}
-function confirmDelete(id){
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
-      confirmButtonClass: 'btn btn-primary',
-      cancelButtonClass: 'btn btn-danger ml-1',
-      buttonsStyling: false,
-    }).then(function(result) {
-      if (result.value) {
-        $.ajax({
-            type: "POST",
-            url: BASEURL + '/invoices/delete-user',
-            data:{
-                _token:csrf_token,
-                user_id:id,
-            },
-            dataType:'json',
-            success: function (result) {
-                if(result.status == true){
-                    Swal.fire({
-                        type: "success",
-                        title: 'Deleted!',
-                        text: 'User has been deleted.',
-                        confirmButtonClass: 'btn btn-success',
-                    }).then(function () {
-
-                        window.location.href= result.redirect;
-                    });
-                }else{
-                    Swal.fire({
-                        title: "Error!",
-                        text: "Error while deleting",
-                        type: "error",
-                        confirmButtonClass: 'btn btn-primary',
-                        buttonsStyling: false,
-                    });
-                }
-            },
-        });
-      }
-    })
-}
-
-function changeStatus(e){
-  var id = $(e).attr("data-id");
-  if($(e).is(":checked")){
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/invoices/status/active',
-        data:{
-            _token:csrf_token,
-            id:id,
-        },
-        dataType:'json',
-        success: function (result) {
-            if(result.status == true){
-                successMessage(result.message);
-                loadData();
-            }else{
-                errorMessage(result.message);
-            }
-        },
-    });
-  }else{
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/invoices/status/inactive',
-        data:{
-            _token:csrf_token,
-            id:id,
-        },
-        dataType:'json',
-        success: function (result) {
-            if(result.status == true){
-                successMessage(result.message);
-                loadData();
-            }else{
-                errorMessage(result.message);
-            }
-        },
-        error: function(){
+        error:function(){
           internalError();
         }
     });
-  }
 }
 
-function profileStatus(e){
-  var id = $(e).attr("data-id");
-  if($(e).is(":checked")){
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/invoices/profile-status/active',
-        data:{
-            _token:csrf_token,
-            id:id,
-        },
-        dataType:'json',
-        success: function (result) {
-            if(result.status == true){
-                successMessage(result.message);
-            }else{
-                errorMessage(result.message);
-            }
-        },
-    });
-  }else{
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/invoices/profile-status/inactive',
-        data:{
-            _token:csrf_token,
-            id:id,
-        },
-        dataType:'json',
-        success: function (result) {
-            if(result.status == true){
-                successMessage(result.message);
-                loadData();
-            }else{
-                errorMessage(result.message);
-            }
-        },
-        error: function(){
-          internalError();
-        }
-    });
-  }
-}
 </script>
 @endsection

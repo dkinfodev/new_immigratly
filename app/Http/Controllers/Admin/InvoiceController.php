@@ -121,13 +121,32 @@ class InvoiceController extends Controller
 
         foreach($items as $item){
             $itemObj = new CaseInvoiceItems();
+            $itemObj->unique_id = randomNumber();
             $itemObj->case_id = $case->unique_id;
             $itemObj->case_invoice_id = $cinv_unique_id;
             $itemObj->particular = $item["particular_name"];
             $itemObj->amount = $item["amount"];
             $itemObj->save();
         }
+        $subdomain = \Session::get('subdomain');
+        $professional = ProfessionalDetails::first();
+        $not_data['send_by'] = \Auth::user()->role;
+        $not_data['added_by'] = \Auth::user()->unique_id;
+        $not_data['user_id'] = $case->client_id;
+        $not_data['type'] = "other";
+        $not_data['notification_type'] = "invoice";
+        $not_data['title'] = $professional->company_name." send you the invoice";
+        $not_data['comment'] = "Invoice created for case id ".$case->unique_id;
+        $not_data['url'] = "cases/".$subdomain."/invoices/view/".$inv_unique_id;
+        
 
+        $other_data[] = array("key"=>"case_id","value"=>$case->unique_id);
+        $other_data[] = array("key"=>"invoice_id","value"=>$inv_unique_id);
+        
+        $not_data['other_data'] = $other_data;
+        
+        sendNotification($not_data,"user");
+        
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('cases/invoices/list/'.base64_encode($case->id));
         $response['message'] = "Invoice added sucessfully";
@@ -136,8 +155,9 @@ class InvoiceController extends Controller
     }
  
     public function editCaseInvoice($invoice_id){
+
         $id = base64_decode($invoice_id);
-        $invoice = CaseInvoices::with(["Invoice","InvoiceItems"])->first();
+        $invoice = CaseInvoices::with(["Invoice","InvoiceItems"])->where("id",$id)->first();
         $case_id = $invoice->case_id;
         $case = Cases::where("unique_id",$case_id)->first();
         $client = $case->Client($case->client_id);
@@ -151,27 +171,13 @@ class InvoiceController extends Controller
     }
 
 
-    public function update($id,Request $request){
-        // pre($request->all());
-        $id = base64_decode($id);
-        $object =  User::find($id);
-
+    public function updateCaseInvoice($invoice_id,Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email,'.$object->id,
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'country_code' => 'required',
-            'phone_no' => 'required|unique:users,phone_no,'.$object->id,
-            'gender'=>'required',
-            'date_of_birth'=>'required',
-            'languages_known'=>'required',
-            'country_id'=>'required',
-            'state_id'=>'required',
-            'city_id'=>'required',
-            'address'=>'required',
-            'zip_code'=>'required',
-            'role'=>'required',
-            'profile_image'=>'mimes:jpeg,jpg,png,gif'
+            'invoice_date' => 'required',
+            'due_date' => 'required',
+            'bill_from' => 'required',
+            'bill_to'=>'required',
+            'items'=>'required',
         ]);
 
         if ($validator->fails()) {
@@ -185,133 +191,94 @@ class InvoiceController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-        $object->first_name = $request->input("first_name");
-        $object->last_name = $request->input("last_name");
-        $object->email = $request->input("email");
-        $object->country_code = $request->input("country_code");
-        $object->phone_no = $request->input("phone_no");
-        $object->date_of_birth = $request->input("date_of_birth");
-        $object->gender = $request->input("gender");
-        $object->country_id = $request->input("country_id");
-        $object->state_id = $request->input("state_id");
-        $object->city_id = $request->input("city_id");
-        $object->address = $request->input("address");
-        $object->zip_code = $request->input("zip_code");
+        $invoice_id = base64_decode($invoice_id);
+        $case_invoice = CaseInvoices::with(["Invoice","InvoiceItems"])->where("id",$invoice_id)->first();
+        $case_id = $case_invoice->case_id;
+        $case = Cases::where("unique_id",$case_id)->first();
         
-        $object->role = $request->input("role");
-        $path = professionalDir()."/profile";
-        $object->languages_known = json_encode($request->input("languages_known"));
-        if($object->profile_image !=''){
-            if(file_exists($path.'/'.$object->profile_image))
-                unlink($path.'/'.$object->profile_image);
-
-            if(file_exists($path.'/thumb/'.$object->profile_image))
-                unlink($path.'/thumb/'.$object->profile_image);
-
-            if(file_exists($path.'/medium/'.$object->profile_image))
-                unlink($path.'/medium/'.$object->profile_image);
+        
+        $items = $request->input("items");
+        
+        $total_amount = 0;
+        foreach($items as $item){
+            $total_amount += $item['amount'];
         }
-        if ($file = $request->file('profile_image')){
-                
-            $fileName        = $file->getClientOriginalName();
-            $extension       = $file->getClientOriginalExtension() ?: 'png';
-            $newName        = mt_rand(1,99999)."-".$fileName;
-            $source_url = $file->getPathName();
-            // Thumb Image
-            
-            $destinationPath = $path.'/thumb';
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-            $destination_url = $destinationPath.'/'.$newName;
-            resizeImage($source_url, $destination_url, 100,100,80);
+        $inv_unique_id = $case_invoice->invoice_id;
+        $invObject = Invoices::where("unique_id",$inv_unique_id)->first();
+        $invObject->client_id = $case->client_id;
+        $invObject->amount = $total_amount;
+        $invObject->payment_status = 'pending';
+        $invObject->link_to = "case";
+        $invObject->link_id = $case->unique_id;
+        $invObject->bill_from = $request->input("bill_from");
+        $invObject->bill_to = $request->input("bill_to");
+        $invObject->invoice_date = $request->input("invoice_date");
+        $invObject->due_date = $request->input("due_date");
+        $invObject->save();
 
-            $destinationPath = $path.'/medium';
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0777, true);
-            }
-            $destination_url = $destinationPath.'/'.$newName;
-            resizeImage($source_url, $destination_url, 500,500,80);
-
-            $destinationPath = professionalDir()."/profile";
-            if($file->move($destinationPath, $newName)){
-                $object->profile_image = $newName;
-            }
+        
+        $caseInvObj = CaseInvoices::find($invoice_id);
+        $cinv_unique_id = $caseInvObj->unique_id;
+        if($request->input("notes")){
+            $caseInvObj->notes = $request->input("notes");
         }
-
-        $object->is_active = 1;
-        $object->is_verified = 1;
-        $object->created_by = \Auth::user()->id;
-
-        $object->save();
-
+        $caseInvObj->total_amount = $total_amount;
+        $caseInvObj->save();
+        $inv_items = array();
+        foreach($items as $item){
+            if($item['id'] == 0){
+                $item_unique_id = randomNumber(); 
+                $itemObj = new CaseInvoiceItems();
+                $itemObj->unique_id = $item_unique_id;
+            }else{
+                $itemObj = CaseInvoiceItems::where("unique_id",$item['id'])->first();
+                $item_unique_id = $itemObj->unique_id;
+            }
+            $itemObj->case_id = $case->unique_id;
+            $itemObj->case_invoice_id = $cinv_unique_id;
+            $itemObj->particular = $item["particular_name"];
+            $itemObj->amount = $item["amount"];
+            $itemObj->save();
+            $inv_items[] = $item_unique_id;
+        }
+        CaseInvoiceItems::where("case_invoice_id",$cinv_unique_id)->whereNotIn("unique_id",$inv_items)->delete();
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('staff');
-        $response['message'] = "Updation sucessfully";
+        $response['redirect_back'] = baseUrl('cases/invoices/list/'.base64_encode($case->id));
+        $response['message'] = "Invoice edit sucessfully";
         
         return response()->json($response);
     }
 
-    
+    public function viewCaseInvoice($invoice_id){
 
-     public function deleteSingle($id){
+        $id = base64_decode($invoice_id);
+        $invoice = CaseInvoices::with(["Invoice","InvoiceItems"])->where("id",$id)->first();
+
+        $case_id = $invoice->case_id;
+        $case = Cases::where("unique_id",$case_id)->first();
+        $client = $case->Client($case->client_id);
+        $professional = ProfessionalDetails::first();
+        $viewData['professional'] = $professional;
+        $viewData['case'] = $case;
+        $viewData['client'] = $client;
+        $viewData['record'] = $invoice;
+        $viewData['pageTitle'] = "View Invoice";
+        return view(roleFolder().'.cases.view-invoice',$viewData);
+    }
+
+    public function deleteSingle($id){
         $id = base64_decode($id);
-        User::deleteRecord($id);
+        Invoices::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
     public function deleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
             $id = base64_decode($ids[$i]);
-            User::deleteRecord($id);
+            Invoices::deleteRecord($id);
         }
         $response['status'] = true;
         \Session::flash('success', 'Records deleted successfully'); 
-        return response()->json($response);
-    }
-
-
-    public function changePassword($id)
-    {
-        $id = base64_decode($id);
-        $record = User::where("id",$id)->first();
-        $viewData['record'] = $record;
-        $viewData['pageTitle'] = "Change Password";
-        return view(roleFolder().'.invoices.change-password',$viewData);
-    }
-
-    public function updatePassword($id,Request $request)
-    {
-        $id = base64_decode($id);
-        $object =  User::find($id);
-
-        $validator = Validator::make($request->all(), [
-            'password' => 'required|confirmed|min:4',
-            'password_confirmation' => 'required|min:4',
-        ]);
-
-        if ($validator->fails()) {
-            $response['status'] = false;
-            $error = $validator->errors()->toArray();
-            $errMsg = array();
-            
-            foreach($error as $key => $err){
-                $errMsg[$key] = $err[0];
-            }
-            $response['message'] = $errMsg;
-            return response()->json($response);
-        }
-        
-        if($request->input("password")){
-            $object->password = bcrypt($request->input("password"));
-        }
-
-        $object->save();
-
-        $response['status'] = true;
-        $response['redirect_back'] = baseUrl('staff');
-        $response['message'] = "Updation sucessfully";
-        
         return response()->json($response);
     }
 

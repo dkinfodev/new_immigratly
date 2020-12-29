@@ -15,7 +15,7 @@
 <div class="bg-dark">
   <div class="content container-fluid" style="height: 25rem;">
     <!-- Page Header -->
-    <div class="page-header page-header-light">
+    <div class="page-header-light">
       <div class="row align-items-center">
         <div class="col-6">
           <h1 class="page-header-title">{{$pageTitle}}</h1>
@@ -23,6 +23,7 @@
         <div class="col-6" style="">
 
           <div class="form-inline float-right ml-2">
+
             <lable><span class="text-white" style="font-size:16px;">Profile Status </span></lable>
             <?php
             $check_profile = checkProfileStatus($record->subdomain);
@@ -49,16 +50,14 @@
               </span>
             </label>
             @if($profile_checked == 'checked')
-            <span>Active</span>
+            <!-- <span>Active</span> -->
             @else
-            <span>Inactive</span>
+            <!-- <span>Inactive</span> -->
             @endif
           </div>          
           
           <div class="form-inline float-right">
-
             <lable><span class="text-white" style="font-size:16px;">Panel Status </span></lable>
-
             <label class="toggle-switch mx-2" for="customSwitch-1">
               <input type="checkbox" data-id="{{ $record->id }}" onchange="changeStatus(this)" class="js-toggle-switch toggle-switch-input" id="customSwitch-1" {{($record->panel_status == 1)?'checked':''}} >
               <span class="toggle-switch-label">
@@ -66,13 +65,15 @@
               </span>
             </label>
             @if($record->panel_status == 1)
-            <span>Active</span>
+            <!-- <span>Active</span> -->
             @else
-            <span>Inactive</span>
+            <!-- <span>Inactive</span> -->
             @endif
           </div>
+          
         </div>
       </div>
+      
     </div>
     <!-- End Row -->
 
@@ -107,11 +108,17 @@
 
 
 <!-- Content -->
-<div class="content container-fluid" style="margin-top: -17rem;">
+<div class="content container-fluid" style="margin-top:-22rem">
   <!-- Card -->
+  
   <div class="card mb-3 mb-lg-5" style="padding:30px;">
     <!-- Header -->
-
+    <div class="text-right mb-3">
+      <a class="btn btn-warning mb-3 width-auto" onclick="showPopup('<?php echo baseUrl('professionals/add-notes/'.base64_encode($record->id)) ?>')" href="javascript:;">
+        <i class="tio-edit mr-1"></i> Add Notes
+      </a>
+    </div>
+    <div class="clearfix"></div>
     <!-- Step Form -->
     <form id="profile_form" class="js-step-form js-validate"
     data-hs-step-form-options='{

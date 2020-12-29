@@ -21,6 +21,7 @@ use App\Models\CaseFolders;
 use App\Models\Documents;
 use App\Models\DocumentChats;
 use App\Models\Chats;
+use App\Models\ProfessionalDetails;
 
 class CasesController extends Controller
 {
@@ -693,13 +694,18 @@ class CasesController extends Controller
     }
 
     public function saveDocumentChat(Request $request){
-        $data['case_id'] = $request->input("case_id");
-        $data['document_id'] = $request->input("document_id");
-        $data['message'] = $request->input("message");
+        // $data['case_id'] = $request->input("case_id");
+        // $data['document_id'] = $request->input("document_id");
+        // $data['message'] = $request->input("message");
         
-        $data['created_by'] = \Auth::user()->unique_id;
-        $subdomain = $request->input("subdomain");
-        
+        // $data['created_by'] = \Auth::user()->unique_id;
+        $case_id = $request->input("case_id");
+        $case = Cases::where("unique_id",$case_id)->first();
+        $document_id = $request->input("document_id");
+        $case_document = CaseDocuments::where("unique_id",$document_id)
+                                        ->where("case_id",$case_id)
+                                        ->first();
+        $folder_id = $case_document->folder_id;
         $object = new DocumentChats();
         $object->case_id = $request->input("case_id");
         $object->document_id = $request->input("document_id");
@@ -711,6 +717,31 @@ class CasesController extends Controller
     
         $response['status'] = true;
         $response['message'] = "Message send successfully";
+        
+        $not_data['send_by'] = \Auth::user()->role;
+        $not_data['added_by'] = \Auth::user()->unique_id;
+        $not_data['user_id'] = $case->client_id;
+        $not_data['type'] = "chat";
+        $not_data['notification_type'] = "document_chat";
+        $not_data['title'] = "Message on document by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+        $not_data['comment'] = $request->input("message");
+        $subdomain = \Session::get("subdomain");
+        if($case_document->document_type == 'extra'){
+            $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+        }
+        if($case_document->document_type == 'other'){
+            $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+        }
+        if($case_document->document_type == 'default'){
+            $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+        }
+        
+        $other_data[] = array("key"=>"case_id","value"=>$case_id);
+        $other_data[] = array("key"=>"document_id","value"=>$document_id);
+        
+        $not_data['other_data'] = $other_data;
+        
+        sendNotification($not_data,"user");
         
         return response()->json($response);
     }
@@ -750,7 +781,31 @@ class CasesController extends Controller
             
                 $response['status'] = true;
                 $response['message'] = "File send successfully";
-                                 
+                
+                $not_data['send_by'] = \Auth::user()->role;
+                $not_data['added_by'] = \Auth::user()->unique_id;
+                $not_data['user_id'] = $case->client_id;
+                $not_data['type'] = "chat";
+                $not_data['notification_type'] = "document_chat";
+                $not_data['title'] = "Message on document by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+                $not_data['comment'] = "Document send in chat";
+                $subdomain = \Session::get("subdomain");
+                if($case_document->document_type == 'extra'){
+                    $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+                }
+                if($case_document->document_type == 'other'){
+                    $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+                }
+                if($case_document->document_type == 'default'){
+                    $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+                }
+                
+                $other_data[] = array("key"=>"case_id","value"=>$case_id);
+                $other_data[] = array("key"=>"document_id","value"=>$document_id);
+                
+                $not_data['other_data'] = $other_data;
+                
+                sendNotification($not_data,"user");         
             }else{
                 $response['status'] = true;
                 $response['message'] = "File send failed, try again!";
@@ -828,7 +883,33 @@ class CasesController extends Controller
         $object->created_by = \Auth::user()->unique_id;
         $object->chat_client_id = $request->input("client_id");
         $object->save();
-    
+        
+        $subdomain = \Session::get("subdomain");
+        $not_data['send_by'] = \Auth::user()->role;
+        $not_data['added_by'] = \Auth::user()->unique_id;
+        $not_data['user_id'] = $request->input("client_id");
+        $not_data['type'] = "chat";
+        $not_data['notification_type'] = "case_chat";
+        $professional = ProfessionalDetails::first();
+        $not_data['title'] = $professional->company_name." send message on document";
+        $not_data['comment'] = $request->input("message");
+        if($request->input("chat_type") == 'general'){
+            $not_data['notification_type'] = "general";
+            $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
+        }else{
+            $not_data['notification_type'] = "case_chat";
+            $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
+        }
+        
+        $other_data[] = array("key"=>"chat_type","value"=>$request->input("chat_type"));
+        if($request->input("chat_type") == 'case_chat'){
+            $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
+        }
+        $not_data['other_data'] = $other_data;
+        
+        sendNotification($not_data,"user");
+        
+
         $response['status'] = true;
         $response['message'] = "Message send successfully";
         
@@ -870,9 +951,34 @@ class CasesController extends Controller
             
                 $response['status'] = true;
                 $response['message'] = "File send successfully";
-                                 
+                
+                $subdomain = \Session::get("subdomain");
+                $not_data['send_by'] = \Auth::user()->role;
+                $not_data['added_by'] = \Auth::user()->unique_id;
+                $not_data['user_id'] = $request->input("client_id");
+                $not_data['type'] = "chat";
+                $not_data['notification_type'] = "case_chat";
+                $professional = ProfessionalDetails::first();
+                $not_data['title'] = $professional->company_name." send message on document";
+                $not_data['comment'] = "Document send in chat";
+                if($request->input("chat_type") == 'general'){
+                    $not_data['notification_type'] = "general";
+                    $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
+                }else{
+                    $not_data['notification_type'] = "case_chat";
+                    $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
+                }
+                
+                $other_data[] = array("key"=>"chat_type","value"=>$request->input("chat_type"));
+                if($request->input("chat_type") == 'case_chat'){
+                    $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
+                }
+                $not_data['other_data'] = $other_data;
+                
+                sendNotification($not_data,"user");
+                                
             }else{
-                $response['status'] = true;
+                $response['status'] = false;
                 $response['message'] = "File send failed, try again!";
             }
         }else{

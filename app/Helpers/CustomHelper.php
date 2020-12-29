@@ -7,6 +7,8 @@ use App\Models\DomainDetails;
 use App\Models\Documents;
 use App\Models\Professionals;
 use App\Models\RolePrivileges;
+use App\Models\Notifications;
+
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -237,14 +239,14 @@ if(!function_exists("currencyFormat")){
 }
 if(!function_exists("bankList")){
     function bankList() { 
-        $netbanking = Netbanking::get();
+        $netbanking = DB::table(MAIN_DATABASE.".netbankings")->get();
         return $netbanking;
     }
 }
 
 if(!function_exists("WalletList")){
     function WalletList() { 
-        $wallet_list = WalletList::get();
+        $wallet_list = DB::table(MAIN_DATABASE.".wallet_list")->get();
         return $wallet_list;
     }
 }
@@ -268,91 +270,7 @@ if(!function_exists("paginateInfo")){
         return $html;
     }
 }
-if(!function_exists("getNotificationByType")){
-    function getNotificationByType($meta_key,$meta_value){
-        $notifications = NotificationData::where("user_id",\Auth::user()->id)
-                            ->where("is_read",0)
-                            ->where("meta_key",$meta_key)
-                            ->where("meta_value",$meta_value)
-                            ->count();
-        $response['count'] = $notifications;
-        return $notifications;
 
-   }
-}
-if(!function_exists("markAsRead")) {
-    function markAsRead($type){
-        try{
-
-            if(!is_array($type)){
-                $types[] = $type;
-            }else{
-                $types = $type;
-            }
-            
-
-            $ids = Notifications::where("user_id",\Auth::user()->id)
-                            ->where("is_read",0)
-                            ->whereIn("type",$types)
-                            ->pluck('id');
-                 
-            if(count($ids) > 0){
-                $ids = $ids->toArray();
-                $data['is_read'] = 1;
-                $notifications = Notifications::where("user_id",\Auth::user()->id)
-                            ->where("is_read",0)
-                            ->whereIn("type",$types)
-                            ->update($data);
-
-                $notifications = NotificationData::where("user_id",\Auth::user()->id)
-                            ->where("is_read",0)
-                            ->whereIn("notification_id",$ids)
-                            ->update($data);
-            }
-            $response['status'] = true;
-        } catch (Exception $e) {
-            $response['status'] = false;
-            $response['message'] = $e->getMessage();
-        }
-        return $response;
-   }
-}
-if(! function_exists('setNotification')){
-    function setNotification($type,$title,$comment,$user_id,$url = '',$otherData = array()){
-        try{
-
-            $object = new Notifications();
-            $object->type = $type;
-            $object->title = $title;
-            $object->comment = $comment;
-            $object->user_id = $user_id;
-            $object->url = $url;
-            $object->is_read=0;
-            $object->save();
-            $id = $object->id;
-            if(count($otherData) > 0){
-
-                foreach($otherData as $data){
-                
-                    $object2 = new NotificationData();
-                    $object2->notification_id = $id;
-                    $object2->user_id = $user_id;
-                    $object2->meta_key = $data['meta_key'];
-                    $object2->meta_value = $data['meta_value'];
-                    $object2->save();
-                }
-            }
-            $response['status'] = true;
-            $response['message'] = "Notification added successfully";
-
-        } catch (Exception $e) {
-            $response['status'] = false;
-            $response['message'] = $e->getMessage();
-        }
-        return $response;
-        
-    }
-}
 if (! function_exists('getFileTypeIcon')) {
     function getFileTypeIcon($filename) {
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -982,5 +900,91 @@ if(!function_exists("role_permission")){
         }else{
             return false;
         }
+    }
+}
+if(!function_exists("sendNotification")){
+    function sendNotification($data,$send_to,$subdomain=''){
+        $data['created_at'] = date("Y-m-d H:i:s");
+        $data['updated_at'] = date("Y-m-d H:i:s");
+
+        $other_data = array();
+        if(isset($data['other_data'])){
+            $other_data = $data['other_data'];
+            unset($data['other_data']);
+        }
+        if($send_to == 'professional'){
+            if($subdomain == ''){
+                $subdomain = \Session::get("subdomain");
+            }
+            DB::table(PROFESSIONAL_DATABASE.$subdomain.".notifications")->insert($data);
+
+            if(!empty($other_data)){
+                $id = DB::getPdo()->lastInsertId();
+                foreach($other_data as $value){
+                    $ins_data['meta_key'] = $value['key'];
+                    $ins_data['meta_value'] = $value['value'];
+                    $ins_data['notification_id'] = $id;
+                    $ins_data['send_by'] = $data['send_by'];
+                    $ins_data['added_by'] = $data['added_by'];
+                    $ins_data['created_at'] = date("Y-m-d H:i:s");
+                    $ins_data['updated_at'] = date("Y-m-d H:i:s");
+                    DB::table(PROFESSIONAL_DATABASE.$subdomain.".notification_data")->insert($ins_data);    
+                }
+            }
+        }else{
+            DB::table(MAIN_DATABASE.".notifications")->insert($data);
+            if(!empty($other_data)){
+                $id = DB::getPdo()->lastInsertId();
+                foreach($other_data as $value){
+                    $ins_data['meta_key'] = $value['key'];
+                    $ins_data['meta_value'] = $value['value'];
+                    $ins_data['notification_id'] = $id;
+                    $ins_data['send_by'] = $data['send_by'];
+                    $ins_data['added_by'] = $data['added_by'];
+                    $ins_data['created_at'] = date("Y-m-d H:i:s");
+                    $ins_data['updated_at'] = date("Y-m-d H:i:s");
+                    DB::table(MAIN_DATABASE.".notification_data")->insert($ins_data);    
+                }
+            }
+        }
+        return true;
+    }
+}
+if(!function_exists("chatNotifications")){
+    function chatNotifications(){
+        $notifications = array();
+        
+        if(\Session::get("login_to") == 'professional_panel'){
+            $notifications = Notifications::where('type','chat')
+                        ->whereDoesntHave("Read")
+                        ->orderBy("id","desc")
+                        ->get();
+        }else{
+            $notifications = Notifications::where('type','chat')
+                        ->whereDoesntHave("Read")
+                        ->where("user_id",\Auth::user()->unique_id)
+                        ->orderBy("id","desc")
+                        ->get();
+        }
+        return $notifications;
+    }
+}
+if(!function_exists("otherNotifications")){
+    function otherNotifications(){
+        $notifications = array();
+        
+        if(\Session::get("login_to") == 'professional_panel'){
+            $notifications = Notifications::where('type','other')
+                        ->whereDoesntHave("Read")
+                        ->orderBy("id","desc")
+                        ->get();
+        }else{
+            $notifications = Notifications::where('type','other')
+                        ->whereDoesntHave("Read")
+                        ->where("user_id",\Auth::user()->unique_id)
+                        ->orderBy("id","desc")
+                        ->get();
+        }
+        return $notifications;
     }
 }

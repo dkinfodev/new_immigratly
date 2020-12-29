@@ -18,7 +18,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('/cases/invoices/'.base64_encode($case->id))}}">
+        <a class="btn btn-primary" href="{{baseUrl('/cases/invoices/list/'.base64_encode($case->id))}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -235,7 +235,10 @@ $(document).on('ready', function () {
         $('[data-toggle="tooltip"]').tooltip();
         $(".amount").blur(function(){
           calculateAmount();
-        })
+        });
+        $(".js-delete-field").click(function(){
+          calculateAmount();
+        });
       },
       deletedField: function() {
         $('.tooltip').hide();

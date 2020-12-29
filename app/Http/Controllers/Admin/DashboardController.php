@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 use DB;
+use View;
 
 use App\Models\RolePrivileges;
+use App\Models\ReminderNotes;
 
 class DashboardController extends Controller
 {
@@ -123,5 +127,115 @@ class DashboardController extends Controller
             $response['message'] = 'No privileges selected';
         }
         return response()->json($response);
+    }
+
+    public function addReminderNote(Request $request){
+        $viewData['pageTitle'] = "Add Reminder Notes";
+        $view = View::make(roleFolder().'.modal.add-reminder-note',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function saveReminderNote(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'reminder_date' => 'required',
+            'notes' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $response['error_type'] = 'validation';
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object = new ReminderNotes();
+        $object->user_id = \Auth::user()->unique_id;
+        $object->unique_id = randomNumber();
+        $object->notes = $request->input("notes");
+        $date = str_replace("/","-",$request->input("reminder_date"));
+        $object->reminder_date = dateFormat($date,"Y-m-d");
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Notes added successfully";
+
+        return response()->json($response);  
+    }
+
+    public function fetchReminderNotes(Request $request){
+        $unique_id = \Auth::user()->unique_id;
+        
+        $notes = ReminderNotes::where("user_id",$unique_id)
+                            ->orderBy("reminder_date","desc")
+                            ->get();
+        $viewData['current_date'] = date("Y-m-d");
+        $viewData['notes'] = $notes;
+        $view = View::make(roleFolder().'.modal.reminder-list',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['html'] = $contents;
+        return response()->json($response);
+    }
+
+    public function editReminderNote($id,Request $request){
+        $viewData['pageTitle'] = "Edit Reminder Notes";
+        $record = ReminderNotes::where("unique_id",$id)->first();
+        $viewData['record'] = $record;
+        $view = View::make(roleFolder().'.modal.edit-reminder-note',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function updateReminderNote($id,Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'reminder_date' => 'required',
+            'notes' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $response['error_type'] = 'validation';
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object = ReminderNotes::where("unique_id",$id)->first();
+        $object->user_id = \Auth::user()->unique_id;
+        $object->unique_id = randomNumber();
+        $object->notes = $request->input("notes");
+        $date = str_replace("/","-",$request->input("reminder_date"));
+        $object->reminder_date = dateFormat($date,"Y-m-d");
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Notes edited successfully";
+
+        return response()->json($response);  
+    }
+
+    public function deleteReminderNote($id){
+        $note = ReminderNotes::where("unique_id",$id)->first();
+        ReminderNotes::deleteRecord($note->id);
+        return redirect()->back()->with("success","Note has been deleted!");
     }
 }

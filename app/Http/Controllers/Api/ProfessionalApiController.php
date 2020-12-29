@@ -18,6 +18,10 @@ use App\Models\CaseFolders;
 use App\Models\Documents;
 use App\Models\DocumentChats;
 use App\Models\Chats;
+use App\Models\Invoices;
+use App\Models\CaseInvoices;
+use App\Models\CaseInvoiceItems;
+use App\Models\ProfessionalDetails;
 
 class ProfessionalApiController extends Controller
 {
@@ -185,11 +189,12 @@ class ProfessionalApiController extends Controller
 
             $case_id = $request->input("case_id");
             $doc_id = $request->input("doc_id");
-            $record = Cases::where("unique_id",$case_id)->first();
 
-            $document = CaseFolders::where("id",$doc_id)->first();
+            $record = Cases::where("unique_id",$case_id)->first();
+           
+            $document = CaseFolders::where("unique_id",$doc_id)->first();
             $folder_id = $document->unique_id;
-            $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+            $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
             $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
@@ -610,4 +615,97 @@ class ProfessionalApiController extends Controller
         }
         return response()->json($response); 
     }
+
+    public function fetchCaseInvoice(Request $request)
+    {
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $case_id = $request->input("case_id");
+            $records = CaseInvoices::with(['Invoice'])
+                            ->where("case_id",$case_id)
+                            ->orderBy('id',"desc")
+                            ->paginate();
+            $data['records'] = $records->items();
+            $data['last_page'] = $records->lastPage();
+            $data['current_page'] = $records->currentPage();
+            $data['total_records'] = $records->total();
+            $response['status'] = "success";
+            $response['data'] = $data;
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function viewCaseInvoice(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $id = $request->input("invoice_id");
+            $invoice = CaseInvoices::with(["Invoice","InvoiceItems"])->where("unique_id",$id)->first();
+
+            $case_id = $invoice->case_id;
+            $case = Cases::where("unique_id",$case_id)->first();
+            $client = $case->Client($case->client_id);
+            $professional = ProfessionalDetails::first();
+            $data['professional'] = $professional;
+            $data['case'] = $case;
+            $data['client'] = $client;
+            $data['invoice'] = $invoice;
+
+            $response['status'] = "success";
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function fetchInvoice(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $id = $request->input("invoice_id");
+            $invoice = Invoices::with(['CaseInvoice'])->where("unique_id",$id)->first();
+            $data['invoice'] = $invoice;
+            $response['status'] = "success";
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function sendInvoiceData(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $id = $request->input("invoice_id");
+
+            $object = Invoices::where("unique_id",$id)->first();
+            $object->payment_method = $request->input("payment_method");
+            $object->paid_amount = $request->input("amount_paid");
+            $object->transaction_response = $request->input("transaction_response");
+            $object->paid_date = date("Y-m-d H:i:s");
+            $object->paid_by = $request->input("paid_by");
+            $object->payment_status = 'paid';
+            $object->save();
+            $response['link_to'] = $object->link_to;
+            $response['status'] = "success";
+            $response['message'] = "Payment detail submitted";
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CaseInvoiceItems;
 
 class CaseInvoices extends Model
 {
@@ -11,6 +12,8 @@ class CaseInvoices extends Model
     protected $table = "case_invoices";
 
     static function deleteRecord($id){
+        $record = CaseInvoices::where("id",$id)->first();
+        CaseInvoiceItems::where("case_invoice_id",$record->unique_id)->delete();
         CaseInvoices::where("id",$id)->delete();
     }
 

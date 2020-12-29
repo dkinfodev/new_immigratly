@@ -48,7 +48,10 @@ Route::group(array('middleware' => 'professional_curl'), function () {
 			Route::post('/fetch-case-documents', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchCaseDocuments']);
 			Route::post('/fetch-chats', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchChats']);
 			Route::post('/save-chat', [App\Http\Controllers\Api\ProfessionalApiController::class, 'saveChat']);
-			
+			Route::post('/fetch-case-invoices', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchCaseInvoice']);
+			Route::post('/view-case-invoice', [App\Http\Controllers\Api\ProfessionalApiController::class, 'viewCaseInvoice']);
+			Route::post('/fetch-invoice', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchInvoice']);			
+			Route::post('/send-invoice-data', [App\Http\Controllers\Api\ProfessionalApiController::class, 'sendInvoiceData']);			
 		});	
 	});	
 });

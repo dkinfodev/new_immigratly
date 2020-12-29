@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+
+use App\Models\Notifications;
+use App\Models\NotificationRead;
+
 class CommonController extends Controller
 {
    	public function __construct()
@@ -46,4 +50,27 @@ class CommonController extends Controller
     	$response['status'] = true;
     	return response()->json($response);
     }
+
+    public function readNotification($id){
+        if(\Auth::check()){
+            $id = base64_decode($id);
+            $notification = Notifications::where("id",$id)->first();
+            $is_read = $notification->NotificationRead($id);
+            if($is_read <= 0){
+                $object = new NotificationRead();
+                $object->notification_id = $id;
+                $object->user_id = \Auth::user()->unique_id;
+                $object->user_role = \Auth::user()->role;
+                $object->save();
+            }
+            if($notification->url != ''){
+                return redirect(baseUrl($notification->url));
+            }else{
+                return redirect()->back();
+            }
+        }else{
+            return redirect()->back()->with("error","Not allowed to view");
+        }
+    }
+
 }

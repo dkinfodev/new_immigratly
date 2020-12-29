@@ -167,6 +167,10 @@
                  <i class="tio-pages-outlined dropdown-item-icon"></i>
                  Case Documents
                 </a>
+                <a class="dropdown-item" href="{{baseUrl('cases/'.$professional->professional.'/invoices/list/'.$record['unique_id'])}}">
+                 <i class="tio-dollar dropdown-item-icon"></i>
+                 Invoices
+                </a>
                 
               </div>
             </div>

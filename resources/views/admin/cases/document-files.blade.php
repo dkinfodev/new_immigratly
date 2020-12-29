@@ -479,8 +479,8 @@
                $("#message_input,.send-message,.send-attachment").removeAttr('disabled');
                $("#activitySidebar .messages").html(response.html);
                setTimeout(function(){
-                  $(".messages").mCustomScrollbar();
-                  $(".messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
+                  $("#activitySidebar .messages").mCustomScrollbar();
+                  $("#activitySidebar .messages").animate({ scrollTop: $(".messages")[0].scrollHeight}, 1000);
                },800);
                
                $(".doc_chat_input").show();

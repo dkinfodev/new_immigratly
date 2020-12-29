@@ -215,6 +215,7 @@
         $("#popupModal").modal("hide");
     }
     </script>
+    @include(roleFolder().'.layouts.footer')
     @yield('javascript')
   </body>
 </html>

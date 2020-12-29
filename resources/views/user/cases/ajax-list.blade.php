@@ -1,3 +1,4 @@
+<?php /*
  @foreach($records as $key => $record)
           <tr>
             <td class="table-column-pr-0">
@@ -88,6 +89,10 @@
                    <i class="tio-pages-outlined dropdown-item-icon"></i>
                    Case Documents
                   </a>
+                  <a class="dropdown-item" href="{{baseUrl('cases/invoices/list/'.base64_encode($record->id))}}">
+                   <i class="tio-dollar dropdown-item-icon"></i>
+                   Invoices
+                  </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/delete/'.base64_encode($record->id))}}">
                    <i class="tio-delete-outlined dropdown-item-icon"></i>
@@ -98,3 +103,4 @@
              </td>
           </tr>
           @endforeach
+*/ ?>
