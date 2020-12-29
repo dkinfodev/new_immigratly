@@ -340,7 +340,7 @@
         <!-- End Body -->
 
         <!-- Card Footer -->
-        <a class="card-footer text-center" href="#">
+        <a class="card-footer text-center" href="{{baseUrl('notifications')}}">
           View all notifications
           <i class="tio-chevron-right"></i>
         </a>

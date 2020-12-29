@@ -248,6 +248,7 @@ Route::group(array('prefix' => 'admin'), function () {
         Route::post('/update-profile', [App\Http\Controllers\Admin\ProfileController::class, 'updateProfile']);
     }); 
     Route::group(array('middleware' => 'admin'), function () {
+        Route::get('/notifications', [App\Http\Controllers\Admin\DashboardController::class, 'notifications']);
         Route::get('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'rolePrivileges']);
         Route::post('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'savePrivileges']);
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard']);

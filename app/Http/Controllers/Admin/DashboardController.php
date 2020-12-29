@@ -11,7 +11,7 @@ use View;
 
 use App\Models\RolePrivileges;
 use App\Models\ReminderNotes;
-
+use App\Models\Notifications;
 class DashboardController extends Controller
 {
     public function __construct()
@@ -237,5 +237,31 @@ class DashboardController extends Controller
         $note = ReminderNotes::where("unique_id",$id)->first();
         ReminderNotes::deleteRecord($note->id);
         return redirect()->back()->with("success","Note has been deleted!");
+    }
+
+    public function notifications(){
+        $viewData['pageTitle'] = "All Notifications";
+
+        if(\Session::get("login_to") == 'professional_panel'){
+            $chat_notifications = Notifications::with('Read')->where('type','chat')
+                        
+                        ->orderBy("id","desc")
+                        ->get();
+            $other_notifications = Notifications::with('Read')->where('type','other')
+                        ->orderBy("id","desc")
+                        ->get();
+        }else{
+            $chat_notifications = Notifications::with('Read')->where('type','chat')
+                        ->where("user_id",\Auth::user()->unique_id)
+                        ->orderBy("id","desc")
+                        ->get();
+            $other_notifications = Notifications::with('Read')->where('type','other')
+                        ->where("user_id",\Auth::user()->unique_id)
+                        ->orderBy("id","desc")
+                        ->get();
+        }
+        $viewData['chat_notifications'] = $chat_notifications;
+        $viewData['other_notifications'] = $other_notifications;
+        return view(roleFolder().'.allnotification',$viewData);        
     }
 }
