@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Manager;
+namespace App\Http\Controllers\Associate;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -27,7 +27,7 @@ class CasesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('manager');
+        $this->middleware('associate');
     }
 
     public function cases(Request $request){

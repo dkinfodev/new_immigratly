@@ -42,7 +42,7 @@ class ConfigServiceProvider extends ServiceProvider
             }
         }else{
             \Session::forget("subdomain");
-            $login_to = 'admin_panel'; // admin_panel/professional_panel
+            $login_to = 'professional_panel'; // admin_panel/professional_panel
             \Session::put("login_to",$login_to);
             if($login_to == 'professional_panel'){
                 \Session::put("subdomain",'fastzone');

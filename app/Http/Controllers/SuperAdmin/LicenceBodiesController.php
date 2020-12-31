@@ -29,7 +29,14 @@ class LicenceBodiesController extends Controller
 
     public function getAjaxList(Request $request)
     {
-        $records = LicenceBodies::orderBy('id',"desc")->paginate();
+        $keyword = $request->input("search");
+        $records = LicenceBodies::where(function($query) use($keyword){
+                                    if($keyword != ''){
+                                        $query->where("name","LIKE",$keyword."%");
+                                    }
+                                })
+                                ->orderBy('id',"desc")
+                                ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.licence-bodies.ajax-list',$viewData);
         $contents = $view->render();

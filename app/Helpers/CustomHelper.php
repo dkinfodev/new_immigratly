@@ -959,12 +959,14 @@ if(!function_exists("chatNotifications")){
         if(\Session::get("login_to") == 'professional_panel'){
             $notifications = Notifications::where('type','chat')
                         ->whereDoesntHave("Read")
+                        ->where("added_by","!=",\Auth::user()->unique_id)
                         ->orderBy("id","desc")
                         ->get();
         }else{
             $notifications = Notifications::where('type','chat')
                         ->whereDoesntHave("Read")
                         ->where("user_id",\Auth::user()->unique_id)
+                        ->where("added_by","!=",\Auth::user()->unique_id)
                         ->orderBy("id","desc")
                         ->get();
         }
@@ -978,12 +980,14 @@ if(!function_exists("otherNotifications")){
         if(\Session::get("login_to") == 'professional_panel'){
             $notifications = Notifications::where('type','other')
                         ->whereDoesntHave("Read")
+                        ->where("added_by","!=",\Auth::user()->unique_id)
                         ->orderBy("id","desc")
                         ->get();
         }else{
             $notifications = Notifications::where('type','other')
                         ->whereDoesntHave("Read")
                         ->where("user_id",\Auth::user()->unique_id)
+                        ->where("added_by","!=",\Auth::user()->unique_id)
                         ->orderBy("id","desc")
                         ->get();
         }

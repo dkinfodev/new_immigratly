@@ -53,6 +53,7 @@ function initPagination(data,parent_class= ''){
 	if(parent_class != ''){
 		parent_class = parent_class+" ";
 	}
+  $(parent_class+".datatable-custom").find(".norecord").remove();
 	if(data.total_records > 0){
       var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
       $(parent_class+"#pageinfo").html(pageinfo);
@@ -69,7 +70,7 @@ function initPagination(data,parent_class= ''){
       }
       $(parent_class+"#pageno").attr("max",data.last_page);
     }else{
-      $(parent_class+".datatable-custom").find(".norecord").remove();
+      
       var html = '<div class="text-center text-danger norecord">No records available</div>';
       $(parent_class+".datatable-custom").append(html);
     }

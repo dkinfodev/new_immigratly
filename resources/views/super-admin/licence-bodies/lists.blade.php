@@ -34,7 +34,7 @@
     <div class="card-header">
       <div class="row justify-content-between align-items-center flex-grow-1">
         <div class="col-sm-6 col-md-4 mb-3 mb-sm-0">
-          <form>
+          
             <!-- Search -->
             <div class="input-group input-group-merge input-group-flush">
               <div class="input-group-prepend">
@@ -42,10 +42,10 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" onchange="search(this.value)" type="search" class="form-control" placeholder="Search Licence Bodies" aria-label="Search Licence Bodies">
+              <input id="datatableSearch" type="text" class="form-control" placeholder="Search Licence Bodies" aria-label="Search Licence Bodies">
             </div>
             <!-- End Search -->
-          </form>
+          
         </div>
 
         <div class="col-sm-6">
@@ -138,15 +138,25 @@ $(document).ready(function(){
   $('.js-toggle-switch').each(function () {
     var toggleSwitch = new HSToggleSwitch($(this)).init();
   });
-  
+  $("#datatableSearch").keyup(function(){
+    var value = $(this).val();
+    if(value == ''){
+      loadData();
+    }
+    if(value.length > 3){
+      loadData();
+    }
+  });
 })
 loadData();
 function loadData(page=1){
+    var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
         url: BASEURL + '/licence-bodies/ajax-list?page='+page,
         data:{
-            _token:csrf_token
+            _token:csrf_token,
+            search:search
         },
         dataType:'json',
         beforeSend:function(){
@@ -156,48 +166,6 @@ function loadData(page=1){
             hideLoader();
             $("#tableList tbody").html(data.contents);
             initPagination(data);
-        },
-    });
-}
-
-
-
-function search(keyword){
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/licence-bodies/search/'+keyword,
-        data:{
-            _token:csrf_token
-        },
-        dataType:'json',
-        beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
-        },
-        success: function (data) {
-            $("#tableList tbody").html(data.contents);
-            
-            if(data.total_records > 0){
-              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
-              $("#pageinfo").html(pageinfo);
-              $("#pageno").val(data.current_page);
-              if(data.current_page < data.last_page){
-                $(".next").removeClass("disabled");
-              }else{
-                $(".next").addClass("disabled","disabled");
-              }
-              if(data.current_page > 1){
-                $(".previous").removeClass("disabled");
-              }else{
-                $(".previous").addClass("disabled","disabled");
-              }
-              $("#pageno").attr("max",data.last_page);
-            }else{
-              $(".datatable-custom").find(".norecord").remove();
-              var html = '<div class="text-center text-danger norecord">No records available</div>';
-              $(".datatable-custom").append(html);
-            }
         },
     });
 }

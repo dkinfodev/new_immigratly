@@ -720,12 +720,41 @@ class CasesController extends Controller
         
         $not_data['send_by'] = \Auth::user()->role;
         $not_data['added_by'] = \Auth::user()->unique_id;
-        $not_data['user_id'] = $case->client_id;
+        // $not_data['user_id'] = $case->client_id;
         $not_data['type'] = "chat";
         $not_data['notification_type'] = "document_chat";
-        $not_data['title'] = "Message on document by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+        $not_data['title'] = "Message on document by ".\Auth::user()->first_name." ".\Auth::user()->last_name;
         $not_data['comment'] = $request->input("message");
         $subdomain = \Session::get("subdomain");
+        // if($case_document->document_type == 'extra'){
+        //     $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+        // }
+        // if($case_document->document_type == 'other'){
+        //     $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+        // }
+        // if($case_document->document_type == 'default'){
+        //     $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+        // }
+        
+        $other_data[] = array("key"=>"case_id","value"=>$case_id);
+        $other_data[] = array("key"=>"document_id","value"=>$document_id);
+        
+        $not_data['other_data'] = $other_data;
+        
+        // to professional
+        if($request->input("doc_type") == 'extra'){
+            $not_data['url'] = "cases/case-documents/extra/".$case_id."/".$folder_id;
+        }
+        if($request->input("doc_type") == 'other'){
+            $not_data['url'] = "cases/case-documents/other/".$case_id."/".$folder_id;
+        }
+        if($request->input("doc_type") == 'default'){
+            $not_data['url'] = "cases/case-documents/default/".$case_id."/".$folder_id;
+        }
+        sendNotification($not_data,"professional",\Session::get('subdomain'));
+
+        // to user
+        $not_data['user_id'] = $case->client_id;
         if($case_document->document_type == 'extra'){
             $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
         }
@@ -735,13 +764,8 @@ class CasesController extends Controller
         if($case_document->document_type == 'default'){
             $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
         }
-        
-        $other_data[] = array("key"=>"case_id","value"=>$case_id);
-        $other_data[] = array("key"=>"document_id","value"=>$document_id);
-        
-        $not_data['other_data'] = $other_data;
-        
         sendNotification($not_data,"user");
+        // sendNotification($not_data,"user");
         
         return response()->json($response);
     }
@@ -784,12 +808,43 @@ class CasesController extends Controller
                 
                 $not_data['send_by'] = \Auth::user()->role;
                 $not_data['added_by'] = \Auth::user()->unique_id;
-                $not_data['user_id'] = $case->client_id;
+                // $not_data['user_id'] = $case->client_id;
                 $not_data['type'] = "chat";
                 $not_data['notification_type'] = "document_chat";
-                $not_data['title'] = "Message on document by Client ".\Auth::user()->first_name." ".\Auth::user()->last_name;
+                $not_data['title'] = "Message on document by ".\Auth::user()->first_name." ".\Auth::user()->last_name;
                 $not_data['comment'] = "Document send in chat";
                 $subdomain = \Session::get("subdomain");
+                // if($case_document->document_type == 'extra'){
+                //     $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+                // }
+                // if($case_document->document_type == 'other'){
+                //     $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+                // }
+                // if($case_document->document_type == 'default'){
+                //     $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+                // }
+                
+                $other_data[] = array("key"=>"case_id","value"=>$case_id);
+                $other_data[] = array("key"=>"document_id","value"=>$document_id);
+                
+                $not_data['other_data'] = $other_data;
+                
+                // sendNotification($not_data,"user");         
+
+                // to professional
+                if($request->input("doc_type") == 'extra'){
+                    $not_data['url'] = "cases/case-documents/extra/".$case_id."/".$folder_id;
+                }
+                if($request->input("doc_type") == 'other'){
+                    $not_data['url'] = "cases/case-documents/other/".$case_id."/".$folder_id;
+                }
+                if($request->input("doc_type") == 'default'){
+                    $not_data['url'] = "cases/case-documents/default/".$case_id."/".$folder_id;
+                }
+                sendNotification($not_data,"professional",\Session::get('subdomain'));
+
+                // to user
+                $not_data['user_id'] = $case->client_id;
                 if($case_document->document_type == 'extra'){
                     $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
                 }
@@ -799,13 +854,8 @@ class CasesController extends Controller
                 if($case_document->document_type == 'default'){
                     $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
                 }
+                sendNotification($not_data,"user");
                 
-                $other_data[] = array("key"=>"case_id","value"=>$case_id);
-                $other_data[] = array("key"=>"document_id","value"=>$document_id);
-                
-                $not_data['other_data'] = $other_data;
-                
-                sendNotification($not_data,"user");         
             }else{
                 $response['status'] = true;
                 $response['message'] = "File send failed, try again!";
@@ -887,19 +937,19 @@ class CasesController extends Controller
         $subdomain = \Session::get("subdomain");
         $not_data['send_by'] = \Auth::user()->role;
         $not_data['added_by'] = \Auth::user()->unique_id;
-        $not_data['user_id'] = $request->input("client_id");
+        // $not_data['user_id'] = $request->input("client_id");
         $not_data['type'] = "chat";
         $not_data['notification_type'] = "case_chat";
         $professional = ProfessionalDetails::first();
         $not_data['title'] = $professional->company_name." send message on document";
         $not_data['comment'] = $request->input("message");
-        if($request->input("chat_type") == 'general'){
-            $not_data['notification_type'] = "general";
-            $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
-        }else{
-            $not_data['notification_type'] = "case_chat";
-            $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
-        }
+        // if($request->input("chat_type") == 'general'){
+        //     $not_data['notification_type'] = "general";
+        //     $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
+        // }else{
+        //     $not_data['notification_type'] = "case_chat";
+        //     $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
+        // }
         
         $other_data[] = array("key"=>"chat_type","value"=>$request->input("chat_type"));
         if($request->input("chat_type") == 'case_chat'){
@@ -907,7 +957,27 @@ class CasesController extends Controller
         }
         $not_data['other_data'] = $other_data;
         
+        // to professional
+        if($request->input("chat_type") == 'general'){
+            $not_data['notification_type'] = "general";
+            $not_data['url'] = "cases/chats/".$request->input("case_id");
+        }else{
+            $not_data['notification_type'] = "case_chat";
+            $not_data['url'] = "cases/chats/".$request->input("case_id")."?chat_type=case_chat";
+        }
+        sendNotification($not_data,"professional",\Session::get('subdomain'));
+
+        // to user
+        if($request->input("chat_type") == 'general'){
+            $not_data['notification_type'] = "general";
+            $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
+        }else{
+            $not_data['notification_type'] = "case_chat";
+            $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
+        }
+        $not_data['user_id'] = $request->input("client_id");
         sendNotification($not_data,"user");
+        
         
 
         $response['status'] = true;
@@ -955,19 +1025,19 @@ class CasesController extends Controller
                 $subdomain = \Session::get("subdomain");
                 $not_data['send_by'] = \Auth::user()->role;
                 $not_data['added_by'] = \Auth::user()->unique_id;
-                $not_data['user_id'] = $request->input("client_id");
+                // $not_data['user_id'] = $request->input("client_id");
                 $not_data['type'] = "chat";
                 $not_data['notification_type'] = "case_chat";
                 $professional = ProfessionalDetails::first();
                 $not_data['title'] = $professional->company_name." send message on document";
                 $not_data['comment'] = "Document send in chat";
-                if($request->input("chat_type") == 'general'){
-                    $not_data['notification_type'] = "general";
-                    $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
-                }else{
-                    $not_data['notification_type'] = "case_chat";
-                    $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
-                }
+                // if($request->input("chat_type") == 'general'){
+                //     $not_data['notification_type'] = "general";
+                //     $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
+                // }else{
+                //     $not_data['notification_type'] = "case_chat";
+                //     $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
+                // }
                 
                 $other_data[] = array("key"=>"chat_type","value"=>$request->input("chat_type"));
                 if($request->input("chat_type") == 'case_chat'){
@@ -975,7 +1045,28 @@ class CasesController extends Controller
                 }
                 $not_data['other_data'] = $other_data;
                 
+                // to professional
+                if($request->input("chat_type") == 'general'){
+                    $not_data['notification_type'] = "general";
+                    $not_data['url'] = "cases/chats/".$request->input("case_id");
+                }else{
+                    $not_data['notification_type'] = "case_chat";
+                    $not_data['url'] = "cases/chats/".$request->input("case_id")."?chat_type=case_chat";
+                }
+                sendNotification($not_data,"professional",\Session::get('subdomain'));
+
+                // to user
+                $not_data['user_id'] = $request->input("client_id");
+                if($request->input("chat_type") == 'general'){
+                    $not_data['notification_type'] = "general";
+                    $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id");
+                }else{
+                    $not_data['notification_type'] = "case_chat";
+                    $not_data['url'] = "cases/chats/".$subdomain."/".$request->input("case_id")."?chat_type=case_chat";
+                }
                 sendNotification($not_data,"user");
+                $response['status'] = true;
+                $response['message'] = "File send successfully";
                                 
             }else{
                 $response['status'] = false;

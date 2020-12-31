@@ -10,23 +10,25 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/super-admin') }}">Super Admin</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Languages</li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/leads') }}">Leads</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
 
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
-
+      @if(role_permission('leads','quick-lead'))
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/languages/add') }}">
-          <i class="tio-add mr-1"></i> Add 
+        <a class="btn btn-primary" onclick="showPopup('<?php echo baseUrl('leads/quick-lead') ?>')" href="javascript:;">
+          <i class="tio-user-add mr-1"></i> Quick Lead
         </a>
       </div>
+      @endif
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
+
 
   <!-- Card -->
   <div class="card">
@@ -34,7 +36,7 @@
     <div class="card-header">
       <div class="row justify-content-between align-items-center flex-grow-1">
         <div class="col-sm-6 col-md-4 mb-3 mb-sm-0">
-         
+          <form>
             <!-- Search -->
             <div class="input-group input-group-merge input-group-flush">
               <div class="input-group-prepend">
@@ -42,8 +44,10 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch"  type="text" class="form-control" placeholder="Search Language" aria-label="Search Language">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Lead" aria-label="Search Lead">
             </div>
+            <!-- End Search -->
+          </form>
         </div>
 
         <div class="col-sm-6">
@@ -55,7 +59,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('languages/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('leads/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -72,14 +76,20 @@
       <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
         <thead class="thead-light">
           <tr>
-            <th class="table-column-pr-0">
+            <th scope="col" class="table-column-pr-0">
               <div class="custom-control custom-checkbox">
                 <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th class="table-column-pl-0">Name</th>
-            <th>Action</th>
+            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Leads</th>
+            <th>Email/Phone no</th>
+            <th scope="col">Visa Service</th>
+            <th scope="col">Assigned</th>
+            @if(role_permission('leads','mark-as-client'))
+            <th scope="col"></td>
+            @endif
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -135,6 +145,7 @@ $(document).ready(function(){
   $('.js-toggle-switch').each(function () {
     var toggleSwitch = new HSToggleSwitch($(this)).init();
   });
+  
   $("#datatableSearch").keyup(function(){
     var value = $(this).val();
     if(value == ''){
@@ -144,20 +155,23 @@ $(document).ready(function(){
       loadData();
     }
   });
+
 })
 loadData();
 function loadData(page=1){
-    var search = $("#datatableSearch").val();
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/languages/ajax-list?page='+page,
+        url: BASEURL + '/leads/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search
         },
         dataType:'json',
         beforeSend:function(){
+            var cols = $("#tableList thead tr > th").length;
             showLoader();
+            // $("#paginate").html('');
         },
         success: function (data) {
             hideLoader();
@@ -169,5 +183,6 @@ function loadData(page=1){
         }
     });
 }
+
 </script>
 @endsection

@@ -26,7 +26,14 @@ class LanguagesController extends Controller
 
     public function getAjaxList(Request $request)
     {
-        $records = Languages::orderBy('id',"desc")->paginate();
+        $keyword = $request->input("search");
+        $records = Languages::where(function($query) use($keyword){
+                                    if($keyword != ''){
+                                        $query->where("name","LIKE",$keyword."%");
+                                    }
+                                })
+                                ->orderBy('id',"desc")
+                                ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.languages.ajax-list',$viewData);
         $contents = $view->render();

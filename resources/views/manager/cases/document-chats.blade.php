@@ -9,7 +9,12 @@ if($chat->send_by != 'client'){
 ?>
 <li class="message left appeared">
    <span class="avatar avatar-sm avatar-circle">
+     @if($chat->send_by != 'client')
+      <img class="avatar-img" src="{{ professionalProfile($chat->created_by,'t') }}" alt="Image Description">
+     @else
      <img class="avatar-img" src="{{ userProfile($chat->created_by,'t') }}" alt="Image Description">
+     @endif
+
    </span>
    <div class="text_wrapper">
       <div class="text-left"><b>{{dateFormat($chat->created_at,"F d, Y H:i:s a")}}</div>
@@ -45,14 +50,24 @@ if($chat->send_by != 'client'){
 @else
 <li class="message right appeared">
    <span class="avatar avatar-circle">
-     <img class="avatar-img" src="{{ professionalProfile($chat->created_by,'t') }}" alt="Image Description">
+     @if($chat->send_by != 'client')
+      <img class="avatar-img" src="{{ professionalProfile($chat->created_by,'t') }}" alt="Image Description">
+     @else
+     <img class="avatar-img" src="{{ userProfile($chat->created_by,'t') }}" alt="Image Description">
+     @endif
    </span>
    <div class="text_wrapper">
       @if($chat->type == 'text')
       <div class="text">
          <div class="send-date"><small>{{dateFormat($chat->created_at,"F d, Y H:i:s a")}}</small></div>
          <div class="text-msg">{{$chat->message}}</div>
+         @if($chat->created_by == Auth::user()->unique_id)
          <div class="text-right"><small><b>-You</b></small></div>
+         @else
+         <div class="text-right">
+            <small><b>-{{$user->first_name." ".$user->last_name}} ({{$chat->send_by}})</b></small>
+         </div>
+         @endif
       </div>
       @else
       <div class="text file-msg">
