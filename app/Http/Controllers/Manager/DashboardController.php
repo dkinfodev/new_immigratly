@@ -10,7 +10,7 @@ use DB;
 
 use App\Models\User;
 use App\Models\Countries;
-
+use App\Models\Notifications;
 class DashboardController extends Controller
 {
     public function __construct()
@@ -154,6 +154,32 @@ class DashboardController extends Controller
         $response['message'] = "Updation sucessfully";
         
         return response()->json($response);
+    }
+
+    public function notifications(){
+        $viewData['pageTitle'] = "All Notifications";
+
+        if(\Session::get("login_to") == 'professional_panel'){
+            $chat_notifications = Notifications::with('Read')->where('type','chat')
+                        
+                        ->orderBy("id","desc")
+                        ->get();
+            $other_notifications = Notifications::with('Read')->where('type','other')
+                        ->orderBy("id","desc")
+                        ->get();
+        }else{
+            $chat_notifications = Notifications::with('Read')->where('type','chat')
+                        ->where("user_id",\Auth::user()->unique_id)
+                        ->orderBy("id","desc")
+                        ->get();
+            $other_notifications = Notifications::with('Read')->where('type','other')
+                        ->where("user_id",\Auth::user()->unique_id)
+                        ->orderBy("id","desc")
+                        ->get();
+        }
+        $viewData['chat_notifications'] = $chat_notifications;
+        $viewData['other_notifications'] = $other_notifications;
+        return view(roleFolder().'.allnotification',$viewData);        
     }
 
 

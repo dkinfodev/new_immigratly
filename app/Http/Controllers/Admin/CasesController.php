@@ -742,13 +742,13 @@ class CasesController extends Controller
         $not_data['other_data'] = $other_data;
         
         // to professional
-        if($request->input("doc_type") == 'extra'){
+        if($case_document->document_type == 'extra'){
             $not_data['url'] = "cases/case-documents/extra/".$case_id."/".$folder_id;
         }
-        if($request->input("doc_type") == 'other'){
+        if($case_document->document_type == 'other'){
             $not_data['url'] = "cases/case-documents/other/".$case_id."/".$folder_id;
         }
-        if($request->input("doc_type") == 'default'){
+        if($case_document->document_type == 'default'){
             $not_data['url'] = "cases/case-documents/default/".$case_id."/".$folder_id;
         }
         sendNotification($not_data,"professional",\Session::get('subdomain'));
@@ -832,13 +832,13 @@ class CasesController extends Controller
                 // sendNotification($not_data,"user");         
 
                 // to professional
-                if($request->input("doc_type") == 'extra'){
+                if($case_document->document_type == 'extra'){
                     $not_data['url'] = "cases/case-documents/extra/".$case_id."/".$folder_id;
                 }
-                if($request->input("doc_type") == 'other'){
+                if($case_document->document_type == 'other'){
                     $not_data['url'] = "cases/case-documents/other/".$case_id."/".$folder_id;
                 }
-                if($request->input("doc_type") == 'default'){
+                if($case_document->document_type == 'default'){
                     $not_data['url'] = "cases/case-documents/default/".$case_id."/".$folder_id;
                 }
                 sendNotification($not_data,"professional",\Session::get('subdomain'));

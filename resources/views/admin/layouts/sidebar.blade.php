@@ -66,12 +66,12 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases</span>
                   </a>
                 </li>
-                <li class="navbar-vertical-aside-has-menu">
+                <!-- <li class="navbar-vertical-aside-has-menu">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/invoices') }}">
                     <i class="tio-dollar nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Invoices</span>
                   </a>
-                </li>
+                </li> -->
               </ul>
             </div>
             <!-- End Content -->
