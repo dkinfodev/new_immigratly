@@ -147,6 +147,31 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/change-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'changePassword']);
         Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'updatePassword']);
     });
+ 
+    Route::group(array('prefix' => 'news'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\NewsController::class, 'news']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\NewsController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\NewsController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\NewsController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NewsController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'edit']); 
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'update']);
+        
+    }); 
+
+    Route::group(array('prefix' => 'news-category'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategory']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryGetAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryAdd']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategorySave']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryDeleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryDeleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryEdit']); 
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryUpdate']);
+       
+    });  
 });
 
 // User

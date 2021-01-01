@@ -88,6 +88,32 @@
                   </ul>
                 </li>
                 <!-- End Apps -->
+
+
+                <!-- Apps -->
+                <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
+                    <i class="tio-settings nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">News<span class="badge badge-info badge-pill ml-1">Updates</span></span>
+                  </a>
+
+                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('news') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">News</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('news-category') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">News Category</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!-- End Apps -->
               </ul>
             </div>
             <!-- End Content -->
