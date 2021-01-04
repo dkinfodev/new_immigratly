@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Validator;
 use View;
 use DB;
 
+use App\Models\ProfessionalServices;
 use App\Models\User;
 use App\Models\Countries;
 
-
-class UserController extends Controller
+class StaffController extends Controller
 {
     public function __construct()
     {
@@ -21,8 +21,8 @@ class UserController extends Controller
 
     public function index()
     {
-        $viewData['pageTitle'] = "Users";
-        return view(roleFolder().'.user.lists',$viewData);
+        $viewData['pageTitle'] = "Staff";
+        return view(roleFolder().'.staff.lists',$viewData);
     } 
 
     public function getAjaxList(Request $request)
@@ -34,10 +34,10 @@ class UserController extends Controller
                                 $query->where("first_name","LIKE","%$search%");
                             }
                         })
-                        ->where("role","user")
+                        ->where("role","executive")
                         ->paginate();
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.user.ajax-list',$viewData);
+        $view = View::make(roleFolder().'.staff.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['last_page'] = $records->lastPage();
@@ -46,12 +46,15 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    
     public function add(){
-        $viewData['pageTitle'] = "Add User";
+        $viewData['pageTitle'] = "Add Staff";
         $countries = Countries::get();
+        //$languages = DB::table(MAIN_DATABASE.".languages")->get();
+        //$roles = DB::table(MAIN_DATABASE.".roles")->get();
+        //$viewData['languages'] = $languages;
         $viewData['countries'] = $countries;
-        return view(roleFolder().'.user.add',$viewData);
+        //$viewData['roles'] = $roles;
+        return view(roleFolder().'.staff.add',$viewData);
     }
 
 
@@ -87,7 +90,7 @@ class UserController extends Controller
         $object->phone_no = $request->input("phone_no");
         $object->is_active = $request->input("status");
 
-        $object->role = 'user';
+        $object->role = 'executive';
 
         if($request->input("password")){
             $object->password = bcrypt($request->input("password"));
@@ -113,22 +116,22 @@ class UserController extends Controller
         $object->save();
 
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('user');
-        $response['message'] = "User added sucessfully";
+        $response['redirect_back'] = baseUrl('staff');
+        $response['message'] = "Record added sucessfully";
         
         return response()->json($response);
     }
  
     public function edit($id,Request $request){
         $id = base64_decode($id);
-        $viewData['pageTitle'] = "Edit User";
+        $viewData['pageTitle'] = "Edit Staff";
         $record = User::where("id",$id)->first();
         $viewData['record'] = $record;
        
         $countries = Countries::get();
         $viewData['countries'] = $countries;
     
-        return view(roleFolder().'.user.edit',$viewData);
+        return view(roleFolder().'.staff.edit',$viewData);
     }
 
 
@@ -163,7 +166,7 @@ class UserController extends Controller
         $object->phone_no = $request->input("phone_no");
         $object->is_active = $request->input("status");        
         
-        $object->role = 'user';
+        $object->role = 'executive';
         
         if ($file = $request->file('profile_image')){
                 
@@ -185,17 +188,20 @@ class UserController extends Controller
         $object->save();
 
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('user');
+        $response['redirect_back'] = baseUrl('staff');
         $response['message'] = "Updation sucessfully";
         
         return response()->json($response);
     }
 
+    
     public function deleteSingle($id){
         $id = base64_decode($id);
         User::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
+
+
     public function deleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
@@ -207,14 +213,14 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-
+    
     public function changePassword($id)
     {
         $id = base64_decode($id);
         $record = User::where("id",$id)->first();
         $viewData['record'] = $record;
         $viewData['pageTitle'] = "Change Password";
-        return view(roleFolder().'.user.change-password',$viewData);
+        return view(roleFolder().'.staff.change-password',$viewData);
     }
 
     public function updatePassword($id,Request $request)
@@ -246,9 +252,12 @@ class UserController extends Controller
         $object->save();
 
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('user');
+        $response['redirect_back'] = baseUrl('staff');
         $response['message'] = "Updation sucessfully";
         
         return response()->json($response);
-    }
+    } 
+
+
+    
 }

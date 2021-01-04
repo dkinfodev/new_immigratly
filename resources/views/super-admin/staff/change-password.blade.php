@@ -10,7 +10,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/user') }}">User</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/staff') }}">Staff</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -18,7 +18,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('/user')}}">
+        <a class="btn btn-primary" href="{{baseUrl('/staff')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -31,7 +31,7 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('/user/update-password/'.base64_encode($record->id)) }}" method="post">
+      <form id="form" class="js-validate" action="{{ baseUrl('/staff/update-password/'.base64_encode($record->id)) }}" method="post">
 
         @csrf
         <!-- Input Group -->

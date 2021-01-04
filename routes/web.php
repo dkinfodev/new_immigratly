@@ -169,9 +169,44 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryDeleteSingle']); 
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryDeleteMultiple']); 
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryEdit']); 
-        Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryUpdate']);
-       
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryUpdate']);     
     });  
+
+    Route::group(array('prefix' => 'staff'), function () {
+            Route::get('/', [App\Http\Controllers\SuperAdmin\StaffController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\StaffController::class, 'getAjaxList']);
+            Route::get('/add', [App\Http\Controllers\SuperAdmin\StaffController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\SuperAdmin\StaffController::class, 'save']);
+            Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'update']);
+            Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\StaffController::class, 'deleteMultiple']);
+            Route::get('/change-password/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'changePassword']);
+            Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'updatePassword']);
+    });
+
+    Route::group(array('prefix' => 'employee-privileges'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'update']);
+        Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'search']); 
+
+        Route::group(array('prefix' => 'action'), function () {  
+            Route::get('/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'getAjaxList']); 
+            Route::get('/{id}/add', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'save']); 
+            Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'deleteSingle']); 
+            Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'deleteMultiple']); 
+            Route::get('/{mid}/edit/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'edit']); 
+            Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesActionsController::class, 'update']);
+        });
+    });
 });
 
 // User
@@ -303,6 +338,13 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/edit-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'editFolder']);
             Route::post('/edit-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'updateFolder']);
             Route::get('/delete-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteFolder']);
+
+        });
+
+         Route::group(array('prefix' => 'articles'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\ArticleController::class, 'add']);
+            //Route::post('/ajax-list', [App\Http\Controllers\Admin\ArticleController::class, 'getAjaxList']); 
+            //Route::get('/edit/{id}', [App\Http\Controllers\Admin\ArticleController::class, 'edit']);
 
         });
         

@@ -32,6 +32,14 @@
                   <small class="nav-subtitle" title="Accounts">Accounts</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
+                
+                <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/staff') }}">
+                    <i class="tio-user-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Staff</span>
+                  </a>
+                </li>
+
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/user') }}">
                     <i class="tio-user-outlined nav-icon"></i>
@@ -83,6 +91,12 @@
                       <a class="nav-link " href="{{ baseUrl('privileges') }}">
                         <span class="tio-circle nav-indicator-icon"></span>
                         <span class="text-truncate">Professional Privileges</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('employee-privileges') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Employee Privileges</span>
                       </a>
                     </li>
                   </ul>

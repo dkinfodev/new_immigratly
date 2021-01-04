@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PrivilegesActions extends Model
+class EmployeePrivilegesActions extends Model
 {
     use HasFactory;
-    protected $table = "privileges_actions";
+    protected $table = "employee_modules_action";
 
     static function deleteRecord($id){
-        PrivilegesActions::where("id",$id)->delete();
+        EmployeePrivilegesAction::where("id",$id)->delete();
     }
 }
