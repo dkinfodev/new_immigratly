@@ -170,6 +170,30 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryDeleteMultiple']); 
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryEdit']); 
         Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryUpdate']);     
+    }); 
+
+    Route::group(array('prefix' => 'noc-code'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'list']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'edit']); 
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'update']);     
+    });
+
+    Route::group(array('prefix' => 'primary-degree'), function () {
+
+        Route::get('/', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'list']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'edit']); 
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'update']);     
     });  
 
     Route::group(array('prefix' => 'staff'), function () {
