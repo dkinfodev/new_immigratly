@@ -98,6 +98,18 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
             Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'editCutoff']); 
             Route::post('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'updateCutoff']);
         });
+
+
+        Route::group(array('prefix' => 'content/{visa_service_id}'), function () {
+            Route::get('/', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'visaServiceContent']);
+            Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'visaContentList']); 
+            Route::get('/add', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'addContent']);
+            Route::post('/save', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'saveContent']); 
+            Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'deleteSingleContent']); 
+            Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'deleteMultipleContent']); 
+            Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'editContent']); 
+            Route::post('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'updateContent']);
+        });
     });
 
     Route::group(array('prefix' => 'document-folder'), function () {
