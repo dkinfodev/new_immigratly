@@ -90,7 +90,7 @@
         <div class="col-md-5">
           <div class="js-form-message">
             <select name="country_code" id="country_code" class="form-control">
-              <option value="">select</option>
+              <option value="">Select Code</option>
               @foreach($countries as $country)
               <option value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
               @endforeach
@@ -111,7 +111,7 @@
             <div class="col-md-12">
               <div class="js-form-message">
                 <select name="status" class="form-control">
-                  <option>Select</option>
+                  <option value="">Select Status</option>
                   <option value="1">Active</option>
                   <option value="0">Inactive</option>
                   <option value="2">Suspended</option>

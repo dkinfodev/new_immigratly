@@ -23,7 +23,7 @@
                 <li class="navbar-vertical-aside-has-menu show">
                   <a class="js-navbar-vertical-aside-menu-link nav-link active" href="{{ baseUrl('/') }}">
                     <i class="tio-home-vs-1-outlined nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Dashboards</span>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Dashboard</span>
                   </a>
                 </li>
                 <!-- End Dashboards -->
@@ -31,6 +31,12 @@
                 <li class="nav-item">
                   <small class="nav-subtitle" title="Accounts">Accounts</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/staff') }}">
+                    <i class="tio-group-senior nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Staff</span>
+                  </a>
                 </li>
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/user') }}">
@@ -46,7 +52,28 @@
                   </a>
                 </li>
                 <!-- End Pages -->
+                <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
+                    <i class="tio-feed-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">News</span>
+                  </a>
 
+                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('news') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">News</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('news-category') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">News Category</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
                 <!-- Apps -->
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
@@ -85,9 +112,29 @@
                         <span class="text-truncate">Professional Privileges</span>
                       </a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('employee-privileges') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Employee Privileges</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('noc-code') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">NOC Code</span>
+                      </a>
+                    </li>
+
+                     <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('primary-degree') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Primary Degree</span>
+                      </a>
+                    </li>
                   </ul>
                 </li>
                 <!-- End Apps -->
+                
               </ul>
             </div>
             <!-- End Content -->

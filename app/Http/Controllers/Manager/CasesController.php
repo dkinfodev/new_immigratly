@@ -1009,13 +1009,13 @@ class CasesController extends Controller
         // to user
         $not_data['user_id'] = $case->client_id;
         if($case_document->document_type == 'extra'){
-            $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+            $not_data['url'] = "cases/documents/extra/".$subdomain."/".$case_id."/".$folder_id;
         }
         if($case_document->document_type == 'other'){
-            $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+            $not_data['url'] = "cases/documents/other/".$subdomain."/".$case_id."/".$folder_id;
         }
         if($case_document->document_type == 'default'){
-            $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+            $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
         }
         sendNotification($not_data,"user");
 
@@ -1101,16 +1101,16 @@ class CasesController extends Controller
                 // to user
                 $not_data['user_id'] = $case->client_id;
                 if($case_document->document_type == 'extra'){
-                    $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+                    $not_data['url'] = "cases/documents/extra/".$subdomain."/".$case_id."/".$folder_id;
                 }
                 if($case_document->document_type == 'other'){
-                    $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+                    $not_data['url'] = "cases/documents/other/".$subdomain."/".$case_id."/".$folder_id;
                 }
                 if($case_document->document_type == 'default'){
-                    $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+                    $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
                 }
                 sendNotification($not_data,"user");
-                
+
                 
                 $response['status'] = true;
                 $response['message'] = "File send successfully";

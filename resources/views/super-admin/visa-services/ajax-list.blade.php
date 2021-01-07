@@ -12,8 +12,25 @@
     </a>
   </td>
   <td> 
-    <a href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> 
-    <a href="javascript:;" onclick="deleteRecord('{{ base64_encode($record->id) }}')" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+    <div class="hs-unfold">
+      <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
+         data-hs-unfold-options='{
+           "target": "#action-{{$key}}",
+           "type": "css-animation"
+         }'>
+              More <i class="tio-chevron-down ml-1"></i>
+      </a>
+
+      <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
+        <a class="dropdown-item" href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}">Edit</a>
+        <a class="dropdown-item" href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}">Cutoff Points</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}">Delete</a> 
+      </div>
+    </div>
+    <!-- <a href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> 
+    <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+    <a href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}" class="btn btn-info"><i class="tio-survey"></i> Cutoff Points</a>  -->
   
 </td>
 </tr>
@@ -30,8 +47,24 @@
     </a>
   </td>
   <td> 
-    <a href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}"><i class="tio-edit"></i></a> &nbsp; 
-    <a href="javascript:;" onclick="deleteRecord('{{ base64_encode($subservice->id) }}')" data-href="{{baseUrl('visa-services/delete/'.base64_encode($subservice->id))}}"><i class="tio-delete"></i></a> 
+    <div class="hs-unfold">
+      <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
+         data-hs-unfold-options='{
+           "target": "#subaction-{{$key}}",
+           "type": "css-animation"
+         }'>
+              More <i class="tio-chevron-down ml-1"></i>
+      </a>
+
+      <div id="subaction-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
+        <a class="dropdown-item" href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}">Edit</a>
+        <a class="dropdown-item" href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}">Cutoff Points</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($subservice->id))}}">Delete</a> 
+      </div>
+    </div>
+    <!-- <a href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}"><i class="tio-edit"></i></a> &nbsp; 
+    <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($subservice->id))}}"><i class="tio-delete"></i></a>  -->
   </td>
 </tr>
 @endforeach
@@ -44,6 +77,9 @@
 
 <script>
 $(document).ready(function(){
+  $('.js-hs-action').each(function () {
+    var unfold = new HSUnfold($(this)).init();
+  });
   $(".parent-check").change(function(){
       var key = $(this).attr("data-key");
       if($(this).is(":checked")){

@@ -730,10 +730,10 @@ class CasesController extends Controller
         //     $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
         // }
         // if($case_document->document_type == 'other'){
-        //     $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+        //     $not_data['url'] = "cases/documents/other/".$subdomain."/".$case_id."/".$folder_id;
         // }
         // if($case_document->document_type == 'default'){
-        //     $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+        //     $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
         // }
         
         $other_data[] = array("key"=>"case_id","value"=>$case_id);
@@ -756,13 +756,13 @@ class CasesController extends Controller
         // to user
         $not_data['user_id'] = $case->client_id;
         if($case_document->document_type == 'extra'){
-            $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+            $not_data['url'] = "cases/documents/extra/".$subdomain."/".$case_id."/".$folder_id;
         }
         if($case_document->document_type == 'other'){
-            $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+            $not_data['url'] = "cases/documents/other/".$subdomain."/".$case_id."/".$folder_id;
         }
         if($case_document->document_type == 'default'){
-            $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+            $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
         }
         sendNotification($not_data,"user");
         // sendNotification($not_data,"user");
@@ -815,13 +815,13 @@ class CasesController extends Controller
                 $not_data['comment'] = "Document send in chat";
                 $subdomain = \Session::get("subdomain");
                 // if($case_document->document_type == 'extra'){
-                //     $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+                //     $not_data['url'] = "cases/documents/extra/".$subdomain."/".$case_id."/".$folder_id;
                 // }
                 // if($case_document->document_type == 'other'){
-                //     $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+                //     $not_data['url'] = "cases/documents/other/".$subdomain."/".$case_id."/".$folder_id;
                 // }
                 // if($case_document->document_type == 'default'){
-                //     $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+                //     $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
                 // }
                 
                 $other_data[] = array("key"=>"case_id","value"=>$case_id);
@@ -846,13 +846,13 @@ class CasesController extends Controller
                 // to user
                 $not_data['user_id'] = $case->client_id;
                 if($case_document->document_type == 'extra'){
-                    $not_data['url'] = "cases/documents/".$subdomain."/extra/".$case_id."/".$folder_id;
+                    $not_data['url'] = "cases/documents/extra/".$subdomain."/".$case_id."/".$folder_id;
                 }
                 if($case_document->document_type == 'other'){
-                    $not_data['url'] = "cases/documents/".$subdomain."/other/".$case_id."/".$folder_id;
+                    $not_data['url'] = "cases/documents/other/".$subdomain."/".$case_id."/".$folder_id;
                 }
                 if($case_document->document_type == 'default'){
-                    $not_data['url'] = "cases/documents/".$subdomain."/default/".$case_id."/".$folder_id;
+                    $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
                 }
                 sendNotification($not_data,"user");
                 

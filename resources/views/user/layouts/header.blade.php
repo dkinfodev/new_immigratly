@@ -463,12 +463,11 @@
         </div>
 
         <div class="dropdown-divider"></div>
-
-        <a class="dropdown-item" href="#">
-          <span class="text-truncate pr-2" title="Profile &amp; account">Profile &amp; account</span>
-        </a>
         <a class="dropdown-item" href="{{baseUrl('edit-profile')}}">
           <span class="text-truncate pr-2" title="Edit Profile">Edit Profile</span>
+        </a>
+        <a class="dropdown-item" href="{{baseUrl('cv')}}">
+          <span class="text-truncate pr-2" title="Manage CV">Manage CV</span>
         </a>
         <a class="dropdown-item" href="{{baseUrl('change-password')}}">
           <span class="text-truncate pr-2" title="Change Password">Change Password</span>

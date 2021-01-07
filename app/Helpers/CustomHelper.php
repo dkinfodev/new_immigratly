@@ -11,6 +11,9 @@ use App\Models\Notifications;
 use App\Models\Cities;
 use App\Models\States;
 use App\Models\Countries;
+use App\Models\LanguageProficiency;
+use App\Models\ClientExperience;
+use App\Models\ClientEducations;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {

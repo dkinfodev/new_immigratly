@@ -14,7 +14,7 @@
 }
 .page-header{
     margin-bottom: 30px !important;
-    padding-bottom: 0px !important;
+    /*padding-bottom: 0px !important;*/
 }
 .required-error{
     display: block !important;
@@ -25,4 +25,7 @@
 }
 .invalid-feedback {
     display: block;
+}
+.custom-select-err {
+    border-color: #ed4c78 !important;
 }

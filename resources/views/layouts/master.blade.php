@@ -205,7 +205,7 @@
             },
             error:function(){
                 hideLoader();
-                internalServerError();
+                internalError();
             }
         });
       }

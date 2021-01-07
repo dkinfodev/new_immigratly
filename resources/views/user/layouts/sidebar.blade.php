@@ -38,6 +38,7 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Documents</span>
                   </a>
                 </li>
+
                 <!-- End Personal -->
 
                 <!-- Professionals -->
