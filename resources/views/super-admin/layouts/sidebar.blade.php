@@ -125,10 +125,24 @@
                       </a>
                     </li>
 
-                     <li class="nav-item">
+                    <li class="nav-item">
                       <a class="nav-link " href="{{ baseUrl('primary-degree') }}">
                         <span class="tio-circle nav-indicator-icon"></span>
                         <span class="text-truncate">Primary Degree</span>
+                      </a>
+                    </li>
+
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('categories') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Categories</span>
+                      </a>
+                    </li>
+
+                    <li class="nav-item">
+                      <a class="nav-link " href="{{ baseUrl('tags') }}">
+                        <span class="tio-circle nav-indicator-icon"></span>
+                        <span class="text-truncate">Tags</span>
                       </a>
                     </li>
                   </ul>

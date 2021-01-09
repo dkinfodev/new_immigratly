@@ -25,6 +25,38 @@
           </div>
           <!-- End Form Group -->
 
+          
+          <!-- Form Group -->
+          <div class="row form-group js-form-message">
+            <label class="col-sm-3 col-form-label input-label">NOC Code</label>
+            <div class="col-sm-9">
+              <div class="input-group input-group-sm-down-break">
+                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="" placeholder="Enter NOC Code" aria-label="NOC Code" >
+                @error('code')
+                <span class="invalid-feedback" role="alert">
+                  <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+              </div>
+            </div>
+          </div>
+          <!-- End Form Group -->
+
+          <!-- Form Group -->
+          <div class="row form-group js-form-message">
+            <label class="col-sm-3 col-form-label input-label">Level</label>
+            <div class="col-sm-9">
+              <div class="input-group input-group-sm-down-break">
+                <input type="text" class="form-control @error('level') is-invalid @enderror" name="level" id="level" value="" placeholder="Enter NOC Level" aria-label="NOC Level" >
+                @error('level')
+                <span class="invalid-feedback" role="alert">
+                  <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+              </div>
+            </div>
+          </div>
+          <!-- End Form Group -->
         </form>
     </div>
     <div class="modal-footer">

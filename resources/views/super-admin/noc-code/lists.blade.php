@@ -83,9 +83,7 @@
                 </div>
               </th>
               <th>Name</th>
-
-              <th>Added By</th>
-              
+              <th>Code</th>
               <th>Action</th>
             </tr>
           </thead>

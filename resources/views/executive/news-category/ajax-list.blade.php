@@ -20,21 +20,19 @@
 
   
   <td> 
-
-     <a onclick="showPopup('{{ baseUrl('news-category/edit/'.base64_encode($record->id)) }}')" href="javascript:;">
-          <i class="tio-edit"></i>
-     </a>
-
+    @if(employee_permission('news-category','edit-category'))
+    <a onclick="showPopup('{{ baseUrl('news-category/edit/'.base64_encode($record->id)) }}')" href="javascript:;">
+       <i class="tio-edit"></i>
+    </a>
+    @endif
+    @if(employee_permission('news-category','delete-category'))
     <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('news-category/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+    @endif
   
 </td>
 </tr>
 
 @endforeach
-@else
-<tr>
-  <td colspan="3" class="text-center text-danger">No records available</td>
-</tr>
 @endif
 
 <script>

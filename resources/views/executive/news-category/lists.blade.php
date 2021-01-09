@@ -16,14 +16,14 @@
 
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
-
+      @if(employee_permission('news-category','add-category'))
       <div class="col-sm-auto">
 
         <a onclick="showPopup('{{ baseUrl('news-category/add') }}')" class="btn btn-primary" href="javascript:;">
           <i class="tio-folder-add mr-1"></i> Add Category
         </a>
-
       </div>
+      @endif
     </div>
     <!-- End Row -->
   </div>
@@ -50,6 +50,7 @@
         </div>
 
         <div class="col-sm-6">
+          @if(employee_permission('news-category','delete-category'))
           <div class="d-sm-flex justify-content-sm-end align-items-sm-center">
             <!-- Datatable Info -->
             <div id="datatableCounterInfo" class="mr-2 mb-2 mb-sm-0" style="display: none;">
@@ -64,6 +65,7 @@
               </div>
             </div>
           </div>
+          @endif
         </div>
       </div>
       <!-- End Row -->

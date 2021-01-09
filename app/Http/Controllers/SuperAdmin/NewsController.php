@@ -27,14 +27,7 @@ class NewsController extends Controller
         return view(roleFolder().'.news.lists',$viewData);
     }
 
-    public function newsCategory()
-    {
-        $viewData['pageTitle'] = "News Category";
-        return view(roleFolder().'.news-category.lists',$viewData);
-    } 
-
     
-
     public function getAjaxList(Request $request)
     {   
         $search = $request->input("search");
@@ -61,114 +54,6 @@ class NewsController extends Controller
         $viewData['pageTitle'] = "Add News";
         $viewData['categories'] = NewsCategory::get();
         return view(roleFolder().'.news.add',$viewData);
-    }
-
-    public function newsCategoryUpdate(Request $request){
-        $id = $request->input('id');
-        $id = base64_decode($id);
-
-        $object = NewsCategory::find($id);
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',    
-        ]);
-        
-        if ($validator->fails()) {
-            $response['status'] = false;
-            $error = $validator->errors()->toArray();
-            $errMsg = array();
-            
-            foreach($error as $key => $err){
-                $errMsg[$key] = $err[0];
-            }
-            $response['message'] = $errMsg;
-            return response()->json($response);
-        }
-
-        $object->name = $request->input("name");
-        $object->slug = str_slug($request->input("name"));
-        
-        $object->save();
-        
-        $response['status'] = true;
-        $response['redirect_back'] = baseUrl('news-category');
-        $response['message'] = "Record added successfully";
-        
-        return response()->json($response);
-    }
-
-    public function newsCategoryEdit($id){
-        $id = base64_decode($id);
-        $viewData['record'] = NewsCategory::where('id',$id)->first();
-        $viewData['pageTitle'] = "Edit News Category";
-        $view = View::make(roleFolder().'.news-category.modal.edit',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['status'] = true;
-        return response()->json($response); 
-    }
-
-    public function newsCategoryAdd(){
-        $viewData['pageTitle'] = "Add News Category";
-        $view = View::make(roleFolder().'.news-category.modal.add',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['status'] = true;
-        return response()->json($response); 
-    }
-
-    public function newsCategoryGetAjaxList(Request $request){
-        
-        $search = $request->input("search");
-        $records = NewsCategory::
-                        where(function($query) use($search){
-                            if($search != ''){
-                                $query->where("name","LIKE","%".$search."%");
-                            }
-                        })
-                        ->orderBy('id',"desc")
-                        ->paginate();
-
-        $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.news-category.ajax-list',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['last_page'] = $records->lastPage();
-        $response['current_page'] = $records->currentPage();
-        $response['total_records'] = $records->total();
-        return response()->json($response);
-    }
-
-
-    public function newsCategorySave(Request $request){
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',    
-        ]);
-        
-        if ($validator->fails()) {
-            $response['status'] = false;
-            $error = $validator->errors()->toArray();
-            $errMsg = array();
-            
-            foreach($error as $key => $err){
-                $errMsg[$key] = $err[0];
-            }
-            $response['message'] = $errMsg;
-            return response()->json($response);
-        }
-
-        $object =  new NewsCategory;
-        $object->name = $request->input("name");
-        $object->slug = str_slug($request->input("name"));
-        $object->added_by = \Auth::user()->id;
-        
-        $object->save();
-        
-        $response['status'] = true;
-        $response['redirect_back'] = baseUrl('news-category');
-        $response['message'] = "Record added successfully";
-        
-        return response()->json($response);
     }
 
     public function save(Request $request){
@@ -275,11 +160,126 @@ class NewsController extends Controller
         \Session::flash('success', 'Records deleted successfully'); 
         return response()->json($response);
     }
+
+
+    public function newsCategory()
+    {
+        $viewData['pageTitle'] = "News Category";
+        return view(roleFolder().'.news-category.lists',$viewData);
+    } 
+
+    public function newsCategoryGetAjaxList(Request $request){
+        
+        $search = $request->input("search");
+        $records = NewsCategory::
+                        where(function($query) use($search){
+                            if($search != ''){
+                                $query->where("name","LIKE","%".$search."%");
+                            }
+                        })
+                        ->orderBy('id',"desc")
+                        ->paginate();
+
+        $viewData['records'] = $records;
+        $view = View::make(roleFolder().'.news-category.ajax-list',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['last_page'] = $records->lastPage();
+        $response['current_page'] = $records->currentPage();
+        $response['total_records'] = $records->total();
+        return response()->json($response);
+    }
+    public function newsCategoryAdd(){
+        $viewData['pageTitle'] = "Add News Category";
+        $view = View::make(roleFolder().'.news-category.modal.add',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response); 
+    }
+
+    public function newsCategorySave(Request $request){
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:news_category,name',    
+        ]);
+        
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object =  new NewsCategory;
+        $object->name = $request->input("name");
+        $object->slug = str_slug($request->input("name"));
+        $object->added_by = \Auth::user()->id;
+        
+        $object->save();
+        
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('news-category');
+        $response['message'] = "Record added successfully";
+        
+        return response()->json($response);
+    }
+
+    public function newsCategoryEdit($id){
+        $id = base64_decode($id);
+        $viewData['record'] = NewsCategory::where('id',$id)->first();
+        $viewData['pageTitle'] = "Edit News Category";
+        $view = View::make(roleFolder().'.news-category.modal.edit',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response); 
+    }
+
+    public function newsCategoryUpdate(Request $request){
+        $id = $request->input('id');
+        $id = base64_decode($id);
+
+        $object = NewsCategory::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:news_category,name,'.$object->id,   
+        ]);
+        
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object->name = $request->input("name");
+        $object->slug = str_slug($request->input("name"));
+        
+        $object->save();
+        
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('news-category');
+        $response['message'] = "Record edited successfully";
+        
+        return response()->json($response);
+    }
+
     public function newsCategoryDeleteSingle($id){
         $id = base64_decode($id);
         NewsCategory::deleteRecord($id);
         return redirect()->back()->with("success","Record deleted successfully");
     }
+
     public function newsCategoryDeleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){

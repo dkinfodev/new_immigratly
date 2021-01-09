@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Associate;
+namespace App\Http\Controllers\Executive;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class DashboardController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('associate');
+        $this->middleware('executive');
     }
     public function dashboard()
     {

@@ -53,6 +53,38 @@
             <input type="number" name="cutoff_point" id="cutoff_point" placeholder="Cutoff Points" class="form-control" value="{{$record->cutoff_point}}">
           </div>
         </div>
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Included NOC</label>
+          <div class="col-sm-10">
+            <?php
+              $included_noc = array();
+              if($record->included_noc != ''){
+                $included_noc = explode(",",$record->included_noc);
+              }
+            ?>
+            <select name="included_noc[]" multiple>
+                @foreach($noc_codes as $code)
+                <option {{(in_array($code->id,$included_noc))?'selected':'' }} value="{{$code->id}}">{{$code->code}} - {{$code->name}}</option>
+                @endforeach
+            </select>
+          </div>
+        </div>
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Included NOC</label>
+          <div class="col-sm-10">
+            <?php
+              $excluded_noc = array();
+              if($record->excluded_noc != ''){
+                $excluded_noc = explode(",",$record->excluded_noc);
+              }
+            ?>
+            <select name="excluded_noc[]" multiple>
+                @foreach($noc_codes as $code)
+                <option {{(in_array($code->id,$excluded_noc))?'selected':'' }} value="{{$code->id}}">{{$code->code}} - {{$code->name}}</option>
+                @endforeach
+            </select>
+          </div>
+        </div>
         <div class="form-group">
           <button type="submit" class="btn add-btn btn-primary">Save</button>
         </div>

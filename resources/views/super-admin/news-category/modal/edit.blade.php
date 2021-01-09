@@ -10,11 +10,11 @@
       <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('news-category/update') }}">  
           @csrf
           <!-- Form Group -->
-          <div class="row form-group js-form-message">
+          <div class="row form-group">
             <input type="hidden" name="id" value="{{base64_encode($record->id)}}">
 
             <label class="col-sm-3 col-form-label input-label">Name</label>
-            <div class="col-sm-9">
+            <div class="col-sm-9 js-form-message">
               <div class="input-group input-group-sm-down-break">
                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ $record->name }}" placeholder="Enter name" aria-label="Enter news category name" >
                 @error('name')

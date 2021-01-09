@@ -28,61 +28,6 @@ class NocCodeController extends Controller
         return view(roleFolder().'.noc-code.lists',$viewData);
     } 
 
-
-    public function update(Request $request){
-        $id = $request->input('id');
-        $id = base64_decode($id);
-
-        $object = NocCode::find($id);
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',    
-        ]);
-        
-        if ($validator->fails()) {
-            $response['status'] = false;
-            $error = $validator->errors()->toArray();
-            $errMsg = array();
-            
-            foreach($error as $key => $err){
-                $errMsg[$key] = $err[0];
-            }
-            $response['message'] = $errMsg;
-            return response()->json($response);
-        }
-
-        $object->name = $request->input("name");
-        $object->slug = str_slug($request->input("name"));
-        
-        $object->save();
-        
-        $response['status'] = true;
-        $response['redirect_back'] = baseUrl('noc-code');
-        $response['message'] = "Record added successfully";
-        
-        return response()->json($response);
-    }
-
-    public function edit($id){
-        $id = base64_decode($id);
-        $viewData['record'] = NocCode::where('id',$id)->first();
-        $viewData['pageTitle'] = "Edit NOC Code";
-        $view = View::make(roleFolder().'.noc-code.modal.edit',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['status'] = true;
-        return response()->json($response); 
-    }
-
-    public function add(){
-        $viewData['pageTitle'] = "Add NOC Code";
-        $view = View::make(roleFolder().'.noc-code.modal.add',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['status'] = true;
-        return response()->json($response); 
-    }
-
     public function getAjaxList(Request $request){
         
         $search = $request->input("search");
@@ -106,9 +51,20 @@ class NocCodeController extends Controller
     }
 
 
+    public function add(){
+        $viewData['pageTitle'] = "Add NOC Code";
+        $view = View::make(roleFolder().'.noc-code.modal.add',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response); 
+    }
+
     public function save(Request $request){
         $validator = Validator::make($request->all(), [
-            'name' => 'required',    
+            'name' => 'required',
+            'code' => 'required',    
+            'level' => 'required'
         ]);
         
         if ($validator->fails()) {
@@ -125,7 +81,8 @@ class NocCodeController extends Controller
 
         $object =  new NocCode;
         $object->name = $request->input("name");
-        $object->slug = str_slug($request->input("name"));
+        $object->code = $request->input("code");
+        $object->level = $request->input("level");
         $object->added_by = \Auth::user()->id;
         
         $object->save();
@@ -137,6 +94,55 @@ class NocCodeController extends Controller
         return response()->json($response);
     }
     
+
+    public function edit($id){
+        $id = base64_decode($id);
+        $viewData['record'] = NocCode::where('id',$id)->first();
+        $viewData['pageTitle'] = "Edit NOC Code";
+        $view = View::make(roleFolder().'.noc-code.modal.edit',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response); 
+    }
+
+    public function update(Request $request){
+        $id = $request->input('id');
+        $id = base64_decode($id);
+
+        $object = NocCode::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',    
+            'code' => 'required',    
+            'level' => 'required'
+        ]);
+        
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object->name = $request->input("name");
+        $object->code = $request->input("code");
+        $object->level = $request->input("level");
+        $object->save();
+        
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('noc-code');
+        $response['message'] = "Record added successfully";
+        
+        return response()->json($response);
+    }
+    
+
     public function deleteSingle($id){
         $id = base64_decode($id);
         NocCode::deleteRecord($id);

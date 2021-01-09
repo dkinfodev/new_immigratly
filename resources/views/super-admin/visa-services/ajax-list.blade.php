@@ -24,6 +24,7 @@
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         <a class="dropdown-item" href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}">Edit</a>
         <a class="dropdown-item" href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}">Cutoff Points</a>
+        <a class="dropdown-item" href="{{baseUrl('visa-services/content/'.base64_encode($record->id))}}">Visa Service Content</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>

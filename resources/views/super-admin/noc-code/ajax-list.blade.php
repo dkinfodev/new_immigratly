@@ -11,14 +11,10 @@
   <td>
       {{$record->name}}
   </td>
-
   <td>
-      {{$record->fetchUser->first_name}} {{$record->fetchUser->last_name}}
+      {{$record->code}}
   </td>
-
-  
   <td> 
-
      <a onclick="showPopup('{{ baseUrl('noc-code/edit/'.base64_encode($record->id)) }}')" href="javascript:;">
           <i class="tio-edit"></i>
      </a>

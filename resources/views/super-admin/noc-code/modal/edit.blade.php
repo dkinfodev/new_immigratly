@@ -7,17 +7,47 @@
       </button>
     </div>
     <div class="modal-body">
-      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('noc-code/update') }}">  
+      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('noc-code/update/'.base64_encode($record->id)) }}">  
           @csrf
           <!-- Form Group -->
           <div class="row form-group js-form-message">
-            <input type="hidden" name="id" value="{{base64_encode($record->id)}}">
-
             <label class="col-sm-3 col-form-label input-label">Name</label>
             <div class="col-sm-9">
               <div class="input-group input-group-sm-down-break">
                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" value="{{ $record->name }}" placeholder="Enter name" aria-label="Enter news category name" >
                 @error('name')
+                <span class="invalid-feedback" role="alert">
+                  <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+              </div>
+            </div>
+          </div>
+          <!-- End Form Group -->
+          
+          <!-- Form Group -->
+          <div class="row form-group js-form-message">
+            <label class="col-sm-3 col-form-label input-label">NOC Code</label>
+            <div class="col-sm-9">
+              <div class="input-group input-group-sm-down-break">
+                <input type="text" class="form-control @error('code') is-invalid @enderror" name="code" id="code" value="{{ $record->code }}" placeholder="Enter NOC Code" aria-label="NOC Code" >
+                @error('code')
+                <span class="invalid-feedback" role="alert">
+                  <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+              </div>
+            </div>
+          </div>
+          <!-- End Form Group -->
+
+          <!-- Form Group -->
+          <div class="row form-group js-form-message">
+            <label class="col-sm-3 col-form-label input-label">Level</label>
+            <div class="col-sm-9">
+              <div class="input-group input-group-sm-down-break">
+                <input type="text" class="form-control @error('level') is-invalid @enderror" name="level" id="level" value="{{ $record->level }}" placeholder="Enter NOC Level" aria-label="NOC Level" >
+                @error('level')
                 <span class="invalid-feedback" role="alert">
                   <strong>{{ $message }}</strong>
                 </span>

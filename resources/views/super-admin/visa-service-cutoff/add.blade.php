@@ -55,6 +55,28 @@
             <input type="number" name="cutoff_point" id="cutoff_point" placeholder="Cutoff Points" class="form-control" value="">
           </div>
         </div>
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Included NOC</label>
+          <div class="col-sm-10">
+            
+            <select name="included_noc[]" multiple>
+                @foreach($noc_codes as $code)
+                <option value="{{$code->id">{{$code->code}} - {{$code->name}}</option>
+                @endforeach
+            </select>
+          </div>
+        </div>
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Included NOC</label>
+          <div class="col-sm-10">
+            
+            <select name="excluded_noc[]" multiple>
+                @foreach($noc_codes as $code)
+                <option value="{{$code->id">{{$code->code}} - {{$code->name}}</option>
+                @endforeach
+            </select>
+          </div>
+        </div>
         <div class="form-group">
           <button type="submit" class="btn add-btn btn-primary">Save</button>
         </div>

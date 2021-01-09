@@ -98,6 +98,17 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
             Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'editCutoff']); 
             Route::post('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'updateCutoff']);
         });
+
+        Route::group(array('prefix' => 'content/{visa_service_id}'), function () {
+            Route::get('/', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'visaServiceContent']);
+            Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'visaContentList']); 
+            Route::get('/add', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'addContent']);
+            Route::post('/save', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'saveContent']); 
+            Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'deleteSingleContent']); 
+            Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'deleteMultipleContent']); 
+            Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'editContent']); 
+            Route::post('/edit/{id}', [App\Http\Controllers\SuperAdmin\VisaServicesController::class, 'updateContent']);
+        });
     });
 
     Route::group(array('prefix' => 'document-folder'), function () {
@@ -159,6 +170,28 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'updatePassword']);
     });
 
+    Route::group(array('prefix' => 'categories'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'category']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'edit']); 
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\CategoryController::class, 'update']);     
+    }); 
+
+    Route::group(array('prefix' => 'tags'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\TagsController::class, 'tags']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\TagsController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\TagsController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\TagsController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\TagsController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\TagsController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\TagsController::class, 'edit']); 
+        Route::post('/update', [App\Http\Controllers\SuperAdmin\TagsController::class, 'update']);     
+    }); 
+
     Route::group(array('prefix' => 'news'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\NewsController::class, 'news']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\NewsController::class, 'getAjaxList']); 
@@ -172,7 +205,6 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     }); 
 
     Route::group(array('prefix' => 'news-category'), function () {
-
         Route::get('/', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategory']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryGetAjaxList']); 
         Route::get('/add', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryAdd']);
@@ -182,6 +214,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryEdit']); 
         Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryUpdate']);     
     });  
+
     Route::group(array('prefix' => 'noc-code'), function () {
 
         Route::get('/', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'list']);
@@ -191,7 +224,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'deleteSingle']); 
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'deleteMultiple']); 
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'edit']); 
-        Route::post('/update', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'update']);     
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'update']);     
     });
 
     Route::group(array('prefix' => 'primary-degree'), function () {
@@ -243,7 +276,56 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         });
     });
 });
+// Executive
+Route::group(array('prefix' => 'executive'), function () {
+    Route::group(array('middleware' => 'executive'), function () {
+        Route::get('/', [App\Http\Controllers\Executive\DashboardController::class, 'dashboard']);
+        Route::get('/notifications', [App\Http\Controllers\Executive\DashboardController::class, 'notifications']);
+        Route::get('/edit-profile', [App\Http\Controllers\Executive\DashboardController::class, 'editProfile']);
+        Route::post('/update-profile/', [App\Http\Controllers\Executive\DashboardController::class, 'updateProfile']);
+        Route::get('/change-password', [App\Http\Controllers\Executive\DashboardController::class, 'changePassword']);
+        Route::post('/update-password', [App\Http\Controllers\Executive\DashboardController::class, 'updatePassword']);
 
+        Route::group(array('prefix' => 'news'), function () {
+
+            Route::get('/', [App\Http\Controllers\Executive\NewsController::class, 'news']);
+            Route::post('/ajax-list', [App\Http\Controllers\Executive\NewsController::class, 'getAjaxList']); 
+            Route::get('/add', [App\Http\Controllers\Executive\NewsController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Executive\NewsController::class, 'save']); 
+            Route::get('/delete/{id}', [App\Http\Controllers\Executive\NewsController::class, 'deleteSingle']); 
+            Route::post('/delete-multiple', [App\Http\Controllers\Executive\NewsController::class, 'deleteMultiple']); 
+            Route::get('/edit/{id}', [App\Http\Controllers\Executive\NewsController::class, 'edit']); 
+            Route::post('/update', [App\Http\Controllers\Executive\NewsController::class, 'update']);
+            
+        }); 
+
+        Route::group(array('prefix' => 'news-category'), function () {
+
+            Route::get('/', [App\Http\Controllers\Executive\NewsController::class, 'newsCategory']);
+            Route::post('/ajax-list', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryGetAjaxList']); 
+            Route::get('/add', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryAdd']);
+            Route::post('/save', [App\Http\Controllers\Executive\NewsController::class, 'newsCategorySave']); 
+            Route::get('/delete/{id}', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryDeleteSingle']); 
+            Route::post('/delete-multiple', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryDeleteMultiple']); 
+            Route::get('/edit/{id}', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryEdit']); 
+            Route::post('/update', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryUpdate']);     
+        }); 
+        Route::group(array('prefix' => 'visa-services'), function () {
+            Route::get('/', [App\Http\Controllers\Executive\VisaServicesController::class, 'visaServices']);
+            Route::post('/ajax-list', [App\Http\Controllers\Executive\VisaServicesController::class, 'getAjaxList']); 
+            Route::group(array('prefix' => 'content/{visa_service_id}'), function () {
+                Route::get('/', [App\Http\Controllers\Executive\VisaServicesController::class, 'visaServiceContent']);
+                Route::post('/ajax-list', [App\Http\Controllers\Executive\VisaServicesController::class, 'visaContentList']); 
+                Route::get('/add', [App\Http\Controllers\Executive\VisaServicesController::class, 'addContent']);
+                Route::post('/save', [App\Http\Controllers\Executive\VisaServicesController::class, 'saveContent']); 
+                Route::get('/delete/{id}', [App\Http\Controllers\Executive\VisaServicesController::class, 'deleteSingleContent']); 
+                Route::post('/delete-multiple', [App\Http\Controllers\Executive\VisaServicesController::class, 'deleteMultipleContent']); 
+                Route::get('/edit/{id}', [App\Http\Controllers\Executive\VisaServicesController::class, 'editContent']); 
+                Route::post('/edit/{id}', [App\Http\Controllers\Executive\VisaServicesController::class, 'updateContent']);
+            });
+        });
+    });
+});
 // User
 Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'dashboard']);
@@ -396,6 +478,19 @@ Route::group(array('prefix' => 'admin'), function () {
 
         });
         
+        Route::group(array('prefix' => 'articles'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\ArticlesController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\ArticlesController::class, 'getAjaxList']);
+            Route::get('/add', [App\Http\Controllers\Admin\ArticlesController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Admin\ArticlesController::class, 'save']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'edit']);
+            Route::post('/update/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'update']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\ArticlesController::class, 'deleteMultiple']);
+            Route::get('/change-password/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'changePassword']);
+            Route::post('/update-password/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'updatePassword']);
+        });
+
         Route::group(array('prefix' => 'staff'), function () {
             Route::get('/', [App\Http\Controllers\Admin\StaffController::class, 'index']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\StaffController::class, 'getAjaxList']);
@@ -407,7 +502,6 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\StaffController::class, 'deleteMultiple']);
             Route::get('/change-password/{id}', [App\Http\Controllers\Admin\StaffController::class, 'changePassword']);
             Route::post('/update-password/{id}', [App\Http\Controllers\Admin\StaffController::class, 'updatePassword']);
-
         });
 
         Route::group(array('prefix' => 'leads'), function () {
@@ -489,10 +583,10 @@ Route::group(array('prefix' => 'manager'), function () {
     Route::group(array('middleware' => 'manager'), function () {
         Route::get('/', [App\Http\Controllers\Manager\DashboardController::class, 'dashboard']);
         Route::get('/notifications', [App\Http\Controllers\Manager\DashboardController::class, 'notifications']);
-         Route::get('/edit-profile', [App\Http\Controllers\Manager\DashboardController::class, 'editProfile']);
-         Route::post('/update-profile/', [App\Http\Controllers\Manager\DashboardController::class, 'updateProfile']);
-         Route::get('/change-password', [App\Http\Controllers\Manager\DashboardController::class, 'changePassword']);
-         Route::post('/update-password', [App\Http\Controllers\Manager\DashboardController::class, 'updatePassword']);
+        Route::get('/edit-profile', [App\Http\Controllers\Manager\DashboardController::class, 'editProfile']);
+        Route::post('/update-profile/', [App\Http\Controllers\Manager\DashboardController::class, 'updateProfile']);
+        Route::get('/change-password', [App\Http\Controllers\Manager\DashboardController::class, 'changePassword']);
+        Route::post('/update-password', [App\Http\Controllers\Manager\DashboardController::class, 'updatePassword']);
 
         Route::group(array('prefix' => 'leads'), function () {
             Route::get('/', [App\Http\Controllers\Manager\LeadsController::class, 'newLeads']);

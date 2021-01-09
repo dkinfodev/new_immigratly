@@ -28,17 +28,18 @@
   </td>
 
   <td> 
+    @if(employee_permission('news','edit-news'))
     <a href="{{baseUrl('news/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> 
+    @endif
+    @if(employee_permission('news','delete-news'))
     <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('news/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+    @endif
   
 </td>
 </tr>
 
 @endforeach
-@else
-<tr>
-  <td colspan="3" class="text-center text-danger">No records available</td>
-</tr>
+
 @endif
 
 <script>

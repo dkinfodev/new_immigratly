@@ -14,7 +14,7 @@ use App\Models\Countries;
 use App\Models\LanguageProficiency;
 use App\Models\ClientExperience;
 use App\Models\ClientEducations;
-
+use App\Models\StaffPrivileges;
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
         $file_type = array(
@@ -1015,5 +1015,19 @@ if (! function_exists('getCountryName')) {
     function getCountryName($id) {
         $countryName = Countries::where('id',$id)->first();
         return $countryName->name;
+    }
+}
+
+if(!function_exists("employee_permission")){
+    function employee_permission($module,$action,$user_id=''){
+        if($user_id == ''){
+            $user_id = \Auth::user()->id;
+        }
+        $check_exists = StaffPrivileges::where("user_id",$user_id)->where("module",$module)->where("action",$action)->count();
+        if($check_exists > 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

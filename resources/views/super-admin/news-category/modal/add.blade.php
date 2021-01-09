@@ -10,9 +10,9 @@
       <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/news-category/save') }}">  
           @csrf
           <!-- Form Group -->
-          <div class="row form-group js-form-message">
+          <div class="row form-group">
             <label class="col-sm-3 col-form-label input-label">Name</label>
-            <div class="col-sm-9">
+            <div class="col-sm-9 js-form-message">
               <div class="input-group input-group-sm-down-break">
                 <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Enter name" aria-label="Enter name" >
                 @error('name')
