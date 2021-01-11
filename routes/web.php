@@ -492,6 +492,13 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/update-password/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'updatePassword']);
         });
 
+        Route::group(array('prefix' => 'events'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\EventsController::class, 'index']); 
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\EventsController::class, 'getAjaxList']);
+            Route::get('/add', [App\Http\Controllers\Admin\EventsController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Admin\EventsController::class, 'save']);
+        });
+
         Route::group(array('prefix' => 'staff'), function () {
             Route::get('/', [App\Http\Controllers\Admin\StaffController::class, 'index']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\StaffController::class, 'getAjaxList']);
