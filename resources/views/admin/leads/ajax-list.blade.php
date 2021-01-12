@@ -34,7 +34,7 @@
       </div>
    </td>
    <td>
-    @if(!empty($record->Service($record->VisaService->service_id)))
+    @if(!empty($record->VisaService) && !empty($record->Service($record->VisaService->service_id)))
     <a class="badge badge-soft-primary p-2" href="javascript:;">{{$record->Service($record->VisaService->service_id)->name}}</a>
     @else
     <a href="javascript:;" class="badge badge-soft-danger p-2">Service Removed</a>

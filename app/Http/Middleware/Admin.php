@@ -20,8 +20,8 @@ class Admin
     public function handle($request, Closure $next)
     {
         if(Auth::check()){
-            $setting = DomainDetails::first();
             if(Auth::user()->role == 'admin'){
+                $setting = DomainDetails::first();
                 if($setting->profile_status == 2){
                     return $next($request);
                 }else{

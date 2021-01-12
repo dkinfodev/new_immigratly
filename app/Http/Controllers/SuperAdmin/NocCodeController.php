@@ -106,12 +106,9 @@ class NocCodeController extends Controller
         return response()->json($response); 
     }
 
-    public function update(Request $request){
-        $id = $request->input('id');
+    public function update($id,Request $request){
         $id = base64_decode($id);
-
         $object = NocCode::find($id);
-
         $validator = Validator::make($request->all(), [
             'name' => 'required',    
             'code' => 'required',    

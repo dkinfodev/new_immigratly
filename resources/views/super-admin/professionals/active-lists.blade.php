@@ -19,9 +19,9 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="users-add-user.html">
+        <!-- <a class="btn btn-primary" href="users-add-user.html">
           <i class="tio-user-add mr-1"></i> Add user
-        </a>
+        </a> -->
       </div>
     </div>
     <!-- End Row -->

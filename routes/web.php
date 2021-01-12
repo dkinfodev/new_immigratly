@@ -24,6 +24,7 @@ Route::get('/logout', function () {
 });
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'welcome_page']);
 Route::get('/states', [App\Http\Controllers\CommonController::class, 'stateList']);
 Route::get('/cities', [App\Http\Controllers\CommonController::class, 'cityList']);
 Route::get('/licence-bodies', [App\Http\Controllers\CommonController::class, 'licenceBodies']);

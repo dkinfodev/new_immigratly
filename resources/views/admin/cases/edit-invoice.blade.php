@@ -43,7 +43,7 @@
               <!-- Form Group -->
               <div class="form-group js-form-message">
                 <label class="input-label">Bill to:</label>
-                <textarea class="form-control" required placeholder="Who is this invoice from?" name="bill_to" aria-label="Who is this invoice from?" rows="5">{{$record->Invoice->bill_from}}</textarea>
+                <textarea class="form-control" required placeholder="Who is this invoice from?" name="bill_to" aria-label="Who is this invoice from?" rows="5">{{$record->Invoice->bill_to}}</textarea>
               </div>
               <!-- End Form Group -->
               <div class="form-group mb-0 js-form-message">
@@ -68,7 +68,7 @@
               <!-- Form Group -->
               <div class="form-group text-left js-form-message">
                 <label class="input-label">Bill From:</label>
-                <textarea class="form-control text-right" required placeholder="Who is this invoice from?" name="bill_from" aria-label="Who is this invoice from?" rows="5">{{$record->Invoice->bill_to}}</textarea>
+                <textarea class="form-control text-right" required placeholder="Who is this invoice from?" name="bill_from" aria-label="Who is this invoice from?" rows="5">{{$record->Invoice->bill_from}}</textarea>
               </div>
               <!-- End Form Group -->
               <div class="form-group mb-0 js-form-message">

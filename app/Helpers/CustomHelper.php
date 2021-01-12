@@ -544,6 +544,9 @@ if(!function_exists("createSubDomain")){
         $root_dir = Settings::where("meta_key",'root_dir')->first();
         $root_dir = $root_dir->meta_value;
 
+        $db_username = Settings::where("meta_key",'db_username')->first();
+        $db_username = $db_username->meta_value;
+
         $parameters = [
             'domain' => $subdomain,
             'rootdomain' => $rootdomain,
@@ -573,7 +576,7 @@ if(!function_exists("createSubDomain")){
         $set_dbuser_privs = $cPanel->execute('uapi',
             'Mysql', 'set_privileges_on_database',
             array(
-                'user'       => 'immigrat_casestudy',
+                'user'       => $db_username,
                 'database'   => $dbname,
                 'privileges' => 'ALL PRIVILEGES',
             )
@@ -593,7 +596,7 @@ if(!function_exists("curlRequest")){
         if($subdomain == 'localhost'){
             $api_url = url('/api/main');
         }else{
-            $api_url = $site_url."api";
+            $api_url = $site_url."api/main";
         }
         $token = $client_key->client_secret;
       
@@ -1025,6 +1028,56 @@ if(!function_exists("employee_permission")){
         }
         $check_exists = StaffPrivileges::where("user_id",$user_id)->where("module",$module)->where("action",$action)->count();
         if($check_exists > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
+
+
+if(!function_exists("cv_progress")){
+    function cv_progress($module='',$user_id=''){
+        if($user_id == ''){
+            $user_id = \Auth::user()->unique_id;
+        }
+        $language_proficiency = LanguageProficiency::where("user_id",$user_id)->count();
+        $work_expirence = ClientExperience::where("user_id",$user_id)->orderBy('id','desc')->count();
+        $educations = ClientEducations::where("user_id",$user_id)->orderBy('id','desc')->count();
+        $count = 1;
+        if($language_proficiency > 0){
+            $count++;
+        }
+        if($work_expirence > 0){
+            $count++;
+        }
+        if($educations > 0){
+            $count++;
+        }
+        $total = 4;
+
+        $percentage = ($count/$total)*100;
+        if($module == ''){
+            return $percentage;
+        }else{
+            if($module == 'language_proficiency'){
+                return $language_proficiency;
+            }   
+            if($module == 'work_expirences'){
+                return $work_expirence;
+            }  
+            if($module == 'educations'){
+                return $educations;
+            }  
+        }
+        
+    }
+}
+
+if(!function_exists("profession_profile")){
+    function profession_profile(){
+        $setting = DomainDetails::first();
+        if($setting->profile_status == 2){
             return true;
         }else{
             return false;

@@ -18,11 +18,11 @@
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
 
-      <div class="col-sm-auto">
+      <!-- <div class="col-sm-auto">
         <a class="btn btn-primary" href="{{ baseUrl('/staff') }}">
           <i class="tio mr-1"></i> Back 
         </a>
-      </div>
+      </div> -->
     </div>
     <!-- End Row -->
   </div>
@@ -63,7 +63,7 @@
           <div class="row form-group">
             <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
 
-            <div class="col-12">
+            <div class="col-12 pl-0">
               <div class="js-form-message">
                 <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg="Please enter your first name." value="{{ $record->first_name }}">
               </div>
@@ -74,7 +74,7 @@
           <div class="row form-group">
             <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
 
-            <div class="col-12">
+            <div class="col-12 pl-0">
               <div class="js-form-message">
                 <input type="text" class="form-control" name="last_name" id="validationFormLastnameLabel" placeholder="Lastname" aria-label="Lastname" required data-msg="Please enter your last name." value="{{ $record->last_name }}">
               </div>
@@ -102,30 +102,9 @@
           </div>
           <!-- End Form Group -->
 
-
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Phone Number</label>
-
-            <div class="col-sm-3">
-              <div class="js-form-message">
-                <select name="country_code" id="country_code" class="form-control">
-                  <option value="">Select Country</option>
-                  @foreach($countries as $country)
-                  <option {{$record->country_code == $country->phonecode?"selected":""}} value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            <div class="col-sm-4">
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="phone no" required data-msg="Please enter your phone number." value="{{$record->phone_no}}">
-              </div>
-            </div>
-          </div>
           <!-- End Form Group -->
           <!-- Form Group -->
-          <div class="row form-group">
+          <!-- <div class="row form-group">
             <label class="col-sm-5 col-form-label input-label">Gender</label>
 
             <div class="col-sm-7">
@@ -137,48 +116,8 @@
                 </select>
               </div>
             </div>
-          </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Date of Birth</label>
-            <div class="col-sm-7">
-              <div class="input-group">
-                <input type="text" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ $record->date_of_birth }}" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
-                <div class="input-group-addon p-2">
-                  <i class="tio-date-range"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Languages Known</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="languages_known[]" multiple id="languages_known" class="form-control">
-                  
-                <?php
-                  $language_known = json_decode($record->languages_known,true);
-                ?>
-
-                @foreach($languages as $language)
-                <option {{in_array($language->id,$language_known)?"selected":""}} value="{{$language->id}}">{{$language->name}}</option>
-                @endforeach
-
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-        </div> <!-- div end -->
-        
-
-        <div class="col-md-6">
-          
-          <!-- Form Group -->
+          </div> -->
+          <!-- 
           <div class="row form-group">
             <label class="col-sm-5 col-form-label input-label">Country</label>
             <div class="col-sm-7">
@@ -192,8 +131,17 @@
               </div>
             </div>
           </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
+          <div class="row form-group">
+            <label class="col-sm-5 col-form-label input-label">Date of Birth</label>
+            <div class="col-sm-7">
+              <div class="input-group">
+                <input type="text" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ $record->date_of_birth }}" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
+                <div class="input-group-addon p-2">
+                  <i class="tio-date-range"></i>
+                </div>
+              </div>
+            </div>
+          </div> 
           <div class="row form-group">
             <label class="col-sm-5 col-form-label input-label">State</label>
             <div class="col-sm-7">
@@ -207,46 +155,34 @@
                 </select>
               </div>
             </div>
-          </div>
-          <!-- End Form Group -->
+          </div>-->
+        </div> <!-- div end -->
+        
+
+        <div class="col-md-6">
+          
+          
 
           <!-- Form Group -->
           <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">City</label>
-            <div class="col-sm-7">
+            <label class="col-sm-5 col-form-label input-label">Phone Number</label>
+
+            <div class="col-sm-3">
               <div class="js-form-message">
-                <select name="city_id" id="city_id"  aria-label="City" required data-msg="Please select your city" class="form-control">
-                  <option value="">Select City</option>
-                  @foreach($cities as $city)
-                  <option {{$record->city_id == $city->id?"selected":""}} value="{{$city->id}}">{{$city->name}}</option>
+                <select name="country_code" id="country_code" class="form-control">
+                  <option value="">Select Code</option>
+                  @foreach($countries as $country)
+                  <option {{$record->country_code == $country->phonecode?"selected":""}} value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
                   @endforeach
                 </select>
               </div>
             </div>
-          </div>
-          <!-- End Form Group -->
-          
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Address</label>
-            <div class="col-sm-7">
+            <div class="col-sm-4">
               <div class="js-form-message">
-                <input type="text" class="form-control" name="address" id="address" placeholder="Address" aria-label="Address" required data-msg="Please enter your address" value="{{ $record->address }}">
+                <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="phone no" required data-msg="Please enter your phone number." value="{{$record->phone_no}}">
               </div>
             </div>
           </div>
-          <!-- End Form Group -->
-
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Zip Code</label>
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $record->zip_code }}">
-              </div>
-            </div>
-          </div>
-
           
         </div>
         <!-- End Form Group -->    

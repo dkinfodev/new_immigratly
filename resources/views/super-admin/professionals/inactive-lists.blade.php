@@ -18,11 +18,11 @@
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
 
-      <div class="col-sm-auto">
+      <!-- <div class="col-sm-auto">
         <a class="btn btn-primary" href="users-add-user.html">
           <i class="tio-user-add mr-1"></i> Add user
         </a>
-      </div>
+      </div> -->
     </div>
     <!-- End Row -->
   </div>

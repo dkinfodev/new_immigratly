@@ -15,7 +15,7 @@
 
   <td> 
       <a href="{{baseUrl('languages/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; 
-      <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('languages/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+      <a href="javascript:;" class="text-danger" onclick="confirmAction(this)" data-href="{{baseUrl('languages/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>
 </tr>

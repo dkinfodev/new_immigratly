@@ -15,7 +15,7 @@
      <a onclick="showPopup('{{ baseUrl('tags/edit/'.base64_encode($record->id)) }}')" href="javascript:;">
           <i class="tio-edit"></i>
      </a>
-    <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('tags/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+    <a href="javascript:;" class="text-danger" onclick="confirmAction(this)" data-href="{{baseUrl('tags/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>
 </tr>

@@ -243,15 +243,13 @@
         <a class="dropdown-item" href="{{baseUrl('edit-profile')}}">
           <span class="text-truncate pr-2" title="Edit profile">Edit Profile</span>
         </a>
-        
-        <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{baseUrl('/change-password/')}}">
           <span class="text-truncate pr-2" title="change password">Change Password</span>
         </a>
 
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{ url('logout') }}">
-          <span class="text-truncate pr-2" title="Sign out">Sign out</span>
+          <span class="text-truncate pr-2 text-danger" title="Sign out">Sign out</span>
         </a>
       </div>
     </div>

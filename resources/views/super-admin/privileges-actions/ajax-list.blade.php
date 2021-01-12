@@ -21,7 +21,7 @@
   <td> 
 
       <a href="{{baseUrl('privileges/action/'.base64_encode($moduleId).'/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> &nbsp; 
-      <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('privileges/action/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+      <a href="javascript:;" class="text-danger" onclick="confirmAction(this)" data-href="{{baseUrl('privileges/action/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   
 </td>
 </tr>

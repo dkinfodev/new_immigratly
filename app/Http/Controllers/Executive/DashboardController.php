@@ -36,9 +36,6 @@ class DashboardController extends Controller
         $viewData['states'] = $states;
         $cities = DB::table(MAIN_DATABASE.".cities")->where("state_id",$record->state_id)->get();
         $viewData['cities'] = $cities;
-        $languages = DB::table(MAIN_DATABASE.".languages")->get();
-        $viewData['languages'] = $languages;    
-        $viewData['countries'] = $countries;
         
         $viewData['record'] = $record;
         return view(roleFolder().'.edit-profile',$viewData);
@@ -55,14 +52,14 @@ class DashboardController extends Controller
             'last_name' => 'required',
             'country_code' => 'required',
             'phone_no' => 'required|unique:users,phone_no,'.$object->id,
-            'gender'=>'required',
-            'date_of_birth'=>'required',
-            'languages_known'=>'required',
-            'country_id'=>'required',
-            'state_id'=>'required',
-            'city_id'=>'required',
-            'address'=>'required',
-            'zip_code'=>'required',
+            // 'gender'=>'required',
+            // 'date_of_birth'=>'required',
+            // 'languages_known'=>'required',
+            // 'country_id'=>'required',
+            // 'state_id'=>'required',
+            // 'city_id'=>'required',
+            // 'address'=>'required',
+            // 'zip_code'=>'required',
         ]);
 
         if ($validator->fails()) {
@@ -81,15 +78,15 @@ class DashboardController extends Controller
         $object->email = $request->input("email");
         $object->country_code = $request->input("country_code");
         $object->phone_no = $request->input("phone_no");
-        $object->date_of_birth = $request->input("date_of_birth");
-        $object->gender = $request->input("gender");
-        $object->country_id = $request->input("country_id");
-        $object->state_id = $request->input("state_id");
-        $object->city_id = $request->input("city_id");
-        $object->address = $request->input("address");
-        $object->zip_code = $request->input("zip_code");
+        // $object->date_of_birth = $request->input("date_of_birth");
+        // $object->gender = $request->input("gender");
+        // $object->country_id = $request->input("country_id");
+        // $object->state_id = $request->input("state_id");
+        // $object->city_id = $request->input("city_id");
+        // $object->address = $request->input("address");
+        // $object->zip_code = $request->input("zip_code");
         
-        $object->languages_known = json_encode($request->input("languages_known"));
+        // $object->languages_known = json_encode($request->input("languages_known"));
         if ($file = $request->file('profile_image')){
                 
             $fileName        = $file->getClientOriginalName();

@@ -10,9 +10,7 @@ use Illuminate\Support\Str;
 use View;
 
 use App\Models\VisaServices;
-use App\Models\DocumentFolder;
 use App\Models\News;
-use App\Models\NewsCategory;
 
 class NewsController extends Controller
 {
@@ -31,8 +29,7 @@ class NewsController extends Controller
     public function getAjaxList(Request $request)
     {   
         $search = $request->input("search");
-        $records = News::
-                        where(function($query) use($search){
+        $records = News::where(function($query) use($search){
                             if($search != ''){
                                 $query->where("title","LIKE","%".$search."%");
                             }
@@ -52,7 +49,7 @@ class NewsController extends Controller
 
     public function add(){
         $viewData['pageTitle'] = "Add News";
-        $viewData['categories'] = NewsCategory::get();
+        $viewData['categories'] = VisaServices::get();
         return view(roleFolder().'.news.add',$viewData);
     }
 
@@ -75,7 +72,7 @@ class NewsController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-        $object =  new News;
+        $object =  new News();
 
         $object->title = $request->input("title");
 
@@ -99,7 +96,7 @@ class NewsController extends Controller
         $id = base64_decode($id);
         $viewData['record'] = News::where("id",$id)->first();
         $viewData['pageTitle'] = "Edit News";
-        $viewData['categories'] = NewsCategory::get();
+        $viewData['categories'] = VisaServices::get();
         return view(roleFolder().'.news.edit',$viewData);
     }
 

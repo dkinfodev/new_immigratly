@@ -4,13 +4,17 @@
 .custom-select {
     height: 56px;
 }
+.select2-selection.custom-select {
+    padding-top: 14px;
+    padding-bottom: 13px;
+}
 </style>
 @endsection
 @section('content')
 <!-- ========== HEADER ========== -->
     <header class="position-absolute top-0 left-0 right-0 mt-3 mx-3">
       <div class="d-flex d-lg-none justify-content-between">
-        <a href="index.html">
+        <a href="{{ baseUrl('/') }}">
           <img class="w-100" src="assets/svg/logos/logo.svg" alt="Image Description" style="min-width: 7rem; max-width: 7rem;">
         </a>
         <!-- End Select -->
@@ -28,7 +32,7 @@
             <!-- Logo & Language -->
             <div class="position-absolute top-0 left-0 right-0 mt-3 mx-3">
               <div class="d-none d-lg-flex justify-content-between">
-                <a href="index.html">
+                <a href="{{ baseUrl('/') }}">
                   <img class="w-100" src="assets/svg/logos/logo.svg" alt="Image Description" style="min-width: 7rem; max-width: 7rem;">
                 </a>
               </div>
@@ -85,7 +89,7 @@
                 <div id="personal-info">
                 <div class="text-center mb-5">
                   <h1 class="display-4">Create your account</h1>
-                  <p>Already have an account? <a href="authentication-signin-cover.html">Sign in here</a></p>
+                  <p>Already have an account? <a href="{{ url('login') }}">Sign in here</a></p>
                 </div>
                 <label class="input-label" for="fullNameSrEmail">Full name</label>
 
@@ -121,8 +125,9 @@
                     <div class="js-form-message form-group">
                       <div class="select2-custom select2-custom-right">
                         <select class="js-select2-custom form-control-lg" id="country_code" name="country_code">
+                            <option value="">Select Code</option>
                             @foreach($countries as $code)
-                                <option {{ old("country_code") =='+'.$code->phonecode?"selected":"" }} value="+{{ $code->phonecode }}">+{{ $code->phonecode }}({{$code->name}})</option>
+                                <option {{ old("country_code") =='+'.$code->phonecode?"selected":"" }} value="+{{ $code->phonecode }}">+{{ $code->phonecode }} ({{$code->sortname}})</option>
                             @endforeach
                         </select>
                       </div>

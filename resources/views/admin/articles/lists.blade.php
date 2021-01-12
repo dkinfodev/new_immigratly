@@ -68,7 +68,7 @@
     </div>
     <!-- End Header -->
     <div class="card-body">
-        <div id="articles-list">
+        <div class="row" id="articles-list">
 
         </div>
     </div>

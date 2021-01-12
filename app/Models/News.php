@@ -14,7 +14,7 @@ class News extends Model
     protected $table = "news";
 
     public function fetchNewsCategory(){
-        return $this->belongsTo('App\Models\NewsCategory','category_id');
+        return $this->belongsTo('App\Models\VisaServices','category_id');
     }
 
     public function fetchUser(){

@@ -81,7 +81,9 @@
       </div>
   </td> -->
   <td>
+    @if($check_profile['status'] == 'success')
     <a href="{{baseUrl('/professionals/view/'.base64_encode($record->id))}}"><i class="tio-visible"></i> Details</a>
+    @endif
   </td>
 </tr>
 @endforeach

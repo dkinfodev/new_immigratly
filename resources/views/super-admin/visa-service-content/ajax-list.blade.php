@@ -17,7 +17,7 @@
 
   <td> 
       <a href="{{baseUrl('visa-services/content/'.$visa_service_id.'/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a>
-      <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/content/'.$visa_service_id.'/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+      <a href="javascript:;" class="text-danger" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/content/'.$visa_service_id.'/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
   </td>
 </tr>
 @endforeach

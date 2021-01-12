@@ -92,7 +92,7 @@ class StaffController extends Controller
         $object->country_code = $request->input("country_code");
         $object->phone_no = $request->input("phone_no");
         $object->is_active = $request->input("status");
-
+        $object->unique_id = randomNumber();
         $object->role = 'executive';
 
         if($request->input("password")){
@@ -168,7 +168,7 @@ class StaffController extends Controller
         $object->country_code = $request->input("country_code");
         $object->phone_no = $request->input("phone_no");
         $object->is_active = $request->input("status");        
-        
+        $object->unique_id = randomNumber();
         $object->role = 'executive';
         
         if ($file = $request->file('profile_image')){

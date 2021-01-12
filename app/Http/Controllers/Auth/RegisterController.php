@@ -92,6 +92,12 @@ class RegisterController extends Controller
         if(\Auth::check()){
             return Redirect::to(baseUrl('/'));
         }
+        $subdomain = "dkdev";
+        $rootdomain = DB::table(MAIN_DATABASE.".settings")->where("meta_key",'rootdomain')->first();
+        $rootdomain = $rootdomain->meta_value;
+
+        $url = "http://".$subdomain.".".$rootdomain."/";
+
         $viewData['pageTitle'] = 'Sign Up as Professional';
         $viewData['countries'] = Countries::get();
         return view('auth.professional-signup',$viewData);   
@@ -261,8 +267,14 @@ class RegisterController extends Controller
         $database_name = $db_prefix.$subdomain;
         if($_SERVER['SERVER_NAME'] != 'localhost'){
             $response = createSubDomain($subdomain,$database_name);
+
             if($response['status'] == 'error'){
-                return redirect()->back()->with('error_message',$response['message']." Process of creating panel interrupted. Try again!");
+                $response['status'] = false;
+                $response['message'] = $response['message']." Process of creating panel interrupted. Try again!";
+                \Session::flash('error_message', $response['message']." Process of creating panel interrupted. Try again!"); 
+                Professionals::where("id",$user_id)->delete();
+                return response()->json($response);
+                // return redirect()->back()->with('error_message',$response['message']." Process of creating panel interrupted. Try again!");
             }
         }else{
             $sql = "CREATE DATABASE IF NOT EXISTS `$database_name` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;";
@@ -271,10 +283,12 @@ class RegisterController extends Controller
 
         $sql = "SHOW TABLES FROM ".$sample_db;
         $sample_tables = DB::select($sql);
-
+        
         for($i=0;$i < count($sample_tables);$i++){
             $sdb = "Tables_in_".$sample_db;
             $table = $sample_tables[$i]->$sdb;
+            
+
             DB::statement('CREATE TABLE IF NOT EXISTS '.$database_name.'.'.$table.' LIKE '.$sample_db.'.'.$table.';');
         }
         $now = \Carbon\Carbon::now();
@@ -317,7 +331,16 @@ class RegisterController extends Controller
             $response['message'] = "Your panel has been created successfully";
             \Session::flash('success_message', 'Your panel has been created successfully!'); 
         }else{
-
+            $response['status'] = true;
+            $rootdomain = DB::table(MAIN_DATABASE.".settings")->where("meta_key",'rootdomain')->first();
+            $rootdomain = $rootdomain->meta_value;
+            $portal_url = "http://".$subdomain.".".$rootdomain."/";
+            $url = url('welcome');
+            $response['redirect_back'] = $url;
+            $response['message'] = "Your panel has been created successfully. You can login to your panel with the access you entered.";
+            \Session::flash('success_message', "Your panel has been created successfully. You can login to your panel with the access you entered."); 
+            \Session::put('professional_register', true); 
+            \Session::put('portal_url', $portal_url); 
         }
         // \Auth::loginUsingId($user_id);
         // \Session::forget("verify_code");
@@ -327,7 +350,6 @@ class RegisterController extends Controller
         // }else{
         //     $response['redirect_back'] = url('home');  
         // }
-
         return response()->json($response);
     }
 }

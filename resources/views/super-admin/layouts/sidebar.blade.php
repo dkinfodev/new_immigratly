@@ -53,6 +53,12 @@
                 </li>
                 <!-- End Pages -->
                 <li class="navbar-vertical-aside-has-menu ">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/news') }}">
+                    <i class="tio-feed-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">News</span>
+                  </a>
+                </li>
+                <!-- <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
                     <i class="tio-feed-outlined nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">News</span>
@@ -73,12 +79,12 @@
                       </a>
                     </li>
                   </ul>
-                </li>
+                </li> -->
                 <!-- Apps -->
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
                     <i class="tio-settings nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Settings <span class="badge badge-info badge-pill ml-1">Modules</span></span>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Settings</span>
                   </a>
 
                   <ul class="js-navbar-vertical-aside-submenu nav nav-sub">

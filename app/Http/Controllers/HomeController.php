@@ -29,4 +29,17 @@ class HomeController extends Controller
             return redirect('/login');
         }
     }
+
+    public function welcome_page(){
+        if(\Session::get("professional_register")){
+            $viewData['portal_url'] = \Session::get("portal_url");
+            $viewData['pageTitle'] = "Welcome";
+            $viewData['bodyClass'] = 'aboutus';
+            \Session::forget("portal_url");
+            \Session::forget("professional_register");
+            return view('welcome',$viewData);
+        }else{
+            return redirect('/');
+        }
+    }
 }

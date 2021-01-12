@@ -1988,4 +1988,6 @@ class FrontendController extends Controller
         $viewData['record'] = $business;
         return view('front.business.business-detail',$viewData);
     }
+
+    
 }
