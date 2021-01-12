@@ -1,5 +1,16 @@
 @extends('layouts.master')
 
+@section('style')
+<style>
+.event_paid_details{
+  display: none;
+}
+.hidden{
+  display: none;
+}
+</style>
+@endsection
+
 @section('content')
 <!-- Content -->
 <div class="content container-fluid">
@@ -10,7 +21,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/events') }}">Events</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/article') }}">Article</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -32,317 +43,345 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('events/save') }}" method="post">
+      <form id="form" class="js-validate" action="{{ baseUrl('staff/save') }}" method="post">
 
         @csrf
-        
-        <div class="row justify-content-md-between">
-          <div class="col-md-4">
-            <!-- Logo -->
-            <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
 
-              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
-
-              <span class="d-block">Upload your Image here</span>
-
-              <input type="file" class="js-file-attach custom-file-boxed-input" name="profile_image" id="logoUploader"
-              data-hs-file-attach-options='{
-              "textTarget": "#logoImg",
-              "mode": "image",
-              "targetAttr": "src"
-            }'>
-          </label>
-          <!-- End Logo -->
+        <div class="form-group">
+          <label>Event Name</label>
+          <input type="text" class="form-control" name="event_name" id="event_name">
         </div>
 
-        <div class="col-md-7 justify-content-md-end">
+        <div class="row">
 
-          <div class="row form-group">
-            <div class="col-12">
-              <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg=" " >
+          <div class="col-md-6">
+
+            <div class="form-group">
+              <label>Event Category</label>
+              <select name="category" class="form-control" id="category">
+                <option>Select</option>
+              </select>
+            </div>
+          </div>  
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Event Language</label>
+              <select name="language" class="form-control" id="language">
+                <option>Select</option>
+                @foreach($languages as $key=>$l)
+                <option value="{{$l->id}}">{{$l->name}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+
+        </div>  
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Event Level</label>
+              <select name="event_level" class="form-control" id="event_level">
+                <option>Select</option>
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advance</option>
+              </select>
+            </div>
+          </div>  
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Tags</label>
+              <select name="tags" class="form-control" id="tags">
+                <option>Select</option>
+              </select>
+            </div>
+          </div>  
+
+        </div>    
+
+        
+        <div class="form-group">
+          <label>No. of seats</label>
+          <input type="number" name="seats" class="form-control" id="seats">
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-6 order-2">
+            <div class="form-group">
+              <label>Event Cover Image</label>
+              <!-- Dropzone -->
+              <div class="dz-message custom-file-boxed-label">
+                <img class="avatar avatar-xl avatar-4by3 mb-3" src="./assets/svg/illustrations/browse.svg" alt="Image Description">
+                <h5 class="mb-1">Drag and drop your file here</h5>
+                <p class="mb-2">or</p>
+                <span class="btn btn-sm btn-white">Browse files</span>
               </div>
             </div>
           </div>
-          <!-- End Form Group -->
 
-          <div class="row form-group">
-            <div class="col-12">
-              <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="last_name" id="validationFormLastnameLabel" placeholder="Lastname" aria-label="Lastname" required data-msg="">
+          <div class="col-md-6 order-1">
+            <div class="form-group">
+              <label>Is Event Paid?</label> &nbsp;
+              <input type="checkbox" name="event_paid" id="event_paid" >
+            </div>
+
+            <div class="row event_paid_details"  id="event_paid_details">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <lable>Event Cost</lable>
+                  <input type="number" name="event_cost" id="event_cost" class="form-control">
+                </div>
               </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <lable>Price Per Group</lable>
+                  <select name="price_per_group" id="price_per_group" class="form-group">
+                    <option>Per Person</option>
+                    <option>Per Group</option>
+                  </select>
+                </div>
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>  
+
+
+        <div class="row">
+          <div class="col-md-9 online-event" id="online_event">
+            <div class="form-group">
+              <label>Online Event Link</label>
+              <input type="text" class="form-control" name="online_event_link" id="online_event_link">
             </div>
           </div>
-          <!-- End Form Group -->
 
+          <div class="col-md-9 offline_event_details hidden">
+            <div class="form-group">
+              <label>Address</label>
+              <textarea name="event_address" rows="4" id="event_address" class="form-control"></textarea>
+            </div>
+          </div>
+
+          <div class="col-md-3" style="margin-top:20px;">
+            <div class="form-group">
+              <label>Is this offline event?</label> &nbsp;
+              <input type="checkbox" name="offline_event" id="offline_event">
+            </div>
+          </div>
+
+
+
+          <div class="col-md-4 offline_event_details hidden">
+            <div class="form-group">
+              <label>City</label>
+              <select class="form-control" name="city" id="city">
+                <option>Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4 offline_event_details hidden">
+            <div class="form-group">
+              <label>State</label>
+              <select class="form-control" name="state" id="state">
+                <option>Select</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-4 offline_event_details hidden">
+            <div class="form-group">
+              <label>Country</label>
+              <select class="form-control" name="country" id="country">
+                <option>Select</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+          <label>Short Description</label>
+          <input type="text" class="form-control" name="short_description" id="short_description">
+        </div>
+
+
+        <div class="form-group">
+          <label>Event Description</label>
+          <textarea name="event_content" id="event_content" class="form-control"></textarea>
+        </div>
+
+          <hr class="my-5">
+
+    <div class="js-add-field" data-hs-add-field-options='{
+        "template": "#addTopicItemTemplate",
+        "container": "#addTopicItemContainer",
+        "defaultCreated": 0
+      }'>
+      <!-- Title -->
+      <div class="bg-light border-bottom p-2 mb-3">
+        <div class="row">
+          <div class="col-sm-6">
+            <h6 class="card-title text-cap">Topic</h6>
+          </div>
         </div>
       </div>
 
-      <hr class="my-5">
+      <!-- Container For Input Field -->
+      <div id="addTopicItemContainer"></div>
 
+      <a href="javascript:;" class="js-create-field form-link btn btn-sm btn-no-focus btn-ghost-primary" style="margin-bottom: 20px;">
+        <i class="tio-add"></i> Add Topic
+      </a>
 
-      <div class="row justify-content-md-between">
-        <div class="col-md-6">
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Email</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <input type="email" class="form-control" name="email" id="validationFormEmailLabel" placeholder="Email" aria-label="Email" required data-msg="" value="">
-              </div>
+      <!-- Add Phone Input Field -->
+      <div id="addTopicItemTemplate" class="item-row"  style="display: none;">
+        <!-- Content -->
+        <div class="input-group-add-field">
+          <div class="row">
+            <div class="col-md-6 js-form-message">
+              <input type="text" class="form-control mb-3 particular_name" placeholder="Topic name" aria-label="Item name">
             </div>
+
           </div>
-          <!-- End Form Group -->
+          <!-- End Row -->
 
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Password</label>
-
-            <div class="col-sm-5">
-              <div class="js-form-message input-group-merge">
-                <!--<input type="password" class="form-control" name="password" id="password" placeholder="password" aria-label="Email" required data-msg="Please enter password." value="">-->
-                <input type="password" class="js-toggle-password form-control" name="password" id="password" placeholder="8+ characters required" aria-label="8+ characters required" required
-                data-msg="Your password is invalid. Please try again."
-                data-hs-toggle-password-options='{
-                "target": [".js-toggle-password-target-1", ".js-toggle-password-target-2"],
-                "defaultClass": "tio-hidden-outlined",
-                "showClass": "tio-visible-outlined",
-                "classChangeTarget": ".js-toggle-passowrd-show-icon-1"
-              }'>
-            </div> <!-- Js Form Message -->
-          </div> <!--col sm end -->
-
-          <div class="col-sm-1 js-toggle-password-target-1 input-group-append">
-            <a class="input-group-text" href="javascript:;">
-              <i class="js-toggle-passowrd-show-icon-1 tio-visible-outlined"></i>
-            </a>  
-          </div>
-        </div>
-        <!-- End Form Group -->
-
-
-        <!-- Form Group -->
-        <div class="row form-group">
-          <label class="col-sm-5 col-form-label input-label">Confirm Password</label>
-
-          <div class="col-sm-5">
-            <div class="js-form-message">
-              <!--<input type="password" class="form-control" name="password" id="password" placeholder="password" aria-label="Confirm password" required data-msg="Please enter password." value="">-->
-
-              <input type="password" class="js-toggle-password form-control" name="password_confirmation" id="password_confirmation" placeholder="8+ characters required" aria-label="8+ characters required" required
-              data-msg="Password does not match the confirm password."
-              data-hs-toggle-password-options='{
-              "target": [".js-toggle-password-target-1", ".js-toggle-password-target-2"],
-              "defaultClass": "tio-hidden-outlined",
-              "showClass": "tio-visible-outlined",
-              "classChangeTarget": ".js-toggle-passowrd-show-icon-2"
-            }'>
-          </div>
-        </div>
-
-        <div class="col-sm-1 js-toggle-password-target-2 input-group-append">
-          <a class="input-group-text" href="javascript:;">
-            <i class="js-toggle-passowrd-show-icon-2 tio-visible-outlined"></i>
+          <a class="js-delete-field input-group-add-field-delete" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Remove item">
+            <i class="tio-clear"></i>
           </a>
         </div>
-
+        <!-- End Content -->
       </div>
-      
-      <!-- End Form Group -->
 
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Phone Number</label>
 
-        <div class="col-sm-3">
-          <div class="js-form-message">
-            <select name="country_code" id="country_code" class="form-control">
-              <option value="">selec</option>
-              @foreach($countries as $country)
-              <option value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="js-form-message">
-            <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="Email" required data-msg="" value="">
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Gender</label>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Event Author</label>
+              <select name="author" class="form-control" id="author">
+                <option>Select</option>
+              </select>
+            </div>
 
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <select name="gender" class="form-control">
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Date of Birth</label>
-        <div class="col-sm-7">
-          <div class="input-group js-form-message">
-            <input type="text" name="date_of_birth" id="date_of_birth" class="form-control" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="">
-            <div class="input-group-addon p-2">
-              <i class="tio-date-range"></i>
+            <div class="form-group">
+              <label>Is Event Popular</label>
+              <input type="checkbox" name="popular_event" id="popular_event">
             </div>
           </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Event Date and Time</label>
+              <input required type="text" name="event_date" id="event_date" class="flatpickr-custom-form-control form-control" id="invoice_date" placeholder="Select Event Date" data-input value="">
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <div class="form-group">
+                  <label>Start Time</label>
+                  <input type="time" name="event_start_time" id="event_start_time" class="form-control">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label>End Time</label>
+                  <input type="time" name="event_end_time" id="event_end_time" class="form-control">
+                </div>
+              </div>
+            </div>
+          </div>  
         </div>
+
+      
+
+      <div class="form-group">
+        <button type="submit" class="btn add-btn btn-primary">Add</button>
       </div>
-      <!-- End Form Group -->
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Languages Known</label>
-
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <select name="languages_known[]" multiple id="languages_known" class="form-control">
-
-              @foreach($languages as $language)
-              <option value="{{$language->id}}">{{$language->name}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-
-
-    </div> <!-- div end -->
-
-
-    <div class="col-md-6">
-
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Country</label>
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <select name="country_id" id="country_id" onchange="stateList(this.value,'state_id')" class="form-control">
-              <option value="">Select Country</option>
-              @foreach($countries as $country)
-              <option value="{{$country->id}}">{{$country->name}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">State</label>
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <select name="state_id" id="state_id" aria-label="State" required data-msg="" onchange="cityList(this.value,'city_id')" class="form-control">
-              <option value="">Select State</option>
-
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">City</label>
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <select name="city_id" id="city_id"  aria-label="City" required data-msg="" class="form-control">
-              <option value="">Select City</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Address</label>
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <input type="text" class="form-control" name="address" id="address" placeholder="Address" aria-label="Address" required data-msg="" value="">
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Zip Code</label>
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="">
-          </div>
-        </div>
-      </div>
-
-      <!-- Form Group -->
-      <div class="row form-group">
-        <label class="col-sm-5 col-form-label input-label">Role</label>
-
-        <div class="col-sm-7">
-          <div class="js-form-message">
-            <select name="role" class="form-control">
-              <option value="">Select Role</option>
-               @foreach($roles as $role)
-              <option value="{{$role->slug}}">{{$role->name}}</option>
-              @endforeach
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- End Form Group -->
-    </div>
-    <!-- End Form Group -->    
-  </div>
-
-  <div class="form-group">
-    <button type="submit" class="btn add-btn btn-primary">Add</button>
-  </div>
-  <!-- End Input Group -->
-
-</div><!-- End Card body-->
+      <!-- End Input Group -->
+    </form>
+  </div><!-- End Card body-->
 </div>
 <!-- End Card -->
 </div>
 <!-- End Content -->
+
 @endsection
 
-@section('javascript')
 
 @section('javascript')
 <!-- JS Implementing Plugins -->
-
 <!-- JS Implementing Plugins -->
 <script src="assets/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside.min.js"></script>
-<script src="assets/vendor/hs-nav-scroller/dist/hs-nav-scroller.min.js"></script>
-<script src="assets/vendor/hs-go-to/dist/hs-go-to.min.js"></script>
-<script src="assets/vendor/list.js/dist/list.min.js"></script>
-<script src="assets/vendor/prism/prism.js"></script>
-<script src="assets/vendor/hs-step-form/dist/hs-step-form.min.js"></script>
-<script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
-
-<script src="assets/vendor/hs-toggle-password/dist/js/hs-toggle-password.js"></script>
-<script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="assets/vendor/hs-unfold/dist/hs-unfold.min.js"></script>
+<script src="assets/vendor/hs-form-search/dist/hs-form-search.min.js"></script>
+<script src="assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
 <script src="assets/vendor/select2/dist/js/select2.full.min.js"></script>
+<script src="assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
+<script src="assets/vendor/hs-quantity-counter/dist/hs-quantity-counter.min.js"></script>
+<script src="assets/vendor/hs-add-field/dist/hs-add-field.min.js"></script>
+<script src="assets/vendor/hs-sticky-block/dist/hs-sticky-block.min.js"></script>
+<script src="assets/vendor/hs-step-form/dist/hs-step-form.min.js"></script>
+<script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script> 
 
-<script src="assets/vendor/quill/dist/quill.min.js"></script>
-
-
-<script>
+<!-- JS Front -->
+<script type="text/javascript">
   $(document).on('ready', function () {
+
+    $('#event_date').datepicker({
+      format: 'dd/mm/yyyy',
+      autoclose: true,
+      maxDate:(new Date()).getDate(),
+      todayHighlight: true,
+      orientation: "bottom auto"
+    });
+    
+
+    $('.js-add-field').each(function () {
+      new HSAddField($(this), {
+        addedField: function() {
+          var index = randomNumber();
+          $("#addTopicItemContainer > .item-row:last").find(".particular_name").attr("name","items["+index+"][particular_name]");
+          $("#addTopicItemContainer > .item-row:last").find(".particular_name").attr("required","true");
+       // $("#addTopicItemContainer > .item-row:last").find(".amount").attr("name","items["+index+"][amount]");
+       // $("#addTopicItemContainer > .item-row:last").find(".amount").attr("required","true");
+     },
+     deletedField: function() {
+      $('.tooltip').hide();
+    }
+  }).init();
+    });  
+
+    $('#event_paid').change(function(){
+        //alert("ok");
+        if($('#event_paid').is(':checked')){
+          $('#event_paid_details').removeClass('event_paid_details');
+        }
+        else{
+          $('#event_paid_details').addClass('event_paid_details');
+        }
+      })
+
+    $('#offline_event').change(function(){
+        //alert("ok");
+        if($('#offline_event').is(':checked')){
+          $('.offline_event_details').removeClass('hidden');
+          $('.online-event').addClass('hidden')
+        }
+        else{
+          $('.offline_event_details').addClass('hidden');
+          $('.online-event').removeClass('hidden')
+        }
+      })
+
+
+    initEditor("event_content"); 
+
     $('#date_of_birth').datepicker({
       format: 'dd/mm/yyyy',
       autoclose: true,
@@ -353,7 +392,7 @@
 
     // initialization of Show Password
     $('.js-toggle-password').each(function () {
-        new HSTogglePassword(this).init()
+      new HSTogglePassword(this).init()
     });
 
 
@@ -388,7 +427,7 @@
           }
         },
         error:function(){
-            internalError();
+          internalError();
         }
       });
       
