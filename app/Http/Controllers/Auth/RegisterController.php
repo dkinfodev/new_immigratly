@@ -355,7 +355,7 @@ class RegisterController extends Controller
         // }
 
 
-        /************** IMPLEMENTING MAIL *************************/
+        /************** IMPLEMENTING MAIL ************************
         $viewData['pageTitle'] = 'Email';
         $viewData['firstname'] = $request->input('first_name');
         $viewData['lastname'] = $request->input('last_name');
@@ -367,9 +367,9 @@ class RegisterController extends Controller
         //$response['contents'] = $contents; 
         //echo $contents;
         //exit;
-        return view('emails.panel-notification',$viewData);
+        //return view('emails.panel-notification',$viewData);
         /************** END IMPLEMENTING MAIL ********************/
 
-        //return response()->json($response);
+        return response()->json($response);
     }
 }
