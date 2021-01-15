@@ -42,4 +42,11 @@ class HomeController extends Controller
             return redirect('/');
         }
     }
+
+   /* public function emails()
+    {
+        $viewData['pageTitle'] = 'Email';
+        return view('emails.panel-notification',$viewData);
+    } */
+
 }

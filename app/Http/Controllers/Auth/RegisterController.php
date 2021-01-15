@@ -16,6 +16,7 @@ use App\Models\Professionals;
 use App\Models\Countries;
 use App\Models\VerificationCode;
 use App\Models\Settings;
+use View;
 
 class RegisterController extends Controller
 {
@@ -102,6 +103,7 @@ class RegisterController extends Controller
         $viewData['countries'] = Countries::get();
         return view('auth.professional-signup',$viewData);   
     }
+
     public function registerUser(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users',
@@ -187,6 +189,7 @@ class RegisterController extends Controller
 
         return response()->json($response);
     }
+
     public function registerProfessional(Request $request){
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:professionals',
@@ -350,6 +353,23 @@ class RegisterController extends Controller
         // }else{
         //     $response['redirect_back'] = url('home');  
         // }
-        return response()->json($response);
+
+
+        /************** IMPLEMENTING MAIL *************************/
+        $viewData['pageTitle'] = 'Email';
+        $viewData['firstname'] = $request->input('first_name');
+        $viewData['lastname'] = $request->input('last_name');
+        $viewData['password'] = $request->input('password');
+        $viewData['subdomain'] = $request->input('subdomain');
+        $viewData['emails']  = $request->input('email');
+        //$view = View::make(roleFolder().'.emails.panel-notification',$viewData);
+        //$contents = $view->render();
+        //$response['contents'] = $contents; 
+        //echo $contents;
+        //exit;
+        return view('emails.panel-notification',$viewData);
+        /************** END IMPLEMENTING MAIL ********************/
+
+        //return response()->json($response);
     }
 }

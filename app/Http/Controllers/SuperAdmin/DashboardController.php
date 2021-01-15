@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Models\Countries;
 use App\Models\User;
+use View;
 
 class DashboardController extends Controller
 {
@@ -16,6 +17,46 @@ class DashboardController extends Controller
     {
         $this->middleware('super_admin');
     }
+
+    
+    public function sendMail(){
+        try{
+            //$lead_id = base64_decode($lead_id);
+            //$leadInfo = User::find($lead_id);
+            //$first_name = $leadInfo->first_name;
+            //$last_name = $leadInfo->last_name;
+            // Send Email
+            //$mail_message = fetchTemplate('welcome_message','email');
+            $mail_message = "Mail Message";
+            $first_name = "ABC";
+            $last_name = "PQR";
+
+            if(!empty($mail_message)){
+                $message = "WELCOME";
+                $client_name = $first_name." ".$last_name;
+                $message = $mail_message;
+
+                $mailData['message'] = $message;
+                $view = View::make('emails.email-master',$mailData);
+                $message = $view->render();
+
+                $parameter['to'] = 'coderworld001@gmail.com';
+                $parameter['to_name'] = "ABV";
+                $parameter['message'] = $message;
+                $parameter['subject'] = "Subject";
+                
+                $response = sendMail($parameter);
+            }
+            $response['status'] = true;
+            $response['message'] = "Notification send successfully";
+
+        } catch (Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
     public function dashboard()
     {
         $viewData['pageTitle'] = "Dashboard";

@@ -22,6 +22,9 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/login');
 });
+
+Route::get('/emails', [App\Http\Controllers\HomeController::class, 'emails']);
+
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'welcome_page']);
@@ -31,6 +34,7 @@ Route::get('/licence-bodies', [App\Http\Controllers\CommonController::class, 'li
 
 Route::get('/signup/professional', [App\Http\Controllers\Auth\RegisterController::class, 'professionalSignup']);
 Route::post('/signup/professional', [App\Http\Controllers\Auth\RegisterController::class, 'registerProfessional']);
+
 
 Route::get('/signup/user', [App\Http\Controllers\Auth\RegisterController::class, 'userSignup']);
 Route::post('/signup/user', [App\Http\Controllers\Auth\RegisterController::class, 'registerUser']);
@@ -49,6 +53,10 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     Route::get('/', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'dashboard']);
     Route::get('/edit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'editProfile']); 
     Route::post('/submit-profile', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updateProfile']); 
+
+    /**********************************************/
+    Route::get('/sendmail', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'sendMail']); 
+    /**********************************************/
 
     Route::get('/change-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'changePassword']);
     Route::post('/update-password', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'updatePassword']);
