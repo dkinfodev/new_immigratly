@@ -60,6 +60,7 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
+<<<<<<< HEAD
         <a class="dropdown-item" href="{{baseUrl('staff/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i> Edit</a>
         <a class="dropdown-item" href="{{baseUrl('staff/privileges/'.base64_encode($record->id))}}"><i class="tio-lock"></i> Set Privileges</a>
         <div class="dropdown-divider"></div>
@@ -69,6 +70,15 @@
         
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('staff/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i> Delete</a> 
+=======
+        <a class="dropdown-item" href="{{baseUrl('staff/edit/'.base64_encode($record->id))}}">Edit</a>
+        
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="{{baseUrl('staff/change-password/'.base64_encode($record->id))}}">Change Password</a>
+        
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('staff/delete/'.base64_encode($record->id))}}">Delete</a> 
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
       </div>
     </div>
   </td>

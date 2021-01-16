@@ -42,9 +42,18 @@
 
           <div class="form-group">
             <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
+<<<<<<< HEAD
               <div class="js-form-message">
                 <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg=" " >
               </div>
+=======
+
+            
+              <div class="js-form-message">
+                <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg=" " >
+              </div>
+            
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
           </div>
           <!-- End Form Group -->
         </div>
@@ -87,7 +96,11 @@
         <div class="col-md-5">
           <div class="js-form-message">
             <select name="country_code" id="country_code" class="form-control">
+<<<<<<< HEAD
               <option value="">Select Code</option>
+=======
+              <option value="">select</option>
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
               @foreach($countries as $country)
               <option value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
               @endforeach
@@ -108,7 +121,11 @@
             <div class="col-md-12">
               <div class="js-form-message">
                 <select name="status" class="form-control">
+<<<<<<< HEAD
                   <option value="">Select Status</option>
+=======
+                  <option>Select</option>
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
                   <option value="1">Active</option>
                   <option value="0">Inactive</option>
                   <option value="2">Suspended</option>

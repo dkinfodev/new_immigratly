@@ -11,9 +11,12 @@ use DB;
 use App\Models\ProfessionalServices;
 use App\Models\User;
 use App\Models\Countries;
+<<<<<<< HEAD
 use App\Models\EmployeePrivileges;
 use App\Models\EmployeePrivilegesActions;
 use App\Models\StaffPrivileges;
+=======
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
 
 class StaffController extends Controller
 {
@@ -261,6 +264,7 @@ class StaffController extends Controller
         return response()->json($response);
     } 
 
+<<<<<<< HEAD
     public function setPrivileges($id){
         $id = base64_decode($id);
         $privileges = EmployeePrivileges::get();
@@ -304,5 +308,8 @@ class StaffController extends Controller
         }
         return response()->json($response);
     }
+=======
+
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     
 }

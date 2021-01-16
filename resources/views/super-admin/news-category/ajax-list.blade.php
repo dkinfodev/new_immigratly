@@ -10,12 +10,18 @@
 
   <td>
       {{$record->name}}
+<<<<<<< HEAD
     </a>
+=======
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
   </td>
 
   <td>
       {{$record->fetchUser->first_name}} {{$record->fetchUser->last_name}}
+<<<<<<< HEAD
     </a>
+=======
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
   </td>
 
   
@@ -25,7 +31,11 @@
           <i class="tio-edit"></i>
      </a>
 
+<<<<<<< HEAD
     <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('news-category/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+=======
+    <a href="javascript:;" onclick="deleteRecord('{{ base64_encode($record->id) }}')" data-href="{{baseUrl('news-category/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
   
 </td>
 </tr>

@@ -170,7 +170,11 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/change-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'changePassword']);
         Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\UserController::class, 'updatePassword']);
     });
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     Route::group(array('prefix' => 'news'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\NewsController::class, 'news']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\NewsController::class, 'getAjaxList']); 
@@ -193,7 +197,12 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryDeleteMultiple']); 
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryEdit']); 
         Route::post('/update', [App\Http\Controllers\SuperAdmin\NewsController::class, 'newsCategoryUpdate']);     
+<<<<<<< HEAD
     });  
+=======
+    }); 
+
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     Route::group(array('prefix' => 'noc-code'), function () {
 
         Route::get('/', [App\Http\Controllers\SuperAdmin\NocCodeController::class, 'list']);
@@ -217,6 +226,10 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'edit']); 
         Route::post('/update', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'update']);     
     });  
+<<<<<<< HEAD
+=======
+
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     Route::group(array('prefix' => 'staff'), function () {
             Route::get('/', [App\Http\Controllers\SuperAdmin\StaffController::class, 'index']);
             Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\StaffController::class, 'getAjaxList']);
@@ -228,8 +241,11 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
             Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\StaffController::class, 'deleteMultiple']);
             Route::get('/change-password/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'changePassword']);
             Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'updatePassword']);
+<<<<<<< HEAD
             Route::get('/privileges/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'setPrivileges']);
             Route::post('/privileges/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'savePrivileges']);
+=======
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     });
 
     Route::group(array('prefix' => 'employee-privileges'), function () {
@@ -405,6 +421,13 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::get('/edit-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'editFolder']);
             Route::post('/edit-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'updateFolder']);
             Route::get('/delete-folder/{id}', [App\Http\Controllers\Admin\ServicesController::class, 'deleteFolder']);
+
+        });
+
+         Route::group(array('prefix' => 'articles'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\ArticleController::class, 'add']);
+            //Route::post('/ajax-list', [App\Http\Controllers\Admin\ArticleController::class, 'getAjaxList']); 
+            //Route::get('/edit/{id}', [App\Http\Controllers\Admin\ArticleController::class, 'edit']);
 
         });
         

@@ -7,12 +7,25 @@
     </div>
   </td>
   <td class="table-column-pl-0">
+<<<<<<< HEAD
       {{$record->name}}
       
   </td>
   <td class="table-column-pl-0">
      {{$record->slug}}
       
+=======
+      <div class="ml-3">
+        <span class="d-block h5 text-hover-primary mb-0">{{$record->name}}</span>
+      </div>
+    </a>
+  </td>
+  <td class="table-column-pl-0">
+      <div class="ml-3">
+        <span class="d-block h5 text-hover-primary mb-0">{{$record->slug}}</span>
+      </div>
+    </a>
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
   </td>
   <td>
     <div class="hs-unfold">

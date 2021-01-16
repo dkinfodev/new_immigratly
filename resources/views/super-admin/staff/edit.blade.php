@@ -88,7 +88,11 @@
             <div class="col-sm-5">
               <div class="js-form-message">
                 <select name="country_code" id="country_code" class="form-control">
+<<<<<<< HEAD
                   <option value="">Select Code</option>
+=======
+                  <option value="">Select Country</option>
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
                   @foreach($countries as $country)
                   <option {{$record->country_code == $country->phonecode?"selected":""}} value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
                   @endforeach

@@ -29,7 +29,11 @@
 
   <td> 
     <a href="{{baseUrl('news/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> 
+<<<<<<< HEAD
     <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('news/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+=======
+    <a href="javascript:;" onclick="deleteRecord('{{ base64_encode($record->id) }}')" data-href="{{baseUrl('news/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
   
 </td>
 </tr>

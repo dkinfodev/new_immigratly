@@ -16,6 +16,12 @@
       {{$record->level}}
   </td>
  
+<<<<<<< HEAD
+=======
+  <td>
+      {{$record->fetchUser->first_name}} {{$record->fetchUser->last_name}}
+  </td>
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
 
   
   <td> 

@@ -61,7 +61,11 @@ class EmployeePrivilegesActionsController extends Controller
 
         $id = base64_decode($id);
 
+<<<<<<< HEAD
         $viewData['pageTitle'] = "Add Action";
+=======
+        $viewData['pageTitle'] = "Add Employee Modules";
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
         $moduleName = EmployeePrivileges::where('id',$id)->first();
         $viewData['moduleName'] = $moduleName->name;
         $viewData['moduleId'] = $id;
@@ -114,7 +118,11 @@ class EmployeePrivilegesActionsController extends Controller
         $viewData['moduleId'] = $mid;
         $id = base64_decode($id);
         $viewData['record'] = EmployeePrivilegesActions::where("id",$id)->first();
+<<<<<<< HEAD
         $viewData['pageTitle'] = "Edit Action";
+=======
+        $viewData['pageTitle'] = "Edit Professional Modules";
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
         return view(roleFolder().'.employee-privileges-actions.edit',$viewData);
     }
 

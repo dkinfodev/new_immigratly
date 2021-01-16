@@ -29,7 +29,14 @@
 </tr>
 
 @endforeach
+<<<<<<< HEAD
 
+=======
+@else
+<tr>
+  <td colspan="3" class="text-center text-danger">No records available</td>
+</tr>
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
 @endif
 
 <script>

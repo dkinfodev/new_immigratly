@@ -27,7 +27,44 @@ class PrimaryDegreeController extends Controller
     } 
 
 
+<<<<<<< HEAD
     
+=======
+    public function update(Request $request){
+        $id = $request->input('id');
+        $id = base64_decode($id);
+
+        $object = PrimaryDegree::find($id);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'level' => 'required',
+        ]);
+        
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object->name = $request->input("name");
+        $object->level = $request->input("level");
+        
+        $object->save();
+        
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('primary-degree');
+        $response['message'] = "Record added successfully";
+        
+        return response()->json($response);
+    }
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
 
     public function edit($id){
         $id = base64_decode($id);
@@ -104,6 +141,7 @@ class PrimaryDegreeController extends Controller
         
         return response()->json($response);
     }
+<<<<<<< HEAD
     public function update(Request $request){
         $id = $request->input('id');
         $id = base64_decode($id);
@@ -138,6 +176,9 @@ class PrimaryDegreeController extends Controller
         
         return response()->json($response);
     }
+=======
+    
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     public function deleteSingle($id){
         $id = base64_decode($id);
         PrimaryDegree::deleteRecord($id);

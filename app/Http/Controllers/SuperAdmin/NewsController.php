@@ -263,7 +263,15 @@ class NewsController extends Controller
         return redirect()->back()->with("success","Record deleted successfully");
     }
 
+<<<<<<< HEAD
     
+=======
+    public function newsCategoryDeleteSingle($id){
+        $id = base64_decode($id);
+        News::deleteRecord($id);
+        return redirect()->back()->with("success","Record deleted successfully");
+    }
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
 
     public function deleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
@@ -275,11 +283,15 @@ class NewsController extends Controller
         \Session::flash('success', 'Records deleted successfully'); 
         return response()->json($response);
     }
+<<<<<<< HEAD
     public function newsCategoryDeleteSingle($id){
         $id = base64_decode($id);
         NewsCategory::deleteRecord($id);
         return redirect()->back()->with("success","Record deleted successfully");
     }
+=======
+
+>>>>>>> e5fb5987d66674af94dc8171075020ea0d1da7aa
     public function newsCategoryDeleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){

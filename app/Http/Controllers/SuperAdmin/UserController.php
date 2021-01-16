@@ -191,7 +191,7 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-     public function deleteSingle($id){
+    public function deleteSingle($id){
         $id = base64_decode($id);
         User::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");

@@ -11,6 +11,6 @@ class PrivilegesActions extends Model
     protected $table = "privileges_actions";
 
     static function deleteRecord($id){
-        Languages::where("id",$id)->delete();
+        PrivilegesActions::where("id",$id)->delete();
     }
 }
