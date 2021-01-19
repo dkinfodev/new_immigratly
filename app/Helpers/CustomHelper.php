@@ -2,6 +2,8 @@
 require dirname(__DIR__)."/../library/subdomain/init.php";
 require dirname(__DIR__)."/../library/twilio/twilio.php";
 
+use Illuminate\Support\Str;
+
 use App\Models\Settings;
 use App\Models\DomainDetails;
 use App\Models\Documents;
@@ -1119,5 +1121,11 @@ if(!function_exists("profession_profile")){
         }else{
             return false;
         }
+    }
+}
+if(!function_exists("generateUUID")){
+    function generateUUID(){
+        $uuid = Str::uuid()->toString();
+        return $uuid;
     }
 }

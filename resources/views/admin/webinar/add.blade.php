@@ -364,9 +364,9 @@ $(document).on('ready', function () {
     new HSAddField($(this), {
       addedField: function() {
         var index = randomNumber();
-        $("#addTopicContainer > .item-row:last").find(".topic_name").attr("name","items["+index+"][topic_name]");
+        $("#addTopicContainer > .item-row:last").find(".topic_name").attr("name","topics["+index+"][topic_name]");
         $("#addTopicContainer > .item-row:last").find(".topic_name").attr("required","true");
-        $("#addTopicContainer > .item-row:last").find(".topic_list").attr("name","items["+index+"][topic_list][]");
+        $("#addTopicContainer > .item-row:last").find(".topic_list").attr("name","topics["+index+"][topic_list][]");
         $("#addTopicContainer > .item-row:last").find(".topic_list").attr("required","true");
 
         $('[data-toggle="tooltip"]').tooltip();

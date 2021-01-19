@@ -6,24 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use DB;
 
-class Articles extends Model
+class Webinar extends Model
 {
     use HasFactory;
-    protected $table = "articles";
+    protected $table = "webinar";
 
     static function deleteRecord($id){
-        $article = Articles::where("id",$id)->first();
-        Articles::where("id",$id)->delete();
+        $article = Webinar::where("id",$id)->first();
+        Webinar::where("id",$id)->delete();
         $images = $article->images;
         if($images != ''){
             $images = explode(",",$images);
             for($i=0;$i < count($images);$i++){
-                if(file_exists(public_path('uploads/articles/'.$images[$i]))){
-                    unlink(public_path('uploads/articles/'.$images[$i]));
+                if(file_exists(public_path('uploads/webinars/'.$images[$i]))){
+                    unlink(public_path('uploads/webinars/'.$images[$i]));
                 }
             }
         }
-        ArticleTags::where("article_id",$id)->delete();
+        WebinarTags::where("webinar_id",$id)->delete();
+        WebinarTopics::where("webinar_id",$id)->delete();
     }
 
     public function Category()
@@ -37,8 +38,13 @@ class Articles extends Model
         return $company;
     }
 
-    public function ArticleTags()
+    public function WebinarTags()
     {
-        return $this->hasMany('App\Models\ArticleTags','article_id');
+        return $this->hasMany('App\Models\WebinarTags','webinar_id');
+    }
+
+    public function WebinarTopics()
+    {
+        return $this->hasMany('App\Models\WebinarTopics','webinar_id');
     }
 }

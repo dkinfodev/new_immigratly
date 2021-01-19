@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ArticleTags extends Model
+class WebinarTopics extends Model
 {
     use HasFactory;
-    protected $table = "article_tags";
+    protected $table = "webinar_topics";
 
     static function deleteRecord($id){
-        ArticleTags::where("id",$id)->delete();
+        WebinarTopics::where("id",$id)->delete();
     }
 }

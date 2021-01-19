@@ -32,7 +32,16 @@ Route::group(array('middleware' => 'curl_api'), function () {
 			Route::post('/update', [App\Http\Controllers\Api\MasterApiController::class, 'updateArticle']);
 			Route::post('/delete', [App\Http\Controllers\Api\MasterApiController::class, 'deleteArticle']);
 			Route::post('/delete-image', [App\Http\Controllers\Api\MasterApiController::class, 'deleteArticleImage']);
+		});
 
+		Route::group(array('prefix' => 'webinar'), function () {
+			Route::post('/', [App\Http\Controllers\Api\MasterApiController::class, 'fetchWebinars']);
+			Route::post('/count', [App\Http\Controllers\Api\MasterApiController::class, 'WebinarsCount']);
+			Route::post('/save', [App\Http\Controllers\Api\MasterApiController::class, 'saveWebinar']);
+			Route::post('/fetch-webinar', [App\Http\Controllers\Api\MasterApiController::class, 'fetchWebinar']);
+			Route::post('/update', [App\Http\Controllers\Api\MasterApiController::class, 'updateWebinar']);
+			Route::post('/delete', [App\Http\Controllers\Api\MasterApiController::class, 'deleteWebinar']);
+			Route::post('/delete-image', [App\Http\Controllers\Api\MasterApiController::class, 'deleteWebinarImage']);
 		});
 	});	
 

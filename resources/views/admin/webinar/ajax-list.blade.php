@@ -13,8 +13,8 @@
                 if($record['images'] != ''){
                   $images = explode(",",$record['images']);
                   $image = '';
-                  if(file_exists(public_path('uploads/webinar/'.$images[0]))){
-                      $image = url('public/uploads/webinar/'.$images[0]);
+                  if(file_exists(public_path('uploads/webinars/'.$images[0]))){
+                      $image = url('public/uploads/webinars/'.$images[0]);
                   }else{
                       $image = "assets/svg/brands/google-webdev.svg";    
                   }
