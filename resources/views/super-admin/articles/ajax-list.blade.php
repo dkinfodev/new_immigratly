@@ -10,8 +10,8 @@
             <div class="d-flex justify-content-center mb-2">
               <!-- Avatar -->
               <?php
-                if($record['images'] != ''){
-                  $images = explode(",",$record['images']);
+                if($record->images != ''){
+                  $images = explode(",",$record->images);
                   if(file_exists(public_path('uploads/articles/'.$images[0]))){
                       $image = url('public/uploads/articles/'.$images[0]);
                   }
@@ -37,14 +37,14 @@
                 </a>
 
                 <div id="projectsGridDropdown-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                  <a class="dropdown-item" href="{{baseUrl('articles/edit/'.$record['unique_id'])}}">
+                  <a class="dropdown-item" href="{{baseUrl('articles/edit/'.$record->unique_id)}}">
                     <i class="tio-edit dropdown-item-icon"></i>
                     Edit
                   </a>
                   <!-- <a class="dropdown-item" href="#">Add to favorites</a>
                   <a class="dropdown-item" href="#">Archive project</a> -->
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{ baseUrl('articles/delete/'.$record['unique_id']) }}">
+                  <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{ baseUrl('articles/delete/'.$record->unique_id) }}">
                    <i class="tio-delete-outlined dropdown-item-icon"></i>
                    Delete
                   </a>
@@ -54,23 +54,23 @@
             <div class="clearfix"></div>
           
             <div class="mb-4">
-              <h2 class="mb-1">{{$record['title']}}</h2>
+              <h2 class="mb-1">{{$record->title}}</h2>
               <div class="row mb-3">
                 <div class="col-auto">
                   <span class="legend-indicator bg-primary"></span> {{$record['category']['name']}}
                 </div>
                 <div class="col-auto">
-                  <span class="font-size-sm"><i class="tio-calendar"></i> {{dateFormat($record['created_at'])}}</span>
+                  <span class="font-size-sm"><i class="tio-calendar"></i> {{dateFormat($record->created_at)}}</span>
                 </div>
               </div>
               <p>
-                {{substr($record['short_description'],0,150)}}
+                {{substr($record->short_description,0,150)}}
               </p>
               <div class="article-user">
                 <span class="avatar avatar-circle">
-                  <img class="avatar-img" src="{{professionalLogo('m',$record['professional'])}}" alt="Image Description">
+                  <img class="avatar-img" src="{{professionalLogo('m',$record->professional)}}" alt="Image Description">
                 </span>
-                <span class="h3 avatar-name">{{ $record['professional_info']['company_name'] }}</span>
+                <span class="h3 avatar-name">{{ $record->professional_info->company_name }}</span>
               </div>
             </div>
             <a class="stretched-link" href="#"></a>

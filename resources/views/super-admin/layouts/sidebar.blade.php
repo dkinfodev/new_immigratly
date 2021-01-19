@@ -58,6 +58,12 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">News</span>
                   </a>
                 </li>
+                <li class="navbar-vertical-aside-has-menu">
+                  <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/articles') }}">
+                    <i class="tio-document-text nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Articles</span>
+                  </a>
+                </li>
                 <!-- <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
                     <i class="tio-feed-outlined nav-icon"></i>

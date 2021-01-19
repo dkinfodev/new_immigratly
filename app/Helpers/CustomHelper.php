@@ -618,7 +618,7 @@ if(!function_exists("curlRequest")){
         curl_close($ch);
        
         $curl_response = json_decode($response,true);
-        
+        // echo $response;
         // if($curl_response->status == 'api_error'){
         //     if($curl_response->error == 'account_disabled'){
         //         Auth::logout();
@@ -803,7 +803,44 @@ if(!function_exists("professionalProfile")){
         return $url;
     }
 }
-
+if(!function_exists("professionalLogo")){
+    function professionalLogo($size='r',$domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        
+        $user = DB::table(PROFESSIONAL_DATABASE.$domain.".professional_details")->first();
+        $profile_image = $user->company_logo;
+        $profile_dir = professionalDir($domain)."/profile/".$profile_image;
+        if($profile_image == '' || !file_exists($profile_dir)){
+            $url = asset("public/uploads/users/default.jpg");
+            return $url;
+        }
+        $original = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        $url = '';
+        if($size == 'r'){
+            $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        }
+        if($size == 'm'){
+            if(file_exists(professionalDir($domain)."/profile/medium/".$profile_image)){
+                $url = asset("public/uploads/professional/".$domain."/profile/medium/".$profile_image);
+            }else{
+                $url = $original;
+            }
+        }
+        if($size == 't'){
+            if(file_exists(professionalDir($domain)."/profile/thumb/".$profile_image)){
+                $url = asset("public/uploads/professional/".$domain."/profile/thumb/".$profile_image);
+            }else{
+                $url = $original;
+            }
+        }
+        if($url == ''){
+            $url = $original;
+        }
+        return $url;
+    }
+}
 if(!function_exists("userDir")){
     function userDir($unique_id = ''){
         if($unique_id == ''){

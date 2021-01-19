@@ -23,7 +23,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{(baseUrl('articles/add'))}}">
+        <a class="btn btn-primary" href="{{(baseUrl('webinar/add'))}}">
           <i class="tio-user-add mr-1"></i> Add
         </a>
       </div>
@@ -61,7 +61,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('articles/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('webinar/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -155,7 +155,7 @@ function loadData(page=1){
   var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/articles/ajax-list?page='+page,
+        url: BASEURL + '/webinar/ajax-list?page='+page,
         data:{
             _token:csrf_token,
             search:search,

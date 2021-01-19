@@ -397,6 +397,32 @@ class ProfileController extends Controller
                 $object2->company_address_proof = $newName;                    
             }
         }
+        if ($file = $request->file('company_logo')){
+                
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension() ?: 'png';
+            $newName        = mt_rand(1,99999)."-".$fileName;
+            $source_url = $file->getPathName();
+            $path = professionalDir()."/profile";
+            
+            $destinationPath = $path.'/thumb';
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $destination_url = $destinationPath.'/'.$newName;
+            resizeImage($source_url, $destination_url, 100,100,80);
+
+            $destinationPath = $path.'/medium';
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $destination_url = $destinationPath.'/'.$newName;
+            resizeImage($source_url, $destination_url, 500,500,80);
+            $destinationPath = professionalDir()."/profile";
+            if($file->move($destinationPath, $newName)){
+                $object2->company_logo = $newName;                    
+            }
+        }
         $object2->save();
 
         //$domain_details = DomainDetails::first();

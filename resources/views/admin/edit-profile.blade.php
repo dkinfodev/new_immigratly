@@ -466,6 +466,24 @@ Next <i class="tio-chevron-right"></i>
 <div id="validationFormCompanyInfo" style="display: none;">
  <div class="row justify-content-md-between">
   <div class="col-md-6">
+    <!-- Logo -->
+      <label class="custom-file-boxed custom-file-boxed-sm" for="company_logo">
+          @if($company_details->company_logo != '' &&  file_exists(professionalDir().'/profile/'.$company_details->company_logo))
+            <img id="companylogoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$company_details->company_logo }}" alt="Company Logo">
+          @else
+            <img id="companylogoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Company Logo">
+          @endif
+
+          <span class="d-block">Upload your company logo</span>
+
+          <input type="file" class="js-file-attach custom-file-boxed-input" name="company_logo" id="company_logo"
+          data-hs-file-attach-options='{
+          "textTarget": "#companylogoImg",
+          "mode": "image",
+          "targetAttr": "src"
+        }'>
+      </label>
+      <!-- End Logo -->
     <!-- Form Group -->
     <div class="row form-group">
       <label class="col-sm-5 col-form-label input-label">Company Name</label>
@@ -524,51 +542,49 @@ Next <i class="tio-chevron-right"></i>
     <!-- End Form Group -->
 
     <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Owner ID Proof</label>
-
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <div class="custom-file">
-            <input type="file" class="js-file-attach custom-file-input" name="owner_id_proof" id="owner_id_proof"
-            data-hs-file-attach-options='{
-            "textTarget": "[for=\"owner_id_proof\"]"
-          }'>
-          <label class="custom-file-label" for="owner_id_proof">Choose file</label>
-        </div>
-      </div>
-      @if($company_details->owner_id_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->owner_id_proof))
-        <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->owner_id_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
-      @endif
-    </div>
-  </div>
-  <!-- End Form Group -->
-
- <!-- Form Group -->
-    <div class="row form-group">
-      <label class="col-sm-5 col-form-label input-label">Company Address Proof</label>
-
-      <div class="col-sm-7">
-        <div class="js-form-message">
-          <div class="custom-file">
-            <input type="file" class="js-file-attach custom-file-input" name="company_address_proof" id="company_address_proof"
-            data-hs-file-attach-options='{
-            "textTarget": "[for=\"company_address_proof\"]"
-          }'>
-          <label class="custom-file-label" for="company_address_proof">Choose file</label>
-        </div>
-      </div>
-      @if($company_details->company_address_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->company_address_proof))
-        <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->company_address_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
-      @endif
-    </div>
-  </div>
-  <!-- End Form Group -->
+    
+    <!-- End Form Group -->
 
 </div> <!-- div end -->
 
 
 <div class="col-md-6">
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Owner ID Proof</label>
+
+    <div class="col-sm-7">
+      <div class="js-form-message">
+        <div class="custom-file">
+          <input type="file" class="js-file-attach custom-file-input" name="owner_id_proof" id="owner_id_proof"
+          data-hs-file-attach-options='{
+          "textTarget": "[for=\"owner_id_proof\"]"
+        }'>
+        <label class="custom-file-label" for="owner_id_proof">Choose file</label>
+      </div>
+    </div>
+    @if($company_details->owner_id_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->owner_id_proof))
+      <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->owner_id_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+    @endif
+    </div>
+  </div>
+  <div class="row form-group">
+    <label class="col-sm-5 col-form-label input-label">Company Address Proof</label>
+
+    <div class="col-sm-7">
+      <div class="js-form-message">
+        <div class="custom-file">
+          <input type="file" class="js-file-attach custom-file-input" name="company_address_proof" id="company_address_proof"
+          data-hs-file-attach-options='{
+          "textTarget": "[for=\"company_address_proof\"]"
+        }'>
+        <label class="custom-file-label" for="company_address_proof">Choose file</label>
+      </div>
+    </div>
+    @if($company_details->company_address_proof != '' && file_exists(professionalDir().'/documents/'.$company_details->company_address_proof))
+      <a class="badge badge-primary" download href="{{ professionalDirUrl().'/documents/'.$company_details->company_address_proof }}"><i class="fa fa-download"></i>{{$company_details->owner_id_proof}}</a>
+    @endif
+    </div>
+  </div>
   <!-- Form Group -->
   <div class="row form-group">
     <label class="col-sm-5 col-form-label input-label">State</label>

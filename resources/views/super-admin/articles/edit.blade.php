@@ -1,6 +1,17 @@
 @extends('layouts.master')
 
 @section('content')
+<style>
+.del-icon {
+    position: absolute;
+    z-index: 1;
+    top: 0px;
+    background-color: rgba(0,0,0,0.8);
+}
+.article-image {
+    margin-bottom: 20px;
+}
+</style>
 <!-- Content -->
 <div class="content container-fluid">
   <!-- Page Header -->
@@ -32,13 +43,13 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('articles/save') }}" method="post">
+      <form id="form" class="js-validate" action="{{ baseUrl('articles/edit/'.$record['unique_id']) }}" method="post">
         @csrf
         <input type="hidden" name="timestamp" value="{{$timestamp}}" />
         
         <div class="form-group js-form-message">
           <label>Title</label>
-          <input type="text" class="form-control" data-msg="Please enter a article title." name="title" id="title">
+          <input type="text" class="form-control" data-msg="Please enter a article title." value="{{$record['title']}}" name="title" id="title">
         </div>
         <div class="row">
           <div class="col-md-6">
@@ -51,7 +62,7 @@
               }'>
                 <option value="">Select Category</option>
                 @foreach($services as $service)
-                <option value="{{$service->id}}">{{$service->name}}</option>
+                <option {{($record['category_id'] == $service->id)?'selected':''}} value="{{$service->id}}">{{$service->name}}</option>
                 @endforeach
               </select>
             </div>
@@ -59,13 +70,21 @@
           <div class="col-md-6">
             <div class="form-group js-form-message">
               <label>Tags</label>
+              <?php
+                $article_tags = $record->ArticleTags;
+
+                $tag_ids = array();
+                foreach($article_tags as $at){
+                  $tag_ids[] = $at->tag_id;
+                }
+              ?>
               <select name="tags[]" multiple class="form-control" id="tags"
               data-hs-select2-options='{
                 "placeholder": "Select Tags",
                 "searchInputPlaceholder": "Select Tags"
               }'>
                 @foreach($tags as $tag)
-                <option value="{{$tag->id}}">{{$tag->name}}</option>
+                <option {{ (in_array($tag->id,$tag_ids))?'selected':'' }} value="{{$tag->id}}">{{$tag->name}}</option>
                 @endforeach
               </select>
             </div>
@@ -75,13 +94,13 @@
 
         <div class="form-group js-form-message">
           <label>Short Description</label>
-          <textarea type="text" class="form-control" data-msg="Please enter short description." name="short_description" id="short_description"></textarea>
+          <textarea type="text" class="form-control" data-msg="Please enter short description." name="short_description" id="short_description">{{$record['short_description']}}</textarea>
         </div>
      
 
         <div class="form-group js-form-message">
           <label>Content</label>
-          <textarea name="description" data-msg="Please enter description." id="article_content" class="form-control editor"></textarea>
+          <textarea name="description" data-msg="Please enter description." id="article_content" class="form-control editor">{{$record['description']}}</textarea>
         </div>
 
         <div class="form-group js-form-message">
@@ -92,8 +111,8 @@
             "searchInputPlaceholder": "Select share with"
           }'>
             <option value="">Select Option</option>
-            <option value="Public">Public</option>
-            <option value="Private">Private</option>
+            <option {{($record['share_with'] == 'Public')?'selected':''}} value="Public">Public</option>
+            <option {{($record['share_with'] == 'Private')?'selected':''}} value="Private">Private</option>
           </select>
         </div>
 
@@ -140,7 +159,30 @@
         <div class="form-group js-form-message">
           <input type="hidden" id="no_of_images" name="images" value="" />
         </div>
-
+        <div class="row">
+          <?php
+            if($record['images'] != ''){
+              $images = explode(",",$record['images']);
+              for($i=0;$i < count($images);$i++){
+                if(file_exists(public_path('uploads/articles/'.$images[$i]))){
+          ?>
+            <div class="col-auto article-image">
+              <span class="avatar avatar-xxl avatar-4by3">
+                <img class="avatar-img" width="100%" src="{{url('public/uploads/articles/'.$images[$i])}}" alt="Image Description">
+              </span>
+              <div class="del-icon">
+                <a class="text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{ baseUrl('articles/remove-image/'.$record['unique_id'].'?image='.$images[$i]) }}" >
+                  <i class="tio-clear"></i>
+                </a>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          <?php
+                }
+              }
+            }
+          ?>
+        </div>
         <div class="form-group">
           <button type="submit" id="submitbtn" class="btn add-btn btn-primary">Save</button>
         </div>

@@ -12,8 +12,11 @@
               <?php
                 if($record['images'] != ''){
                   $images = explode(",",$record['images']);
-                  if(file_exists(public_path('uploads/articles/'.$images[0]))){
-                      $image = url('public/uploads/articles/'.$images[0]);
+                  $image = '';
+                  if(file_exists(public_path('uploads/webinar/'.$images[0]))){
+                      $image = url('public/uploads/webinar/'.$images[0]);
+                  }else{
+                      $image = "assets/svg/brands/google-webdev.svg";    
                   }
               ?>
               <img src="{{$image}}" width="100%" alt="Image Description">
@@ -37,14 +40,14 @@
                 </a>
 
                 <div id="projectsGridDropdown-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-                  <a class="dropdown-item" href="{{baseUrl('articles/edit/'.$record['unique_id'])}}">
+                  <a class="dropdown-item" href="{{baseUrl('webinar/edit/'.$record['unique_id'])}}">
                     <i class="tio-edit dropdown-item-icon"></i>
                     Edit
                   </a>
                   <!-- <a class="dropdown-item" href="#">Add to favorites</a>
                   <a class="dropdown-item" href="#">Archive project</a> -->
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{ baseUrl('articles/delete/'.$record['unique_id']) }}">
+                  <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{ baseUrl('webinar/delete/'.$record['unique_id']) }}">
                    <i class="tio-delete-outlined dropdown-item-icon"></i>
                    Delete
                   </a>

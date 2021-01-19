@@ -22,11 +22,11 @@
         @endif--}}
       </div>
 
-      <div class="col-sm-auto">
+      <!-- <div class="col-sm-auto">
         <a class="btn btn-primary" href="{{(baseUrl('articles/add'))}}">
           <i class="tio-user-add mr-1"></i> Add
         </a>
-      </div>
+      </div> -->
     </div>
     <!-- End Row -->
   </div>

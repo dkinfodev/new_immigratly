@@ -29,3 +29,15 @@
 .custom-select-err {
     border-color: #ed4c78 !important;
 }
+.custom-select.is-invalid {
+    border-color: #ed4c78 !important;
+}
+.avatar-name {
+    top: -12px !important;
+    position: relative;
+    left: 6px;
+    color: #999;
+}
+.noimage{
+    font-size: 16px;
+}

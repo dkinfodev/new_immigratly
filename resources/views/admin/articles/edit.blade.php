@@ -1,6 +1,17 @@
 @extends('layouts.master')
 
 @section('content')
+<style>
+.del-icon {
+    position: absolute;
+    z-index: 1;
+    top: 0px;
+    background-color: rgba(0,0,0,0.8);
+}
+.article-image {
+    margin-bottom: 20px;
+}
+</style>
 <!-- Content -->
 <div class="content container-fluid">
   <!-- Page Header -->
@@ -10,7 +21,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/staff') }}">Staff</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/article') }}">Article</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -19,7 +30,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{ baseUrl('/staff') }}">
+        <a class="btn btn-primary" href="{{ baseUrl('articles') }}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -32,375 +43,250 @@
   <div class="card">
 
     <div class="card-body">
-      <form id="form" class="js-validate" action="{{ baseUrl('staff/update/'.base64_encode($record->id)) }}" method="post">
-
+      <form id="form" class="js-validate" action="{{ baseUrl('articles/edit/'.$record['unique_id']) }}" method="post">
         @csrf
+        <input type="hidden" name="timestamp" value="{{$timestamp}}" />
         
-        <div class="row justify-content-md-between">
-          <div class="col-md-4 js-form-message">
-            <!-- Logo -->
-            <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
-              @if($record->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$record->profile_image))
-              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalProfile($record->unique_id)}}" alt="Profile Image">
-              @else
-              <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
-              @endif
-
-              <span class="d-block">Upload your Image here</span>
-
-              <input type="file" class="js-file-attach custom-file-boxed-input" name="profile_image" id="logoUploader"
-              data-hs-file-attach-options='{
-              "textTarget": "#logoImg",
-              "mode": "image",
-              "targetAttr": "src"
-            }'>
-          </label>
-          <!-- End Logo -->
+        <div class="form-group js-form-message">
+          <label>Title</label>
+          <input type="text" class="form-control" data-msg="Please enter a article title." value="{{$record['title']}}" name="title" id="title">
         </div>
-
-        <div class="col-md-7 justify-content-md-end">
-
-          <div class="row form-group">
-            <div class="col-12">
-              <label for="validationFormUsernameLabel" class="col-form-label input-label">First name</label>
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="first_name" id="validationFormFirstnameLabel" placeholder="Firstname" aria-label="Firstname" required data-msg="Please enter your first name." value="{{ $record->first_name }}">
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-
-          <div class="row form-group">
-            <div class="col-12">
-              <label for="validationFormUsernameLabel" class="col-form-label input-label">Last name</label>
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="last_name" id="validationFormLastnameLabel" placeholder="Lastname" aria-label="Lastname" required data-msg="Please enter your last name." value="{{ $record->last_name }}">
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-
-        </div>
-      </div>
-
-      <hr class="my-5">
-
-
-      <div class="row justify-content-md-between">
-        <div class="col-md-6">
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Email</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <input type="email" class="form-control" name="email" id="validationFormEmailLabel" placeholder="Email" aria-label="Email" required data-msg="Please enter your email." value="{{ $record->email }}">
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-
-
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Phone Number</label>
-
-            <div class="col-sm-3">
-              <div class="js-form-message">
-                <select name="country_code" id="country_code" class="form-control">
-                  <option value="">Select Country</option>
-                  @foreach($countries as $country)
-                  <option {{$record->country_code == $country->phonecode?"selected":""}} value="+{{$country->phonecode}}">+{{$country->phonecode}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-            <div class="col-sm-4">
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone number" aria-label="phone no" required data-msg="Please enter your phone number." value="{{$record->phone_no}}">
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Gender</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="gender" class="form-control">
-                  <option value="">Select Gender</option>
-                  <option {{($record->gender == 'male')?'selected':''}} value="male">Male</option>
-                  <option {{($record->gender == 'female')?'selected':''}} value="female">Female</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Date of Birth</label>
-            <div class="col-sm-7">
-              <div class="input-group">
-                <input type="text" name="date_of_birth" id="date_of_birth" class="form-control" value="{{ $record->date_of_birth }}" placeholder="Date of Birth" aria-label="Date of birth" required data-msg="Enter date of birth">
-                <div class="input-group-addon p-2">
-                  <i class="tio-date-range"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Languages Known</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="languages_known[]" multiple id="languages_known" class="form-control">
-                  
-                <?php
-                  $language_known = json_decode($record->languages_known,true);
-                ?>
-
-                @foreach($languages as $language)
-                <option {{in_array($language->id,$language_known)?"selected":""}} value="{{$language->id}}">{{$language->name}}</option>
+        <div class="row">
+          <div class="col-md-6">
+           <div class="form-group js-form-message">
+              <label>Category</label>
+              <select name="category_id" class="form-control"  id="category_id"
+              data-hs-select2-options='{
+                "placeholder": "Select Category",
+                "searchInputPlaceholder": "Select category"
+              }'>
+                <option value="">Select Category</option>
+                @foreach($services as $service)
+                <option {{($record['category_id'] == $service->id)?'selected':''}} value="{{$service->id}}">{{$service->name}}</option>
                 @endforeach
-
-                </select>
-              </div>
+              </select>
             </div>
           </div>
-          <!-- End Form Group -->
-        </div> <!-- div end -->
+          <div class="col-md-6">
+            <div class="form-group js-form-message">
+              <label>Tags</label>
+              <?php
+                $article_tags = $record['article_tags'];
+
+                $tag_ids = array();
+                foreach($article_tags as $at){
+                  $tag_ids[] = $at['tag_id'];
+                }
+              ?>
+              <select name="tags[]" multiple class="form-control" id="tags"
+              data-hs-select2-options='{
+                "placeholder": "Select Tags",
+                "searchInputPlaceholder": "Select Tags"
+              }'>
+                @foreach($tags as $tag)
+                <option {{ (in_array($tag->id,$tag_ids))?'selected':'' }} value="{{$tag->id}}">{{$tag->name}}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group js-form-message">
+          <label>Short Description</label>
+          <textarea type="text" class="form-control" data-msg="Please enter short description." name="short_description" id="short_description">{{$record['short_description']}}</textarea>
+        </div>
+     
+
+        <div class="form-group js-form-message">
+          <label>Content</label>
+          <textarea name="description" data-msg="Please enter description." id="article_content" class="form-control editor">{{$record['description']}}</textarea>
+        </div>
+
+        <div class="form-group js-form-message">
+          <label>Share with</label>
+          <select name="share_with" class="form-control" id="share_with"
+          data-hs-select2-options='{
+            "placeholder": "Select share with",
+            "searchInputPlaceholder": "Select share with"
+          }'>
+            <option value="">Select Option</option>
+            <option {{($record['share_with'] == 'Public')?'selected':''}} value="Public">Public</option>
+            <option {{($record['share_with'] == 'Private')?'selected':''}} value="Private">Private</option>
+          </select>
+        </div>
+
+        <!-- <div class="form-group js-form-message">
+          <label>Content Block</label>
+          <select name="content_block" class="form-control" id="content_block"
+          data-hs-select2-options='{
+            "placeholder": "Select content block",
+            "searchInputPlaceholder": "Select content block"
+          }'>
+            <option value="">Select Content</option>
+          </select>
+        </div> -->
         
 
-        <div class="col-md-6">
+        <!-- <div class="form-group">
+            <div class="btn-group" role="group">
+               <a class="btn btn-primary"  href="javascript:;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><i class="tio-upload-on-cloud mr-1"></i>Image</a>
+            </div>
+         </div> -->
+
+        <div id="collapseOne" class="collapse show image-area" aria-labelledby="headingOne">
           
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Country</label>
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="country_id" id="country_id" onchange="stateList(this.value,'state_id')" class="form-control">
-                  <option value="">Select Country</option>
-                  @foreach($countries as $country)
-                  <option {{$record->country_id == $country->id?"selected":""}} value="{{$country->id}}">{{$country->name}}</option>
-                  @endforeach
-                </select>
-              </div>
+            <div id="attachFilesLabel" class="js-dropzone dropzone-custom custom-file-boxed"
+               data-hs-dropzone-options='{
+                  "url": "<?php echo url('/upload-files?_token='.csrf_token()) ?>",
+                  "autoProcessQueue":false,
+                  "thumbnailWidth": 100,
+                  "thumbnailHeight": 100,
+                  "autoQueue":true,
+                  "parallelUploads":20,
+                  "acceptedFiles":"image/*"
+               }'
+            >
+               <div class="dz-message custom-file-boxed-label">
+                  <img class="avatar avatar-xl avatar-4by3 mb-3" src="./assets/svg/illustrations/browse.svg" alt="Image Description">
+                  <h5 class="mb-1">Drag and drop your file here</h5>
+                  <p class="mb-2">or</p>
+                  <span class="btn btn-sm btn-white">Browse files</span>
+               </div>
             </div>
-          </div>
-          <!-- End Form Group -->
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">State</label>
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="state_id" id="state_id" aria-label="State" required data-msg="Please select your state" onchange="cityList(this.value,'city_id')" class="form-control">
-                  <option value="">Select State</option>
-                  <option value="">Select State</option>
-                  @foreach($states as $state)
-                  <option {{$record->state_id == $state->id?"selected":""}} value="{{$state->id}}">{{$state->name}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">City</label>
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="city_id" id="city_id"  aria-label="City" required data-msg="Please select your city" class="form-control">
-                  <option value="">Select City</option>
-                  @foreach($cities as $city)
-                  <option {{$record->city_id == $city->id?"selected":""}} value="{{$city->id}}">{{$city->name}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-          
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Address</label>
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="address" id="address" placeholder="Address" aria-label="Address" required data-msg="Please enter your address" value="{{ $record->address }}">
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
-
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Zip Code</label>
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <input type="text" class="form-control" name="zip_code" id="zip_code" placeholder="Zipcode" aria-label="Zipcode" required data-msg="Please enter your zip code" value="{{ $record->zip_code }}">
-              </div>
-            </div>
-          </div>
-
-          <!-- Form Group -->
-          <div class="row form-group">
-            <label class="col-sm-5 col-form-label input-label">Role</label>
-
-            <div class="col-sm-7">
-              <div class="js-form-message">
-                <select name="role" class="form-control">
-                  <option value="">Select Role</option>
-                   @foreach($roles as $role)
-                  <option value="{{$role->slug}}" <?php if($role->slug==$record->role){ echo "selected";} ?>>{{$role->name}}</option>
-                  @endforeach
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- End Form Group -->
+            <!-- End Dropzone -->
         </div>
-        <!-- End Form Group -->    
-      </div>
-
-      <div class="form-group">
-        <button type="submit" class="btn add-btn btn-primary">Save</button>
-      </div>
-      <!-- End Input Group -->
-
+        <div class="form-group js-form-message">
+          <input type="hidden" id="no_of_images" name="images" value="" />
+        </div>
+        <div class="row">
+          <?php
+            if($record['images'] != ''){
+              $images = explode(",",$record['images']);
+              for($i=0;$i < count($images);$i++){
+                if(file_exists(public_path('uploads/articles/'.$images[$i]))){
+          ?>
+            <div class="col-auto article-image">
+              <span class="avatar avatar-xxl avatar-4by3">
+                <img class="avatar-img" width="100%" src="{{url('public/uploads/articles/'.$images[$i])}}" alt="Image Description">
+              </span>
+              <div class="del-icon">
+                <a class="text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{ baseUrl('articles/remove-image/'.$record['unique_id'].'?image='.$images[$i]) }}" >
+                  <i class="tio-clear"></i>
+                </a>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          <?php
+                }
+              }
+            }
+          ?>
+        </div>
+        <div class="form-group">
+          <button type="submit" id="submitbtn" class="btn add-btn btn-primary">Save</button>
+        </div>
+        <!-- End Input Group -->
+      </form>
     </div><!-- End Card body-->
   </div>
-  <!-- End Card -->
+<!-- End Card -->
 </div>
 <!-- End Content -->
+
 @endsection
 
-@section('javascript')
 
 @section('javascript')
 <!-- JS Implementing Plugins -->
 
-<!-- JS Implementing Plugins -->
-<script src="assets/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside.min.js"></script>
-<script src="assets/vendor/hs-nav-scroller/dist/hs-nav-scroller.min.js"></script>
-<script src="assets/vendor/hs-go-to/dist/hs-go-to.min.js"></script>
-<script src="assets/vendor/list.js/dist/list.min.js"></script>
-<script src="assets/vendor/prism/prism.js"></script>
-<script src="assets/vendor/hs-step-form/dist/hs-step-form.min.js"></script>
-<script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
-<!-- JS Front -->
-<script src="assets/vendor/hs-toggle-password/dist/js/hs-toggle-password.js"></script>
-<script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="assets/vendor/select2/dist/js/select2.full.min.js"></script>
-
-<script src="assets/vendor/quill/dist/quill.min.js"></script>
+<script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
 
 <script>
-  $(document).on('ready', function () {
-    $('#date_of_birth').datepicker({
-      format: 'dd/mm/yyyy',
-      autoclose: true,
-      maxDate:(new Date()).getDate(),
-      todayHighlight: true,
-      orientation: "bottom auto"
-    });
-    // initialization of Show Password
-    $('.js-toggle-password').each(function () {
-        new HSTogglePassword(this).init()
-    });
+var is_error = false;
+var fc=0;
+var dropzone;
+$(document).on('ready', function () {
+    // $('.js-validate').each(function() {
+    //   $.HSCore.components.HSValidation.init($(this));
+    // });
+    initEditor("article_content"); 
 
-    // initialization of quilljs editor
-    $('.js-flatpickr').each(function () {
-      $.HSCore.components.HSFlatpickr.init($(this));
+    dropzone = $.HSCore.components.HSDropzone.init('#attachFilesLabel');
+    // dropzone.autoProcessQueue = false;
+    dropzone.on("success", function(file,response) {
+      if(response.status == false){
+          is_error = true;
+       }
     });
-    // initEditor("about_professional");
-    
+    dropzone.on("queuecomplete", function() {
+       dropzone.options.autoProcessQueue = false; 
+       saveForm();
+    });
+    dropzone.on("process", function () {
+         dropzone.options.autoProcessQueue = true;
+    });
+    dropzone.on('success', function( file, resp ){
+         fc++;
+    });
+    // dropzone.on("queuecomplete", function (file) {
+        
+    //     // saveForm();
+    // });
+    dropzone.on("sending", function(file, xhr, formData) { 
+        formData.append("timestamp","{{$timestamp}}");
+    });
     $("#form").submit(function(e){
-      e.preventDefault();
-      
-      var formData = new FormData($(this)[0]);
-      var url  = $("#form").attr('action');
-      $.ajax({
-        url:url,
-        type:"post",
-        data:formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType:"json",
-        beforeSend:function(){
-          showLoader();
-        },
-        success:function(response){
-          hideLoader();
-          if(response.status == true){
-            successMessage(response.message);
-            redirect(response.redirect_back);
+        e.preventDefault();
+        var count= dropzone.files.length;
+       
+        if(count == 0){
+          $("#no_of_images").val('');
+        }else{
+          $("#no_of_images").val(fc);
+        }
+        if(fc >= count){
+           saveForm();
+        }else{
+          if(count > 0){
+              dropzone.processQueue();
           }else{
-            validation(response.message);
-            // $.each(response.message, function (index, value) {
-            //   $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
-            //   $("[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
-              
-            //   var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-            //   $("[name="+index+"]").parents(".js-form-message").append(html);
-            //   $("[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
-            // });
-              // errorMessage(response.message);
-            }
-          },
-          error:function(){
-            internalError();
-          }
-        });
-      
+            errorMessage("Please select some images");
+          } 
+        }
     });
-  });
+});
   
 
-  function stateList(country_id,id){
+function saveForm(){
+    // var formData = new FormData($("#form")[0]);
+    var url  = $("#form").attr('action');
+    var formData = $("#form").serialize();
     $.ajax({
-      url:"{{ url('states') }}",
-      data:{
-        country_id:country_id
-      },
+      url:url,
+      type:"post",
+      data:formData,
+      // cache: false,
+      // contentType: false,
+      // processData: false,
       dataType:"json",
       beforeSend:function(){
-       $("#"+id).html('');
-     },
-     success:function(response){
-      if(response.status == true){
-        $("#"+id).html(response.options);
-      } 
-    },
-    error:function(){
-     
-    }
-  });
-  }
-
-  function cityList(state_id,id){
-    $.ajax({
-      url:"{{ url('cities') }}",
-      data:{
-        state_id:state_id
+        showLoader();
       },
-      dataType:"json",
-      beforeSend:function(){
-       $("#"+id).html('');
-     },
-     success:function(response){
-      if(response.status == true){
-        $("#"+id).html(response.options);
-      } 
-    },
-    error:function(){
-     
-    }
-  });
-  }
+      success:function(response){
+        hideLoader();
+        if(response.status == true){
+          successMessage(response.message);
+          redirect(response.redirect_back);
+        }else{
+          validation(response.message);
+        }
+      },
+      error:function(){
+          internalError();
+      }
+    });
+}
 </script>
 
 @endsection

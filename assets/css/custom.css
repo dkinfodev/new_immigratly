@@ -210,3 +210,6 @@
 .custom-control-label::before {
     border-color: #888;
 }
+#pageno {
+    height: 36px;
+}

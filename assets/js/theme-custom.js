@@ -205,14 +205,20 @@ function validation(errors){
 	$(".form-control").removeClass('is-invalid');
   $(".custom-select").removeClass('is-invalid');
 	$.each(errors, function (index, value) {
+    // alert(index+"::"+$("[name="+index+"]").val());
 	  $("*[name="+index+"]").parents(".js-form-message").find(".invalid-feedback").remove();
 	  $("*[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
 	  var html = '<div id="'+index+'-error" class="invalid-feedback required-error">'+value+'</div>';
-	  if($("[name="+index+"]").get(0).tagName == 'SELECT'){
+    
+	  if($("*[name="+index+"]").get(0).tagName == 'SELECT'){
 	  	$("*[name="+index+"]").parents(".js-form-message").append(html);
       $("*[name="+index+"]").parents(".js-form-message").find(".custom-select").addClass('is-invalid');
 	  }else{
-	  	$(html).insertAfter("*[name="+index+"]");
+      if($("*[name="+index+"]").hasClass("editor")){
+        $("*[name="+index+"]").parents(".js-form-message").append(html);  
+      }else{
+        $(html).insertAfter("*[name="+index+"]");  
+      }
 	  }
 	  $("*[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
 	});

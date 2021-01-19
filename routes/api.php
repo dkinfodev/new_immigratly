@@ -24,6 +24,16 @@ Route::group(array('middleware' => 'curl_api'), function () {
 		Route::post('/create-client', [App\Http\Controllers\Api\MasterApiController::class, 'createClient']);
 		Route::post('/privileges', [App\Http\Controllers\Api\MasterApiController::class, 'privilegesList']);
 		Route::post('/roles', [App\Http\Controllers\Api\MasterApiController::class, 'roles']);
+		Route::group(array('prefix' => 'articles'), function () {
+			Route::post('/', [App\Http\Controllers\Api\MasterApiController::class, 'fetchArticles']);
+			Route::post('/count', [App\Http\Controllers\Api\MasterApiController::class, 'articlesCount']);
+			Route::post('/save', [App\Http\Controllers\Api\MasterApiController::class, 'saveArticle']);
+			Route::post('/fetch-article', [App\Http\Controllers\Api\MasterApiController::class, 'fetchArticle']);
+			Route::post('/update', [App\Http\Controllers\Api\MasterApiController::class, 'updateArticle']);
+			Route::post('/delete', [App\Http\Controllers\Api\MasterApiController::class, 'deleteArticle']);
+			Route::post('/delete-image', [App\Http\Controllers\Api\MasterApiController::class, 'deleteArticleImage']);
+
+		});
 	});	
 
 });

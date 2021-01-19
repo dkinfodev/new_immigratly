@@ -12,6 +12,8 @@ use App\Models\ProfessionalPrivileges;
 use App\Models\PrivilegesActions;
 use App\Models\Roles;
 use App\Models\UserDetails;
+use App\Models\Articles;
+use App\Models\ArticleTags;
 class MasterApiController extends Controller
 {
 	var $subdomain;
@@ -129,6 +131,263 @@ class MasterApiController extends Controller
             $response['data'] = $data;
 
 
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function fetchArticles(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $search = $request->input("search");
+            $records = Articles::with(['Category'])
+                            ->where("professional",$this->subdomain)
+                            ->where(function($query) use($search){
+                                if($search != ''){
+                                    $query->where("title","LIKE","%$search%");
+                                }
+                            })
+                            ->where("status",$request->input("status"))
+                            ->orderBy("id","desc")
+                            ->paginate();
+            
+            foreach($records as $record){
+                $record->professional_info = $record->ProfessionalDetail($record->professional);
+            }
+            $data = $records;
+
+            $response['status'] = 'success';
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+    public function saveArticle(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            
+            $unique_id = randomNumber();
+            $check_name_count = Articles::where("title",$request->input('title'))->count();
+            $slug = str_slug($request->input("title"));
+            if($check_name_count > 0){
+                $slug = $slug."-".($check_name_count+1);
+            }
+            $object = new Articles();
+            $object->unique_id = $unique_id;
+            $object->title = $request->input("title");
+            $object->slug = $slug;
+            $object->description = $request->input("description");
+            $object->short_description = $request->input("short_description");
+            $object->category_id = $request->input("category_id");
+            $object->share_with = $request->input("share_with");
+            // $object->status = $request->input("status");
+            // if($request->input("content_block")){
+            //     $object->content_block = $request->input("content_block");
+            // }
+            $object->professional= $this->subdomain;
+            $object->added_by = $request->input("added_by");
+            if($request->input("timestamp")){
+                $timestamp = $request->input("timestamp");
+                $files = glob(public_path()."/uploads/temp/". $timestamp."/*");
+                $filename = array();
+                for($f = 0; $f < count($files);$f++){
+                    $file_arr = explode("/",$files[$f]);
+                    $filename[] = end($file_arr);
+                    $file_name =  end($file_arr);
+                    $destinationPath = public_path("/uploads/articles/".$file_name);
+                    copy($files[$f], $destinationPath);
+                    unlink($files[$f]);
+                }
+                if(file_exists(public_path()."/uploads/temp/". $timestamp)){
+                    rmdir(public_path()."/uploads/temp/". $timestamp);
+                }
+                if(!empty($filename)){
+                    $object->images = implode(",",$filename);
+                }
+            }
+            $object->save();
+            $id  = $object->id;
+            if($request->input("tags")){
+                $tags = $request->input("tags");
+                for($i=0;$i < count($tags);$i++){
+                    $object2 = new ArticleTags();
+                    $object2->article_id = $id;
+                    $object2->tag_id = $tags[$i];
+                    $object2->save();
+                }
+            }
+            $response['status'] = 'success';
+            $response['message'] = "Article saved successfully";
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function deleteArticle(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $record = Articles::where("professional",$this->subdomain)
+                            ->where("unique_id",$request->input("article_id"))
+                            ->first();
+            Articles::deleteRecord($record->id);
+            $response['status'] = 'success';
+            $response['message'] = 'Article deleted successfully';
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+    public function articlesCount(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $publish = Articles::with(['Category','ArticleTags'])
+                            ->where("professional",$this->subdomain)
+                            ->where("status","publish")
+                            ->count();
+            
+            $draft = Articles::with(['Category','ArticleTags'])
+                            ->where("professional",$this->subdomain)
+                            ->where("status","draft")
+                            ->count();
+            $data['publish'] = $publish;
+            $data['draft'] = $draft;
+
+            $response['status'] = 'success';
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+    public function fetchArticle(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+
+            $record = Articles::with(['Category','ArticleTags'])
+                            ->where("professional",$this->subdomain)
+                            ->where("unique_id",$request->input("article_id"))
+                            ->first();
+          
+            $data = $record;
+
+            $response['status'] = 'success';
+            $response['data'] = $data;
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function updateArticle(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $article_id = $request->input("article_id");
+            $object = Articles::where('unique_id',$article_id)
+                                ->where("professional",$this->subdomain)
+                                ->first();
+            $images = $object->images;
+            $check_name_count = Articles::where("title",$request->input('title'))
+                                        ->where("unique_id","!=",$article_id)
+                                        ->count();
+            $slug = str_slug($request->input("title"));
+            if($check_name_count > 0){
+                $slug = $slug."-".($check_name_count+1);
+            }
+            $object->title = $request->input("title");
+            $object->slug = $slug;
+            $object->description = $request->input("description");
+            $object->short_description = $request->input("short_description");
+            $object->category_id = $request->input("category_id");
+            $object->share_with = $request->input("share_with");
+            // if($request->input("content_block")){
+            //     $object->content_block = $request->input("content_block");
+            // }
+            $object->professional= $this->subdomain;
+            $object->added_by = $request->input("added_by");
+            if($request->input("timestamp")){
+                $timestamp = $request->input("timestamp");
+                $files = glob(public_path()."/uploads/temp/". $timestamp."/*");
+                $filename = array();
+                for($f = 0; $f < count($files);$f++){
+                    $file_arr = explode("/",$files[$f]);
+                    $filename[] = end($file_arr);
+                    $file_name =  end($file_arr);
+                    $destinationPath = public_path("/uploads/articles/".$file_name);
+                    copy($files[$f], $destinationPath);
+                    unlink($files[$f]);
+                }
+                if(file_exists(public_path()."/uploads/temp/". $timestamp)){
+                    rmdir(public_path()."/uploads/temp/". $timestamp);
+                }
+                if(!empty($filename)){
+                    if($images != ''){
+                        $images .=",".implode(",",$filename);
+                    }
+                    $object->images = $images;
+                }
+            }
+            $object->save();
+            $id  = $object->id;
+            if($request->input("tags")){
+                ArticleTags::where("article_id",$id)->delete();
+                $tags = $request->input("tags");
+                for($i=0;$i < count($tags);$i++){
+                    $object2 = new ArticleTags();
+                    $object2->article_id = $id;
+                    $object2->tag_id = $tags[$i];
+                    $object2->save();
+                }
+            }
+            $response['status'] = 'success';
+            $response['message'] = "Article saved successfully";
+
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+    public function deleteArticleImage(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $image = $request->input("image");
+            $article = Articles::where("unique_id",$request->input("article_id"))->first();
+            $images = explode(",",$article->images);
+            if(file_exists(public_path('uploads/articles/'.$image))){
+                unlink(public_path('uploads/articles/'.$image));
+            }
+            if (($key = array_search($image, $images)) !== false) {
+                unset($images[$key]);
+                array_values($images);
+            }
+            $article->images = implode(",",$images);
+            $article->save();
+
+            $response['status'] = 'success';
+            $response['message'] = "Article image removed successfully";
         } catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();

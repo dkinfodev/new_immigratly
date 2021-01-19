@@ -11,15 +11,15 @@ use View;
 
 use App\Models\Articles;
 
-class ArticlesController extends Controller
+class WebinarController extends Controller
 {
     public function __construct()
     {
         $this->middleware('admin');
     }
-    public function publishArticles()
+    public function index()
     {
-       	$viewData['pageTitle'] = "Articles";
+       	$viewData['pageTitle'] = "Webinar";
         $result = curlRequest("articles/count");
         $publish = 0;
         $draft = 0;
@@ -33,26 +33,7 @@ class ArticlesController extends Controller
         $viewData['publish'] = $publish;
         $viewData['draft'] = $draft;
         $viewData['status'] = 'publish';
-        return view(roleFolder().'.articles.lists',$viewData);
-    }
-
-    public function draftArticles()
-    {
-        $viewData['pageTitle'] = "Articles";
-        $result = curlRequest("articles/count");
-        $publish = 0;
-        $draft = 0;
-        if($result['status'] == 'success'){
-            $data = $result['data'];
-            $publish = $data['publish'];
-            $draft = $data['draft'];
-        }
-        $total_articles = $publish+$draft;
-        $viewData['total_articles'] = $total_articles;
-        $viewData['publish'] = $publish;
-        $viewData['draft'] = $draft;
-        $viewData['status'] = 'draft';
-        return view(roleFolder().'.articles.lists',$viewData);
+        return view(roleFolder().'.webinar.lists',$viewData);
     }
 
     public function getAjaxList(Request $request)
@@ -78,7 +59,7 @@ class ArticlesController extends Controller
             $response['total_records'] = $data['total'];
         }
         $viewData['records'] = $records;
-        $view = View::make(roleFolder().'.articles.ajax-list',$viewData);
+        $view = View::make(roleFolder().'.webinar.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         
@@ -87,29 +68,52 @@ class ArticlesController extends Controller
 
     public function add(){
 
-        $viewData['pageTitle'] = "Add Article";
+        $viewData['pageTitle'] = "Add Webinar";
         $services = DB::table(MAIN_DATABASE.".visa_services")->get();
         $viewData['services'] = $services;
 
         $tags = DB::table(MAIN_DATABASE.".tags")->get();
         $viewData['tags'] = $tags;
+
+        $countries = DB::table(MAIN_DATABASE.".countries")->get();
+        $languages = DB::table(MAIN_DATABASE.".languages")->get();
+        $roles = DB::table(MAIN_DATABASE.".roles")->get();
+        $viewData['languages'] = $languages;
+        $viewData['countries'] = $countries;
+        $viewData['roles'] = $roles;
+
         $timestamp = time();
         $viewData['timestamp'] = $timestamp;
-        return view(roleFolder().'.articles.add',$viewData);
+        return view(roleFolder().'.webinar.add',$viewData);
     }
 
 
     public function save(Request $request){
         // pre($request->all());
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
+        // exit;
+        $field_validate = array('title' => 'required',
             'short_description' => 'required',
             'description' => 'required',
             'category_id' => 'required',
-            // 'tags'=>'required|array',
-            'share_with'=>'required',
-            // 'images'=>'required',
-        ]);
+            'level'=>'required',
+            'language_id'=>'required',
+            'webinar_date'=>'required',
+            'start_time'=>'required',
+            'end_time'=>'required',
+            'total_seats'=>'required|numeric');
+        if($request->input("paid_event")){
+            $field_validate['event_cost'] = "required";
+            $field_validate['price_group'] = "required";
+        }
+        if($request->input("offline_event")){
+            $field_validate['address'] = "required";
+            $field_validate['country_id'] = "required";
+            $field_validate['state_id'] = "required";
+            $field_validate['city_id'] = "required";
+        }else{
+            $field_validate['online_event_link'] = "required";
+        }
+        $validator = Validator::make($request->all(),$field_validate);
 
         if ($validator->fails()) {
             $response['status'] = false;
@@ -126,7 +130,7 @@ class ArticlesController extends Controller
         $apiData = $request->input();
         $apiData['added_by'] = \Auth::user()->unique_id;
         
-        $result = curlRequest("articles/save",$apiData);
+        $result = curlRequest("webinar/save",$apiData);
         // pre($result);
         if($result['status'] == 'success'){
             $response['status'] = true;
@@ -142,7 +146,7 @@ class ArticlesController extends Controller
     }
  
     public function edit($unique_id,Request $request){
-        $viewData['pageTitle'] = "Edit Article";
+        $viewData['pageTitle'] = "Edit Webinar";
         $services = DB::table(MAIN_DATABASE.".visa_services")->get();
         $viewData['services'] = $services;
 
@@ -156,9 +160,9 @@ class ArticlesController extends Controller
         if($result['status'] == 'success'){
             $viewData['record'] = $result['data'];
         }else{
-            return redirect()->back()->with("error","Article not found");
+            return redirect()->back()->with("error","Webinar not found");
         }
-        return view(roleFolder().'.articles.edit',$viewData);
+        return view(roleFolder().'.webinar.edit',$viewData);
     }
 
 
@@ -232,6 +236,6 @@ class ArticlesController extends Controller
             $response['message'] = "Some issue while saving article";
 
         }
-        return redirect()->back()->with("success","Article has been deleted!");
+        return redirect()->back()->with("success","Webinar has been deleted!");
     }
 }

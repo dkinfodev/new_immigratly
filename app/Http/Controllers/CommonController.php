@@ -73,4 +73,26 @@ class CommonController extends Controller
         }
     }
 
+    public function uploadFiles(Request $request){
+        $timestamp = $request->get("timestamp");
+        
+        if ($file = $request->file('file'))
+        {
+            $fileName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension() ?: 'png';
+            $newName = mt_rand(1,99999)."-".$fileName;
+            $source_url = $file->getPathName();
+            
+            $destinationPath = public_path('/uploads/temp/'.$timestamp);
+            if($file->move($destinationPath, $newName)){
+                $response['status'] = true;
+                $response['message'] = 'File uploaded successfully';
+            }else{
+                $response['status'] = false;
+                $response['message'] = 'Select profile image';
+            }
+
+            return response()->json($response);
+        }
+    }
 }

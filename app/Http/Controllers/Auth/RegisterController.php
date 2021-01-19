@@ -350,6 +350,23 @@ class RegisterController extends Controller
         // }else{
         //     $response['redirect_back'] = url('home');  
         // }
+
+        $mailData['firstname'] = $request->input('first_name');
+        $mailData['lastname'] = $request->input('last_name');
+        $mailData['password'] = $request->input('password');
+        $mailData['subdomain'] = $request->input('subdomain');
+        $mailData['emails']  = $request->input('email');
+        $view = View::make(roleFolder().'.emails.panel-notification',$viewData);
+        $message = $view->render();
+        $parameter['to'] = $request->input('email');
+        $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
+        $parameter['message'] = $message;
+        $parameter['subject'] = companyName()." Welcome Mail";
+        // echo $message;
+        // exit;
+        $parameter['view'] = "emails.panel-notification";
+        $parameter['data'] = $mailData;
+        $mailRes = sendMail($parameter);
         return response()->json($response);
     }
 }

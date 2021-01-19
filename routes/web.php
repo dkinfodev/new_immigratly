@@ -40,6 +40,9 @@ Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, '
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);
 Route::get('/view-notification/{id}', [App\Http\Controllers\CommonController::class, 'readNotification']);
+
+Route::post('/upload-files', [App\Http\Controllers\CommonController::class, 'uploadFiles']);
+
 Route::get('/forgot-password', function () {
     return view('auth.passwords.email');
 })->middleware(['guest'])->name('password.request');
@@ -239,6 +242,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'edit']); 
         Route::post('/update', [App\Http\Controllers\SuperAdmin\PrimaryDegreeController::class, 'update']);     
     });  
+
     Route::group(array('prefix' => 'staff'), function () {
             Route::get('/', [App\Http\Controllers\SuperAdmin\StaffController::class, 'index']);
             Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\StaffController::class, 'getAjaxList']);
@@ -252,6 +256,19 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
             Route::post('/update-password/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'updatePassword']);
             Route::get('/privileges/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'setPrivileges']);
             Route::post('/privileges/{id}', [App\Http\Controllers\SuperAdmin\StaffController::class, 'savePrivileges']);
+    });
+    
+    Route::group(array('prefix' => 'articles'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'publishArticles']);
+        Route::get('/draft', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'draftArticles']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'getAjaxList']);
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'save']);
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'edit']);
+        Route::post('/edit/{id}', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'update']);
+        Route::get('/remove-image/{id}', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'deleteImage']);
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'deleteMultiple']);
     });
 
     Route::group(array('prefix' => 'employee-privileges'), function () {
@@ -480,16 +497,28 @@ Route::group(array('prefix' => 'admin'), function () {
         });
         
         Route::group(array('prefix' => 'articles'), function () {
-            Route::get('/', [App\Http\Controllers\Admin\ArticlesController::class, 'index']);
+            Route::get('/', [App\Http\Controllers\Admin\ArticlesController::class, 'publishArticles']);
+            Route::get('/draft', [App\Http\Controllers\Admin\ArticlesController::class, 'draftArticles']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\ArticlesController::class, 'getAjaxList']);
             Route::get('/add', [App\Http\Controllers\Admin\ArticlesController::class, 'add']);
             Route::post('/save', [App\Http\Controllers\Admin\ArticlesController::class, 'save']);
             Route::get('/edit/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'edit']);
-            Route::post('/update/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'update']);
+            Route::post('/edit/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'update']);
+            Route::get('/remove-image/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'deleteImage']);
             Route::get('/delete/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'deleteSingle']);
             Route::post('/delete-multiple', [App\Http\Controllers\Admin\ArticlesController::class, 'deleteMultiple']);
-            Route::get('/change-password/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'changePassword']);
-            Route::post('/update-password/{id}', [App\Http\Controllers\Admin\ArticlesController::class, 'updatePassword']);
+        });
+        
+        Route::group(array('prefix' => 'webinar'), function () {
+            Route::get('/', [App\Http\Controllers\Admin\WebinarController::class, 'index']);
+            Route::post('/ajax-list', [App\Http\Controllers\Admin\WebinarController::class, 'getAjaxList']);
+            Route::get('/add', [App\Http\Controllers\Admin\WebinarController::class, 'add']);
+            Route::post('/save', [App\Http\Controllers\Admin\WebinarController::class, 'save']);
+            Route::get('/edit/{id}', [App\Http\Controllers\Admin\WebinarController::class, 'edit']);
+            Route::post('/edit/{id}', [App\Http\Controllers\Admin\WebinarController::class, 'update']);
+            Route::get('/remove-image/{id}', [App\Http\Controllers\Admin\WebinarController::class, 'deleteImage']);
+            Route::get('/delete/{id}', [App\Http\Controllers\Admin\WebinarController::class, 'deleteSingle']);
+            Route::post('/delete-multiple', [App\Http\Controllers\Admin\WebinarController::class, 'deleteMultiple']);
         });
 
         Route::group(array('prefix' => 'staff'), function () {

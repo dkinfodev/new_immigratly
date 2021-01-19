@@ -72,6 +72,12 @@
               <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Articles</span>
             </a>
           </li>
+          <li class="navbar-vertical-aside-has-menu">
+            <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/webinar') }}">
+              <i class="tio-globe nav-icon"></i>
+              <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Webinar</span>
+            </a>
+          </li>
           @endif
         </ul>
       </div>

@@ -86,11 +86,11 @@
                <div class="form-group">
                   <label for="clientNewProjectLabel" class="input-label">Client</label>
                   <div class="form-row align-items-center">
-                     <div class="col-12 col-md-7 mb-3">
-                        <div class="form-group js-form-message mb-0">
+                     <div class="col-12 col-md-7 mb-3 js-form-message">
+                        <div class="form-group mb-0">
                             <!-- Select -->
                             <div class="select2-custom">
-                               <select class="js-select2-custom" required name="client_id" id="client_id"
+                               <select class="js-select2-custom custom-select" required name="client_id" id="client_id"
                                 data-hs-select2-options='{
                                   "placeholder": "Select Client"
                                 }'
