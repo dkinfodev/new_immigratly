@@ -80,6 +80,12 @@
           <i class="tio-edit dropdown-item-icon"></i>
           Edit
         </a>
+
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" onclick="showPopup('{{ baseUrl('leads/assign/'.base64_encode($record->unique_id)) }}')" href="javascript:;">
+          <i class="tio-edit dropdown-item-icon"></i> Assign Lead
+        </a>
+
         <div class="dropdown-divider"></div>
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('leads/delete/'.base64_encode($record->id))}}">
           <i class="tio-delete-outlined dropdown-item-icon"></i>

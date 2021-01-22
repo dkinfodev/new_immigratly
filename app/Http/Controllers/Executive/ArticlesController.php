@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\SuperAdmin;
+namespace App\Http\Controllers\Executive;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class ArticlesController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('super_admin');
+        $this->middleware('executive');
     }
     public function publishArticles()
     {
@@ -71,7 +71,7 @@ class ArticlesController extends Controller
                                 $query->where("title","LIKE","%$search%");
                             }
                         })
-                        ->where("status",$request->input("status"))
+                        //->where("status",$request->input("status"))
                         ->orderBy("id","desc")
                         ->paginate();
         

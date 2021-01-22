@@ -328,6 +328,21 @@ Route::group(array('prefix' => 'executive'), function () {
             Route::get('/edit/{id}', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryEdit']); 
             Route::post('/update', [App\Http\Controllers\Executive\NewsController::class, 'newsCategoryUpdate']);     
         }); 
+
+    Route::group(array('prefix' => 'articles'), function () {
+        Route::get('/', [App\Http\Controllers\Executive\ArticlesController::class, 'publishArticles']);
+        Route::get('/draft', [App\Http\Controllers\Executive\ArticlesController::class, 'draftArticles']);
+        Route::post('/ajax-list', [App\Http\Controllers\Executive\ArticlesController::class, 'getAjaxList']);
+        Route::get('/add', [App\Http\Controllers\Executive\ArticlesController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\Executive\ArticlesController::class, 'save']);
+        Route::get('/edit/{id}', [App\Http\Controllers\Executive\ArticlesController::class, 'edit']);
+        Route::post('/edit/{id}', [App\Http\Controllers\Executive\ArticlesController::class, 'update']);
+        Route::get('/remove-image/{id}', [App\Http\Controllers\Executive\ArticlesController::class, 'deleteImage']);
+        Route::get('/delete/{id}', [App\Http\Controllers\Executive\ArticlesController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\Executive\ArticlesController::class, 'deleteMultiple']);
+    });
+
+
         Route::group(array('prefix' => 'visa-services'), function () {
             Route::get('/', [App\Http\Controllers\Executive\VisaServicesController::class, 'visaServices']);
             Route::post('/ajax-list', [App\Http\Controllers\Executive\VisaServicesController::class, 'getAjaxList']); 
@@ -546,6 +561,10 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'update']);
             Route::get('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'markAsClient']);
             Route::post('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'confirmAsClient']);
+
+            Route::get('/assign/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'assignLeads']);
+            Route::post('/assign/save', [App\Http\Controllers\Admin\LeadsController::class, 'saveAssignLeads']);
+
         });
 
         Route::group(array('prefix' => 'cases'), function () {

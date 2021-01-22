@@ -68,12 +68,13 @@
               </p>
               <div class="article-user">
                 <span class="avatar avatar-circle">
-                  <img class="avatar-img" src="{{professionalLogo('m',$record->professional)}}" alt="Image Description">
+                  <!--<img class="avatar-img" src="{professionalLogo('m',$record->professional)}" alt="Image Description">-->
                 </span>
                 <span class="h3 avatar-name">
 
-                  <?php if(!empty($record->professional_info->company_name))
-                  { echo $record->professional_info->company_name; } ?></span>
+                    {{getUserName($record->added_by)}}
+                    
+                  </span>
               </div>
             </div>
             <a class="stretched-link" href="#"></a>

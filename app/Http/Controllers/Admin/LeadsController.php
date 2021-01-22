@@ -11,7 +11,10 @@ use DB;
 
 use App\Models\Cases;
 use App\Models\Leads;
+use App\Models\User;
+use App\Models\AssignLeads;
 use App\Models\ProfessionalServices;
+
 class LeadsController extends Controller
 {
     public function __construct()
@@ -106,6 +109,7 @@ class LeadsController extends Controller
         Leads::deleteRecord($id);
         return redirect()->back()->with("success","Record has been deleted!");
     }
+
     public function deleteMultiple(Request $request){
         $ids = explode(",",$request->input("ids"));
         for($i = 0;$i < count($ids);$i++){
@@ -244,6 +248,80 @@ class LeadsController extends Controller
             $response['error_type'] = 'process_error';
             $response['message'] = "Issue while marking lead as client";
         }
+        return response()->json($response);
+    }
+
+    public function assignLeads($id){
+
+        $viewData['lead_id'] = base64_decode($id);
+        $viewData['staff'] = User::where('role','!=','admin')->get();
+        $viewData['pageTitle'] = "Assign Leads";
+
+        //check for lead already added or not
+        $assignedLead = AssignLeads::where('leads_id',base64_decode($id))->get();
+
+
+        if(!empty($assignedLead))
+        {
+            $viewData['leadAssigned'] = $assignedLead;
+        }
+
+        $view = View::make(roleFolder().'.leads.modal.assign-lead',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response); 
+
+    }
+
+    public function saveAssignLeads(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'leads_id' => 'required',
+            'user_id' => 'required',    
+        ]);
+        
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+            
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $object1 = AssignLeads::where('leads_id',$request->input("leads_id"))->get();
+
+        $user_id = $request->input("user_id");
+
+        if(!empty($object1))
+        {
+            $counter = count($object1);
+            for($i=0;$i < $counter;$i++){
+                 //$id = base64_decode($object1[$i]->id);
+                //print_r($object1[$i]->id);
+                 AssignLeads::deleteRecord($object1[$i]->id);
+            }
+        }
+
+        if(!empty($user_id)){
+            $leads_id = $request->input("leads_id");
+            for($i=0;$i < count($user_id);$i++){
+                $object = new AssignLeads();
+                //$object2->unique_id = randomNumber();
+                $object->user_id = $user_id[$i];
+                $object->leads_id = $leads_id;
+                $object->save();
+            }
+        }
+        
+        $response['status'] = true;
+        $response['redirect_back'] = baseUrl('leads');
+        $response['message'] = "Record added successfully";
+        
         return response()->json($response);
     }
 

@@ -10,11 +10,23 @@ use App\Models\RolePrivileges;
 use App\Models\Notifications;
 use App\Models\Cities;
 use App\Models\States;
+use App\Models\User;
 use App\Models\Countries;
 use App\Models\LanguageProficiency;
 use App\Models\ClientExperience;
 use App\Models\ClientEducations;
 use App\Models\StaffPrivileges;
+
+if (! function_exists('getUserName')) {
+    function getUserName($id) {
+        
+        $user = User::where('unique_id',$id)->first();
+        $username = $user->first_name." ".$user->last_name;
+        return $username;
+
+    }
+}
+
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
         $file_type = array(
