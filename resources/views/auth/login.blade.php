@@ -106,7 +106,7 @@
                    <a href="{{ url('signup/user') }}">Sign up as User</a>
                   </p>
                 </div>
-
+                @if(\Session::get('login_to') != 'professional_panel')
                 <div class="mb-4">
                   <a class="btn btn-lg btn-white btn-block" href="{{ url('login/google') }}">
                     <span class="d-flex justify-content-center align-items-center">
@@ -115,7 +115,7 @@
                     </span>
                   </a>
                 </div>
-
+                @endif
                 <div class="text-center mb-4">
                   <span class="divider text-muted">OR</span>
                 </div>

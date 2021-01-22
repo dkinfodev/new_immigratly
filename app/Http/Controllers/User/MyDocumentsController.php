@@ -113,6 +113,7 @@ class MyDocumentsController extends Controller
         $user_documents = UserFiles::with('FileDetail')
                                     ->where("folder_id",$id)
                                     ->where("user_id",$user_id)
+                                    ->orderBy("id","desc")
                                     ->get();
         $viewData['user_documents'] = $user_documents;
         $viewData['pageTitle'] = "Files List for ".$document->name;

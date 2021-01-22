@@ -16,17 +16,11 @@
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="javascript:;">Pages</a></li>
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="javascript:;">Account</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Settings</li>
+            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
 
-        <h1 class="page-header-title">Settings</h1>
-      </div>
-
-      <div class="col-sm-auto">
-        <a class="btn btn-primary" href="user-profile-my-profile.html">
-          <i class="tio-user mr-1"></i> My profile
-        </a>
+        <h1 class="page-header-title">{{$pageTitle}}</h1>
       </div>
     </div>
     <!-- End Row -->
@@ -47,7 +41,7 @@
 
             <!-- Custom File Cover -->
             <div class="profile-cover-content profile-cover-btn">
-              <div class="custom-file-btn">
+              <!-- <div class="custom-file-btn">
                 <input type="file" class="js-file-attach custom-file-btn-input" name="profile_image" id="profileCoverUplaoder"
                 data-hs-file-attach-options='{
                 "textTarget": "#profileCoverImg",
@@ -57,7 +51,7 @@
               <label class="custom-file-btn-label btn btn-sm btn-white" for="profileCoverUplaoder">
                 <i class="tio-add-photo mr-sm-1"></i>
                 <span class="d-none d-sm-inline-block">Update your header</span>
-              </label>
+              </label> -->
             </div>
           </div>
           <!-- End Custom File Cover -->
@@ -67,9 +61,8 @@
 
       <!-- Avatar -->
       <label class="avatar avatar-xxl avatar-circle avatar-border-lg avatar-uploader profile-cover-avatar" for="avatarUploader">
-        <img id="avatarImg" class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
-
-        <input type="file" class="js-file-attach avatar-uploader-input" id="avatarUploader"
+        <img id="avatarImg" class="avatar-img" src="{{superAdminProfile()}}" alt="Image Description">
+        <input name="profile_image" type="file" class="js-file-attach avatar-uploader-input" id="avatarUploader"
         data-hs-file-attach-options='{
         "textTarget": "#avatarImg",
         "mode": "image",
@@ -80,29 +73,7 @@
         <i class="tio-edit avatar-uploader-icon shadow-soft"></i>
       </span>
     </label>
-    <!-- End Avatar -->
-
-    <!-- Body -->
-    <div class="card-body">
-      <div class="row">
-        <div class="col-sm-5">
-          <span class="d-block font-size-sm mb-2">Who can see your profile photo? <i class="tio-help-outlined" data-toggle="tooltip" data-placement="top" title="Your visibility setting only applies to your profile photo. Your header image is always visible to anyone."></i></span>
-
-          <!-- Select -->
-          <div class="select2-custom">
-            <select class="js-select2-custom"
-            data-hs-select2-options='{
-            "minimumResultsForSearch": "Infinity"
-          }'>
-          <option value="privacy1" data-option-template='<span class="media"><i class="tio-earth-east tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Anyone</span><small class="select2-custom-hide">Visible to anyone who can view your content. Accessible by installed apps.</small></span></span>'>Anyone</option>
-          <option value="privacy2" data-option-template='<span class="media"><i class="tio-lock-outlined tio-lg text-body mr-2" style="margin-top: .125rem;"></i><span class="media-body"><span class="d-block">Only you</span><small class="select2-custom-hide">Only visible to you.</small></span></span>'>Only you</option>
-        </select>
-      </div>
-      <!-- End Select -->
-    </div>
-  </div>
-  <!-- End Row -->
-</div>
+    
 <!-- End Body -->
 </div>
 <!-- End Card -->
@@ -148,7 +119,7 @@
       <div class="row form-group js-form-message">
         <label class="col-sm-3 col-form-label input-label">Phone </label>
 
-        <div class="col-sm-2">
+        <div class="col-sm-3">
           <select name="country_code" class="form-control">
 
             @foreach($countries as $key=>$c)
@@ -164,7 +135,7 @@
           </select>
         </div>
 
-        <div class="col-sm-7">
+        <div class="col-sm-6">
           <input type="text" name="phone_no" value="{{$user->phone_no}}" id="phone_no" class="form-control">
 
         </div>

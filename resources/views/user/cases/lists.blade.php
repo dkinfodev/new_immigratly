@@ -75,7 +75,7 @@
             </div>
           </td>
           <td class="table-column-pl-0">
-            <a class="d-flex align-items-center" href="#">
+            <a class="d-flex align-items-center" href="{{baseUrl('cases/documents/'.$professional->professional.'/'.$record['unique_id'])}}">
               <?php
                 $professional_info = $professional->Professional($professional->professional);
               ?>

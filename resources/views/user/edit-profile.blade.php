@@ -135,8 +135,8 @@
                      <div class="js-form-message">
                         <select name="languages_known[]" multiple id="languages_known" class="form-control">
                         <?php
-                          if($record->languages_known != ''){
-                             $language_known = json_decode($user_detail->languages_known,true);
+                          if($record2->languages_known != ''){
+                             $language_known = json_decode($record2->languages_known,true);
                           }else{
                              $language_known = array();
                           }

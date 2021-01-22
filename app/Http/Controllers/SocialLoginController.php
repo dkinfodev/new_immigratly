@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Socialite;
 use Auth;
 use App\Models\User;
+use App\Models\UserDetails;
 
 class SocialLoginController extends Controller
 {
@@ -39,8 +40,9 @@ class SocialLoginController extends Controller
             if(isset($name[1])){
                 $last_name = $name[1];
             }
-
+            $unique_id = randomNumber();
             $user = User::create([
+                'unique_id'     => $unique_id,
                 'first_name'    => $first_name,
                 'last_name'     => $last_name,
                 'email'         => $userSocial->getEmail(),
@@ -53,7 +55,9 @@ class SocialLoginController extends Controller
                 'role'          =>'user'
             ]);   
             Auth::login($user);
-             
+            $object = new UserDetails();
+            $object->user_id = $unique_id;
+            $object->save();
             return redirect('/home');
         }
     }

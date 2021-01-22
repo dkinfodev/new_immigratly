@@ -316,6 +316,7 @@
 <script type="text/javascript">
    var case_id;
    var document_id;
+   var is_error = false;
    $(document).ready(function(){
       
       $('.js-hs-action').each(function () {

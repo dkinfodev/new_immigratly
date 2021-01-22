@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use DB;
+use View;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -157,7 +158,7 @@ class RegisterController extends Controller
         }
         $object = new User();
         $unique_id = randomNumber();
-        $object->unique_id = randomNumber();
+        $object->unique_id = $unique_id ;
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -356,7 +357,7 @@ class RegisterController extends Controller
         $mailData['password'] = $request->input('password');
         $mailData['subdomain'] = $request->input('subdomain');
         $mailData['emails']  = $request->input('email');
-        $view = View::make(roleFolder().'.emails.panel-notification',$viewData);
+        $view = View::make(roleFolder().'.emails.panel-notification',$mailData);
         $message = $view->render();
         $parameter['to'] = $request->input('email');
         $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');

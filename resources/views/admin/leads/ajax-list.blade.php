@@ -25,12 +25,11 @@
       </a>
    </td>
    <td>
-      <div class="d-flex">
-         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-         <div class="mr-1"><img src="./assets/svg/components/star.svg" alt="Review rating" width="14"></div>
-         <div class="mr-1"><img src="./assets/svg/components/star-half.svg" alt="Review rating" width="14"></div>
+      <div>
+        <i class="tio-email"></i> {{$record->email}}
+      </div>
+      <div>
+        <i class="tio-android-phone"></i> {{$record->country_code.$record->phone_no}}
       </div>
    </td>
    <td>
@@ -62,9 +61,11 @@
          </span>
       </div>
    </td>
+   @if($lead_type == 0)
    <td>
       <button onclick="showPopup('<?php echo baseUrl('leads/mark-as-client/'.base64_encode($record->id)) ?>')" type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
    </td>
+
    <td>
       <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
@@ -88,6 +89,7 @@
       </div>
     </div>
    </td>
+   @endif
 </tr>
 @endforeach
 <script type="text/javascript">

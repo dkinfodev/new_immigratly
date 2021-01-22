@@ -18,11 +18,11 @@
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
 
-      <div class="col-sm-auto">
+      <!-- <div class="col-sm-auto">
         <a class="btn btn-primary" href="<?php echo baseUrl('cases/add') ?>">
           <i class="tio-user-add mr-1"></i> Create Case
         </a>
-      </div>
+      </div> -->
     </div>
     <!-- End Row -->
   </div>

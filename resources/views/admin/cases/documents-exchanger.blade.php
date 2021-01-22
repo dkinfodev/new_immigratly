@@ -58,7 +58,7 @@
         </div>
         <div class="card-body">
           <?php
-            $files = $record->caseDocuments($record->id,$document->unique_id);
+            $files = $record->caseDocuments($record->unique_id,$document->unique_id);
           ?>
           <ul class="list-group list-group-lg">
             @foreach($files as $file)

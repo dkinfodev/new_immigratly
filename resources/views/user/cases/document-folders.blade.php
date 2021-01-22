@@ -65,13 +65,14 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
+                      <a href="<?php echo baseUrl("cases/documents/default/".$subdomain."/".$case_id."/".$document['unique_id']) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document['name']}}
-                           
                         </h5>
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{$document['files_count']}} Files</li>
                         </ul>
+                      </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -102,12 +103,14 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
-                        <h5 class="card-title text-truncate mr-2">
-                           {{$document['name']}}
-                        </h5>
-                        <ul class="list-inline list-separator small">
-                           <li class="list-inline-item">{{$document['files_count']}} Files</li>
-                        </ul>
+                        <a href="<?php echo baseUrl("cases/documents/other/".$subdomain."/".$case_id."/".$document['unique_id']) ?>">
+                          <h5 class="card-title text-truncate mr-2">
+                             {{$document['name']}}
+                          </h5>
+                          <ul class="list-inline list-separator small">
+                             <li class="list-inline-item">{{$document['files_count']}} Files</li>
+                          </ul>
+                        </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -155,6 +158,7 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
+                        <a href="<?php echo baseUrl("cases/documents/extra/".$subdomain."/".$case_id."/".$document['unique_id']) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document['name']}}
                           
@@ -162,6 +166,7 @@
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{$document['files_count']}} Files</li>
                         </ul>
+                        </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"

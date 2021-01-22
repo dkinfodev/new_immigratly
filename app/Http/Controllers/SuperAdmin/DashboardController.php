@@ -63,9 +63,9 @@ class DashboardController extends Controller
         }
         
         $id = \Auth::user()->id;
-        $user = User::find($id);
         
         $object =  User::find($id);
+        $profile_image = $object->profile_image;
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -74,7 +74,7 @@ class DashboardController extends Controller
         }
         $object->phone_no = $request->input("phone_no");
         $object->country_code = $request->input("country_code");
-        
+
         if ($file = $request->file('profile_image')){
                 
             $fileName        = $file->getClientOriginalName();
@@ -84,6 +84,9 @@ class DashboardController extends Controller
             $path = superAdminDir()."/profile";
             
             $destinationPath = $path.'/thumb';
+            if (file_exists($destinationPath."/".$profile_image)) {
+                unlink($destinationPath."/".$profile_image);
+            }
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
             }
@@ -91,12 +94,18 @@ class DashboardController extends Controller
             resizeImage($source_url, $destination_url, 100,100,80);
 
             $destinationPath = $path.'/medium';
+            if (file_exists($destinationPath."/".$profile_image)) {
+                unlink($destinationPath."/".$profile_image);
+            }
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0777, true);
             }
             $destination_url = $destinationPath.'/'.$newName;
             resizeImage($source_url, $destination_url, 500,500,80);
-            $destinationPath = userDir()."/profile";
+            $destinationPath = superAdminDir()."/profile";
+            if (file_exists($destinationPath."/".$profile_image)) {
+                unlink($destinationPath."/".$profile_image);
+            }
             if($file->move($destinationPath, $newName)){
                 $object->profile_image = $newName;                    
             }

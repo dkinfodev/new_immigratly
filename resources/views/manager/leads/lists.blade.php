@@ -29,7 +29,9 @@
   </div>
   <!-- End Page Header -->
 
-
+  <!-- Stats -->
+  @include(roleFolder().".leads.leads-count")
+  <!-- End Stats -->
   <!-- Card -->
   <div class="card">
     <!-- Header -->
@@ -165,7 +167,8 @@ function loadData(page=1){
         url: BASEURL + '/leads/ajax-list?page='+page,
         data:{
             _token:csrf_token,
-            search:search
+            search:search,
+            lead_type:"{{$lead_type}}"
         },
         dataType:'json',
         beforeSend:function(){

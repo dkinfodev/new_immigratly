@@ -30,11 +30,12 @@ class ConfigServiceProvider extends ServiceProvider
         \Session::forget("subdomain");
         if($subdomain != 'localhost'){
             if($subdomain != 'immigratly'){
-                if($subdomain == 'users'){      
-                    \Session::put("login_to",'user_panel');
-                }else{
-                    \Session::put("login_to",'professional_panel');    
-                }
+                \Session::put("login_to",'professional_panel');    
+                // if($subdomain == 'users'){      
+                //     \Session::put("login_to",'user_panel');
+                // }else{
+                    
+                // }
                 \Session::put("subdomain",$subdomain);
                 \Config::set('database.connections.mysql.database', 'immigrat_immigratly_'.$subdomain);
             }else{

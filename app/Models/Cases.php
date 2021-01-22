@@ -40,7 +40,11 @@ class Cases extends Model
     }
 
     static function caseDocuments($case_id,$folder_id,$return='record'){
-        $documents = CaseDocuments::with('FileDetail')->where("case_id",$case_id)->where("folder_id",$folder_id)->get();
+        
+        $documents = CaseDocuments::with('FileDetail')
+                        ->where("case_id",$case_id)
+                        ->where("folder_id",$folder_id)
+                        ->get();
         if($return == 'count'){
             return count($documents);
         }

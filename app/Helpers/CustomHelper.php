@@ -921,7 +921,45 @@ if(!function_exists("superAdminDirUrl")){
         return $dir;
     }
 }
-
+if(!function_exists("superAdminProfile")){
+    function superAdminProfile($unique_id = '',$size='r'){
+        
+        if($unique_id == ''){
+            $unique_id = \Auth::user()->unique_id;
+        }
+        
+        $user = DB::table(MAIN_DATABASE.".users")->where("unique_id",$unique_id)->first();
+        $profile_image = $user->profile_image;
+        $profile_dir = superAdminDir()."/profile/".$profile_image;
+        if($profile_image == '' || !file_exists($profile_dir)){
+            $url = asset("public/uploads/users/default.jpg");
+            return $url;
+        }
+        $original = superAdminDirUrl()."/profile/".$profile_image;
+        $url = '';
+        if($size == 'r'){
+            $url = superAdminDirUrl()."/profile/".$profile_image;
+        }
+        if($size == 'm'){
+            if(file_exists(superAdminDir()."/profile/medium/".$profile_image)){
+                $url = superAdminDirUrl()."/profile/medium/".$profile_image;
+            }else{
+                $url = $original;
+            }
+        }
+        if($size == 't'){
+            if(file_exists(superAdminDir()."/profile/thumb/".$profile_image)){
+                $url = superAdminDirUrl()."/profile/thumb/".$profile_image;
+            }else{
+                $url = $original;
+            }
+        }
+        if($url == ''){
+            $url = $original;
+        }
+        return $url;
+    }
+}
 if(!function_exists("docChatSendBy")){
     function docChatSendBy($send_by,$user_id,$subdomain=''){
         if($send_by == 'client'){

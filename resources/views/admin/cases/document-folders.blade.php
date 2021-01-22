@@ -80,10 +80,7 @@
                      <i class="tio-more-vertical"></i>
                      </a>
                      <div id="action-pinned-{{$folder}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                        <a class="dropdown-item" href="#">
-                        <i class="tio-share dropdown-item-icon"></i>
-                        Share file
-                        </a>
+                        
                         <!-- <a class="dropdown-item" href="#">
                         <i class="tio-folder-add dropdown-item-icon"></i>
                         Move to
@@ -146,6 +143,7 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
+                        <a href="<?php echo baseUrl("cases/case-documents/default/".$record->unique_id."/".$document->unique_id) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document->name}}
                            @if(isset($pinned_folders['default']) && in_array($document->unique_id,$pinned_folders['default']))
@@ -155,6 +153,7 @@
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{$record->caseDocuments($record->unique_id,$document->unique_id,'count')}} Files</li>
                         </ul>
+                        </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -166,10 +165,7 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-default-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share Folder
-                           </a>
+                          
                            <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/default/".$record->unique_id."/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
@@ -193,6 +189,7 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
+                        <a href="<?php echo baseUrl("cases/case-documents/other/".$record->unique_id."/".$document->unique_id) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document->name}}
                            @if(isset($pinned_folders['other']) && in_array($document->unique_id,$pinned_folders['other']))
@@ -202,6 +199,7 @@
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{$record->caseDocuments($record->unique_id,$document->unique_id,'count')}} Files</li>
                         </ul>
+                        </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -213,10 +211,7 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-other-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share Folder
-                           </a>
+                           
                            <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/other/".$record->unique_id."/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
@@ -258,6 +253,7 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
+                      <a href="<?php echo baseUrl("cases/case-documents/extra/".$record->unique_id."/".$document->unique_id) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document->name}}
                            @if(isset($pinned_folders['extra']) && in_array($document->unique_id,$pinned_folders['extra']))
@@ -267,6 +263,7 @@
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{$record->caseDocuments($record->unique_id,$document->unique_id,'count')}} Files</li>
                         </ul>
+                      </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -278,10 +275,7 @@
                         <i class="tio-chevron-down"></i>
                         </a>
                         <div id="action-extra-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-right" style="min-width: 13rem;">
-                           <a class="dropdown-item" href="#">
-                           <i class="tio-share dropdown-item-icon"></i>
-                           Share Folder
-                           </a>
+                           
                            <a class="dropdown-item" href="<?php echo baseUrl("cases/case-documents/extra/".$record->unique_id."/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents

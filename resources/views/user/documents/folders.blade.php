@@ -51,12 +51,14 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
+                      <a href="<?php echo baseUrl("documents/files/".$document->unique_id) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document->name}}
                         </h5>
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{count($document->Files)}} Files</li>
                         </ul>
+                      </a>
                      </div>
                      <div class="hs-unfold">
                         <a class="js-hs-unfold-invoker btn btn-sm btn-white" href="javascript:;"
@@ -72,10 +74,10 @@
                              <i class="tio-edit dropdown-item-icon"></i>
                              Edit
                            </a>
-                           <a class="dropdown-item" href="#">
+                           <!-- <a class="dropdown-item" href="#">
                            <i class="tio-share dropdown-item-icon"></i>
                            Share Folder
-                           </a>
+                           </a> -->
                            <a class="dropdown-item" href="<?php echo baseUrl("documents/files/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents

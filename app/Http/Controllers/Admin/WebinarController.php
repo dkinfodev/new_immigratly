@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use DB;
 use View;
 
-use App\Models\Articles;
 
 class WebinarController extends Controller
 {
@@ -19,18 +18,7 @@ class WebinarController extends Controller
     public function index()
     {
        	$viewData['pageTitle'] = "Webinar";
-        $result = curlRequest("articles/count");
-        $publish = 0;
-        $draft = 0;
-        if($result['status'] == 'success'){
-            $data = $result['data'];
-            $publish = $data['publish'];
-            $draft = $data['draft'];
-        }
-        $total_articles = $publish+$draft;
-        $viewData['total_articles'] = $total_articles;
-        $viewData['publish'] = $publish;
-        $viewData['draft'] = $draft;
+      
         $viewData['status'] = 'publish';
         return view(roleFolder().'.webinar.lists',$viewData);
     }
@@ -233,10 +221,10 @@ class WebinarController extends Controller
     }
     public function deleteImage($id,Request $request){
        
-        $apiData['article_id'] = $id;
+        $apiData['webinar_id'] = $id;
         $apiData['image'] = $request->get("image");
         $result = curlRequest("webinar/delete-image",$apiData);
-        // pre($result);
+        
         if($result['status'] == 'success'){
             return redirect()->back()->with("success","Image has been deleted!");
         }else{
@@ -245,21 +233,14 @@ class WebinarController extends Controller
         }
         
     }
-    public function deleteSingle($id){
-       
+    public function deleteSingle($id){       
         $apiData['webinar_id'] = $id;
         $result = curlRequest("webinar/delete",$apiData);
-        // pre($result);
-        if($result['status'] == 'success'){
-            $response['status'] = true;
-            $response['redirect_back'] = baseUrl('webinar');
-            $response['message'] = $result['message'];
-        }else{
-            $response['status'] = false;
-            $response['error_type'] = 'process_error';
-            $response['message'] = "Some issue while saving article";
 
+        if($result['status'] == 'success'){
+            return redirect()->back()->with("success","Webinar has been deleted!");
+        }else{
+            return redirect()->back()->with("error","Some issue while deleting");
         }
-        return redirect()->back()->with("success","Webinar has been deleted!");
     }
 }

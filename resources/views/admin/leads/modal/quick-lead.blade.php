@@ -100,7 +100,7 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-    // initSelect();
+    initSelect('#popup-form ');
     
     $("#popup-form").submit(function(e){
         e.preventDefault();

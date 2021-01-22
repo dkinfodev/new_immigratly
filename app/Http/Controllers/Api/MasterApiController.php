@@ -35,12 +35,25 @@ class MasterApiController extends Controller
             $password = "demo@123";
             $user = $postData['data'];
 
+            $checkExists = User::where("email",$user['email'])
+                                ->where("phone_no",$user['phone_no'])
+                                ->first();
+            if(!empty($checkExists)){
+                $response['status'] = 'error';
+                $response['error'] = "email_exists";
+                $response['message'] = "Client account with email ".$user['email']." and ".$user['phone_no']." already exists";
+                return response()->json($response);
+            }
+
             $checkExists = User::where("email",$user['email'])->first();
+            $is_exists = 0;
             if(!empty($checkExists)){
             	$response['status'] = 'error';
             	$response['error'] = "email_exists";
             	$response['message'] = "Client account with email ".$user['email']." already exists";
-        		return response()->json($response);
+                $is_exists = 1;
+                $unique_id = $checkExists->unique_id;
+        		// return response()->json($response);
             }
 
             $checkExists = User::where("phone_no",$user['phone_no'])->first();
@@ -50,47 +63,49 @@ class MasterApiController extends Controller
             	$response['message'] = "Phone no already exists";
             	return response()->json($response);
             }
-            $unique_id = randomNumber();
-	       	$object = new User();
-	        $object->first_name = $user['first_name'];
-	        $object->last_name = $user['last_name'];
-	        $object->email =  $user['email'];
-	        $object->password = bcrypt($password);
-	        $object->country_code = $user['country_code'];
-	        $object->phone_no = $user['phone_no'];
-            
-	        $object->role = "user";
-            $object->unique_id = $unique_id;
-	        $object->is_active = 1;
-	        $object->is_verified = 1;
-	        $object->save();
+            if($is_exists == 0){
+                $unique_id = randomNumber();
+    	       	$object = new User();
+    	        $object->first_name = $user['first_name'];
+    	        $object->last_name = $user['last_name'];
+    	        $object->email =  $user['email'];
+    	        $object->password = bcrypt($password);
+    	        $object->country_code = $user['country_code'];
+    	        $object->phone_no = $user['phone_no'];
+                
+    	        $object->role = "user";
+                $object->unique_id = $unique_id;
+    	        $object->is_active = 1;
+    	        $object->is_verified = 1;
+    	        $object->save();
 
-	        $user_id = $object->id;
+    	        $user_id = $object->id;
 
-            $object = new UserDetails();
-            $object->user_id = $unique_id;
-            if(isset($user['date_of_birth'])){
-                $object->date_of_birth = $user['date_of_birth'];
+                $object = new UserDetails();
+                $object->user_id = $unique_id;
+                if(isset($user['date_of_birth'])){
+                    $object->date_of_birth = $user['date_of_birth'];
+                }
+                if(isset($user['gender'])){
+                    $object->gender = $user['gender'];
+                }
+                if(isset($user['country_id'])){
+                    $object->country_id = $user['country_id'];
+                }
+                if(isset($user['state_id'])){
+                    $object->state_id = $user['state_id'];
+                }
+                if(isset($user['city_id'])){
+                    $object->city_id = $user['city_id'];
+                }
+                if(isset($user['address'])){
+                    $object->address = $user['address'];
+                }
+                if(isset($user['zip_code'])){
+                    $object->zip_code = $user['zip_code'];
+                }
+                $object->save();
             }
-            if(isset($user['gender'])){
-                $object->gender = $user['gender'];
-            }
-            if(isset($user['country_id'])){
-                $object->country_id = $user['country_id'];
-            }
-            if(isset($user['state_id'])){
-                $object->state_id = $user['state_id'];
-            }
-            if(isset($user['city_id'])){
-                $object->city_id = $user['city_id'];
-            }
-            if(isset($user['address'])){
-                $object->address = $user['address'];
-            }
-            if(isset($user['zip_code'])){
-                $object->zip_code = $user['zip_code'];
-            }
-            $object->save();
 
 	        $object2 = new UserWithProfessional();
 	        $object2->user_id = $unique_id;
@@ -563,7 +578,6 @@ class MasterApiController extends Controller
             $postData = $request->input();
             $request->request->add($postData);
             $webinar_id = $request->input("webinar_id");
-            $unique_id = randomNumber();
             $check_name_count = Webinar::where("title",$request->input('title'))
                                         ->where("unique_id",$webinar_id)
                                         ->count();
@@ -610,10 +624,6 @@ class MasterApiController extends Controller
                 $object->city_id = 0;
                 $object->online_event_link = $request->input("online_event_link");
             }
-            $object->status = 'publish';
-
-            $object->professional= $this->subdomain;
-            $object->added_by = $request->input("added_by");
             if($request->input("timestamp")){
                 $timestamp = $request->input("timestamp");
                 if(is_dir(public_path()."/uploads/temp/". $timestamp)){
@@ -703,8 +713,8 @@ class MasterApiController extends Controller
                 unset($images[$key]);
                 array_values($images);
             }
-            $article->images = implode(",",$images);
-            $article->save();
+            $record->images = implode(",",$images);
+            $record->save();
 
             $response['status'] = 'success';
             $response['message'] = "Webinar image removed successfully";

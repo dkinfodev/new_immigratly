@@ -373,6 +373,8 @@ class CasesController extends Controller
         $viewData['pageTitle'] = "Files List for ".$document->name;
         $viewData['record'] = $record;
         $viewData['doc_type'] = "default";
+        $viewData['case_id'] = $case_id;
+        $viewData['subdomain'] = \Session::get("subdomain");
         $file_url = professionalDirUrl()."/documents";
         $file_dir = professionalDir()."/documents";
         $viewData['file_url'] = $file_url;
@@ -423,7 +425,8 @@ class CasesController extends Controller
         $file_dir = professionalDir()."/documents";
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
-
+        $viewData['case_id'] = $case_id;
+        $viewData['subdomain'] =\Session::get("subdomain");
         return view(roleFolder().'.cases.document-files',$viewData);
     }
     
@@ -625,7 +628,8 @@ class CasesController extends Controller
     public function documentsExchanger($case_id){
         $id = base64_decode($case_id);
         $record = Cases::find($id);
-        $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
+        
+        $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
         $documents = ServiceDocuments::where("service_id",$record->visa_service_id)->get();
         $case_folders = CaseFolders::where("case_id",$record->id)->get();
         
@@ -823,7 +827,13 @@ class CasesController extends Controller
                 // if($case_document->document_type == 'default'){
                 //     $not_data['url'] = "cases/documents/default/".$subdomain."/".$case_id."/".$folder_id;
                 // }
-                
+                $case_id = $request->input("case_id");
+                $document_id = $request->input("document_id");
+                $case = Cases::where("unique_id",$case_id)->first();
+                $case_document = CaseDocuments::where("unique_id",$document_id)
+                                        ->where("case_id",$case_id)
+                                        ->first();
+                $folder_id = $case_document->folder_id;
                 $other_data[] = array("key"=>"case_id","value"=>$case_id);
                 $other_data[] = array("key"=>"document_id","value"=>$document_id);
                 
@@ -1078,5 +1088,20 @@ class CasesController extends Controller
         }
         
         return response()->json($response);
+    }
+
+    public function viewDocument($case_id,$doc_id,Request $request){
+        $url = $request->get("url");
+        $filename = $request->get("file_name");
+        $ext = fileExtension($filename);
+        $subdomain = $request->get("p");
+
+        $viewData['url'] = $url;
+        $viewData['extension'] = $ext;
+        $viewData['subdomain'] = $subdomain;
+        $viewData['case_id'] = $case_id;
+        $viewData['document_id'] = $doc_id;
+        $viewData['pageTitle'] = "View Documents";
+        return view(roleFolder().'.cases.view-documents',$viewData);
     }
 }

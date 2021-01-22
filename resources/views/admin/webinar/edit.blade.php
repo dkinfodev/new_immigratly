@@ -308,7 +308,7 @@
                     <div class="col-md-6 js-form-message topic_list_area">
                       <?php if(count($topic_list) > 0){ ?>
                       <div class="tp_field">
-                        <input type="text" class="form-control-plaintext mb-3 topic_list" placeholder="Topic List" name="topics[{{$index}}][topic_list][]" value="{{$topic_list[0]}}">
+                        <input type="text" class="form-control mb-3 topic_list" placeholder="Topic List" name="topics[{{$index}}][topic_list][]" value="{{$topic_list[0]}}">
                         <a onclick="removeTopicList(this)" class="text-danger float-right js-tp-delete-field" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Remove Topic List">
                           Remove Sub Topic
                         </a>
@@ -335,7 +335,7 @@
                       </a>
                     </div>
                   </div>
-                  <a class="js-delete-field input-group-add-field-delete" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Remove item">
+                  <a class="js-delete-field del-row input-group-add-field-delete" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Remove item">
                     <i class="tio-clear"></i>
                   </a>
                 </div>
@@ -357,7 +357,7 @@
                   </div>
                   <div class="col-md-6 js-form-message topic_list_area">
                     <div class="tp_field">
-                      <input type="text" class="form-control-plaintext mb-3 topic_list" placeholder="Topic List">
+                      <input type="text" class="form-control mb-3 topic_list" placeholder="Topic List">
                       <a onclick="removeTopicList(this)" class="text-danger float-right js-tp-delete-field" href="javascript:;" data-toggle="tooltip" data-placement="top" title="Remove Topic List">
                         Remove Sub Topic
                       </a>
@@ -457,7 +457,14 @@ $(document).on('ready', function () {
     $('.js-masked-input').each(function () {
       $.HSCore.components.HSMask.init($(this));
     });
-
+    $(".add-topic-list").click(function(){
+      var field = $(this).parents(".topic_list_area").find(".tp_field:last").clone();
+      $(this).parents(".topic_list_area").find(".tplist").append(field);
+      $(this).parents(".topic_list_area").find(".tplist .tp_field:last .topic_list").val('');  
+    });
+    $(".del-row").click(function(){
+      $(this).parents(".item-row").remove();
+    });
     $('.js-add-field').each(function () {
     new HSAddField($(this), {
       addedField: function() {

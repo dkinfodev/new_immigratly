@@ -107,33 +107,7 @@
       </div>
       <!-- End Header -->
       <!-- Table -->
-      <!-- Sidebar -->
-      <div id="activitySidebar" class="hs-unfold-content sidebar sidebar-bordered sidebar-box-shadow">
-         <div class="card card-lg sidebar-card sidebar-scrollbar">
-            <div class="card-header">
-               <h4 class="card-header-title">Sidebar title</h4>
-               <!-- Toggle Button -->
-               <a class="js-hs-unfold-invoker btn btn-icon btn-xs btn-ghost-dark ml-2" href="javascript:;"
-                  data-hs-unfold-options='{
-                  "target": "#activitySidebar",
-                  "type": "css-animation",
-                  "animationIn": "fadeInRight",
-                  "animationOut": "fadeOutRight",
-                  "hasOverlay": true,
-                  "smartPositionOff": true
-                  }'>
-               <i class="tio-clear tio-lg"></i>
-               </a>
-               <!-- End Toggle Button -->
-            </div>
-            <!-- Body -->
-            <div class="card-body sidebar-body">
-               Sidebar body...
-            </div>
-            <!-- End Body -->
-         </div>
-      </div>
-      <!-- End Sidebar -->  
+
       <div class="table-responsive datatable-custom">
          <table id="datatable" class="table table-borderless table-thead-bordered card-table">
             <thead class="thead-light">
@@ -145,9 +119,6 @@
                      </div>
                   </th>
                   <th scope="col" class="table-column-pl-0">Document Name</th>
-                  <!-- <th scope="col">Folder</th> -->
-                  <th scope="col"><i class="tio-chat-outlined"></i></th>
-                  <!-- <th scope="col">Members</th> -->
                   <th scope="col"></th>
                </tr>
             </thead>
@@ -176,25 +147,7 @@
                         </div>
                      </a>
                   </td>
-                  <!-- <td><a class="badge badge-soft-primary p-2" href="#">Marketing team</a></td> -->
-                  <td width="10%">
-                     <!-- Toggle -->
-                     <div class="hs-unfold">
-                        <a class="js-hs-unfold-invoker text-body" href="javascript:;"
-                           data-hs-unfold-options='{
-                           "target": "#activitySidebar",
-                           "type": "css-animation",
-                           "animationIn": "fadeInRight",
-                           "animationOut": "fadeOutRight",
-                           "hasOverlay": true,
-                           "smartPositionOff": true
-                           }'>
-                        <i class="tio-chat-outlined"></i> 21
-                        </a>
-                     </div>
-                     <!-- End Toggle -->
-                       
-                  </td>
+                  
                   <td>
                      <!-- Unfold -->
                      <div class="hs-unfold">

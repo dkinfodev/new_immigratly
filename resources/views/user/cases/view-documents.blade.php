@@ -43,11 +43,16 @@
    <div class="row">
       <div class="col-md-7">
          <div class="card">
+          <div class="card-header">
+              <div class="text-right">
+                <a href="{{$url}}" class="text-primary" download><i class="tio-download"></i> Download</a>
+              </div>
+          </div>
           <div class="card-body">
             @if($extension == 'image')
-              <img src="{{$url}}" class="img-responsive" />
+              <img src="{{$url}}" class="img-fluid" />
             @else
-             <iframe src="http://docs.google.com/viewer?url=https://immigratly.com/public/uploads/test.xlsx&embedded=true" style="margin:0 auto; width:100%; height:700px;" frameborder="0"></iframe>
+             <iframe src="http://docs.google.com/viewer?url={{$url}}&embedded=true" style="margin:0 auto; width:100%; height:700px;" frameborder="0"></iframe>
             @endif
           </div>
          </div>

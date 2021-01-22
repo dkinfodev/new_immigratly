@@ -73,12 +73,18 @@
 <script type="text/javascript">
 $(document).ready(function(){
     // initSelect();
+    
     $('#start_date').datepicker({
         format: 'dd/mm/yyyy',
         autoclose: true,
         maxDate:(new Date()).getDate(),
         todayHighlight: true,
         orientation: "bottom auto"
+    })
+    .on('changeDate', function (selected) {
+        startDate = new Date(selected.date.valueOf());
+        startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+        $('#end_date').datepicker('setStartDate', startDate);
     });
     $('#end_date').datepicker({
         format: 'dd/mm/yyyy',
@@ -109,7 +115,7 @@ $(document).ready(function(){
                 // popupModal("<?php echo baseUrl('cases/create-case') ?>/"+response.user_id);
                 loadData();
               }else{
-                if(response.error_type = 'validation'){
+                if(response.error_type == 'validation'){
                   validation(response.message);
                 }else{
                   $("#response").addClass("text-danger");

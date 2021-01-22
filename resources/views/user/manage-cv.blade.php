@@ -337,7 +337,7 @@
                   <!-- End Form Group -->
                   <!-- Form Group -->
                   <div class="row form-group">
-                     <label class="col-sm-3 col-form-label input-label">Gender</label>
+                     <label class="col-sm-3 col-form-label input-label">Language Known</label>
                      <div class="col-sm-9">
                         <div class="js-form-message">
                            <select name="languages_known[]" multiple id="languages_known" class="form-control">
@@ -757,6 +757,47 @@
         // var education_qualification_dt = $.HSCore.components.HSDatatables.init($('#education_qualification_dt'));
 
       });
+   function stateList(country_id,id){
+     $.ajax({
+          url:"{{ url('states') }}",
+          data:{
+            country_id:country_id
+          },
+          dataType:"json",
+          beforeSend:function(){
+           $("#"+id).html('');
+         },
+         success:function(response){
+          if(response.status == true){
+            $("#"+id).html(response.options);
+          } 
+        },
+        error:function(){
+         
+        }
+      });
+   }
+   
+   function cityList(state_id,id){
+     $.ajax({
+       url:"{{ url('cities') }}",
+       data:{
+         state_id:state_id
+       },
+       dataType:"json",
+       beforeSend:function(){
+        $("#"+id).html('');
+      },
+      success:function(response){
+       if(response.status == true){
+         $("#"+id).html(response.options);
+       } 
+     },
+     error:function(){
+      
+     }
+   });
+   }
     </script>    
 
 @endsection

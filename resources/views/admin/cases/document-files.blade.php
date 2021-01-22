@@ -84,7 +84,7 @@
       <!-- Header -->
       <div class="card-header">
          <div class="row justify-content-between align-items-center flex-grow-1">
-            <div class="col-12 col-md">
+            <!-- <div class="col-12 col-md">
                <form>
                   <div class="input-group input-group-merge input-group-borderless">
                      <div class="input-group-prepend">
@@ -95,7 +95,7 @@
                      <input id="datatableSearch" type="search" class="form-control" placeholder="Search users" aria-label="Search users">
                   </div>
                </form>
-            </div>
+            </div> -->
             <div class="col-auto">
                <div class="d-flex align-items-center">
                   <div id="datatableCounterInfo" class="mr-2" style="display: none;">
@@ -195,7 +195,11 @@
                      </div>
                   </td>
                   <td class="table-column-pl-0">
-                     <a class="d-flex align-items-center" href="javascript:;">
+                     <?php 
+                        $doc_url = $file_url."/".$doc->FileDetail->file_name; 
+                        $url = baseUrl('cases/case-documents/view-document/'.$case_id.'/'.$doc->unique_id.'?url='.$doc_url.'&file_name='.$doc->FileDetail->file_name.'&p='.$subdomain);
+                     ?>
+                     <a class="d-flex align-items-center" href="{{$url}}">
                         <?php 
                            $fileicon = fileIcon($doc->FileDetail->original_name);
                            echo $fileicon;

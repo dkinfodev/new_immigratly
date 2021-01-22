@@ -271,6 +271,17 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\ArticlesController::class, 'deleteMultiple']);
     });
 
+    Route::group(array('prefix' => 'webinar'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'getAjaxList']);
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'save']);
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'edit']);
+        Route::post('/edit/{id}', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'update']);
+        Route::get('/remove-image/{id}', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'deleteImage']);
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'deleteMultiple']);
+    });
     Route::group(array('prefix' => 'employee-privileges'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'getAjaxList']); 
@@ -579,7 +590,8 @@ Route::group(array('prefix' => 'admin'), function () {
                 Route::post('/upload-documents/{id}', [App\Http\Controllers\Admin\CasesController::class, 'uploadDocuments']);
                 Route::get('/delete/{id}', [App\Http\Controllers\Admin\CasesController::class, 'deleteDocument']);
                 Route::post('/delete-multiple', [App\Http\Controllers\Admin\CasesController::class, 'deleteMultipleDocuments']);
-
+                Route::get('/view-document/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'viewDocument']);
+                
                 Route::get('/file-move-to/{file_id}/{case_id}/{doc_id}', [App\Http\Controllers\Admin\CasesController::class, 'fileMoveTo']);
                 Route::post('/file-move-to', [App\Http\Controllers\Admin\CasesController::class, 'moveFileToFolder']);
 

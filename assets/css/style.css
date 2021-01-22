@@ -41,3 +41,8 @@
 .noimage{
     font-size: 16px;
 }
+#addTopicContainer .item-row {
+    background-color: #EEE;
+    padding: 8px 8px 20px;
+    margin-bottom: 15px;
+}

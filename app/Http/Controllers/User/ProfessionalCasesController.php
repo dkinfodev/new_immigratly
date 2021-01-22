@@ -658,9 +658,8 @@ class ProfessionalCasesController extends Controller
             }
             
             $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
-            $other_data[] = array("key"=>"doc_type","value"=>$request->input("doc_type"));
             $other_data[] = array("key"=>"document_id","value"=>$request->input("document_id"));
-            
+
             $not_data['other_data'] = $other_data;
             
             sendNotification($not_data,"professional",$subdomain);

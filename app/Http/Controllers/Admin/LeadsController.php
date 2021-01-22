@@ -24,12 +24,22 @@ class LeadsController extends Controller
         $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
         $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
        	$viewData['pageTitle'] = "New Leads";
+        $viewData['lead_type'] = 0;
         return view(roleFolder().'.leads.lists',$viewData);
     }
 
+    public function assignedLeads(Request $request){
+        $viewData['total_leads'] = Leads::count();
+        $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
+        $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
+        $viewData['pageTitle'] = "Assigned Leads";
+        $viewData['lead_type'] = 1;
+        return view(roleFolder().'.leads.lists',$viewData);
+    }
     public function getNewList(Request $request)
     {
         $search = $request->input("search");
+        $lead_type = $request->input("lead_type");
         $records = Leads::orderBy('id',"desc")
                         ->where(function($query) use($search){
                             if($search != ''){
@@ -39,9 +49,10 @@ class LeadsController extends Controller
                                 $query->orWhere(DB::raw('concat(country_code,"",phone_no)') , 'LIKE' , "%$search%");
                             }
                         })
-                        ->where("mark_as_client","0")
+                        ->where("mark_as_client",$lead_type)
                         ->paginate();
         $viewData['records'] = $records;
+        $viewData['lead_type'] = $lead_type;
         $view = View::make(roleFolder().'.leads.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;

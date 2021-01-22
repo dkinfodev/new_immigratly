@@ -126,6 +126,7 @@ class ProfessionalApiController extends Controller
             $service->MainService = $service->Service($service->service_id);
             $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
+                                            ->orderBy("id","desc")
                                             ->get();
             $data['service'] = $service;
             $data['case_documents'] = $case_documents;
@@ -161,6 +162,7 @@ class ProfessionalApiController extends Controller
             $service->MainService = $service->Service($service->service_id);
             $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
+                                            ->orderBy("id","desc")
                                             ->get();
             $data['service'] = $service;
             $data['case_documents'] = $case_documents;
@@ -198,6 +200,7 @@ class ProfessionalApiController extends Controller
             $service->MainService = $service->Service($service->service_id);
             $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
+                                            ->orderBy("id","desc")
                                             ->get();
             $data['service'] = $service;
             $data['case_documents'] = $case_documents;

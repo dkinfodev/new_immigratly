@@ -122,8 +122,8 @@ function bottomMessage(message,type){
 function redirect(url){
   window.location.href = url;
 }
-function initSelect(){
-	$('select').each(function () {
+function initSelect(parent_id=''){
+	$(parent_id+'select').each(function () {
       $.HSCore.components.HSSelect2.init($(this));
     });
 }
