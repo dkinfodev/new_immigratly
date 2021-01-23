@@ -53,6 +53,9 @@ class UserController extends Controller
         $viewData['pageTitle'] = "Add User";
         $countries = Countries::get();
         $viewData['countries'] = $countries;
+
+        $viewData['languages'] = Languages::get();
+
         return view(roleFolder().'.user.add',$viewData);
     }
 
@@ -67,6 +70,14 @@ class UserController extends Controller
             'phone_no' => 'required|unique:users,phone_no',
             'password' => 'required|confirmed|min:4',
             'password_confirmation' => 'required|min:4',
+            'gender'=>'required',
+            'date_of_birth'=>'required',
+            'languages_known'=>'required',
+            'country_id'=>'required',
+            'state_id'=>'required',
+            'city_id'=>'required',
+            'address'=>'required',
+            'zip_code'=>'required',
         ]);
 
         if ($validator->fails()) {
@@ -82,6 +93,9 @@ class UserController extends Controller
         }
         
         $object = new User();
+        $unique_id = randomNumber();
+        $object2 = new UserDetails();
+        $object->unique_id =  $unique_id;
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -112,7 +126,18 @@ class UserController extends Controller
         $object->created_by = \Auth::user()->id;
         $object->social_connect = 0;
 
+        $object2->user_id = $unique_id;
+        $object2->date_of_birth = $request->input("date_of_birth");
+        $object2->gender = $request->input("gender");
+        $object2->country_id = $request->input("country_id");
+        $object2->state_id = $request->input("state_id");
+        $object2->city_id = $request->input("city_id");
+        $object2->address = $request->input("address");
+        $object2->zip_code = $request->input("zip_code");
+        $object2->languages_known = json_encode($request->input("languages_known"));
+        
         $object->save();
+        $object2->save();
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('user');

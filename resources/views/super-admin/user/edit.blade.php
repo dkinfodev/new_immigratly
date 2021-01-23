@@ -248,7 +248,7 @@
 </div>
 <!-- End Content -->
 @endsection
-@section('javascript')
+
 @section('javascript')
 <!-- JS Implementing Plugins -->
 <!-- JS Implementing Plugins -->
