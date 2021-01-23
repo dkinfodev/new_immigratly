@@ -157,7 +157,7 @@ class RegisterController extends Controller
         }
         $object = new User();
         $unique_id = randomNumber();
-        $object->unique_id = randomNumber();
+        $object->unique_id = $unique_id;
         $object->first_name = $request->input("first_name");
         $object->last_name = $request->input("last_name");
         $object->email = $request->input("email");
@@ -350,7 +350,7 @@ class RegisterController extends Controller
         // }else{
         //     $response['redirect_back'] = url('home');  
         // }
-
+        /*
         $mailData['firstname'] = $request->input('first_name');
         $mailData['lastname'] = $request->input('last_name');
         $mailData['password'] = $request->input('password');
@@ -366,7 +366,7 @@ class RegisterController extends Controller
         // exit;
         $parameter['view'] = "emails.panel-notification";
         $parameter['data'] = $mailData;
-        $mailRes = sendMail($parameter);
+        $mailRes = sendMail($parameter); */
         return response()->json($response);
     }
 }

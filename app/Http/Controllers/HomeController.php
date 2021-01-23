@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use DB;
 class HomeController extends Controller
 {
     /**
@@ -41,5 +41,49 @@ class HomeController extends Controller
         }else{
             return redirect('/');
         }
+    }
+
+    public function dbUpgrade(){
+        $tables = DB::select('SHOW TABLES');
+        foreach($tables as $table)
+        {
+              pre($table);
+              $tb = $table->Tables_in_new_immigratly;
+              $colums = DB::select("SHOW COLUMNS FROM new_immigratly.".$tb);
+              // pre($colums);
+              foreach($colums as $column){
+                // pre($column);
+                if($column->Key == "PRI" && $column->Extra != 'auto_increment'){
+                    $sql = "ALTER TABLE `$tb` CHANGE `".$column->Field."` `".$column->Field."` INT(11) NOT NULL AUTO_INCREMENT;";
+                    echo "NO AI<br>";
+                    echo $sql."<br>";
+                    if(DB::statement($sql)){
+                        echo "success<br>";
+                    }else{
+                        echo "failed<br>";
+                    }
+                }
+                // ALTER TABLE `professional_panel` ADD PRIMARY KEY(`id`);
+                if($column->Key != "PRI" && $column->Field == "id" && $column->Extra != 'auto_increment'){
+                    echo "NO PRI<br>";
+                    pre($tb);
+                    $sql = "ALTER TABLE `$tb` ADD PRIMARY KEY(`id`)";
+                    if(DB::statement($sql)){
+                        echo "Primary success<br>";
+                    }else{
+                        echo "Primary failed<br>";
+                    }
+                    $sql = "ALTER TABLE `$tb` CHANGE `".$column->Field."` `".$column->Field."` INT(11) NOT NULL AUTO_INCREMENT;";
+                    echo $sql."<br>";
+                    if(DB::statement($sql)){
+                        echo "AI success<br>";
+                    }else{
+                        echo "AI failed<br>";
+                    }
+                    
+                }
+              }
+        }
+        exit;
     }
 }
