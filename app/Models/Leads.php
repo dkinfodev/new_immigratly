@@ -23,7 +23,10 @@ class Leads extends Model
         $service = DB::table(MAIN_DATABASE.".visa_services")->where("unique_id",$id)->first();
         return $service;
     }
-
+    public function AssingedMember()
+    {
+        return $this->hasMany('App\Models\AssignLeads','leads_id','unique_id')->with(['Member']);
+    }
     static function deleteRecord($id){
         Leads::where("id",$id)->delete();
     }

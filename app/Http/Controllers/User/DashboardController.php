@@ -148,7 +148,7 @@ class DashboardController extends Controller
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('/edit-profile');
-        $response['message'] = "Updation sucessfully";
+        $response['message'] = "Profile updated sucessfully";
         
         return response()->json($response);
     }
@@ -192,7 +192,7 @@ class DashboardController extends Controller
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('edit-profile');
-        $response['message'] = "Updation sucessfully";
+        $response['message'] = "Password updated sucessfully";
         
         return response()->json($response);
     }
@@ -575,5 +575,50 @@ class DashboardController extends Controller
             $response['message'] = $e->getMessage();
         }
         return response()->json($response);
+    }
+
+    public function connectApps(){
+        $viewData = array();
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $viewData['user_detail'] = $user_detail;
+        return view(roleFolder().'.connect-apps',$viewData);           
+    }
+
+    public function googleAuthention(){
+        $url = baseUrl("/connect-apps/connect-google");
+        $domain = get_domaininfo(url('/'));
+        setcookie("google_url", $url, time() + (86400 * 30), '/');
+        $url = google_auth_url();
+        return redirect($url);
+    }
+    public function unlinkApp($app){
+        if($app == 'google'){
+            $object = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $object->google_drive_auth = '';
+            $object->save();
+            return redirect()->back()->with("success","Google drive account unlinked");
+        }
+        if($app == 'dropbox'){
+            $object = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $object->dropbox_auth = '';
+            $object->save();
+            return redirect()->back()->with("success","Dropbox account unlinked");
+        }
+        return redirect()->back();
+    }
+    public function connectGoogle(Request $request){
+        if(isset($_GET['code'])){
+            $return = google_callback($_GET['code']);
+
+            if(isset($return['access_token'])){
+                $object = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+                $object->google_drive_auth = json_encode($return);
+                $object->save();
+                return redirect(baseUrl('/connect-apps'))->with("success","Google account connected successfully");
+            }
+            return redirect(baseUrl('/connect-apps'))->with("error","Google connection failed try again");
+        }else{
+            return redirect(baseUrl('/connect-apps'))->with("error","Google connection failed");
+        }   
     }
 }

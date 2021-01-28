@@ -14,11 +14,7 @@
             </nav>
             <h1 class="page-title">{{$pageTitle}}</h1>
          </div>
-         <div class="col-sm-auto">
-            <a class="btn btn-primary" href="{{ baseUrl('/') }}">
-            <i class="tio mr-1"></i> Back 
-            </a>
-         </div>
+         
       </div>
       <!-- End Row -->
    </div>

@@ -25,6 +25,7 @@ Route::get('/logout', function () {
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'welcome_page']);
+Route::get('/dbupgrade', [App\Http\Controllers\HomeController::class, 'dbupgrade']);
 Route::get('/states', [App\Http\Controllers\CommonController::class, 'stateList']);
 Route::get('/cities', [App\Http\Controllers\CommonController::class, 'cityList']);
 Route::get('/licence-bodies', [App\Http\Controllers\CommonController::class, 'licenceBodies']);
@@ -39,7 +40,10 @@ Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, '
 
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);
+Route::get('/google-callback', [App\Http\Controllers\SocialLoginController::class, 'googleCallback']);
+
 Route::get('/view-notification/{id}', [App\Http\Controllers\CommonController::class, 'readNotification']);
+
 
 Route::post('/upload-files', [App\Http\Controllers\CommonController::class, 'uploadFiles']);
 
@@ -366,6 +370,14 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
 
     Route::get('/cv', [App\Http\Controllers\User\DashboardController::class, 'manageCv']);
     Route::post('/save-language-proficiency', [App\Http\Controllers\User\DashboardController::class, 'saveLanguageProficiency']);
+
+    Route::group(array('prefix' => 'connect-apps'), function () {
+        Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'connectApps']);
+        Route::get('/unlink/{app}', [App\Http\Controllers\User\DashboardController::class, 'unlinkApp']);
+        Route::get('/google-auth', [App\Http\Controllers\User\DashboardController::class, 'googleAuthention']);
+        Route::get('/connect-google', [App\Http\Controllers\User\DashboardController::class, 'connectGoogle']);
+    });
+
     Route::group(array('prefix' => 'work-experiences'), function () {
         Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'workExperiences']);
         Route::get('/add', [App\Http\Controllers\User\DashboardController::class, 'addWorkExperience']);
@@ -399,14 +411,23 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::get('/edit-folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'editFolder']);
         Route::post('/edit-folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'updateFolder']);
         Route::get('/delete-folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteFolder']);
+
+        Route::group(array('prefix' => 'google-drive'), function () {
+            Route::get('/folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fetchGoogleDrive']);
+            Route::post('/files-list', [App\Http\Controllers\User\MyDocumentsController::class, 'googleDriveFilesList']);
+            Route::post('/upload-from-gdrive', [App\Http\Controllers\User\MyDocumentsController::class, 'uploadFromGdrive']);
+            
+        });
         Route::group(array('prefix' => 'files'), function () {
-            Route::get('/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'folderFiles']);
+            Route::get('/lists/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'folderFiles']);
             Route::post('/upload-documents', [App\Http\Controllers\User\MyDocumentsController::class, 'uploadDocuments']);
             Route::get('/delete/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteDocument']);
             Route::post('/delete-multiple', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteMultipleDocuments']);
 
             Route::get('/file-move-to/{file_id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fileMoveTo']);
             Route::post('/file-move-to', [App\Http\Controllers\User\MyDocumentsController::class, 'moveFileToFolder']);
+
+            Route::get('/view-document/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'viewDocument']);
         });
 
         Route::get('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'documentsExchanger']);
@@ -421,11 +442,14 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/save-chat', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveChat']);
         Route::post('/save-chat-file', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveChatFile']);
         Route::get('/chat-demo', [App\Http\Controllers\User\ProfessionalCasesController::class, 'chatdemo']);
+        Route::post('/google-drive/folder/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchGoogleDrive']);
+        Route::post('/google-drive/files-list', [App\Http\Controllers\User\ProfessionalCasesController::class, 'googleDriveFilesList']);
+        Route::post('/google-drive/upload-from-gdrive', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadFromGdrive']);
         Route::group(array('prefix' => 'documents'), function () {
             Route::get('/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseDocuments']);
-            Route::get('/default/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
-            Route::get('/other/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'otherDocuments']);
-            Route::get('/extra/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'extraDocuments']);
+            Route::get('/default/{subdomain}/{case_id}/{folder_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
+            Route::get('/other/{subdomain}/{case_id}/{folder_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'otherDocuments']);
+            Route::get('/extra/{subdomain}/{case_id}/{folder_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'extraDocuments']);
             Route::get('/file-move-to/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fileMoveTo']);
             Route::get('/delete/{subdomain}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteDocument']);
             Route::get('/delete-multiple', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteMultipleDocument']);
@@ -476,6 +500,9 @@ Route::group(array('prefix' => 'admin'), function () {
         Route::post('/update-profile', [App\Http\Controllers\Admin\ProfileController::class, 'updateProfile']);
     }); 
     Route::group(array('middleware' => 'admin'), function () {
+        Route::get('/connect-apps', [App\Http\Controllers\Admin\DashboardController::class, 'connectApps']);
+        Route::get('/google-auth', [App\Http\Controllers\Admin\DashboardController::class, 'googleAuthention']);
+        Route::get('/connect-google', [App\Http\Controllers\Admin\DashboardController::class, 'connectGoogle']);
         Route::get('/notifications', [App\Http\Controllers\Admin\DashboardController::class, 'notifications']);
         Route::get('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'rolePrivileges']);
         Route::post('/role-privileges', [App\Http\Controllers\Admin\DashboardController::class, 'savePrivileges']);
@@ -548,7 +575,7 @@ Route::group(array('prefix' => 'admin'), function () {
         Route::group(array('prefix' => 'leads'), function () {
             Route::get('/', [App\Http\Controllers\Admin\LeadsController::class, 'newLeads']);
             Route::post('/ajax-list', [App\Http\Controllers\Admin\LeadsController::class, 'getNewList']);
-            Route::get('/assigned', [App\Http\Controllers\Admin\LeadsController::class, 'assignedLeads']);
+            Route::get('/clients', [App\Http\Controllers\Admin\LeadsController::class, 'leadsAsClient']);
             Route::get('/quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'quickLead']);
             Route::post('/create-quick-lead', [App\Http\Controllers\Admin\LeadsController::class, 'createQuickLead']);
             Route::get('/delete/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'deleteSingle']);
@@ -557,6 +584,8 @@ Route::group(array('prefix' => 'admin'), function () {
             Route::post('/edit/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'update']);
             Route::get('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'markAsClient']);
             Route::post('/mark-as-client/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'confirmAsClient']);
+            Route::get('/assign/{id}', [App\Http\Controllers\Admin\LeadsController::class, 'assignLeads']);
+            Route::post('/assign/save', [App\Http\Controllers\Admin\LeadsController::class, 'saveAssignLeads']);
         });
 
         Route::group(array('prefix' => 'cases'), function () {
@@ -634,14 +663,15 @@ Route::group(array('prefix' => 'manager'), function () {
             Route::get('/', [App\Http\Controllers\Manager\LeadsController::class, 'newLeads']);
             Route::post('/ajax-list', [App\Http\Controllers\Manager\LeadsController::class, 'getNewList']);
             Route::get('/assigned', [App\Http\Controllers\Manager\LeadsController::class, 'assignedLeads']);
+            Route::get('/recommended', [App\Http\Controllers\Manager\LeadsController::class, 'recommendLeads']);
             Route::get('/quick-lead', [App\Http\Controllers\Manager\LeadsController::class, 'quickLead']);
             Route::post('/create-quick-lead', [App\Http\Controllers\Manager\LeadsController::class, 'createQuickLead']);
             Route::get('/delete/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'deleteSingle']);
             Route::post('/delete-multiple', [App\Http\Controllers\Manager\LeadsController::class, 'deleteMultiple']);
             Route::get('/edit/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'edit']);
             Route::post('/edit/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'update']);
-            Route::get('/mark-as-client/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'markAsClient']);
-            Route::post('/mark-as-client/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'confirmAsClient']);
+            Route::get('/recommend-as-client/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'recommendAsClient']);
+            // Route::post('/mark-as-client/{id}', [App\Http\Controllers\Manager\LeadsController::class, 'confirmAsClient']);
         });
 
         Route::group(array('prefix' => 'cases'), function () {

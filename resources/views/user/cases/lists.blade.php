@@ -138,7 +138,6 @@
                   <span class="avatar-initials">{{ $more_file }}+</span>
                 </span>
               @endif
-              
             </div>
             <!-- End Avatar Group -->
           </td>

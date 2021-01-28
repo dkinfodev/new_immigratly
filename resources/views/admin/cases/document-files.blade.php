@@ -272,12 +272,10 @@
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
                            </a> -->
-                           <a class="dropdown-item" href="#">
+                           <a class="dropdown-item" href="{{$doc_url}}" download>
                            <i class="tio-download-to dropdown-item-icon"></i>
                            Download
                            </a>
-                           <div class="dropdown-divider"></div>
-                           
                            <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('cases/case-documents/delete/'.base64_encode($doc->id))}}">
                            <i class="tio-delete-outlined dropdown-item-icon"></i>
                            Delete

@@ -44,14 +44,7 @@
     <span class="badge badge-soft-danger p-2">Service not found</span>
     @endif
   </td>
-  <!-- <td>
-    <span class="text-body">
-      <i class="tio-calendar-month"></i> {{$record->start_date}}
-    </span>
-  </td> -->
-  
    <td>
-    <!-- Avatar Group -->
     <div class="avatar-group avatar-group-xs avatar-circle">
       <?php 
         $more_file = 0;
@@ -65,9 +58,6 @@
         <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
           <img class="avatar-img" src="{{ professionalProfile($member->Member->unique_id,'t') }}" alt="Image Description">
         </a>
-        <!-- <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
-          <span class="avatar-initials">{{ userInitial($member->Member) }}</span>
-        </span> -->
         <?php } ?>
       @endforeach
       @if($more_file > 0)
@@ -75,17 +65,7 @@
           <span class="avatar-initials">{{ $more_file }}+</span>
         </span>
       @endif
-      <!-- <a class="avatar" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Costa Quinn">
-        <img class="avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
-      </a>
-      <a class="avatar" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Clarice Boone">
-        <img class="avatar-img" src="./assets/img/160x160/img7.jpg" alt="Image Description">
-      </a>
-      <a class="avatar avatar-soft-danger" href="user-profile.html" data-toggle="tooltip" data-placement="top" title="Adam Keep">
-        <span class="avatar-initials">A</span>
-      </a> -->
     </div>
-    <!-- End Avatar Group -->
   </td>
   <td width="10%">
    <div class="hs-unfold">
@@ -127,7 +107,6 @@
 @endforeach
 <script type="text/javascript">
 $(document).ready(function(){
-
   $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })
   $('.js-hs-action').each(function () {
     var unfold = new HSUnfold($(this)).init();

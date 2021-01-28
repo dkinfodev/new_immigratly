@@ -36,7 +36,10 @@
             </div>
          </div>
          <div class="col-sm-auto">
-            <div class="btn-group" role="group">
+            <div role="group">
+               @if($user_detail->google_drive_auth != '')
+               <a class="btn btn-outline-primary" onclick="showGoogleFiles()"  href="javascript:;"><i class="tio-google-drive mr-1"></i> Upload from Google Drive</a>
+               @endif
                <a class="btn btn-primary"  href="javascript:;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><i class="tio-upload-on-cloud mr-1"></i> Upload</a>
             </div>
          </div>
@@ -199,7 +202,7 @@
                   <td class="table-column-pl-0">
                      <?php 
                         $doc_url = $file_url."/".$doc['file_detail']['file_name']; 
-                        $url = baseUrl('cases/view-document/'.$case_id.'/'.$doc['unique_id'].'?url='.$doc_url.'&file_name='.$doc['file_detail']['file_name'].'&p='.$subdomain);
+                        $url = baseUrl('cases/view-document/'.$case_id.'/'.$doc['unique_id'].'?url='.$doc_url.'&file_name='.$doc['file_detail']['file_name'].'&p='.$subdomain.'&doc_type='.$doc_type.'&folder_id='.$doc_id);
                      ?>
                      <a class="d-flex align-items-center" href="{{ $url }}">
                         <?php 
@@ -236,25 +239,36 @@
                   </td>
                   <td>
                      <div class="avatar-group avatar-group-xs avatar-circle">
-                        <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
-                        <img class="avatar-img" src="./assets/img/160x160/img9.jpg" alt="Image Description">
-                        </span>
-                        <span class="avatar" data-toggle="tooltip" data-placement="top" title="David Harrison">
-                        <img class="avatar-img" src="./assets/img/160x160/img3.jpg" alt="Image Description">
-                        </span>
-                        <span class="avatar avatar-soft-dark" data-toggle="tooltip" data-placement="top" title="Antony Taylor">
-                        <span class="avatar-initials">A</span>
-                        </span>
-                        <span class="avatar avatar-soft-info" data-toggle="tooltip" data-placement="top" title="Sara Iwens">
-                        <span class="avatar-initials">S</span>
-                        </span>
-                        <span class="avatar" data-toggle="tooltip" data-placement="top" title="Finch Hoot">
-                        <img class="avatar-img" src="./assets/img/160x160/img5.jpg" alt="Image Description">
-                        </span>
-                        <span class="avatar avatar-light avatar-circle" data-toggle="tooltip" data-placement="top" title="Sam Kart, Amanda Harvey and 1 more">
-                        <span class="avatar-initials">+3</span>
-                        </span>
+                       <?php 
+                         $more_file = 0;
+                       ?>
+                       @foreach($doc['chat_users'] as $key => $member)
+                         <?php 
+                         if($key > 1){
+                           $more_file++;
+                         }else{
+                           if($member['send_by'] == 'client'){
+                        ?>
+                           <span class="avatar" data-toggle="tooltip" data-placement="top" title="{{ $member['user_name'] }}">
+                           <img class="avatar-img" src="{{ userProfile($member['created_by'],'t') }}" alt="Image Description">
+                           </span>
+                        <?php
+                           }else{
+                         ?>  
+                           <span class="avatar" data-toggle="tooltip" data-placement="top" title="{{ $member['user_name'] }}">
+                              <img class="avatar-img" src="{{ professionalProfile($member['created_by'],'t',$subdomain) }}" alt="Image Description">
+                           </span>
+                         
+
+                         <?php } } ?>
+                       @endforeach
+                       @if($more_file > 0)
+                         <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="">
+                           <span class="avatar-initials">{{ $more_file }}+</span>
+                         </span>
+                       @endif
                      </div>
+                     
                   </td>
                   <td>
                      <!-- Unfold -->
@@ -318,7 +332,7 @@
    var document_id;
    var is_error = false;
    $(document).ready(function(){
-      
+      $('.js-nav-tooltip-link').tooltip({ boundary: 'window' })
       $('.js-hs-action').each(function () {
        var unfold = new HSUnfold($(this)).init();
       });
@@ -526,6 +540,19 @@
          internalError();
         }
       });
+   }
+
+   function showGoogleFiles(){
+      var parameter = {};
+      parameter['doc_type'] = "<?php echo $doc_type ?>";
+      parameter['subdomain'] = "<?php echo $subdomain ?>";
+      parameter['case_id'] = "<?php echo $case_id ?>";
+
+      showPopup("<?php echo baseUrl('cases/google-drive/folder/'.$document['unique_id']) ?>",'post',parameter);
+      // setTimeout(function(){
+      //    $("#popup-form #doc_type").val("<?php echo $doc_type ?>");
+      //    $("#popup-form #subdomain").val("<?php echo $subdomain ?>");
+      // },1500);
    }
 </script>
 @endsection

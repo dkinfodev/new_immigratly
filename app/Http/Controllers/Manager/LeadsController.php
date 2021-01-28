@@ -32,8 +32,18 @@ class LeadsController extends Controller
         $viewData['total_leads'] = Leads::count();
         $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
         $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
+        $viewData['recommend_as_client'] =  Leads::where('mark_as_client','2')->count();
        	$viewData['pageTitle'] = "New Leads";
         $viewData['lead_type'] = 0;
+        return view(roleFolder().'.leads.lists',$viewData);
+    }
+    public function assignedLeads(Request $request){
+        $viewData['total_leads'] = Leads::count();
+        $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
+        $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
+        $viewData['recommend_as_client'] =  Leads::where('mark_as_client','2')->count();
+        $viewData['pageTitle'] = "Assigned Leads";
+        $viewData['lead_type'] = 1;
         return view(roleFolder().'.leads.lists',$viewData);
     }
     public function recommendLeads(Request $request){
@@ -49,7 +59,8 @@ class LeadsController extends Controller
         $viewData['total_leads'] = Leads::count();
         $viewData['new_leads'] =  Leads::where('mark_as_client','0')->count();
         $viewData['lead_as_client'] =  Leads::where('mark_as_client','1')->count();
-        $viewData['pageTitle'] = "New Leads";
+        $viewData['recommend_as_client'] =  Leads::where('mark_as_client','2')->count();
+        $viewData['pageTitle'] = "Leads recommended as client";
         $viewData['lead_type'] = 2;
         return view(roleFolder().'.leads.lists',$viewData);
     }
@@ -268,6 +279,7 @@ class LeadsController extends Controller
         $response['redirect_back'] = baseUrl('leads');
         return response()->json($response);
     }
+    
     public function recommendAsClient($id,Request $request){
         if(!role_permission('leads','recommend-as-client')){
             if($request->ajax()){
@@ -278,68 +290,11 @@ class LeadsController extends Controller
                 return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
             }
         }
-        $viewData['pageTitle'] = "Recommend as client";
-        $lead_id = base64_decode($id);
-        $viewData['lead_id'] = $lead_id;
-        $lead = Leads::find($lead_id);
-        $viewData['lead'] = $lead;
-        $view = View::make(roleFolder().'.leads.modal.recommend-as-client',$viewData);
-        $contents = $view->render();
-        $response['contents'] = $contents;
-        $response['status'] = true;
-        return response()->json($response);
-    }
-    // public function markAsClient($id,Request $request){
-    //     if(!role_permission('leads','mark-as-client')){
-    //         if($request->ajax()){
-    //             $response['status'] = "error";
-    //             $response['message'] = ACCESS_DENIED_MSG;
-    //             return response()->json($response);
-    //         }else{
-    //             return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
-    //         }
-    //     }
-    //     $viewData['pageTitle'] = "Mark as client";
-    //     $lead_id = base64_decode($id);
-    //     $viewData['lead_id'] = $lead_id;
-    //     $lead = Leads::find($lead_id);
-    //     $viewData['lead'] = $lead;
-    //     $view = View::make(roleFolder().'.leads.modal.mark-as-client',$viewData);
-    //     $contents = $view->render();
-    //     $response['contents'] = $contents;
-    //     $response['status'] = true;
-    //     return response()->json($response);
-    // }
-    
-    public function confirmAsClient($id,Request $request){
-        if(!role_permission('leads','recommend-as-client')){
-            if($request->ajax()){
-                $response['status'] = "error";
-                $response['message'] = ACCESS_DENIED_MSG;
-                return response()->json($response);
-            }else{
-                return redirect(baseUrl('/'))->with("error",ACCESS_DENIED_MSG);
-            }
-        }
-        if ($validator->fails()) {
-            $response['status'] = false;
-            $response['error_type'] = 'validation';
-            $error = $validator->errors()->toArray();
-            $errMsg = array();
-            
-            foreach($error as $key => $err){
-                $errMsg[$key] = $err[0];
-            }
-            $response['message'] = $errMsg;
-            return response()->json($response);
-        }
-        $id = base64_decode($id);
-        $object = Leads::find($id);
+        
+        $object = Leads::where('unique_id',$id)->first();
         $object->mark_as_client = 2;
         $object->save();
-        $response['status'] = true;
-        $response['message'] = "Lead recommended as client";
-        return response()->json($response);
+        return redirect()->back()->with("success","Lead recommended as client");
     }
 
 }

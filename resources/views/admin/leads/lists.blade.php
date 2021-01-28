@@ -90,8 +90,9 @@
             <th scope="col">Assigned</th>
             @if($lead_type  == 0)
             <th scope="col"></td>
-            <th scope="col"></th>
             @endif
+            <th scope="col"></th>
+            
           </tr>
         </thead>
         <tbody>

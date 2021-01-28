@@ -161,7 +161,6 @@
                         <a href="<?php echo baseUrl("cases/documents/extra/".$subdomain."/".$case_id."/".$document['unique_id']) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document['name']}}
-                          
                         </h5>
                         <ul class="list-inline list-separator small">
                            <li class="list-inline-item">{{$document['files_count']}} Files</li>

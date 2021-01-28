@@ -124,10 +124,21 @@ class ProfessionalApiController extends Controller
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
-            $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
+            $case_documents = CaseDocuments::with(['FileDetail','Chats','ChatUsers'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->orderBy("id","desc")
                                             ->get();
+            foreach($case_documents as $doc){
+                foreach($doc->ChatUsers as $chat){
+                    if($chat->send_by == 'client'){
+                        $user = DB::table(MAIN_DATABASE.".users")->where("unique_id",$chat->created_by)->first();
+                        $chat->user_name = $user->first_name." ".$user->last_name;
+                    }else{
+                        $user = User::where("unique_id",$chat->created_by)->first();
+                        $chat->user_name = $user->first_name." ".$user->last_name;
+                    }
+                }
+            }
             $data['service'] = $service;
             $data['case_documents'] = $case_documents;
             $data['document'] = $document;
@@ -160,10 +171,21 @@ class ProfessionalApiController extends Controller
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
-            $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
+            $case_documents = CaseDocuments::with(['FileDetail','Chats','ChatUsers'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->orderBy("id","desc")
                                             ->get();
+            foreach($case_documents as $doc){
+                foreach($doc->ChatUsers as $chat){
+                    if($chat->send_by == 'client'){
+                        $user = DB::table(MAIN_DATABASE.".users")->where("unique_id",$chat->created_by)->first();
+                        $chat->user_name = $user->first_name." ".$user->last_name;
+                    }else{
+                        $user = User::where("unique_id",$chat->created_by)->first();
+                        $chat->user_name = $user->first_name." ".$user->last_name;
+                    }
+                }
+            }
             $data['service'] = $service;
             $data['case_documents'] = $case_documents;
             $data['document'] = $document;
@@ -198,10 +220,21 @@ class ProfessionalApiController extends Controller
             $folder_id = $document->unique_id;
             $service = ProfessionalServices::where("unique_id",$record->visa_service_id)->first();
             $service->MainService = $service->Service($service->service_id);
-            $case_documents = CaseDocuments::with(['FileDetail','Chats'])->where("case_id",$case_id)
+            $case_documents = CaseDocuments::with(['FileDetail','Chats','ChatUsers'])->where("case_id",$case_id)
                                             ->where("folder_id",$folder_id)
                                             ->orderBy("id","desc")
                                             ->get();
+            foreach($case_documents as $doc){
+                foreach($doc->ChatUsers as $chat){
+                    if($chat->send_by == 'client'){
+                        $user = DB::table(MAIN_DATABASE.".users")->where("unique_id",$chat->created_by)->first();
+                        $chat->user_name = $user->first_name." ".$user->last_name;
+                    }else{
+                        $user = User::where("unique_id",$chat->created_by)->first();
+                        $chat->user_name = $user->first_name." ".$user->last_name;
+                    }
+                }
+            }
             $data['service'] = $service;
             $data['case_documents'] = $case_documents;
             $data['document'] = $document;
@@ -240,7 +273,6 @@ class ProfessionalApiController extends Controller
             $object->file_name = $newName;
             $object->original_name = $original_name;
             $object->unique_id = $unique_id;
-            $object->created_by = $request->input("created_by");
             $object->save();
 
             $object2 = new CaseDocuments();
@@ -248,6 +280,7 @@ class ProfessionalApiController extends Controller
             $object2->unique_id = randomNumber();
             $object2->folder_id = $folder_id;
             $object2->file_id = $unique_id;
+            $object2->added_by = 'client';
             $object2->created_by = $request->input("created_by");
             $object2->document_type = $document_type;
             $object2->save();

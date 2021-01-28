@@ -1,6 +1,9 @@
 <?php
 require dirname(__DIR__)."/../library/subdomain/init.php";
 require dirname(__DIR__)."/../library/twilio/twilio.php";
+require dirname(__DIR__)."/../library/google-api/vendor/autoload.php";
+require dirname(__DIR__)."/../library/dropbox/demo-lib.php";
+require dirname(__DIR__)."/../library/dropbox/DropboxClient.php";
 
 use Illuminate\Support\Str;
 
@@ -17,6 +20,8 @@ use App\Models\LanguageProficiency;
 use App\Models\ClientExperience;
 use App\Models\ClientEducations;
 use App\Models\StaffPrivileges;
+use App\Models\UserDetails;
+
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
         $file_type = array(
@@ -1165,5 +1170,284 @@ if(!function_exists("generateUUID")){
     function generateUUID(){
         $uuid = Str::uuid()->toString();
         return $uuid;
+    }
+}
+
+if(!function_exists("google_doc_viewer")){
+    function google_doc_viewer($ext){
+        $extensions = array("doc","docx","xlsx","xls");
+        if(in_array($ext,$extensions)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
+if(!function_exists("site_url")){
+    function site_url(){
+        if($_SERVER['HTTP_HOST'] == 'localhost'){
+            $url = url('/');
+        }else{
+            $domain = get_domaininfo(url('/'));
+            $url = "http://".$domain['domain'];
+        }
+        return $url;
+    }
+}
+if(!function_exists("google_auth_url")){
+    function google_auth_url(){
+        
+        $client = new Google_Client();
+        $config_file = base_path("library/google-api/credentials.json");
+        $client->setAuthConfigFile($config_file);
+        $gurl = site_url().'/google-callback';
+        
+        $client->setRedirectUri($gurl);
+        $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+        $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+        $client->addScope(Google_Service_Drive::DRIVE_FILE);
+        $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+        $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
+        $client->addScope(Google_Service_Drive::DRIVE_READONLY);
+        $client->setAccessType('offline');
+        $client->setState($_SERVER['HTTP_HOST']);
+
+        $data = array();
+        $url = $client->createAuthUrl();
+       
+        return $url;
+    } 
+}  
+if(!function_exists("google_callback")){
+    function google_callback($code){
+        $server_arr = explode('.', $_SERVER['HTTP_HOST']);
+        array_shift($server_arr);
+        $gurl = site_url().'/google-callback';
+        $client = new Google_Client();
+        
+        $config_file = base_path("library/google-api/credentials.json");
+        $client->setAuthConfigFile($config_file);
+        $client->setRedirectUri($gurl);
+        $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+        $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+        $client->addScope(Google_Service_Drive::DRIVE_FILE);
+        $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+        $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
+        $client->setAccessType('offline');
+        $client->authenticate($code);
+        $access_token = $client->getAccessToken();
+        if(!isset($access_token['error'])){
+            $client->setAccessToken($access_token['access_token']);
+            $google_service = new Google_Service_Oauth2($client);
+            $user_info = $google_service->userinfo->get();
+            if(isset($user_info['email'])){
+                $response['user_email'] = $user_info['email'];
+                $response['access_token'] = $access_token;    
+            }else{
+                $response['status'] = "failed";
+            }
+        }else{
+            $response['status'] = "failed";
+        }
+        return $response;
+        
+    }
+}
+
+if(!function_exists("get_domaininfo")){
+    function get_domaininfo($url){
+        preg_match("/^(https|http|ftp):\/\/(.*?)\//", "$url/" , $matches);
+        $parts = explode(".", $matches[2]);
+        $tld = array_pop($parts);
+        $host = array_pop($parts);
+        if ( strlen($tld) == 2 && strlen($host) <= 3 ) {
+            $tld = "$host.$tld";
+            $host = array_pop($parts);
+        }
+        if($_SERVER['HTTP_HOST'] == 'localhost'){
+            $domain = "localhost";
+        }else{
+            $domain = "$host.$tld";
+        }
+        return array(
+            'protocol' => $matches[1],
+            'subdomain' => implode(".", $parts),
+            'domain' => $domain,
+            'host'=>$host,'tld'=>$tld
+        );
+    }
+}
+if(!function_exists("get_gdrive_folder")){
+    function get_gdrive_folder($drive,$f_id='',$folder='') {
+        try {
+            $data = array();
+            $data['gdrive_files'] = array();
+            $pageToken = null;
+            $query = '';
+
+            $mime_types = '';
+            if ($folder == '1') {
+                $mime_types = "(mimeType = 'application/vnd.google-apps.folder')";
+            } else {
+                $mime_types= array(
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/gif',
+                    'image/bmp',
+                    'text/plain',
+                    'application/msword',
+                    'application/octet-stream',
+                    'application/vnd.google-apps.folder'
+                );
+                $types = array();
+                for($i=0;$i < count($mime_types);$i++){
+                    $types[] = "mimeType = '".$mime_types[$i]."'";
+                }
+                $m_types = implode(" or ",$types);
+                $mime_types = "($m_types)";
+                // echo $m_types;
+                // exit;
+                // $mime_types = "(mimeType = 'application/vnd.google-apps.folder' or mimeType = 'image/jpeg' or mimeType = 'image/png' or mimeType = 'image/jpg' or mimeType = 'image/heif')";
+                // $mime_types = "(mimeType = 'application/vnd.ms-excel' or mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimeType = 'application/pdf' or mimeType = 'image/jpeg' or mimeType = 'image/png' or mimeType = 'image/gif' or mimeType = 'image/bmp' or mimeType = 'text/plain' or mimeType = 'application/msword' or mimeType = 'application/octet-stream' or mimeType = 'application/vnd.google-apps.folder')";
+            }
+
+            if ($f_id != '') {
+                $query = "parents = '" . $f_id . "' and " . $mime_types . " and trashed = false";
+            } else {
+                $query = "parents = 'root' and " . $mime_types . " and trashed = false";
+            }
+            // echo $f_id;
+            do {
+                $response = $drive->files->listFiles(array(
+                    'q' => $query,
+                    'spaces' => 'drive',
+                    'pageSize'=>500,
+                    'pageToken' => $pageToken,
+                    'fields' => 'nextPageToken, files(id, name, parents, mimeType, description, thumbnailLink)',
+                    'orderBy' => 'folder, name'
+                ));
+                
+                foreach ($response->files as $file) {
+                    
+                    $data['gdrive_files'][] = array(
+                        'id' => $file->id,
+                        'name' => $file->getName(),
+                        'description' => $file->getDescription(),
+                        'mimetype' => $file->getMimeType(),
+                        'thumbnailLink' => "https://drive.google.com/thumbnail?id=".trim($file->id),
+                        'parents' => $file->parents[0]
+                    );
+                }
+                $pageToken = $response->pageToken;
+            } while ($pageToken != null);
+            return $data;
+        } catch (Exception $e) {
+            pre($e->getMessage());
+        }
+    }
+}
+if(!function_exists("create_crm_gservice")){
+    function create_crm_gservice($access_token) {
+        try {
+            $gurl = site_url().'/google-callback';
+            $client = new Google_Client();
+            $config_file = base_path("library/google-api/credentials.json");
+            $client->setAuthConfigFile($config_file);
+            $client->setRedirectUri($gurl);
+            
+            $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+            $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+            $client->addScope(Google_Service_Drive::DRIVE_FILE);
+            $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+            $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
+
+            if (isset($access_token['access_token'])) {
+                if ($client->isAccessTokenExpired()) {
+                    $client->refreshToken($access_token['refresh_token']);
+                    $client->setAccessToken($access_token['access_token']);
+                }else{
+                    $client->setAccessToken($access_token['access_token']);
+                }
+                $drive = new Google_Service_Drive($client);
+                return $drive;
+            } else {
+                $client->refreshToken($access_token['refresh_token']);
+                $access_token['access_token'] = $client->getAccessToken();
+             
+                $client->setAccessToken($access_token['access_token']);
+                $drive = new Google_Service_Drive($client);
+                return $drive;
+            }
+        } catch (Exception $e) {
+            pre($e->getMessage());
+        }
+    }
+}
+if(!function_exists("refresh_google_token")){
+    function refresh_google_token() {
+        try {
+            $user_details = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            if(empty($user_details->google_drive_auth)){
+                return false;
+            }
+            $gurl = site_url().'/google-callback';
+            $client = new Google_Client();
+            $config_file = base_path("library/google-api/credentials.json");
+            $client->setAuthConfigFile($config_file);
+            $client->setRedirectUri($gurl);
+            
+            $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+            $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+            $client->addScope(Google_Service_Drive::DRIVE_FILE);
+            $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+            $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
+            $google_drive_auth = json_decode($user_details->google_drive_auth,true);
+            $access_token = $google_drive_auth['access_token'];
+            
+            if(isset($access_token['access_token'])){
+                if ($client->isAccessTokenExpired()) {
+                    $client->refreshToken($access_token['refresh_token']);
+                    $access_token = $client->getAccessToken();
+
+                    $google_drive_auth['access_token']['access_token'] = $access_token['access_token'];
+                    $updata['google_drive_auth'] = json_encode($google_drive_auth);
+                 
+                    UserDetails::where("user_id",\Auth::user()->unique_id)->update($updata);
+                }
+            }
+            $response['status'] = "success";
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = "Error while refresh google account";
+        }
+    }
+}
+if(!function_exists("dropbox_auth_url")){
+    function dropbox_auth_url(){
+        $dropbox = new DropboxClient(array(
+            'app_key' => DROPBOX_APP_KEY,
+            'app_secret' => DROPBOX_APP_SECRET,
+            'app_full_access' => true,
+        )); 
+        // $return_url = "https://" . $url . "/login/dropbox_return/?auth_redirect=1";
+        $return_url = MAIN_DOMAIN.'login/dropbox_return';
+        
+        $domain = get_domaininfo(base_url('/'));
+        $cookie= array(
+            'name'   => 'dropbox_url',
+            'value'  =>  $return_url,                            
+            'expire' => '3600',                                                                                   
+            'secure' => TRUE,
+            'domain'=> $domain['domain']
+ 
+        );
+        set_cookie($cookie);
+
+        $url = $dropbox->BuildAuthorizeUrl($return_url, $_SERVER['HTTP_HOST']);
+
+        redirect($url);
     }
 }

@@ -30,7 +30,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('/cases')}}">
+        <a class="btn btn-primary" href="{{baseUrl('/cases/documents/'.$doc_type.'/'.$subdomain.'/'.$case_id.'/'.$folder_id)}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -52,7 +52,11 @@
             @if($extension == 'image')
               <img src="{{$url}}" class="img-fluid" />
             @else
-             <iframe src="http://docs.google.com/viewer?url={{$url}}&embedded=true" style="margin:0 auto; width:100%; height:700px;" frameborder="0"></iframe>
+              @if(google_doc_viewer($extension))
+                <iframe src="http://docs.google.com/viewer?url={{$url}}&embedded=true" style="margin:0 auto; width:100%; height:700px;" frameborder="0"></iframe>
+              @else
+              <iframe src="{{$url}}" style="margin:0 auto; width:100%; height:700px;" frameborder="0"></iframe>
+              @endif
             @endif
           </div>
          </div>

@@ -107,7 +107,7 @@ class DashboardController extends Controller
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('edit-profile');
-        $response['message'] = "Updation sucessfully";
+        $response['message'] = "Profile updated sucessfully";
         
         return response()->json($response);
     }
@@ -151,7 +151,7 @@ class DashboardController extends Controller
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('edit-profile');
-        $response['message'] = "Updation sucessfully";
+        $response['message'] = "Password changed sucessfully";
         
         return response()->json($response);
     }

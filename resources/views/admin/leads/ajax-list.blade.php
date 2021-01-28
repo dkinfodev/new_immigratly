@@ -40,32 +40,33 @@
     @endif
    </td>
    <td>
-      <div class="avatar-group avatar-group-xs avatar-circle">
-         <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
-         <img class="avatar-img" src="./assets/img/160x160/img9.jpg" alt="Image Description">
-         </span>
-         <span class="avatar" data-toggle="tooltip" data-placement="top" title="David Harrison">
-         <img class="avatar-img" src="./assets/img/160x160/img3.jpg" alt="Image Description">
-         </span>
-         <span class="avatar avatar-soft-dark" data-toggle="tooltip" data-placement="top" title="Antony Taylor">
-         <span class="avatar-initials">A</span>
-         </span>
-         <span class="avatar avatar-soft-info" data-toggle="tooltip" data-placement="top" title="Sara Iwens">
-         <span class="avatar-initials">S</span>
-         </span>
-         <span class="avatar" data-toggle="tooltip" data-placement="top" title="Finch Hoot">
-         <img class="avatar-img" src="./assets/img/160x160/img5.jpg" alt="Image Description">
-         </span>
-         <span class="avatar avatar-light avatar-circle" data-toggle="tooltip" data-placement="top" title="Sam Kart, Amanda Harvey and 1 more">
-         <span class="avatar-initials">+3</span>
-         </span>
-      </div>
-   </td>
+    <div class="avatar-group avatar-group-xs avatar-circle">
+      <?php 
+        $more_file = 0;
+      ?>
+      @foreach($record->AssingedMember as $key2 => $member)
+        <?php 
+        if($key2 > 1){
+          $more_file++;
+        }else{
+        ?>  
+        <a class="avatar js-nav-tooltip-link" href="javascript:;" data-toggle="tooltip" data-placement="top" title="{{ $member->Member->first_name." ".$member->Member->last_name }}">
+          <img class="avatar-img" src="{{ professionalProfile($member->Member->unique_id,'t') }}" alt="Image Description">
+        </a>
+        <?php } ?>
+      @endforeach
+      @if($more_file > 0)
+        <span class="avatar avatar-light js-nav-tooltip-link avatar-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ $member->first_name." ".$member->last_name }}">
+          <span class="avatar-initials">{{ $more_file }}+</span>
+        </span>
+      @endif
+    </div>
+  </td>
    @if($lead_type == 0)
    <td>
       <button onclick="showPopup('<?php echo baseUrl('leads/mark-as-client/'.base64_encode($record->id)) ?>')" type="button" class="btn btn-primary btn-xs"><i class="tio-user-switch"></i> Make Client</button>
    </td>
-
+   @endif
    <td>
       <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
@@ -77,6 +78,7 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
+        @if($lead_type == 0)
         <a class="dropdown-item" href="{{baseUrl('leads/edit/'.base64_encode($record->id))}}">
           <i class="tio-edit dropdown-item-icon"></i>
           Edit
@@ -86,10 +88,16 @@
           <i class="tio-delete-outlined dropdown-item-icon"></i>
           Delete
         </a> 
+        @endif
+        <a class="dropdown-item" onclick="showPopup('{{ baseUrl('leads/assign/'.base64_encode($record->unique_id)) }}')" href="javascript:;">
+          <i class="tio-edit dropdown-item-icon"></i> Assign Lead
+        </a>
+
+        
       </div>
     </div>
    </td>
-   @endif
+  
 </tr>
 @endforeach
 <script type="text/javascript">
@@ -97,13 +105,6 @@ $(document).ready(function(){
   $('.js-hs-action').each(function () {
     var unfold = new HSUnfold($(this)).init();
   });
-  // $(".row-checkbox").change(function(){
-  //   if($(".row-checkbox:checked").length > 0){
-  //     $("#datatableCounterInfo").show();
-  //   }else{
-  //     $("#datatableCounterInfo").show();
-  //   }
-  //   $("#datatableCounter").html($(".row-checkbox:checked").length);
-  // });
+  $('.js-nav-tooltip-link').tooltip({ boundary: 'window' });
 })
 </script>

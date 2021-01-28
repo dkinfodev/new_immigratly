@@ -18,7 +18,7 @@ class User
     public function handle($request, Closure $next)
     {
         if(Auth::check()){
-           
+            refresh_google_token();
             if(Auth::user()->role == 'user'){
                 if(Auth::user()->is_active == 0){
                     Auth::logout();

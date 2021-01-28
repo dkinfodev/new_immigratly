@@ -61,7 +61,7 @@
             
             <select name="included_noc[]" multiple>
                 @foreach($noc_codes as $code)
-                <option value="{{$code->id">{{$code->code}} - {{$code->name}}</option>
+                <option value="{{$code->id}}">{{$code->code}} - {{$code->name}}</option>
                 @endforeach
             </select>
           </div>
@@ -72,7 +72,7 @@
             
             <select name="excluded_noc[]" multiple>
                 @foreach($noc_codes as $code)
-                <option value="{{$code->id">{{$code->code}} - {{$code->name}}</option>
+                <option value="{{$code->id}}">{{$code->code}} - {{$code->name}}</option>
                 @endforeach
             </select>
           </div>

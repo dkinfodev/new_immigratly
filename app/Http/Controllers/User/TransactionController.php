@@ -137,8 +137,8 @@ class TransactionController extends Controller
             $not_data['comment'] = "Payment paid for invoice ".$invoice_id;
             $other_data[] = array("key"=>"invoice_id","value"=>$invoice_id);
             $not_data['other_data'] = $other_data;
-            
-            sendNotification($not_data,"main_site");
+            $not_data['notification_type'] = "payment_received";
+            sendNotification($not_data,"professional",$subdomain);
             
             $object = new UserTransactions();
             $object->user_id = \Auth::user()->unique_id;

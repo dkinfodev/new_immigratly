@@ -9,14 +9,13 @@ use DB;
 use View;
 
 use App\Models\User;
-use App\Models\UserDetails;
 use App\Models\Countries;
 use App\Models\Languages;
 use App\Models\UserWithProfessional;
 use App\Models\UserFolders;
 use App\Models\UserFiles;
 use App\Models\FilesManager;
-
+use App\Models\UserDetails;
 
 class ProfessionalCasesController extends Controller
 {
@@ -87,6 +86,7 @@ class ProfessionalCasesController extends Controller
         $case_documents = array();
         
         $api_response = professionalCurl('cases/default-documents',$subdomain,$data);
+
         $result = $api_response['data'];
 
         $service = $result['service'];
@@ -104,10 +104,13 @@ class ProfessionalCasesController extends Controller
         $viewData['pageTitle'] = "Files List for ".$document['name'];
         $viewData['record'] = $record;
         $viewData['doc_type'] = "default";
+
         $file_url = $result['file_url'];
         $file_dir = $result['file_dir'];
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $viewData['user_detail'] = $user_detail;
         return view(roleFolder().'.cases.document-files',$viewData);
     }
     public function otherDocuments($subdomain,$case_id,$doc_id){
@@ -142,8 +145,12 @@ class ProfessionalCasesController extends Controller
         $file_url = $result['file_url'];
         $file_dir = $result['file_dir'];
 
+        
+
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
+        $user_detail = UserDetails::where("user_id",$user_id)->first();
+        $viewData['user_detail'] = $user_detail;
         return view(roleFolder().'.cases.document-files',$viewData);
     }
     public function extraDocuments($subdomain,$case_id,$doc_id){
@@ -181,7 +188,126 @@ class ProfessionalCasesController extends Controller
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
 
+        
+
+        $user_detail = UserDetails::where("user_id",$user_id)->first();
+        $viewData['user_detail'] = $user_detail;
         return view(roleFolder().'.cases.document-files',$viewData);
+    }
+
+    public function fetchGoogleDrive($folder_id,Request $request){
+        $doc_type = $request->input("doc_type");
+        $subdomain = $request->input("subdomain");
+        $case_id = $request->input("case_id");
+
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        $drive = create_crm_gservice($google_drive_auth['access_token']);
+        $drive_folders = get_gdrive_folder($drive);
+        if(isset($drive_folders['gdrive_files'])){
+            $drive_folders = $drive_folders['gdrive_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['pageTitle'] = "Google Drive Folders";
+        $viewData['drive_folders'] = $drive_folders;
+        $viewData['folder_id'] = $folder_id;
+        $viewData['case_id'] = $case_id;
+        $viewData['doc_type'] = $doc_type;
+        $viewData['subdomain'] = $subdomain;
+        $view = View::make(roleFolder().'.cases.modal.google-drive',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);  
+    }
+    public function googleDriveFilesList(Request $request){
+        $folder_id = $request->input("folder_id");
+        $folder = $request->input("folder_name");
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        $drive = create_crm_gservice($google_drive_auth['access_token']);
+        $drive_folders = get_gdrive_folder($drive,$folder_id,$folder);
+        if(isset($drive_folders['gdrive_files'])){
+            $drive_folders = $drive_folders['gdrive_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['drive_folders'] = $drive_folders;
+        $view = View::make(roleFolder().'.cases.modal.google-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);   
+    }
+
+    public function uploadFromGdrive(Request $request){
+
+        if($request->input("files")){
+            $files = $request->input("files");
+            $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+            $access_token = $google_drive_auth['access_token'];
+            $folder_id = $request->input("folder_id");
+            $doc_type = $request->input("doc_type");
+            $subdomain = $request->input("subdomain");
+            $case_id = $request->input("case_id");
+            foreach($files as $key => $fileId){
+                $i = $key;
+                $ch = curl_init();
+                $method = "GET";
+                // get file type
+                $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId;
+                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $curl_response = curl_exec($ch);
+                $err = curl_error($ch);
+                curl_close($ch);
+                $file = json_decode($curl_response,true);
+                // get file base64 format
+                $ch = curl_init();
+                $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId.'?alt=media';
+                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $api_response = curl_exec($ch);
+                $err = curl_error($ch);
+                curl_close($ch);
+                $base64_code = $api_response;
+                $original_name = $file['name'];
+                
+                $newName = time()."-".$original_name;
+                $path = professionalDir($subdomain)."/documents";
+                if(file_put_contents($path."/".$newName, $base64_code)){
+                    $insData['newName'] = $newName;
+                    $insData['case_id'] = $case_id;
+                    $insData['original_name'] = $original_name;
+                    $insData['created_by'] = \Auth::user()->unique_id;
+                    $insData['document_type'] = $doc_type;
+                    $insData['folder_id'] = $folder_id;
+                   
+                    $api_response = professionalCurl('cases/upload-documents',$subdomain,$insData);
+                    
+                    if($api_response['status'] == 'success'){
+                        $response['status'] = true;
+                        $response['message'] = 'File uploaded from google drive successfully!';
+                    }else{
+                        $response['status'] = false;
+                        $response['message'] = 'File not uploaded!';
+                    }
+                }
+            }
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = 'no_files';
+            $response['message'] = "No Files selected";
+        }
+        return response()->json($response);
     }
     public function uploadDocuments($id,Request $request){
         $case_id = $id;
@@ -210,7 +336,7 @@ class ProfessionalCasesController extends Controller
                     $insData['newName'] = $newName;
                     $insData['case_id'] = $case_id;
                     $insData['original_name'] = $fileName;
-                    $insData['created_by'] = \Auth::user()->id;
+                    $insData['created_by'] = \Auth::user()->unique_id;
                     $insData['document_type'] = $document_type;
                     $insData['folder_id'] = $folder_id;
 
@@ -385,10 +511,14 @@ class ProfessionalCasesController extends Controller
         $filename = $request->get("file_name");
         $ext = fileExtension($filename);
         $subdomain = $request->get("p");
-
+        $folder_id = $request->get("folder_id");
+        
+        $doc_type = $request->get("doc_type");
         $viewData['url'] = $url;
+        $viewData['doc_type'] = $doc_type;
         $viewData['extension'] = $ext;
         $viewData['subdomain'] = $subdomain;
+        $viewData['folder_id'] = $folder_id;
         $viewData['case_id'] = $case_id;
         $viewData['document_id'] = $doc_id;
         $viewData['pageTitle'] = "View Documents";
@@ -721,7 +851,7 @@ class ProfessionalCasesController extends Controller
                     }
                     
                     $other_data[] = array("key"=>"case_id","value"=>$request->input("case_id"));
-                    $other_data[] = array("key"=>"doc_type","value"=>$request->input("doc_type"));
+                    // $other_data[] = array("key"=>"doc_type","value"=>$request->input("doc_type"));
                     $other_data[] = array("key"=>"document_id","value"=>$request->input("document_id"));
                     
                     $not_data['other_data'] = $other_data;

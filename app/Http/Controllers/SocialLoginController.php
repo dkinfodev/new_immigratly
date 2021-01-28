@@ -61,4 +61,29 @@ class SocialLoginController extends Controller
             return redirect('/home');
         }
     }
+
+    public function googleCallback(Request $request){
+        $query = $request->all();
+        $qs = array();
+        foreach ($query as $key => $value) {
+            $qs[] ="$key=".$value;
+        }
+        $qs = implode("&",$qs);
+
+        $cookies = $_COOKIE;
+        
+        $url = '';
+        
+        foreach($cookies as $key =>$value){
+            if(strpos($key,"google_url") !== false){
+                $url = $value;
+                $url .="?".$qs;
+            }
+        }
+        if($url != ''){
+            return redirect($url);
+        }else{
+            echo "Redirection failed, try again";
+        }   
+    }
 }

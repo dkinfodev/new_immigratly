@@ -51,7 +51,7 @@
                         <i class="tio-folder tio-xl text-body mr-2"></i>
                      </div>
                      <div class="col">
-                      <a href="<?php echo baseUrl("documents/files/".$document->unique_id) ?>" class="text-dark">
+                      <a href="<?php echo baseUrl("documents/files/lists/".$document->unique_id) ?>" class="text-dark">
                         <h5 class="card-title text-truncate mr-2">
                            {{$document->name}}
                         </h5>

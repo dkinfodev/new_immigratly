@@ -28,7 +28,10 @@
             <h1 class="page-header-title">{{$pageTitle}}</h1>
          </div>
          <div class="col-sm-auto">
-            <div class="btn-group" role="group">
+            <div role="group">
+               @if($user_detail->google_drive_auth != '')
+               <a class="btn btn-outline-primary" onclick="showPopup('<?php echo baseUrl('documents/google-drive/folder/'.$document->unique_id) ?>')"  href="javascript:;"><i class="tio-google-drive mr-1"></i> Upload from Google Drive</a>
+               @endif
                <a class="btn btn-primary"  href="javascript:;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne"><i class="tio-upload-on-cloud mr-1"></i> Upload</a>
             </div>
          </div>
@@ -76,18 +79,7 @@
       <!-- Header -->
       <div class="card-header">
          <div class="row justify-content-between align-items-center flex-grow-1">
-            <div class="col-12 col-md">
-               <form>
-                  <div class="input-group input-group-merge input-group-borderless">
-                     <div class="input-group-prepend">
-                        <div class="input-group-text">
-                           <i class="tio-search"></i>
-                        </div>
-                     </div>
-                     <input id="datatableSearch" type="search" class="form-control" placeholder="Search users" aria-label="Search users">
-                  </div>
-               </form>
-            </div>
+            
             <div class="col-auto">
                <div class="d-flex align-items-center">
                   <div id="datatableCounterInfo" class="mr-2" style="display: none;">
@@ -132,9 +124,14 @@
                      </div>
                   </td>
                   <td class="table-column-pl-0">
-                     <a class="d-flex align-items-center" href="javascript:;">
+                     <?php
+                        $fileicon = fileIcon($doc->FileDetail->original_name);
+                        $doc_url = $file_url."/".$doc->FileDetail->file_name;
+                        $url = baseUrl('documents/files/view-document/'.$doc->unique_id.'?url='.$doc_url.'&file_name='.$doc->FileDetail->file_name.'&folder_id='.$document->unique_id);
+                     ?>
+                     <a class="d-flex align-items-center" href="{{$url}}">
                         <?php 
-                           $fileicon = fileIcon($doc->FileDetail->original_name);
+                           
                            echo $fileicon;
                            $filesize = file_size($file_dir."/".$doc->FileDetail->file_name);
                         ?>

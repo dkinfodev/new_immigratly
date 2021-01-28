@@ -29,4 +29,8 @@ class CaseDocuments extends Model
     {
         return $this->hasMany('App\Models\DocumentChats','document_id','unique_id');
     }
+    public function ChatUsers()
+    {
+        return $this->hasMany('App\Models\DocumentChats','document_id','unique_id')->groupBy("created_by");
+    }
 }

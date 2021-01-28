@@ -431,6 +431,11 @@ $(document).on('ready', function () {
       maxDate:(new Date()).getDate(),
       todayHighlight: true,
       orientation: "bottom auto"
+  })
+  .on('changeDate', function (selected) {
+      startDate = new Date(selected.date.valueOf());
+      startDate.setDate(startDate.getDate(new Date(selected.date.valueOf())));
+      $('#end_date').datepicker('setStartDate', startDate);
   });
   $('#end_date').datepicker({
       format: 'dd/mm/yyyy',

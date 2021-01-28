@@ -46,3 +46,22 @@
     padding: 8px 8px 20px;
     margin-bottom: 15px;
 }
+.app-icon {
+    font-size: 115px;
+}
+.connect-apps .card {
+    box-shadow: 0px 12px 17px #ded7d7;
+    background-color:#d5d5d5;
+}
+.folder-block .app-icon {
+    font-size: 50px;
+}
+.folder-block {
+    background-color: #EEE;
+    cursor: pointer;
+    transition: 0.6s;
+}
+.folder-block:hover {
+    background-color: #ddd;
+    transition: 0.6s;
+}

@@ -9,6 +9,7 @@ use DB;
 use View;
 
 use App\Models\User;
+use App\Models\UserDetails;
 use App\Models\FilesManager;
 use App\Models\UserFolders;
 use App\Models\UserFiles;
@@ -115,6 +116,8 @@ class MyDocumentsController extends Controller
                                     ->where("user_id",$user_id)
                                     ->orderBy("id","desc")
                                     ->get();
+        $user_detail = UserDetails::where("user_id",$user_id)->first();
+        $viewData['user_detail'] = $user_detail;
         $viewData['user_documents'] = $user_documents;
         $viewData['pageTitle'] = "Files List for ".$document->name;
  
@@ -244,4 +247,142 @@ class MyDocumentsController extends Controller
         $response['message'] = "File transfered successfully";
         return response()->json($response); 
     }
+
+    public function viewDocument($file_id,Request $request){
+        $url = $request->get("url");
+        $filename = $request->get("file_name");
+        $folder_id = $request->get("folder_id");
+        $ext = fileExtension($filename);
+        $subdomain = $request->get("p");
+
+        $viewData['url'] = $url;
+        $viewData['extension'] = $ext;
+        $viewData['document_id'] = $file_id;
+        $viewData['folder_id'] = $folder_id;
+        $viewData['pageTitle'] = "View Documents";
+        return view(roleFolder().'.documents.view-documents',$viewData);
+    }
+    public function deleteDocument($id){
+        $id = base64_decode($id);
+        UserFiles::deleteRecord($id);
+        return redirect()->back()->with("success","Document has been deleted!");
+    }
+    public function deleteMultipleDocuments(Request $request){
+        $ids = explode(",",$request->input("ids"));
+        for($i = 0;$i < count($ids);$i++){
+            $id = base64_decode($ids[$i]);
+            UserFiles::deleteRecord($id);
+        }
+        $response['status'] = true;
+        \Session::flash('success', 'Documents deleted successfully'); 
+        return response()->json($response);
+    }
+    public function fetchGoogleDrive($folder_id,Request $request){
+
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        $drive = create_crm_gservice($google_drive_auth['access_token']);
+        $drive_folders = get_gdrive_folder($drive);
+        if(isset($drive_folders['gdrive_files'])){
+            $drive_folders = $drive_folders['gdrive_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['pageTitle'] = "Google Drive Folders";
+        $viewData['drive_folders'] = $drive_folders;
+        $viewData['folder_id'] = $folder_id;
+        $view = View::make(roleFolder().'.documents.modal.google-drive',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);  
+    }
+
+    public function googleDriveFilesList(Request $request){
+        $folder_id = $request->input("folder_id");
+        $folder = $request->input("folder_name");
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        $drive = create_crm_gservice($google_drive_auth['access_token']);
+        $drive_folders = get_gdrive_folder($drive,$folder_id,$folder);
+        if(isset($drive_folders['gdrive_files'])){
+            $drive_folders = $drive_folders['gdrive_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['drive_folders'] = $drive_folders;
+        $view = View::make(roleFolder().'.documents.modal.google-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);   
+    }
+
+    public function uploadFromGdrive(Request $request){
+        
+        if($request->input("files")){
+            $files = $request->input("files");
+            $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+            $access_token = $google_drive_auth['access_token'];
+            $folder_id = $request->input("folder_id");
+            foreach($files as $key => $fileId){
+                $i = $key;
+                $ch = curl_init();
+                $method = "GET";
+                // get file type
+                $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId;
+                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $curl_response = curl_exec($ch);
+                $err = curl_error($ch);
+                curl_close($ch);
+                $file = json_decode($curl_response,true);
+                // get file base64 format
+                $ch = curl_init();
+                $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId.'?alt=media';
+                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $api_response = curl_exec($ch);
+                $err = curl_error($ch);
+                curl_close($ch);
+                $base64_code = $api_response;
+                $original_name = $file['name'];
+                
+                $newName = time()."-".$original_name;
+                $path = userDir()."/documents";
+                if(file_put_contents($path."/".$newName, $base64_code)){
+                    $unique_id = randomNumber();
+                    $object = new FilesManager();
+                    $object->file_name = $newName;
+                    $object->original_name = $original_name;
+                    $object->user_id = \Auth::user()->unique_id;
+                    $object->unique_id = $unique_id;
+                    $object->created_by = \Auth::user()->unique_id;
+                    $object->save();
+
+                    $object2 = new UserFiles();
+                    $object2->user_id = \Auth::user()->unique_id;
+                    $object2->folder_id = $folder_id;
+                    $object2->file_id = $unique_id;
+                    $object2->unique_id = randomNumber();
+                    $object2->save();
+                }
+            }
+            $response['status'] = true;
+            $response['message'] = 'File uploaded from google drive successfully!';
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = 'no_files';
+            $response['message'] = "No Files selected";
+        }
+        return response()->json($response);
+    }
 }
+

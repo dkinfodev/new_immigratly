@@ -111,7 +111,7 @@
                   <a class="btn btn-lg btn-white btn-block" href="{{ url('login/google') }}">
                     <span class="d-flex justify-content-center align-items-center">
                       <img class="avatar avatar-xss mr-2" src="assets/svg/brands/google.svg" alt="Image Description">
-                      Sign up with Google
+                      Sign in with Google
                     </span>
                   </a>
                 </div>

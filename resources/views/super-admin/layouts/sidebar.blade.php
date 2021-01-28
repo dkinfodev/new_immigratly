@@ -38,12 +38,12 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Staff</span>
                   </a>
                 </li>
-                <li class="navbar-vertical-aside-has-menu ">
+                <!-- <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/user') }}">
                     <i class="tio-user-outlined nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">User</span>
                   </a>
-                </li>
+                </li> -->
                 <!-- Accounts -->
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/professionals') }}">

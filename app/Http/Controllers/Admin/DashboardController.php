@@ -264,4 +264,22 @@ class DashboardController extends Controller
         $viewData['other_notifications'] = $other_notifications;
         return view(roleFolder().'.allnotification',$viewData);        
     }
+
+    public function connectApps(){
+        $viewData = array();
+        return view(roleFolder().'.connect-apps',$viewData);           
+    }
+
+    public function googleAuthention(){
+        $url = google_auth_url();
+        return redirect($url);
+    }
+    public function connectGoogle(Request $request){
+        if(isset($_GET['code'])){
+            $url = google_callback($_GET['code']);
+        }else{
+            return redirect(baseUrl('/connect-apps'))->with("error","Google connection failed");
+        }   
+    }
+
 }

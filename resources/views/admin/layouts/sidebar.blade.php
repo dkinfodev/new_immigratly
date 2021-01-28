@@ -53,9 +53,9 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="{{ baseUrl('/leads/assigned') }}">
+                <a class="nav-link " href="{{ baseUrl('/leads/clients') }}">
                   <span class="tio-circle nav-indicator-icon"></span>
-                  <span class="text-truncate">Assigned Leads</span>
+                  <span class="text-truncate">Leads as client</span>
                 </a>
               </li>
             </ul>
@@ -78,6 +78,23 @@
               <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Webinar</span>
             </a>
           </li>
+
+          <li class="navbar-vertical-aside-has-menu ">
+            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
+              <i class="tio-apps nav-icon"></i>
+              <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Settings</span>
+            </a>
+
+            <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
+              <li class="nav-item">
+                <a class="nav-link " href="{{ baseUrl('/connect-apps') }}">
+                  <span class="tio-circle nav-indicator-icon"></span>
+                  <span class="text-truncate">Connect Apps</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+
           @endif
         </ul>
       </div>

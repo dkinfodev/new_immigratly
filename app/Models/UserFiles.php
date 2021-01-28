@@ -11,7 +11,7 @@ class UserFiles extends Model
     protected $table = "user_files";
 
     static function deleteRecord($id){
-        CaseDocuments::where("id",$id)->delete();
+        UserFiles::where("id",$id)->delete();
     }
     
     public function FileDetail()
