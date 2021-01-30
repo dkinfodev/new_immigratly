@@ -384,5 +384,103 @@ class MyDocumentsController extends Controller
         }
         return response()->json($response);
     }
+
+    public function fetchDropboxFolder($folder_id,Request $request){
+
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $dropbox_auth = json_decode($user_detail->dropbox_auth,true);
+        $drive_folders = dropbox_files_list($dropbox_auth);
+        
+        if(isset($drive_folders['dropbox_files'])){
+            $drive_folders = $drive_folders['dropbox_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['pageTitle'] = "Dropbox Folders";
+        $viewData['drive_folders'] = $drive_folders;
+        $viewData['folder_id'] = $folder_id;
+        $view = View::make(roleFolder().'.documents.modal.dropbox-folder',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);  
+    }
+
+    public function dropboxFilesList(Request $request){
+        $folder_id = $request->input("folder_id");
+        $folder = $request->input("folder_name");
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $dropbox_auth = json_decode($user_detail->dropbox_auth,true);
+        $drive_folders = dropbox_files_list($dropbox_auth,$folder_id);
+        
+        if(isset($drive_folders['dropbox_files'])){
+            $drive_folders = $drive_folders['dropbox_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['drive_folders'] = $drive_folders;
+        $view = View::make(roleFolder().'.documents.modal.dropbox-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);   
+    }
+
+    public function uploadFromDropbox(Request $request){
+        
+        if($request->input("files")){
+            $files = $request->input("files");
+            $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $dropbox_auth = json_decode($user_detail->dropbox_auth,true);
+            $folder_id = $request->input("folder_id");
+            foreach($files as $key => $fileId){
+                $i = $key;
+                $fileinfo = explode(":",$fileId);
+                $original_name = $fileinfo[1];
+                $file_path = $fileinfo[0];
+                $newName = time()."-".$original_name;
+                $path = userDir()."/documents";
+                $destinationPath = $path."/".$newName;
+                
+                // $file_name = basename($url); 
+   
+                // Use file_get_contents() function to get the file 
+                // from url and use file_put_contents() function to 
+                // save the file by using base name 
+                if(file_put_contents($path."/".$newName,file_get_contents($file_path))) { 
+                    echo "File downloaded successfully"; 
+                } 
+                else { 
+                    echo "File downloading failed."; 
+                } 
+                $is_download = dropbox_file_download($dropbox_auth,$file_path,$destinationPath);
+                exit;
+                // if(file_put_contents(, $base64_code)){
+                //     $unique_id = randomNumber();
+                //     $object = new FilesManager();
+                //     $object->file_name = $newName;
+                //     $object->original_name = $original_name;
+                //     $object->user_id = \Auth::user()->unique_id;
+                //     $object->unique_id = $unique_id;
+                //     $object->created_by = \Auth::user()->unique_id;
+                //     $object->save();
+
+                //     $object2 = new UserFiles();
+                //     $object2->user_id = \Auth::user()->unique_id;
+                //     $object2->folder_id = $folder_id;
+                //     $object2->file_id = $unique_id;
+                //     $object2->unique_id = randomNumber();
+                //     $object2->save();
+                // }
+            }
+            $response['status'] = true;
+            $response['message'] = 'File uploaded from google drive successfully!';
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = 'no_files';
+            $response['message'] = "No Files selected";
+        }
+        return response()->json($response);
+    }
 }
 

@@ -621,4 +621,29 @@ class DashboardController extends Controller
             return redirect(baseUrl('/connect-apps'))->with("error","Google connection failed");
         }   
     }
+
+    public function dropboxAuthention(){
+        $url = baseUrl("/connect-apps/connect-dropbox");
+        $domain = get_domaininfo(url('/'));
+        setcookie("dropbox_url", $url, time() + (86400 * 30), '/');
+        $url = dropbox_auth_url();
+        return redirect($url);
+    }
+
+    public function connectDropbox(Request $request){
+       
+        if(isset($_GET['code'])){
+            $return = dropbox_callback($_GET['code']);
+            
+            if(isset($return['access_token'])){
+                $object = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+                $object->dropbox_auth = json_encode($return);
+                $object->save();
+                return redirect(baseUrl('/connect-apps'))->with("success","Dropbox account connected successfully");
+            }
+            return redirect(baseUrl('/connect-apps'))->with("error",$return['message']);
+        }else{
+            return redirect(baseUrl('/connect-apps'))->with("error","Dropbox connection failed");
+        }   
+    }
 }

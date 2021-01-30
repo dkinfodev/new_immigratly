@@ -1,3 +1,17 @@
+<style type="text/css">
+.folder-block .app-icon {
+    font-size: 50px;
+}
+.folder-block {
+    background-color: #EEE;
+    cursor: pointer;
+    transition: 0.6s;
+}
+.folder-block:hover,.active-card {
+    background-color: #ddd;
+    transition: 0.6s;
+}
+</style>
 <div class="modal-dialog modal-xl" role="document">
   <div class="modal-content">
     <div class="modal-header">
@@ -7,7 +21,7 @@
       </button>
     </div>
     <div class="modal-body">
-      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/documents/google-drive/upload-from-gdrive') }}">  
+      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/documents/dropbox/upload-from-dropbox') }}">  
         @csrf
         <input type="hidden" name="folder_id" value="{{$folder_id}}" />
         <nav aria-label="breadcrumb">
@@ -17,9 +31,9 @@
         </nav>
         <div class="row" id="main-folders">
           @foreach($drive_folders as $key => $folder)
-            <div class="col-md-2 mb-3">
-                @if($folder['mimetype'] == 'application/vnd.google-apps.folder')
-                  <div class="card folder-block h-100" onclick="fetch_google_drive('{{$folder['id']}}','{{$folder['name']}}')" data-type="folder" data-id="{{$folder['id']}}" data-name="{{$folder['name']}}">
+            <div class="col-md-3 mb-3">
+                @if($folder['is_dir'] == 1)
+                  <div class="card folder-block dropbox-folder h-100" onclick="fetch_dropbox_file('{{$folder['path']}}','{{$folder['name']}}')" data-type="folder" data-path="{{$folder['path']}}" data-id="{{$folder['id']}}" data-name="{{$folder['name']}}">
                     <div class="card-body text-center">
                       <div class="app-icon">
                         <i class="tio-folder-add text-warning"></i>
@@ -31,24 +45,24 @@
                     <!-- End Body -->
                   </div>
                 @else
-                  <div class="card folder-block h-100" data-type="file" data-id="{{$folder['id']}}" data-name="{{$folder['name']}}">
-                      <div class="card-body text-center gdrive-file">
-                        <input type="checkbox" class="chk-file" style="display:none" name="files[]" value="{{$folder['id']}}" id="row-{{$key}}">
-                        <div class="clearfix"></div>
-                        <div class="app-icon">
-                          <i class="tio-document-text"></i>
-                        </div>
-                        <h3 class="mb-1">
-                          <span class="text-dark">{{$folder['name']}}</span>
-                        </h3>
+                  <div class="card folder-block dropbox-file h-100" data-type="file" data-id="{{$folder['id']}}" data-name="{{$folder['name']}}" data-link="{{$folder['download_link']}}">
+                    <div class="card-body text-center dropbox-file">
+                      <input type="checkbox" class="chk-file" style="display:none" name="files[]" value="{{$folder['download_link']}}:{{$folder['name']}}" id="row-{{$key}}">
+                      <div class="clearfix"></div>
+                      <div class="app-icon">
+                        <i class="tio-document-text"></i>
                       </div>
-                      <!-- End Body -->
+                      <h3 class="mb-1">
+                        <span class="text-dark">{{$folder['name']}}</span>
+                      </h3>
                     </div>
+                    <!-- End Body -->
+                  </div>
                 @endif
             </div>
           @endforeach
         </div>
-        <div id="gdrive-files"></div>
+        <div id="dropbox-files"></div>
       </form>
     </div>
     <div class="modal-footer">
@@ -87,22 +101,31 @@ $(document).ready(function(){
             }
         });
     });
-    $(".gdrive-folder").click(function(){
-        var folder_id = $(this).attr("data-id");
+    $(".dropbox-folder").click(function(){
+        var folder_id = $(this).attr("data-path");
         var folder_name = $(this).attr("data-name");
-        fetch_google_drive(folder_id,folder_name);
+        fetch_dropbox_file(folder_id,folder_name);
     });
 
     $(".root-directory").click(function(){
         $("#main-folders").fadeIn();
-        $("#gdrive-files").html('');
+        $("#dropbox-files").html('');
         $(".goto").remove();
     });
+    $(".dropbox-file").click(function(){
+      if($(this).hasClass("active-card")){
+        $(this).removeClass("active-card");
+        $(this).find('.chk-file').prop("checked",false);
+      }else{
+        $(this).addClass("active-card");
+        $(this).find('.chk-file').prop("checked",true);
+      }
+    })
 });
 
-function fetch_google_drive(folder_id='',folder_name=''){
+function fetch_dropbox_file(folder_id='',folder_name=''){
   $.ajax({
-      url:"{{ baseUrl('documents/google-drive/files-list') }}",
+      url:"{{ baseUrl('documents/dropbox/files-list') }}",
       type:"post",
       data:{
         _token:"{{ csrf_token() }}",
@@ -138,7 +161,7 @@ function fetch_google_drive(folder_id='',folder_name=''){
               remove_li = true;
             }
           })
-          $("#gdrive-files").html(response.contents);
+          $("#dropbox-files").html(response.contents);
         }else{
           warningMessage("Some issue while fetching files");
         }

@@ -1425,29 +1425,169 @@ if(!function_exists("refresh_google_token")){
         }
     }
 }
+
+if(!function_exists("google_auth_url")){
+    function google_auth_url(){
+        
+        $client = new Google_Client();
+        $config_file = base_path("library/google-api/credentials.json");
+        $client->setAuthConfigFile($config_file);
+        $gurl = site_url().'/google-callback';
+        
+        $client->setRedirectUri($gurl);
+        $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+        $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+        $client->addScope(Google_Service_Drive::DRIVE_FILE);
+        $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+        $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
+        $client->addScope(Google_Service_Drive::DRIVE_READONLY);
+        $client->setAccessType('offline');
+        $client->setState($_SERVER['HTTP_HOST']);
+
+        $data = array();
+        $url = $client->createAuthUrl();
+       
+        return $url;
+    } 
+}  
+
 if(!function_exists("dropbox_auth_url")){
     function dropbox_auth_url(){
         $dropbox = new DropboxClient(array(
-            'app_key' => DROPBOX_APP_KEY,
-            'app_secret' => DROPBOX_APP_SECRET,
+            'app_key' => env('DROPBOX_APP_KEY'),
+            'app_secret' => env('DROPBOX_APP_SECRET'),
             'app_full_access' => true,
         )); 
         // $return_url = "https://" . $url . "/login/dropbox_return/?auth_redirect=1";
-        $return_url = MAIN_DOMAIN.'login/dropbox_return';
-        
-        $domain = get_domaininfo(base_url('/'));
-        $cookie= array(
-            'name'   => 'dropbox_url',
-            'value'  =>  $return_url,                            
-            'expire' => '3600',                                                                                   
-            'secure' => TRUE,
-            'domain'=> $domain['domain']
- 
-        );
-        set_cookie($cookie);
-
+        $return_url = site_url().'/dropbox-callback';
         $url = $dropbox->BuildAuthorizeUrl($return_url, $_SERVER['HTTP_HOST']);
+        return $url;
+    }
+}
+if(!function_exists("dropbox_callback")){
+    function dropbox_callback($code){
+        try{
+            $dropbox = new DropboxClient(array(
+                'app_key' => env('DROPBOX_APP_KEY'),
+                'app_secret' => env('DROPBOX_APP_SECRET'),
+                'app_full_access' => true,
+            )); 
+            $server_arr = explode('.', $_SERVER['HTTP_HOST']);
+            array_shift($server_arr);
+            $url = implode('.', $server_arr);
+            $return_url = site_url().'/dropbox-callback';
+            $bearer_token = $dropbox->GetBearerToken($code, $return_url);
+            $account = $dropbox->getAccountInfo();
+            if(isset($account->email)){
+                $response['user_email'] = $account->email;
+                $response['dropbox_account_id'] = $account->account_id;
+                
+                $response['access_token'] = $bearer_token;    
+            }else{
+                $response['status'] = "failed";
+                $response['message'] = "Dropbox linking failed. Try again.";
+            }
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return $response;
+    }
+}
 
-        redirect($url);
+if(!function_exists("dropbox_files_list")){
+    function dropbox_files_list($access_token,$path=''){
+        try{
+            $dropbox = new DropboxClient(array(
+                'app_key' => env('DROPBOX_APP_KEY'),
+                'app_secret' => env('DROPBOX_APP_SECRET'),
+                'app_full_access' => true,
+            )); 
+            $bearer_token = array();
+            $bearer_token['t'] = $access_token['access_token']['t'];
+            $bearer_token['account_id'] = $access_token['dropbox_account_id'];
+            $dropbox->SetBearerToken($bearer_token);
+            $files = $dropbox->GetFiles($path, false);
+            $dropbox_array = array();
+            $i = 0;
+            $us = $dropbox->getAccountInfo();
+            
+            $extenstion_array = array("JPG", "jpg", "PNG", "png", "jpeg", "JPEG");
+            foreach ($files as $key => $value) {
+                $name = $value->name;
+                $extenstion = explode('.', $name);
+                
+                // if ($value->is_dir || in_array(end($extenstion), $extenstion_array)) {
+                    
+                   
+                    $dropbox_array[$i] = (array) $value;
+                    if($dropbox_array[$i]['.tag'] == 'file'){
+                        $filelink = $dropbox->GetLink($value, false);
+                        // pre($value->id);
+                        // echo $filelink."<br>";
+                        // echo $filelink."<br>";
+                        // echo "https://dl.dropboxusercontent.com/s/".$value->id."/".$value->name."<br>";
+                        $dropbox_array[$i]['download_link'] = $filelink;
+                    }
+                    $i++;
+                // }
+            }
+            $response['status'] = "success";
+            $response['dropbox_files'] = $dropbox_array;
+          
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return $response;
+    }
+}
+if(!function_exists("dropbox_file_download")){
+    function dropbox_file_download($access_token,$source_path,$destination){
+        try{
+            $dropbox = new DropboxClient(array(
+                'app_key' => env('DROPBOX_APP_KEY'),
+                'app_secret' => env('DROPBOX_APP_SECRET'),
+                'app_full_access' => true,
+            )); 
+            $bearer_token = array();
+            $bearer_token['t'] = $access_token['access_token']['t'];
+            $bearer_token['account_id'] = $access_token['dropbox_account_id'];
+            $dropbox->SetBearerToken($bearer_token);
+            $files = $dropbox->DownloadFile($source_path, $destination);
+            pre($files);
+            exit;
+            // $dropbox_array = array();
+            // $i = 0;
+            // $us = $dropbox->getAccountInfo();
+            
+            // $extenstion_array = array("JPG", "jpg", "PNG", "png", "jpeg", "JPEG");
+            // foreach ($files as $key => $value) {
+            //     $name = $value->name;
+            //     $extenstion = explode('.', $name);
+                
+            //     // if ($value->is_dir || in_array(end($extenstion), $extenstion_array)) {
+                    
+                   
+            //         $dropbox_array[$i] = (array) $value;
+            //         if($dropbox_array[$i]['.tag'] == 'file'){
+            //             $filelink = $dropbox->GetLink($value, false);
+            //             // pre($value->id);
+            //             // echo $filelink."<br>";
+            //             // echo $filelink."<br>";
+            //             // echo "https://dl.dropboxusercontent.com/s/".$value->id."/".$value->name."<br>";
+            //             $dropbox_array[$i]['download_link'] = $filelink;
+            //         }
+            //         $i++;
+            //     // }
+            // }
+            $response['status'] = "success";
+            $response['dropbox_files'] = $dropbox_array;
+          
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return $response;
     }
 }

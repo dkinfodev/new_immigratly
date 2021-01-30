@@ -41,7 +41,7 @@ Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, '
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);
 Route::get('/google-callback', [App\Http\Controllers\SocialLoginController::class, 'googleCallback']);
-
+Route::get('/dropbox-callback', [App\Http\Controllers\SocialLoginController::class, 'dropboxCallback']);
 Route::get('/view-notification/{id}', [App\Http\Controllers\CommonController::class, 'readNotification']);
 
 
@@ -376,6 +376,8 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::get('/unlink/{app}', [App\Http\Controllers\User\DashboardController::class, 'unlinkApp']);
         Route::get('/google-auth', [App\Http\Controllers\User\DashboardController::class, 'googleAuthention']);
         Route::get('/connect-google', [App\Http\Controllers\User\DashboardController::class, 'connectGoogle']);
+        Route::get('/dropbox-auth', [App\Http\Controllers\User\DashboardController::class, 'dropboxAuthention']);
+        Route::get('/connect-dropbox', [App\Http\Controllers\User\DashboardController::class, 'connectDropbox']);
     });
 
     Route::group(array('prefix' => 'work-experiences'), function () {
@@ -416,7 +418,11 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
             Route::get('/folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fetchGoogleDrive']);
             Route::post('/files-list', [App\Http\Controllers\User\MyDocumentsController::class, 'googleDriveFilesList']);
             Route::post('/upload-from-gdrive', [App\Http\Controllers\User\MyDocumentsController::class, 'uploadFromGdrive']);
-            
+        });
+        Route::group(array('prefix' => 'dropbox'), function () {
+            Route::get('/folder/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fetchDropboxFolder']);
+            Route::post('/files-list', [App\Http\Controllers\User\MyDocumentsController::class, 'dropboxFilesList']);
+            Route::post('/upload-from-dropbox', [App\Http\Controllers\User\MyDocumentsController::class, 'uploadFromDropbox']);
         });
         Route::group(array('prefix' => 'files'), function () {
             Route::get('/lists/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'folderFiles']);

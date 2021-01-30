@@ -29,6 +29,9 @@
          </div>
          <div class="col-sm-auto">
             <div role="group">
+               @if($user_detail->dropbox_auth != '')
+               <a class="btn btn-outline-primary" onclick="showPopup('<?php echo baseUrl('documents/dropbox/folder/'.$document->unique_id) ?>')"  href="javascript:;"><i class="tio-google-drive mr-1"></i> Upload from Dropbox</a>
+               @endif
                @if($user_detail->google_drive_auth != '')
                <a class="btn btn-outline-primary" onclick="showPopup('<?php echo baseUrl('documents/google-drive/folder/'.$document->unique_id) ?>')"  href="javascript:;"><i class="tio-google-drive mr-1"></i> Upload from Google Drive</a>
                @endif

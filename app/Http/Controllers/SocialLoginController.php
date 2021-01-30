@@ -86,4 +86,29 @@ class SocialLoginController extends Controller
             echo "Redirection failed, try again";
         }   
     }
+
+    public function dropboxCallback(Request $request){
+        $query = $request->all();
+        $qs = array();
+        foreach ($query as $key => $value) {
+            $qs[] ="$key=".$value;
+        }
+        $qs = implode("&",$qs);
+
+        $cookies = $_COOKIE;
+        
+        $url = '';
+        
+        foreach($cookies as $key =>$value){
+            if(strpos($key,"dropbox_url") !== false){
+                $url = $value;
+                $url .="?".$qs;
+            }
+        }
+        if($url != ''){
+            return redirect($url);
+        }else{
+            echo "Redirection failed, try again";
+        }   
+    }
 }

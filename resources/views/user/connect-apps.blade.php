@@ -103,7 +103,7 @@
             @else
             <div class="row justify-content-between align-items-center">
               <div class="col-md-12 text-center">
-                <a href="{{ baseUrl('/connect-apps/google-auth') }}" type="button" class="btn btn-outline-primary"><i class="tio-user-add mr-1"></i> Connect</a>
+                <a href="{{ baseUrl('/connect-apps/dropbox-auth') }}" type="button" class="btn btn-outline-primary"><i class="tio-user-add mr-1"></i> Connect</a>
               </div>
             </div>
             @endif
