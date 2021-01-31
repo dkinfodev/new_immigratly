@@ -418,6 +418,7 @@ class MyDocumentsController extends Controller
         }else{
             $drive_folders = array();
         }
+        // pre($drive_folders);
         $viewData['drive_folders'] = $drive_folders;
         $view = View::make(roleFolder().'.documents.modal.dropbox-files',$viewData);
         $contents = $view->render();
@@ -435,7 +436,7 @@ class MyDocumentsController extends Controller
             $folder_id = $request->input("folder_id");
             foreach($files as $key => $fileId){
                 $i = $key;
-                $fileinfo = explode(":",$fileId);
+                $fileinfo = explode(":::",$fileId);
                 $original_name = $fileinfo[1];
                 $file_path = $fileinfo[0];
                 $newName = time()."-".$original_name;
@@ -447,12 +448,13 @@ class MyDocumentsController extends Controller
                 // Use file_get_contents() function to get the file 
                 // from url and use file_put_contents() function to 
                 // save the file by using base name 
-                if(file_put_contents($path."/".$newName,file_get_contents($file_path))) { 
-                    echo "File downloaded successfully"; 
-                } 
-                else { 
-                    echo "File downloading failed."; 
-                } 
+                echo $file_path;
+                // if(file_put_contents($path."/".$newName,file_get_contents($file_path))) { 
+                //     echo "File downloaded successfully"; 
+                // } 
+                // else { 
+                //     echo "File downloading failed."; 
+                // } 
                 $is_download = dropbox_file_download($dropbox_auth,$file_path,$destinationPath);
                 exit;
                 // if(file_put_contents(, $base64_code)){

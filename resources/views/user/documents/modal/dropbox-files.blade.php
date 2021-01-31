@@ -37,7 +37,7 @@
         @else
           <div class="card folder-block dropbox-file h-100" data-type="file" data-id="{{$folder['id']}}" data-name="{{$folder['name']}}">
             <div class="card-body text-center dropbox-file">
-              <input type="checkbox" class="chk-file" style="display:none" name="files[]" value="{{$folder['download_link']}}:{{$folder['name']}}" id="row-{{$key}}">
+              <input type="checkbox" class="chk-file" style="display:none" name="files[]" value="{{$folder['path']}}:::{{$folder['name']}}" id="row-{{$key}}">
               <div class="clearfix"></div>
               <div class="app-icon">
                 <i class="tio-document-text"></i>
