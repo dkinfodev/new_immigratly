@@ -445,27 +445,18 @@ class ProfessionalApiController extends Controller
             $postData = $request->input();
             $request->request->add($postData);
             $case_id = $request->input("case_id");
+            $folder_id = $request->input("folder_id");
             $file_id = $request->input("file_id");
             $document_type = $request->input("document_type");
-
-            $check_document = Documents::where("is_shared",1)
-                                ->where("shared_id",$file_id)
+            
+            $check_document = CaseDocuments::where("case_id",$case_id)
+                                ->where("folder_id",$folder_id)
+                                ->where("file_id",$file_id)
                                 ->first();
+            
             if(!empty($check_document)){
-                $record = CaseDocuments::where("case_id",$case_id)
-                    ->where("file_id",$check_document->unique_id)
-                    ->where("document_type",$document_type)
-                    ->first();  
-                CaseDocuments::deleteRecord($record->id);
+                CaseDocuments::deleteRecord($check_document->id);
 
-                $check_count = CaseDocuments::where("case_id",$case_id)
-                        ->where("file_id",$check_document->unique_id)
-                        ->count();  
-
-                if($check_count <= 0){
-                    $destination = professionalDir($this->subdomain)."/documents/".$check_document->file_name;
-                    unlink($destination);
-                }
                 $response['status'] = "success";
                 $response['message'] = "File removed successfully"; 
             }else{

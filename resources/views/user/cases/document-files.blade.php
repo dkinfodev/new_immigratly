@@ -37,6 +37,9 @@
          </div>
          <div class="col-sm-auto">
             <div role="group">
+               @if($user_detail->dropbox_auth != '')
+               <a class="btn btn-outline-primary" onclick="showDropboxFiles()"  href="javascript:;"><i class="tio-google-drive mr-1"></i> Upload from Dropbox</a>
+               @endif
                @if($user_detail->google_drive_auth != '')
                <a class="btn btn-outline-primary" onclick="showGoogleFiles()"  href="javascript:;"><i class="tio-google-drive mr-1"></i> Upload from Google Drive</a>
                @endif
@@ -195,7 +198,7 @@
                <tr>
                   <td class="table-column-pr-0">
                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ base64_encode($doc['id']) }}">
+                        <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}" value="{{ $doc['unique_id'] }}">
                         <label class="custom-control-label" for="row-{{$key}}"></label>
                      </div>
                   </td>
@@ -549,10 +552,14 @@
       parameter['case_id'] = "<?php echo $case_id ?>";
 
       showPopup("<?php echo baseUrl('cases/google-drive/folder/'.$document['unique_id']) ?>",'post',parameter);
-      // setTimeout(function(){
-      //    $("#popup-form #doc_type").val("<?php echo $doc_type ?>");
-      //    $("#popup-form #subdomain").val("<?php echo $subdomain ?>");
-      // },1500);
+   }
+   function showDropboxFiles(){
+      var parameter = {};
+      parameter['doc_type'] = "<?php echo $doc_type ?>";
+      parameter['subdomain'] = "<?php echo $subdomain ?>";
+      parameter['case_id'] = "<?php echo $case_id ?>";
+
+      showPopup("<?php echo baseUrl('cases/dropbox/folder/'.$document['unique_id']) ?>",'post',parameter);
    }
 </script>
 @endsection

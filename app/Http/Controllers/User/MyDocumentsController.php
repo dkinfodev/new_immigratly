@@ -443,37 +443,25 @@ class MyDocumentsController extends Controller
                 $path = userDir()."/documents";
                 $destinationPath = $path."/".$newName;
                 
-                // $file_name = basename($url); 
-   
-                // Use file_get_contents() function to get the file 
-                // from url and use file_put_contents() function to 
-                // save the file by using base name 
-                echo $file_path;
-                // if(file_put_contents($path."/".$newName,file_get_contents($file_path))) { 
-                //     echo "File downloaded successfully"; 
-                // } 
-                // else { 
-                //     echo "File downloading failed."; 
-                // } 
                 $is_download = dropbox_file_download($dropbox_auth,$file_path,$destinationPath);
-                exit;
-                // if(file_put_contents(, $base64_code)){
-                //     $unique_id = randomNumber();
-                //     $object = new FilesManager();
-                //     $object->file_name = $newName;
-                //     $object->original_name = $original_name;
-                //     $object->user_id = \Auth::user()->unique_id;
-                //     $object->unique_id = $unique_id;
-                //     $object->created_by = \Auth::user()->unique_id;
-                //     $object->save();
 
-                //     $object2 = new UserFiles();
-                //     $object2->user_id = \Auth::user()->unique_id;
-                //     $object2->folder_id = $folder_id;
-                //     $object2->file_id = $unique_id;
-                //     $object2->unique_id = randomNumber();
-                //     $object2->save();
-                // }
+                if(file_exists($destinationPath)){
+                    $unique_id = randomNumber();
+                    $object = new FilesManager();
+                    $object->file_name = $newName;
+                    $object->original_name = $original_name;
+                    $object->user_id = \Auth::user()->unique_id;
+                    $object->unique_id = $unique_id;
+                    $object->created_by = \Auth::user()->unique_id;
+                    $object->save();
+
+                    $object2 = new UserFiles();
+                    $object2->user_id = \Auth::user()->unique_id;
+                    $object2->folder_id = $folder_id;
+                    $object2->file_id = $unique_id;
+                    $object2->unique_id = randomNumber();
+                    $object2->save();
+                }
             }
             $response['status'] = true;
             $response['message'] = 'File uploaded from google drive successfully!';

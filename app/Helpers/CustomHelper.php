@@ -635,7 +635,7 @@ if(!function_exists("curlRequest")){
     }
 }
 if(!function_exists("professionalCurl")){
-    function professionalCurl($url,$subdomain,$data=array()){
+    function professionalCurl($url,$subdomain,$data=array(),$return=''){
        
         $professional = DB::table(MAIN_DATABASE.".professionals")->where("subdomain",$subdomain)->first();
         
@@ -671,7 +671,9 @@ if(!function_exists("professionalCurl")){
         $info = curl_getinfo($ch);
         curl_close($ch);
         $curl_response = json_decode($response,true);
-        // echo $response;
+        if($return == 'print'){
+            echo $response;
+        }
         return $curl_response;
     }
 }
@@ -764,7 +766,8 @@ if(!function_exists("professionalDirUrl")){
         if($domain == ''){
             $domain = \Session::get("subdomain");
         }
-        $dir = asset("public/uploads/professional/".$domain);
+        // $dir = asset("public/uploads/professional/".$domain);
+        $dir = site_url()."public/uploads/professional/".$domain;
         
         return $dir;
     }
@@ -1555,39 +1558,27 @@ if(!function_exists("dropbox_file_download")){
             $bearer_token['account_id'] = $access_token['dropbox_account_id'];
             $dropbox->SetBearerToken($bearer_token);
             $files = $dropbox->DownloadFile($source_path, $destination);
-            pre($files);
-            exit;
-            // $dropbox_array = array();
-            // $i = 0;
-            // $us = $dropbox->getAccountInfo();
             
-            // $extenstion_array = array("JPG", "jpg", "PNG", "png", "jpeg", "JPEG");
-            // foreach ($files as $key => $value) {
-            //     $name = $value->name;
-            //     $extenstion = explode('.', $name);
-                
-            //     // if ($value->is_dir || in_array(end($extenstion), $extenstion_array)) {
-                    
-                   
-            //         $dropbox_array[$i] = (array) $value;
-            //         if($dropbox_array[$i]['.tag'] == 'file'){
-            //             $filelink = $dropbox->GetLink($value, false);
-            //             // pre($value->id);
-            //             // echo $filelink."<br>";
-            //             // echo $filelink."<br>";
-            //             // echo "https://dl.dropboxusercontent.com/s/".$value->id."/".$value->name."<br>";
-            //             $dropbox_array[$i]['download_link'] = $filelink;
-            //         }
-            //         $i++;
-            //     // }
-            // }
             $response['status'] = "success";
-            $response['dropbox_files'] = $dropbox_array;
+            $response['dropbox_files'] = $files;
           
         } catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();
         }
         return $response;
+    }
+}
+if(!function_exists("site_url")){
+    function site_url($site_url){
+        $domain = get_domaininfo(url('/'));
+        if($_SERVER['HTTP_HOST'] == 'localhost'){
+            $domain = "localhost";
+            $url = url('/');
+        }else{
+            $url = "http://".$domain['domain']."/";
+        }
+        
+        return $url;
     }
 }

@@ -448,9 +448,16 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/save-chat', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveChat']);
         Route::post('/save-chat-file', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveChatFile']);
         Route::get('/chat-demo', [App\Http\Controllers\User\ProfessionalCasesController::class, 'chatdemo']);
-        Route::post('/google-drive/folder/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchGoogleDrive']);
-        Route::post('/google-drive/files-list', [App\Http\Controllers\User\ProfessionalCasesController::class, 'googleDriveFilesList']);
-        Route::post('/google-drive/upload-from-gdrive', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadFromGdrive']);
+        Route::group(array('prefix' => 'google-drive'), function () {
+            Route::post('/folder/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchGoogleDrive']);
+            Route::post('/files-list', [App\Http\Controllers\User\ProfessionalCasesController::class, 'googleDriveFilesList']);
+            Route::post('/upload-from-gdrive', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadFromGdrive']);
+        });
+        Route::group(array('prefix' => 'dropbox'), function () {
+            Route::post('/folder/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchDropboxFolder']);
+            Route::post('/files-list', [App\Http\Controllers\User\ProfessionalCasesController::class, 'dropboxFilesList']);
+            Route::post('/upload-from-dropbox', [App\Http\Controllers\User\ProfessionalCasesController::class, 'uploadFromDropbox']);
+        });
         Route::group(array('prefix' => 'documents'), function () {
             Route::get('/{subdomain}/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseDocuments']);
             Route::get('/default/{subdomain}/{case_id}/{folder_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'defaultDocuments']);
@@ -458,7 +465,7 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
             Route::get('/extra/{subdomain}/{case_id}/{folder_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'extraDocuments']);
             Route::get('/file-move-to/{subdomain}/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fileMoveTo']);
             Route::get('/delete/{subdomain}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteDocument']);
-            Route::get('/delete-multiple', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteMultipleDocument']);
+            Route::post('/delete-multiple', [App\Http\Controllers\User\ProfessionalCasesController::class, 'deleteMultipleDocuments']);
             Route::post('/chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'documentChats']);
             Route::post('/fetch-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'fetchDocumentChats']);
             Route::post('/send-chats', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveDocumentChat']);

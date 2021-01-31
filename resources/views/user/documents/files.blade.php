@@ -169,10 +169,10 @@
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            Move to
                            </a>
-                           <!-- <a class="dropdown-item" href="#">
+                           <a class="dropdown-item" href="#">
                            <i class="tio-download-to dropdown-item-icon"></i>
                            Download
-                           </a> -->
+                           </a>
                            <div class="dropdown-divider"></div>
                            <!-- <a class="dropdown-item" href="#">
                            <i class="tio-chat-outlined dropdown-item-icon"></i>
