@@ -8,8 +8,13 @@
     </div>
   </th>
   <td class="table-column-pl-0">
-      {{$record->name}}
-    </a>
+      {{$record->case_name}}
+  </td>
+  <td class="table-column-pl-0">
+      {{$record->VisaService->name}}
+  </td>
+  <td class="table-column-pl-0">
+      {{$record->amount_paid}}
   </td>
   <td> 
     <div class="hs-unfold">
@@ -22,53 +27,13 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}">Cutoff Points</a>
-        <a class="dropdown-item" href="{{baseUrl('visa-services/content/'.base64_encode($record->id))}}">Visa Service Content</a>
+        <a class="dropdown-item" href="{{baseUrl('assessments/edit/'.base64_encode($record->id))}}">Edit</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('assessments/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
     </div>
-    <!-- <a href="{{baseUrl('visa-services/edit/'.base64_encode($record->id))}}"><i class="tio-edit"></i></a> 
-    <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($record->id))}}"><i class="tio-delete"></i></a> 
-    <a href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}" class="btn btn-info"><i class="tio-survey"></i> Cutoff Points</a>  -->
-  
 </td>
 </tr>
-@foreach($record->SubServices as $key2 => $subservice)
-<tr class="subservice pl-3">
-  <th scope="row">
-    <div class="custom-control custom-checkbox">
-      <input type="checkbox" class="custom-control-input row-checkbox parent-{{ $key }}" id="sub-{{$key2}}" type="checkbox" class="custom-control-input row-checkbox" value="{{ base64_encode($subservice->id) }}">
-      <label class="custom-control-label" for="sub-{{$key2}}"></label>
-    </div>
-  </th>
-  <td class="table-column-pl-2 text-primary">
-      {{$subservice->name}}
-    </a>
-  </td>
-  <td> 
-    <div class="hs-unfold">
-      <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
-         data-hs-unfold-options='{
-           "target": "#subaction-{{$key}}",
-           "type": "css-animation"
-         }'>
-              More <i class="tio-chevron-down ml-1"></i>
-      </a>
-
-      <div id="subaction-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('visa-services/cutoff/'.base64_encode($record->id))}}">Cutoff Points</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($subservice->id))}}">Delete</a> 
-      </div>
-    </div>
-    <!-- <a href="{{baseUrl('visa-services/edit/'.base64_encode($subservice->id))}}"><i class="tio-edit"></i></a> &nbsp; 
-    <a href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('visa-services/delete/'.base64_encode($subservice->id))}}"><i class="tio-delete"></i></a>  -->
-  </td>
-</tr>
-@endforeach
 @endforeach
 @else
 <tr>

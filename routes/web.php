@@ -371,6 +371,16 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::get('/cv', [App\Http\Controllers\User\DashboardController::class, 'manageCv']);
     Route::post('/save-language-proficiency', [App\Http\Controllers\User\DashboardController::class, 'saveLanguageProficiency']);
 
+    Route::group(array('prefix' => 'assessments'), function () {
+        Route::get('/', [App\Http\Controllers\User\AssessmentsController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\User\AssessmentsController::class, 'getAjaxList']);
+        Route::get('/add', [App\Http\Controllers\User\AssessmentsController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\User\AssessmentsController::class, 'save']);
+        Route::get('/edit/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'edit']);
+        Route::post('/update/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'update']);
+        Route::get('/delete/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\User\AssessmentsController::class, 'deleteMultiple']);
+    });
     Route::group(array('prefix' => 'connect-apps'), function () {
         Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'connectApps']);
         Route::get('/unlink/{app}', [App\Http\Controllers\User\DashboardController::class, 'unlinkApp']);
@@ -439,6 +449,8 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::get('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'documentsExchanger']);
         Route::post('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'saveExchangeDocuments']);
     });
+    
+    
 
     Route::group(array('prefix' => 'cases'), function () {
         Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'cases']);

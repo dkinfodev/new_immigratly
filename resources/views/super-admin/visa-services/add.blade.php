@@ -73,6 +73,12 @@
             </select>
           </div>
         </div>
+        <div class="js-form-message form-group row">
+          <label class="col-sm-2 col-form-label">Assessment Price</label>
+          <div class="col-sm-10">  
+            <input type="text" name="assessment_price" id="assessment_price" placeholder="Enter Assessment Price" class="form-control" value="">
+          </div>
+        </div>
         <div class="form-group">
           <button type="button" class="btn add-btn btn-primary">Add</button>
         </div>

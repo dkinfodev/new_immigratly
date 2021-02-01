@@ -190,7 +190,7 @@
           </div>
         </div>
       </div>
-  </div>
+    </div>
   <!-- Modal -->
   
   <!-- End Modal -->

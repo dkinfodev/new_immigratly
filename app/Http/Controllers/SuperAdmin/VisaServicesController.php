@@ -62,7 +62,8 @@ class VisaServicesController extends Controller
     public function save(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:visa_services',
-            'document_folders'=> 'required'
+            'document_folders'=> 'required',
+            'assessment_price' => "required|numeric"
         ]);
         
         if ($validator->fails()) {
@@ -83,6 +84,7 @@ class VisaServicesController extends Controller
         $object->name = $request->input("name");
         $object->slug = str_slug($request->input("name"));
         $object->unique_id = randomNumber();
+        $object->assessment_price = $request->input("assessment_price");
         if($request->input("document_folders")){
             $object->document_folders = implode(",",$request->input("document_folders"));
         }
@@ -110,6 +112,7 @@ class VisaServicesController extends Controller
         $object =  VisaServices::find($id);
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:visa_services,name,'.$object->id,
+            'assessment_price' => "required|numeric"
         ]);
 
         if ($validator->fails()) {
@@ -133,6 +136,7 @@ class VisaServicesController extends Controller
         if($request->input("document_folders")){
             $object->document_folders = implode(",",$request->input("document_folders"));
         }
+        $object->assessment_price = $request->input("assessment_price");
         $object->save();
 
         $response['status'] = true;

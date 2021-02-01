@@ -46,7 +46,12 @@
                   <small class="nav-subtitle" title="Professionals">Professionals</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
-                
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/assessments') }}" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Assessments</span>
+                  </a>
+                </li>
                 <li class="nav-item">
                   <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/cases') }}" data-placement="left">
                     <i class="tio-account-square nav-icon"></i>
