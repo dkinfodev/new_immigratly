@@ -7,12 +7,10 @@
     </div>
   </td>
   <td>
-      @if(!empty($record->Service($record->service_id)))
-        {{$record->Service($record->service_id)->name}}
-      @else
-        Service Removed by adminstrator
-      @endif
-      {{$record->id}}
+    {{$record->case_name}}
+  </td>
+  <td>
+    {{$record->VisaService->name}}
   </td>
   <td>{{$record->price}}</td>
   <td> 
@@ -26,10 +24,9 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('services/edit/'.base64_encode($record->id))}}">Edit</a>
-        <a class="dropdown-item" href="{{baseUrl('services/documents/'.base64_encode($record->id))}}">Document Folders</a>
+        <a class="dropdown-item" href="{{baseUrl('assessments/edit/'.base64_encode($record->id))}}">Edit</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('services/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('assessments/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
     </div>
   </td>

@@ -380,6 +380,9 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/update/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'update']);
         Route::get('/delete/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'deleteSingle']);
         Route::post('/delete-multiple', [App\Http\Controllers\User\AssessmentsController::class, 'deleteMultiple']);
+
+        Route::post('/payment-success', [App\Http\Controllers\User\TransactionController::class, 'assessmentPaymentSuccess']);
+        Route::post('/payment-failed', [App\Http\Controllers\User\TransactionController::class, 'assessmentPaymentFailed']);
     });
     Route::group(array('prefix' => 'connect-apps'), function () {
         Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'connectApps']);

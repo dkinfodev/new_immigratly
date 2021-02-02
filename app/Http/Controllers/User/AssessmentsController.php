@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use DB;
 use View;
 use App\Models\Assessments;
+use App\Models\UserInvoices;
+use App\Models\InvoiceItems;
 use App\Models\VisaServices;
 class AssessmentsController extends Controller
 {
@@ -61,6 +63,7 @@ class AssessmentsController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
+        $visa_service = VisaServices::where("unique_id",$request->input("visa_service_id"))->first();
         $unique_id = randomNumber();
         $object =  new Assessments();
         $object->unique_id = $unique_id;
@@ -68,13 +71,32 @@ class AssessmentsController extends Controller
         $object->visa_service_id = $request->input("visa_service_id");
         $object->case_type = $request->input("case_type");
         $object->user_id = \Auth::user()->unique_id;
-        // $object->amount_paid = $request->input("amount_paid");
+        $object->amount_paid = $visa_service->assessment_price;
         // $object->payment_status = $request->input("payment_status");
         // $object->payment_response = $request->input("payment_response");
         $object->save();
         
+        $inv_unique_id = randomNumber();
+        $object2 = new UserInvoices();
+        $object2->unique_id = $inv_unique_id;
+        $object2->client_id = \Auth::user()->unique_id;
+        $object2->payment_status = "pending";
+        $object2->amount = $visa_service->assessment_price;
+        $object2->link_to = 'assessment';
+        $object2->link_id = $unique_id;
+        $object2->invoice_date = date("Y-m-d"); 
+        $object2->created_by = \Auth::user()->unique_id;
+        $object2->save();
+
+        $object2 = new InvoiceItems();
+        $object2->invoice_id = $inv_unique_id;
+        $object2->unique_id = randomNumber();
+        $object2->particular = "Assessment Fee";
+        $object2->amount = $visa_service->assessment_price;
+        $object2->save();
+
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('assessments/edit/'.$unique_id."?step=2");
+        $response['redirect_back'] = baseUrl('assessments/edit/'.$unique_id.'?step=2');
         $response['message'] = "Record added successfully";
         
         return response()->json($response);
@@ -88,7 +110,9 @@ class AssessmentsController extends Controller
         }
         $viewData['pageTitle'] = "Edit Assessment";
         $record = Assessments::where("unique_id",$id)->first();
-        $pay_amount = $record->VisaService->assessment_price;
+        $pay_amount = $record->amount_paid;
+        $invoice_id = $record->Invoice->unique_id;
+        $viewData['invoice_id'] = $invoice_id;
         $viewData['pay_amount'] = $pay_amount;
         $viewData['record'] = $record;
         $visa_services = VisaServices::get();

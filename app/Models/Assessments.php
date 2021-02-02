@@ -23,4 +23,8 @@ class Assessments extends Model
     {
         return $this->hasMany('App\Models\AssessmentDocuments','assessment_id','unique_id')->groupBy("created_by");
     }
+    public function Invoice()
+    {
+        return $this->hasOne('App\Models\UserInvoices','link_id','unique_id')->where("link_to","assessment");
+    }
 }

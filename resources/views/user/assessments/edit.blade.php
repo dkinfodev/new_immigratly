@@ -163,6 +163,7 @@
          
           <div id="validationFormPayment" class="{{($active_step == 2?'active':'')}}" style="display:{{($active_step != 2?'none':'')}};" class="active" >
             <div class="row">
+              @if($record->Invoice->payment_status != 'paid')
               <div class="col-3">
                 <div class="card mb-3 mb-lg-5">
                   <div class="card-body">
@@ -184,13 +185,16 @@
               </div>
               <div class="col-9">
                 <div class="tab-content">
+                  <div class="col-sm mb-2 mb-sm-0 text-right">
+                    <h3><span class="font-weight-bold text-danger">Pay: </span>{{currencyFormat($pay_amount)}}</h3>
+                  </div>
                   <div class="tab-pane fade show active" id="credit-debit-card" role="tabpanel" aria-labelledby="credit-debit-card-tab">
                     <div class="card mb-3 mb-lg-5">
                         <div class="card-header">
                           <h4 class="card-header-title"> Credit or Debit Card</h4>
                         </div>
                         <div class="card-body">
-                          <form id="razorCardForm" name="razorCardForm">
+                          <div id="razorCardForm" name="razorCardForm">
                               @csrf
                               <input type="hidden" name="payment_type" value="credit_debit_card" />
                            
@@ -239,9 +243,9 @@
                                 </div>
                               </div>
                               <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">Pay Now</button>
+                                <button type="button" id="razorCardBtn" class="btn btn-primary">Pay Now</button>
                               </div>
-                          </form>
+                          </div>
                         </div>
                     </div>
                   </div>
@@ -251,7 +255,7 @@
                         <h4 class="card-header-title"> Netbanking</h4>
                       </div>
                       <div class="card-body">
-                        <form id="razorBankForm" name="razorBankForm">
+                        <div id="razorBankForm" name="razorBankForm">
                             @csrf
                             <input type="hidden" name="payment_type" value="netbanking" />
                          
@@ -267,7 +271,7 @@
                             </div>
                             
                             <div class="form-group js-form-message">
-                              <label for="mobile_no" class="input-label">Select Bank</label>
+                              <label for="netbanking" class="input-label">Select Bank</label>
                               <select class="form-control" name="netbanking" id="bankname">
                                 <option value="">Select Bank</option>
                                 @foreach(bankList() as $bank)
@@ -277,9 +281,9 @@
                             </div>
                            
                             <div class="d-flex justify-content-end">
-                              <button type="submit" class="btn btn-primary">Pay Now</button>
+                              <button type="button" id="razorBankBtn" class="btn btn-primary">Pay Now</button>
                             </div>
-                        </form>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -290,7 +294,7 @@
                         <h4 class="card-header-title">Wallet</h4>
                       </div>
                       <div class="card-body">
-                        <form id="razorWalletForm" name="razorWalletForm">
+                        <div id="razorWalletForm" name="razorWalletForm">
                             @csrf
                             <input type="hidden" name="payment_type" value="wallet" />
                             <div class="form-group js-form-message">
@@ -314,14 +318,21 @@
                             </div>
                            
                             <div class="d-flex justify-content-end">
-                              <button type="submit" class="btn btn-primary">Pay Now</button>
+                              <button type="button" id="razorWalletBtn" class="btn btn-primary">Pay Now</button>
                             </div>
-                        </form>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </div>                
               </div>
+              @else
+              <div class="col-sm mb-2 mb-sm-0 text-center">
+                <h3><span class="font-weight-bold text-danger">Paid: </span>{{currencyFormat($record->Invoice->paid_amount)}}</h3>
+                <div class="text-secondary">Paid Date:{{dateFormat($record->Invoice->paid_date)}}</div>
+                <div class="text-secondary">Payment Method: {{$record->Invoice->payment_method}}</div>
+              </div>
+              @endif
             </div>
           </div>
 
@@ -412,6 +423,30 @@
     </div>
     <!-- End Card -->
   </div>
+  <div class="modal fade" id="processingTransaction" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center d-block" id="staticBackdropLabel">Transaction Processing</h5>
+          <!-- <button type="button" class="btn btn-xs btn-icon btn-ghost-secondary" data-dismiss="modal" aria-label="Close">
+            <i class="tio-clear tio-lg"></i>
+          </button> -->
+        </div>
+        <div class="modal-body">
+          <div class="text-center">
+            <div class="font-weight-bold">
+              <i class="tio-warning" style="font-size:72px"></i>
+            </div>
+            <span class="text-danger">Your transaction is under process. Please do not close your browser or refresh the page while transaction is processing!</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- End Content -->
   @endsection
 
@@ -442,12 +477,12 @@
       $.HSCore.components.HSValidation.init($(this));
     });
 
-    $razorCardForm = $("#razorCardForm");
-  $razorCardForm.on('submit', function(e){
+  $razorCardForm = $("#razorBankForm");
+  $razorCardForm.on('click', function(e){
     $.ajax({
         url:"{{baseUrl('/validate-pay-now') }}",
         type:"post",
-        data:$("#razorCardForm").serialize(),
+        data:$("#razorCardForm").find('select, textarea, input').serialize(),
         dataType:"json",
         beforeSend:function(){
             showLoader();
@@ -458,8 +493,8 @@
             var per_paisa = 100;
             var pay_amount = "{{ $pay_amount }}";
             var amount = pay_amount * per_paisa;
-            var email = $razorCardForm.find("#email").val();
-            var mobile_no = $razorCardForm.find("#mobile_no").val();
+            var email = $("#razorCardForm").find("#email").val();
+            var mobile_no = $("#razorCardForm").find("#mobile_no").val();
             var card_number = $("#cardNumberLabel").val();
 
             var expiry = $("#expirationDateLabel").val();
@@ -527,12 +562,12 @@
     e.preventDefault();
   });
 
-  $razorbankForm = $("#razorBankForm");
-  $razorbankForm.on('submit', function(e){
+  $razorbankForm = $("#razorBankBtn");
+  $razorbankForm.on('click', function(e){
       $.ajax({
         url:"{{baseUrl('/validate-pay-now') }}",
         type:"post",
-        data:$("#razorBankForm").serialize(),
+        data:$("#razorBankForm").find('select, textarea, input').serialize(),
         dataType:"json",
         beforeSend:function(){
             showLoader();
@@ -543,8 +578,8 @@
               var per_paisa = 100;
               var pay_amount = "{{ $pay_amount }}";
               var amount = pay_amount * per_paisa;
-              var email = $razorbankForm.find("#nb_email").val();
-              var mobile_no = $razorbankForm.find("#nb_mobile_no").val();
+              var email = $("#razorBankForm").find("#nb_email").val();
+              var mobile_no = $("#razorBankForm").find("#nb_mobile_no").val();
               var net_banking = $("#bankname").val();
               $.ajax({
                   url:"{{baseUrl('/pay-now') }}",
@@ -602,12 +637,12 @@
 
 // Netbanking Submit  
 
-  $razorWalletForm = $("#razorWalletForm");
-  $razorWalletForm.on('submit', function(e){
+  $razorWalletForm = $("#razorWalletBtn");
+  $razorWalletForm.on('click', function(e){
       $.ajax({
         url:"{{baseUrl('/validate-pay-now') }}",
         type:"post",
-        data:$("#razorWalletForm").serialize(),
+        data:$("#razorWalletForm").find("input,select,textarea").serialize(),
         dataType:"json",
         beforeSend:function(){
             showLoader();
@@ -618,8 +653,8 @@
               var per_paisa = 100;
               var pay_amount = "{{ $pay_amount }}";
               var amount = pay_amount * per_paisa;
-              var email = $razorWalletForm.find("#wl_email").val();
-              var mobile_no = $razorWalletForm.find("#wl_mobile_no").val();
+              var email = $("#razorWalletForm").find("#wl_email").val();
+              var mobile_no = $("#razorWalletForm").find("#wl_mobile_no").val();
               var wallet_selected = $("#wallet_selected").val();
               $.ajax({
                   url:"{{baseUrl('/pay-now') }}",
@@ -712,6 +747,59 @@
       }).init();
     });
   });
+  function paymentSuccess(resp){
+    $.ajax({
+        url:"{{baseUrl('assessments/payment-success') }}",
+        type:"post",
+        data:{
+            _token:"{{ csrf_token() }}",
+            razorpay_payment_id:resp.razorpay_payment_id,
+            razorpay_order_id:resp.razorpay_order_id,
+            razorpay_signature:resp.razorpay_signature,
+            amount:"{{ $pay_amount }}",
+            invoice_id:"{{$invoice_id}}"
+        },
+        beforeSend:function(){
+            
+        },
+        success:function(response){
+          $("#processingTransaction").modal("hide");
+          if(response.status == true){
+            successMessage("Your payment has been paid successfully");
+            redirect('{{ baseUrl("assessments/edit/".$record->unique_id."?step=3") }}')
+          }else{
+            errorMessage(response.message);
+          }
+        },
+        error:function(){
+          $("#processingTransaction").modal("hide");
+          errorMessage("Internal error try again");
+        }
+    });
+  }
+  function paymentError(payment_method,description){
+    $.ajax({
+        url:"{{baseUrl('assessments/payment-failed') }}",
+        type:"post",
+        data:{
+            _token:"{{ csrf_token() }}",
+            payment_method:payment_method,
+            description:description,
+            amount_paid:"{{ $pay_amount }}",
+        },
+        beforeSend:function(){
+            
+        },
+        success:function(response){
+          $("#processingTransaction").modal("hide");
+          errorMessage(description);
+        },
+        error:function(){
+          $("#processingTransaction").modal("hide");
+          errorMessage("Internal error try again");
+        }
+    });
+  }
   </script>
 
   @endsection

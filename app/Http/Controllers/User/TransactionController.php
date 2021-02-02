@@ -13,6 +13,7 @@ use App\Models\Invoices;
 use App\Models\CaseInvoiceItems;
 use App\Models\CaseInvoices;
 use App\Models\UserTransactions;
+use App\Models\UserInvoices;
 
 class TransactionController extends Controller
 {
@@ -127,6 +128,8 @@ class TransactionController extends Controller
             $transaction_response = array("razorpay_order_id"=>$razorpay_order_id,"razorpay_payment_id"=>$razorpay_payment_id,"razorpay_signature"=>$razorpay_signature);
             $data['transaction_response'] = json_encode($result);
             $data['paid_by'] = \Auth::user()->unique_id;
+            $data['payment_status'] = 'paid';
+            $data['paid_date'] = date("Y-m-d H:i:s");
             $data['invoice_id'] = $invoice_id;
             $api_response = professionalCurl('cases/send-invoice-data',$subdomain,$data);
 
@@ -166,6 +169,85 @@ class TransactionController extends Controller
     }
 
     public function paymentFailed(Request $request){
+
+        $invoice_id = $request->input("invoice_id");
+        $razorpay_payment_id = $request->input("razorpay_payment_id");
+        $subdomain = $request->input("subdomain");
+        $razorpay_order_id = $request->input("razorpay_order_id");
+        $razorpay_signature = $request->input("razorpay_signature");
+        $api = new Api(config('razorpay.razor_key'), config('razorpay.razor_secret'));
+        $payment = $api->payment->fetch($razorpay_payment_id);
+        try {
+            $result = $api->payment->fetch($razorpay_payment_id)
+                    ->capture(array('amount'=>$payment['amount'])); 
+            $result = $result->toArray();
+            $data['payment_method'] = $payment->method;
+            $data['amount_paid'] = $payment->amount / 100;
+            $transaction_response = array("razorpay_order_id"=>$razorpay_order_id,"razorpay_payment_id"=>$razorpay_payment_id,"razorpay_signature"=>$razorpay_signature);
+            $data['transaction_response'] = json_encode($result);
+            $data['paid_by'] = \Auth::user()->unique_id;
+            $data['invoice_id'] = $invoice_id;
+            $api_response = professionalCurl('cases/send-invoice-data',$subdomain,$data);
+
+            $object = new UserTransactions();
+            $object->user_id = \Auth::user()->unique_id;
+            $object->professional = $subdomain;
+            $object->invoice_id = $invoice_id;
+            $object->payment_method = $payment->method;
+            $object->save();
+
+            if($api_response['status'] != 'success'){
+                $response['status'] = false;
+                $response['message'] = "Payment submission failed";
+            }else{
+                $response['status'] = true;
+                $response['link_to'] = $api_response['link_to'];
+                $response['message'] = $api_response['message'];
+            }
+
+        } catch (\Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+            
+        }
+        
+       return response()->json($response);
+    }
+
+
+    public function assessmentPaymentSuccess(Request $request){
+
+        $invoice_id = $request->input("invoice_id");
+        $razorpay_payment_id = $request->input("razorpay_payment_id");
+        $razorpay_order_id = $request->input("razorpay_order_id");
+        $razorpay_signature = $request->input("razorpay_signature");
+        $api = new Api(config('razorpay.razor_key'), config('razorpay.razor_secret'));
+        $payment = $api->payment->fetch($razorpay_payment_id);
+        try {
+            $result = $api->payment->fetch($razorpay_payment_id)
+                    ->capture(array('amount'=>$payment['amount'])); 
+            $result = $result->toArray();
+            $data['payment_method'] = $payment->method;
+            $data['paid_amount'] = $payment->amount / 100;
+            $transaction_response = array("razorpay_order_id"=>$razorpay_order_id,"razorpay_payment_id"=>$razorpay_payment_id,"razorpay_signature"=>$razorpay_signature);
+            $data['transaction_response'] = json_encode($result);
+            $data['paid_by'] = \Auth::user()->unique_id;
+            
+            UserInvoices::where("unique_id",$invoice_id)->update($data);
+            // $api_response = professionalCurl('cases/send-invoice-data',$subdomain,$data);
+            $response['status'] = true;
+            $response['message'] = "Payment paid successfully";
+
+        } catch (\Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+            
+        }
+        
+       return response()->json($response);
+    }
+
+    public function assessmentPaymentFailed(Request $request){
 
         $invoice_id = $request->input("invoice_id");
         $razorpay_payment_id = $request->input("razorpay_payment_id");
