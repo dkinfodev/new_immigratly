@@ -380,9 +380,28 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/update/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'update']);
         Route::get('/delete/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'deleteSingle']);
         Route::post('/delete-multiple', [App\Http\Controllers\User\AssessmentsController::class, 'deleteMultiple']);
-
         Route::post('/payment-success', [App\Http\Controllers\User\TransactionController::class, 'assessmentPaymentSuccess']);
         Route::post('/payment-failed', [App\Http\Controllers\User\TransactionController::class, 'assessmentPaymentFailed']);
+        
+        Route::post('/documents/{ass_id}/{doc_id}', [App\Http\Controllers\User\AssessmentsController::class, 'fetchDocuments']);
+        
+        Route::group(array('prefix' => 'files'), function () {
+            Route::post('/upload-documents', [App\Http\Controllers\User\AssessmentsController::class, 'uploadDocuments']);
+            Route::get('/view-document/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'viewDocument']);
+            Route::get('/delete/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'deleteDocument']);
+        });
+        
+        Route::group(array('prefix' => 'google-drive'), function () {
+            Route::post('/folder/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'fetchGoogleDrive']);
+            Route::post('/files-list', [App\Http\Controllers\User\AssessmentsController::class, 'googleDriveFilesList']);
+            Route::post('/upload-from-gdrive', [App\Http\Controllers\User\AssessmentsController::class, 'uploadFromGdrive']);
+        });
+        Route::group(array('prefix' => 'dropbox'), function () {
+            Route::post('/folder/{id}', [App\Http\Controllers\User\AssessmentsController::class, 'fetchDropboxFolder']);
+            Route::post('/files-list', [App\Http\Controllers\User\AssessmentsController::class, 'dropboxFilesList']);
+            Route::post('/upload-from-dropbox', [App\Http\Controllers\User\AssessmentsController::class, 'uploadFromDropbox']);
+        });
+        
     });
     Route::group(array('prefix' => 'connect-apps'), function () {
         Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'connectApps']);

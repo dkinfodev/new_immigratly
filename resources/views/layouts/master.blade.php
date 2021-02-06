@@ -25,10 +25,10 @@
     <link rel="stylesheet" href="assets/css/theme.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/vendor/toastr/toastr.css">
-    <link rel="stylesheet" href="assets/vendor/toastr/plugin/toastr.css">
+    <!--<link rel="stylesheet" href="assets/vendor/toastr/plugin/toastr.css">-->
     <link rel="stylesheet" href="assets/vendor/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.css" />
-    <link rel="stylesheet" href="assets/css/fonts/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/custom.css">
     @yield('style')
 

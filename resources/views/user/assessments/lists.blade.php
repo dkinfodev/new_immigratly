@@ -83,6 +83,7 @@
               <th scope="col" class="table-column-pl-0">Case Name</th>
               <th scope="col" class="table-column-pl-0">Visa Service</th>
               <th scope="col" class="table-column-pl-0">Price</th>
+              <th scope="col" class="table-column-pl-0">Payment Status</th>
               <th scope="col">Action</th>
             </tr>
           </thead>

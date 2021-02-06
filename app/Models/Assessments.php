@@ -4,15 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\UserInvoices;
+use App\Models\AssessmentDocuments;
 class Assessments extends Model
 {
     use HasFactory;
     protected $table = "assessments";
 
     static function deleteRecord($id){
+        $assessment = Assessments::where("id",$id)->first();
         Assessments::where("id",$id)->delete();
         AssessmentDocuments::where("assessment_id",$id)->delete();
+        UserInvoices::deleteRecord($assessment->Invoice->id);
+        
     }
 
     public function VisaService()
@@ -27,4 +31,6 @@ class Assessments extends Model
     {
         return $this->hasOne('App\Models\UserInvoices','link_id','unique_id')->where("link_to","assessment");
     }
+    
+    
 }

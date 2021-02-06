@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
+use App\Models\DocumentFolder;
 
 class VisaServices extends Model
 {
@@ -15,6 +17,21 @@ class VisaServices extends Model
         return $this->hasMany('App\Models\VisaServices','parent_id');
     }
 
+    public function DocumentFolders($id)
+    {
+        $visa_service = VisaServices::where("id",$id)->first();
+        
+        if($visa_service->document_folders != ''){
+            $document_folder = explode(",",$visa_service->document_folders);
+            
+            $document_folders = DocumentFolder::whereIn("id",$document_folder)->get();    
+        }else{
+            $document_folders = array();
+        }
+        
+        return $document_folders;
+    }
+    
     static function deleteRecord($id){
         VisaServices::where("id",$id)->delete();
         VisaServices::where("parent_id",$id)->delete();

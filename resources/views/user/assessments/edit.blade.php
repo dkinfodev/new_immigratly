@@ -16,7 +16,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/visa-services') }}">Services</a></li>
+            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/assessments') }}">Assessments</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
@@ -24,7 +24,7 @@
       </div>
 
       <div class="col-sm-auto">
-        <a class="btn btn-primary" href="{{baseUrl('visa-services')}}">
+        <a class="btn btn-primary" href="{{baseUrl('assessments')}}">
           <i class="tio mr-1"></i> Back 
         </a>
       </div>
@@ -71,7 +71,7 @@
   </div>
   </a>
   </li>
-
+@if($record->Invoice->payment_status == 'paid')    
   <li class="step-item">
     <a class="step-content-wrapper" href="javascript:;"
     data-hs-step-form-next-options='{
@@ -95,6 +95,25 @@
   </div>
   </a>
   </li>
+  @else
+  <li class="step-item">
+    <a class="step-content-wrapper" href="javascript:;">
+  <span class="step-icon step-icon-soft-dark">3</span>
+  <div class="step-content">
+    <span class="step-title">Visa Documents</span>
+  </div>
+  </a>
+  </li>
+
+  <li class="step-item">
+    <a class="step-content-wrapper" href="javascript:;">
+  <span class="step-icon step-icon-soft-dark">4</span>
+  <div class="step-content">
+    <span class="step-title">Additional Comments</span>
+  </div>
+  </a>
+  </li>
+  @endif
         </ul>
         <!-- End Step -->
 
@@ -150,10 +169,7 @@
             <div class="d-flex align-items-center">
               <div class="ml-auto">
                 <!-- <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Next</button> -->
-                <button type="button" class="btn btn-primary"
-                        data-hs-step-form-next-options='{
-                          "targetSelector": "#validationFormPayment"
-                        }'>
+                <button type="button" onclick="saveData('1')" class="btn btn-primary">
                   Next <i class="tio-chevron-right"></i>
                 </button>
               </div>
@@ -332,86 +348,111 @@
                 <div class="text-secondary">Paid Date:{{dateFormat($record->Invoice->paid_date)}}</div>
                 <div class="text-secondary">Payment Method: {{$record->Invoice->payment_method}}</div>
               </div>
+             
               @endif
             </div>
+             <!-- Footer -->
+             <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-ghost-secondary mr-2"
+                   data-hs-step-form-prev-options='{
+                     "targetSelector": "#validationFormCaseInfo"
+                   }'>
+                  <i class="tio-chevron-left"></i> Previous step
+                </button>
+        @if($record->Invoice->payment_status == 'paid')    
+                <div class="ml-auto">
+                  <button type="button" class="btn btn-primary"
+                          data-hs-step-form-next-options='{
+                            "targetSelector": "#validationFormVisaDocument"
+                          }'>
+                    Next <i class="tio-chevron-right"></i>
+                  </button>
+                </div>
+        @endif
+              </div>
+            <!-- End Footer -->
           </div>
 
           <div id="validationFormVisaDocument" class="{{($active_step == 3?'active':'')}}" style="display:{{($active_step != 3?'none':'')}};">
-            <!-- Form Group -->
-            <div class="row form-group">
-              <label for="validationFormVisaDocument1Label" class="col-sm-3 col-form-label input-label">Address 1</label>
-
-              <div class="col-sm-9">
-                <div class="js-form-message">
-                  <input type="password" class="form-control" name="address1" id="validationFormVisaDocument1Label" placeholder="Address 1" aria-label="Address 1" required data-msg="Please enter your address.">
-                </div>
-              </div>
-            </div>
-            <!-- End Form Group -->
-
-            <!-- Form Group -->
-            <div class="row form-group">
-              <label for="validationFormVisaDocument2Label" class="col-sm-3 col-form-label input-label">Address 2 <span class="input-label-secondary">(Optional)</span></label>
-
-              <div class="col-sm-9">
-                <input type="password" class="form-control" name="address2" id="validationFormVisaDocument2Label" placeholder="Address 2" aria-label="Address 2">
-              </div>
-            </div>
-            <!-- End Form Group -->
+            <ul class="list-group mb-3 mt-3">
+               @foreach($document_folders as $key => $document)
+               <li class="list-group-item">
+                  <div class="row align-items-center gx-2">
+                     <div class="col-auto">
+                        <i class="tio-folder tio-xl text-body mr-2"></i>
+                     </div>
+                     <div class="col">
+                      <a href="javascript:;" data-toggle="collapse" data-target="#collapse-{{$document->unique_id}}" data-folder="{{$document->unique_id}}" aria-expanded="true" aria-controls="collapse-{{$document->unique_id}}" onclick="fetchDocuments('{{$record->unique_id}}','{{$document->unique_id}}')" class="text-dark">
+                        <h5 class="card-title text-truncate mr-2">
+                           {{$document->name}}
+                        </h5>
+                        <ul class="list-inline list-separator small">
+                           {{--<li class="list-inline-item">{{count($document->Files)}} Files</li>--}}
+                        </ul>
+                      </a>
+                     </div>
+                     <span class="card-btn-toggle">
+                        <span class="card-btn-toggle-default">
+                          <i class="tio-add"></i>
+                        </span>
+                        <span class="card-btn-toggle-active">
+                          <i class="tio-remove"></i>
+                        </span>
+                      </span>
+                  </div>
+                  <div id="collapse-{{$document->unique_id}}" class="collapse" aria-labelledby="headingOne">
+                  </div>
+                  <!-- End Row -->
+               </li>
+               @endforeach
+            </ul>
 
             <!-- Footer -->
-            <div class="d-sm-flex align-items-center">
-              <button type="button" class="btn btn-ghost-secondary mb-3 mb-sm-0 mr-2"
-                 data-hs-step-form-prev-options='{
-                   "targetSelector": "#validationFormPayment"
-                 }'>
-                <i class="tio-chevron-left"></i> Previous step
-              </button>
-
-              <div class="d-flex justify-content-end ml-auto">
-                <button type="button" class="btn btn-white mr-2" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Save Changes</button>
+              <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-ghost-secondary mr-2"
+                   data-hs-step-form-prev-options='{
+                     "targetSelector": "#validationFormPayment"
+                   }'>
+                  <i class="tio-chevron-left"></i> Previous step
+                </button>
+        
+                <div class="ml-auto">
+                  <button type="button" class="btn btn-primary"
+                          data-hs-step-form-next-options='{
+                            "targetSelector": "#validationFormAdditional"
+                          }'>
+                    Next <i class="tio-chevron-right"></i>
+                  </button>
+                </div>
               </div>
-            </div>
-            <!-- End Footer -->
+              <!-- End Footer -->
           </div>
           <div id="validationFormAdditional" class="{{($active_step == 4?'active':'')}}" style="display:{{($active_step != 4?'none':'')}};">
             <!-- Form Group -->
             <div class="row form-group">
-              <label for="validationFormVisaDocument1Label" class="col-sm-3 col-form-label input-label">Address 1</label>
+              <label for="additional_comment" class="col-sm-3 col-form-label input-label">Additional Comment</label>
 
               <div class="col-sm-9">
                 <div class="js-form-message">
-                  <input type="password" class="form-control" name="address1" id="validationFormVisaDocument1Label" placeholder="Address 1" aria-label="Address 1" required data-msg="Please enter your address.">
+                  <textarea class="form-control" rowspan="5" name="additional_comment" id="additional_comment" placeholder="Additional Comment" aria-label="Additional Comment">{{$record->additional_comment}}</textarea>
                 </div>
               </div>
             </div>
             <!-- End Form Group -->
 
-            <!-- Form Group -->
-            <div class="row form-group">
-              <label for="validationFormVisaDocument2Label" class="col-sm-3 col-form-label input-label">Address 2 <span class="input-label-secondary">(Optional)</span></label>
-
-              <div class="col-sm-9">
-                <input type="password" class="form-control" name="address2" id="validationFormVisaDocument2Label" placeholder="Address 2" aria-label="Address 2">
-              </div>
-            </div>
-            <!-- End Form Group -->
-
             <!-- Footer -->
-            <div class="d-sm-flex align-items-center">
-              <button type="button" class="btn btn-ghost-secondary mb-3 mb-sm-0 mr-2"
-                 data-hs-step-form-prev-options='{
-                   "targetSelector": "#validationFormPayment"
-                 }'>
-                <i class="tio-chevron-left"></i> Previous step
-              </button>
-
-              <div class="d-flex justify-content-end ml-auto">
-                <button type="button" class="btn btn-white mr-2" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Save Changes</button>
+              <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-ghost-secondary mr-2"
+                   data-hs-step-form-prev-options='{
+                     "targetSelector": "#validationFormAccount"
+                   }'>
+                  <i class="tio-chevron-left"></i> Previous step
+                </button>
+        
+                <div class="ml-auto">
+                  <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Save Changes</button>
+                </div>
               </div>
-            </div>
             <!-- End Footer -->
           </div>
         </div>
@@ -465,7 +506,7 @@
 <script type="text/javascript" src="https://checkout.razorpay.com/v1/razorpay.js"></script>
 <!-- JS Front -->
 <script src="assets/vendor/quill/dist/quill.min.js"></script>
-
+<script src="assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
   <script type="text/javascript">
   var razorpay = new Razorpay({
     key: "{{ Config::get('razorpay.razor_key') }}",
@@ -477,7 +518,7 @@
       $.HSCore.components.HSValidation.init($(this));
     });
 
-  $razorCardForm = $("#razorBankForm");
+  $razorCardForm = $("#razorCardBtn");
   $razorCardForm.on('click', function(e){
     $.ajax({
         url:"{{baseUrl('/validate-pay-now') }}",
@@ -712,41 +753,53 @@
     $('.js-step-form').each(function () {
       var stepForm = new HSStepForm($(this), {
         finish: function() {
-            var formData = new FormData($("#form")[0]);
-            $.ajax({
-              url:"{{ baseUrl('assessments/save') }}",
-              type:"post",
-              data:formData,
-              cache: false,
-              contentType: false,
-              processData: false,
-              beforeSend:function(){
-                  $("#validationFormFinishBtn").html("Processing...");
-                  $("#validationFormFinishBtn").attr("disabled","disabled");
-              },
-              success:function(response){
-                $("#validationFormFinishBtn").html("Next");
-                $("#validationFormFinishBtn").removeAttr("disabled");
-                if(response.status == true){
-                  successMessage(response.message);
-                  setTimeout(function(){
-                        window.location.href=window.location.href;
-                  },2000);
-                  
-                }else{
-                  validation(response.message);
-                }
-              },
-              error:function(){
-                  $("#validationFormFinishBtn").html("Save Data");
-                  $("#validationFormFinishBtn").removeAttr("disabled");
-                  internalError();
-              }
-          });
+            saveData();
         }
       }).init();
     });
   });
+  function saveData(step=''){
+       var formData = new FormData($("#form")[0]);
+       if(step != ''){
+           formData.append("step",step);
+       }
+        $.ajax({
+          url:"{{ baseUrl('assessments/update/'.$record->unique_id) }}",
+          type:"post",
+          data:formData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          beforeSend:function(){
+              showLoader();
+              $("#validationFormFinishBtn").html("Processing...");
+              $("#validationFormFinishBtn").attr("disabled","disabled");
+          },
+          success:function(response){
+            hideLoader();
+            $("#validationFormFinishBtn").html("Save Changes");
+            $("#validationFormFinishBtn").removeAttr("disabled");
+            if(response.status == true){
+                if(step != 1){
+                    successMessage(response.message);
+                }
+              
+              setTimeout(function(){
+                    window.location.href=response.redirect_back;
+              },2000);
+              
+              
+            }else{
+              validation(response.message);
+            }
+          },
+          error:function(){
+              $("#validationFormFinishBtn").html("Save Changes");
+              $("#validationFormFinishBtn").removeAttr("disabled");
+              internalError();
+          }
+      });
+  }
   function paymentSuccess(resp){
     $.ajax({
         url:"{{baseUrl('assessments/payment-success') }}",
@@ -796,6 +849,27 @@
         },
         error:function(){
           $("#processingTransaction").modal("hide");
+          errorMessage("Internal error try again");
+        }
+    });
+  }
+  
+  function fetchDocuments(assessment_id,folder_id){
+      var url = '<?php echo baseUrl("assessments/documents") ?>/'+assessment_id+'/'+folder_id;
+    //   var id = $(e).attr("data-folder");
+      $.ajax({
+        url:url,
+        type:"post",
+        data:{
+            _token:"{{ csrf_token() }}",
+        },
+        beforeSend:function(){
+          $("#collapse-"+folder_id).html('');  
+        },
+        success:function(response){
+          $("#collapse-"+folder_id).html(response.contents);
+        },
+        error:function(){
           errorMessage("Internal error try again");
         }
     });

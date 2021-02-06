@@ -23,4 +23,5 @@ class AssessmentDocuments extends Model
         return $this->belongsTo('App\Models\Assessments','assessment_id','unique_id');
     }
     
+    
 }

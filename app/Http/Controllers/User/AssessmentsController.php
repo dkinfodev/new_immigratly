@@ -8,9 +8,14 @@ use Illuminate\Support\Facades\Validator;
 use DB;
 use View;
 use App\Models\Assessments;
+use App\Models\AssessmentDocuments;
 use App\Models\UserInvoices;
 use App\Models\InvoiceItems;
 use App\Models\VisaServices;
+use App\Models\DocumentFolder;
+use App\Models\UserDetails;
+use App\Models\FilesManager;
+
 class AssessmentsController extends Controller
 {
     public function __construct()
@@ -110,6 +115,10 @@ class AssessmentsController extends Controller
         }
         $viewData['pageTitle'] = "Edit Assessment";
         $record = Assessments::where("unique_id",$id)->first();
+        $vs = VisaServices::where("unique_id",$record->visa_service_id)->first();
+        
+        $document_folders = $vs->DocumentFolders($vs->id);
+        $viewData['document_folders'] = $document_folders;
         $pay_amount = $record->amount_paid;
         $invoice_id = $record->Invoice->unique_id;
         $viewData['invoice_id'] = $invoice_id;
@@ -122,8 +131,9 @@ class AssessmentsController extends Controller
 
     public function update($id,Request $request){
         $validator = Validator::make($request->all(), [
-            'price' => 'required',
-            'description' => 'required',
+            'case_name' => 'required',
+            'visa_service_id' => 'required',
+            'case_type' => 'required',
         ]);
         if ($validator->fails()) {
             $response['status'] = false;
@@ -135,13 +145,41 @@ class AssessmentsController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-        $object =  Assessments::find($id);
-        $object->price = $request->input("price");
-        $object->description = $request->input("description");
+        $visa_service = VisaServices::where("unique_id",$request->input("visa_service_id"))->first();
+        $service_changed = 0;
+        $object =  Assessments::where("unique_id",$id)->first();;
+        $object->case_name = $request->input("case_name");
+        if($object->visa_service_id != $request->input("visa_service_id")){
+            $service_changed = 1;
+        }
+        $object->visa_service_id = $request->input("visa_service_id");
+        $object->case_type = $request->input("case_type");
+        $object->additional_comment = $request->input("additional_comment");
+        $object->amount_paid = $visa_service->assessment_price;
         $object->save();
         
+        if($request->input("step") == 1){
+            $assessment = Assessments::where("id",$object->id)->first();
+            $object2 = UserInvoices::where("link_id",$assessment->unique_id)->where('link_to','assessment')->first();
+            $object2->amount = $visa_service->assessment_price;
+            if($service_changed == 1){
+                $object2->payment_status = "pending";
+            }
+            $object2->save();
+            
+            $assessment_invoice = UserInvoices::where("link_id",$assessment->unique_id)->where('link_to','assessment')->first();
+            $object2 = InvoiceItems::where('invoice_id',$assessment_invoice->unique_id)->first();
+            $object2->amount = $visa_service->assessment_price;
+            $object2->save();
+        }
         $response['status'] = true;
-        $response['redirect_back'] = baseUrl('assessments');
+        if($request->input("step")){
+            $next_step = (int)$request->input("step") + 1;
+            $response['redirect_back'] = baseUrl('assessments/edit/'.$object->unique_id."?step=".$next_step);
+        }else{
+            $response['redirect_back'] = baseUrl('assessments');    
+        }
+        
         $response['message'] = "Record edited successfully";
         
         return response()->json($response);
@@ -161,5 +199,311 @@ class AssessmentsController extends Controller
         $response['status'] = true;
         \Session::flash('success', 'Records deleted successfully'); 
         return response()->json($response);
+    }
+    
+    public function fetchDocuments($assessment_id,$folder_id,Request $request){
+        
+        $folder = DocumentFolder::where("unique_id",$folder_id)->first();
+        $documents = AssessmentDocuments::orderBy('id',"desc")
+                                    ->where("user_id",\Auth::user()->unique_id)
+                                    ->where("assessment_id",$assessment_id)
+                                    ->where("folder_id",$folder_id)
+                                    ->get();
+        $assessment = Assessments::where("unique_id",$assessment_id)->first();
+        $viewData['documents'] = $documents;
+        $viewData['assessment'] = $assessment;
+        $viewData['folder'] = $folder;
+        $user_details = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $viewData['user_details'] = $user_details;
+        $file_dir = userDir()."/documents";
+        $file_url = userDirUrl()."/documents";
+        $viewData['file_dir'] = $file_dir;
+        $viewData['file_url'] = $file_url;
+        $view = View::make(roleFolder().'.assessments.document-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        return response()->json($response);        
+    }
+    
+    public function fetchGoogleDrive($folder_id,Request $request){
+
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $assessment_id = $request->input("assessment_id");
+        $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        $drive = create_crm_gservice($google_drive_auth['access_token']);
+        $drive_folders = get_gdrive_folder($drive);
+        if(isset($drive_folders['gdrive_files'])){
+            $drive_folders = $drive_folders['gdrive_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['pageTitle'] = "Google Drive Folders";
+        $viewData['drive_folders'] = $drive_folders;
+        $viewData['folder_id'] = $folder_id;
+        $viewData['assessment_id'] = $assessment_id;
+        $view = View::make(roleFolder().'.assessments.modal.google-drive',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);  
+    }
+
+    public function googleDriveFilesList(Request $request){
+        $folder_id = $request->input("folder_id");
+        $folder = $request->input("folder_name");
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        $drive = create_crm_gservice($google_drive_auth['access_token']);
+        $drive_folders = get_gdrive_folder($drive,$folder_id,$folder);
+        if(isset($drive_folders['gdrive_files'])){
+            $drive_folders = $drive_folders['gdrive_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['drive_folders'] = $drive_folders;
+        $view = View::make(roleFolder().'.assessments.modal.google-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);   
+    }
+
+    public function uploadFromGdrive(Request $request){
+        
+        if($request->input("files")){
+            $files = $request->input("files");
+            $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+            $access_token = $google_drive_auth['access_token'];
+            $folder_id = $request->input("folder_id");
+            $assessment_id = $request->input("assessment_id");
+            
+            foreach($files as $key => $fileId){
+                $i = $key;
+                $ch = curl_init();
+                $method = "GET";
+                // get file type
+                $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId;
+                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $curl_response = curl_exec($ch);
+                $err = curl_error($ch);
+                curl_close($ch);
+                $file = json_decode($curl_response,true);
+                // get file base64 format
+                $ch = curl_init();
+                $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId.'?alt=media';
+                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                $api_response = curl_exec($ch);
+                $err = curl_error($ch);
+                curl_close($ch);
+                $base64_code = $api_response;
+                $original_name = $file['name'];
+                
+                $newName = time()."-".$original_name;
+                $path = userDir()."/documents";
+                if(file_put_contents($path."/".$newName, $base64_code)){
+                    $unique_id = randomNumber();
+                    $object = new FilesManager();
+                    $object->file_name = $newName;
+                    $object->original_name = $original_name;
+                    $object->user_id = \Auth::user()->unique_id;
+                    $object->unique_id = $unique_id;
+                    $object->created_by = \Auth::user()->unique_id;
+                    $object->save();
+
+                    $object2 = new AssessmentDocuments();
+                    $object2->user_id = \Auth::user()->unique_id;
+                    $object2->assessment_id = $assessment_id;
+                    $object2->folder_id = $folder_id;
+                    $object2->file_id = $unique_id;
+                    $object2->added_by = \Auth::user()->unique_id;
+                    $object2->unique_id = randomNumber();
+                    $object2->save();
+                }
+            }
+            $response['status'] = true;
+            $response['message'] = 'File uploaded from google drive successfully!';
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = 'no_files';
+            $response['message'] = "No Files selected";
+        }
+        return response()->json($response);
+    }
+
+    public function fetchDropboxFolder($folder_id,Request $request){
+
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $dropbox_auth = json_decode($user_detail->dropbox_auth,true);
+        $assessment_id = $request->input("assessment_id");
+        $drive_folders = dropbox_files_list($dropbox_auth);
+        
+        if(isset($drive_folders['dropbox_files'])){
+            $drive_folders = $drive_folders['dropbox_files'];
+        }else{
+            $drive_folders = array();
+        }
+        $viewData['pageTitle'] = "Dropbox Folders";
+        $viewData['drive_folders'] = $drive_folders;
+        $viewData['folder_id'] = $folder_id;
+        $viewData['assessment_id'] = $assessment_id;
+        $view = View::make(roleFolder().'.assessments.modal.dropbox-folder',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);  
+    }
+
+    public function dropboxFilesList(Request $request){
+        $folder_id = $request->input("folder_id");
+        $folder = $request->input("folder_name");
+        $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        $dropbox_auth = json_decode($user_detail->dropbox_auth,true);
+        $drive_folders = dropbox_files_list($dropbox_auth,$folder_id);
+        
+        if(isset($drive_folders['dropbox_files'])){
+            $drive_folders = $drive_folders['dropbox_files'];
+        }else{
+            $drive_folders = array();
+        }
+        // pre($drive_folders);
+        $viewData['drive_folders'] = $drive_folders;
+        $view = View::make(roleFolder().'.assessments.modal.dropbox-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);   
+    }
+
+    public function uploadFromDropbox(Request $request){
+        
+        if($request->input("files")){
+            $files = $request->input("files");
+            $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+            $dropbox_auth = json_decode($user_detail->dropbox_auth,true);
+            $folder_id = $request->input("folder_id");
+            $assessment_id = $request->input("assessment_id");
+            foreach($files as $key => $fileId){
+                $i = $key;
+                $fileinfo = explode(":::",$fileId);
+                $original_name = $fileinfo[1];
+                $file_path = $fileinfo[0];
+                $newName = time()."-".$original_name;
+                $path = userDir()."/documents";
+                $destinationPath = $path."/".$newName;
+                
+                $is_download = dropbox_file_download($dropbox_auth,$file_path,$destinationPath);
+
+                if(file_exists($destinationPath)){
+                    $unique_id = randomNumber();
+                    $object = new FilesManager();
+                    $object->file_name = $newName;
+                    $object->original_name = $original_name;
+                    $object->user_id = \Auth::user()->unique_id;
+                    $object->unique_id = $unique_id;
+                    $object->created_by = \Auth::user()->unique_id;
+                    $object->save();
+
+                    $object2 = new AssessmentDocuments();
+                    $object2->user_id = \Auth::user()->unique_id;
+                    $object2->assessment_id = $assessment_id;
+                    $object2->folder_id = $folder_id;
+                    $object2->file_id = $unique_id;
+                    $object2->added_by = \Auth::user()->unique_id;
+                    $object2->unique_id = randomNumber();
+                    $object2->save();
+                }
+            }
+            $response['status'] = true;
+            $response['message'] = 'File uploaded from google drive successfully!';
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = 'no_files';
+            $response['message'] = "No Files selected";
+        }
+        return response()->json($response);
+    }
+    
+    public function uploadDocuments(Request $request){
+        try{
+            $id = \Auth::user()->unique_id;
+            $folder_id = $request->input("folder_id");
+            $assessment_id = $request->input("assessment_id");
+            $failed_files = array();
+            if($file = $request->file('file'))
+            {
+                $fileName        = $file->getClientOriginalName();
+                $extension       = $file->getClientOriginalExtension();
+                $allowed_extension = allowed_extension();
+                if(in_array($extension,$allowed_extension)){
+                    $newName        = randomNumber(5)."-".$fileName;
+                    $source_url = $file->getPathName();
+                    $destinationPath = userDir()."/documents";
+                    if($file->move($destinationPath, $newName)){
+                        $unique_id = randomNumber();
+                        $object = new FilesManager();
+                        $object->file_name = $newName;
+                        $object->original_name = $fileName;
+                        $object->user_id = $id;
+                        $object->unique_id = $unique_id;
+                        $object->created_by = \Auth::user()->unique_id;
+                        $object->save();
+
+                        $object2 = new AssessmentDocuments();
+                        $object2->user_id = \Auth::user()->unique_id;
+                        $object2->assessment_id = $assessment_id;
+                        $object2->folder_id = $folder_id;
+                        $object2->file_id = $unique_id;
+                        $object2->added_by = \Auth::user()->unique_id;
+                        $object2->unique_id = randomNumber();
+                        $object2->save();
+                        $response['status'] = true;
+                        $response['message'] = 'File uploaded!';
+                    }else{
+                        $response['status'] = false;
+                        $response['message'] = 'File not uploaded!';
+                    }
+                }else{
+                    $response['status'] = false;
+                    $response['message'] = "File not allowed";
+                } 
+            }else{
+                $response['status'] = false;
+                $response['message'] = 'Please select the file';
+            }
+        } catch (Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+    
+    public function viewDocument($file_id,Request $request){
+        $url = $request->get("url");
+        $filename = $request->get("file_name");
+        $folder_id = $request->get("folder_id");
+        $ext = fileExtension($filename);
+        $subdomain = $request->get("p");
+
+        $viewData['url'] = $url;
+        $viewData['extension'] = $ext;
+        $viewData['document_id'] = $file_id;
+        $viewData['folder_id'] = $folder_id;
+        $viewData['pageTitle'] = "View Documents";
+        return view(roleFolder().'.assessments.view-documents',$viewData);
+    }
+    
+    public function deleteDocument($id){
+        $id = base64_decode($id);
+        AssessmentDocuments::deleteRecord($id);
+        return redirect()->back()->with("success","Document has been deleted!");
     }
 }
