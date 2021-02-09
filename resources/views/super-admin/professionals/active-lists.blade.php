@@ -6,7 +6,7 @@
   <!-- Page Header -->
   <div class="page-header">
     <div class="row align-items-end">
-      <div class="col-sm mb-2 mb-sm-0">
+      <div class="col-sm-6 mb-2 mb-sm-0">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
@@ -14,8 +14,12 @@
             <li class="breadcrumb-item active" aria-current="page">Overview</li>
           </ol>
         </nav>
-
         <h1 class="page-title">{{$pageTitle}}</h1>
+      </div>
+      <div class="col-sm-6 mb-2 mb-sm-0">
+        <div class="update_db_btn text-right">
+          <button type="button" onclick="showPopup('<?php echo baseUrl('professionals/update-all-databases') ?>')" class="btn btn-primary"><i class="fa fa-database"></i> Update All Database</button>
+        </div>
       </div>
 
       <div class="col-sm-auto">
@@ -154,6 +158,19 @@ $(document).ready(function(){
     if(!$(this).hasClass('disabled')){
       changePage('prev');
     }
+  });
+  $("#datatableCheckAll").change(function(){
+    if($(this).is(":checked")){
+      $(".row-checkbox").prop("checked",true);
+    }else{
+      $(".row-checkbox").prop("checked",false);
+    }
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").hide();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
   });
 })
 loadData();
@@ -344,6 +361,26 @@ function profileStatus(e){
         }
     });
   }
+}
+
+function updateAllDatabase(e){
+  var url = $(e).attr("data-href");
+  Swal.fire({
+      title: 'Are you sure to delete?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes',
+      confirmButtonClass: 'btn btn-primary',
+      cancelButtonClass: 'btn btn-danger ml-1',
+      buttonsStyling: false,
+    }).then(function(result) {
+      if(result.value){
+        redirect(url);
+      }
+    })
 }
 </script>
 @endsection

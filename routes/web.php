@@ -22,7 +22,8 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/login');
 });
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
+Route::get('/', [App\Http\Controllers\Frontend\FrontendController::class, 'index']);
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'welcome_page']);
 Route::get('/dbupgrade', [App\Http\Controllers\HomeController::class, 'dbupgrade']);
@@ -130,12 +131,46 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'update']);
         Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'search']); 
     });
+    Route::group(array('prefix' => 'assessments'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'getAjaxList']);
+        // Route::get('/add', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'add']);
+        // Route::post('/save', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'save']);
+        Route::get('/view/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'edit']);
+        // Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'update']);
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteSingle']);
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteMultiple']);
+        // Route::post('/payment-success', [App\Http\Controllers\SuperAdmin\TransactionController::class, 'assessmentPaymentSuccess']);
+        // Route::post('/payment-failed', [App\Http\Controllers\SuperAdmin\TransactionController::class, 'assessmentPaymentFailed']);
+        
+        Route::post('/documents/{ass_id}/{doc_id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'fetchDocuments']);
+        
+        Route::group(array('prefix' => 'files'), function () {
+            Route::post('/upload-documents', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'uploadDocuments']);
+            Route::get('/view-document/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'viewDocument']);
+            Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteDocument']);
+        });
+        
+        Route::group(array('prefix' => 'google-drive'), function () {
+            Route::post('/folder/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'fetchGoogleDrive']);
+            Route::post('/files-list', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'googleDriveFilesList']);
+            Route::post('/upload-from-gdrive', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'uploadFromGdrive']);
+        });
+        Route::group(array('prefix' => 'dropbox'), function () {
+            Route::post('/folder/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'fetchDropboxFolder']);
+            Route::post('/files-list', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'dropboxFilesList']);
+            Route::post('/upload-from-dropbox', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'uploadFromDropbox']);
+        });
+        
+    });
     Route::group(array('prefix' => 'professionals'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'activeProfessionals']);
         Route::post('/ajax-active', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getActiveList']);
         Route::get('/inactive', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'inactiveProfessionals']);
         Route::post('/ajax-inactive', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'getPendingList']);
-
+        Route::get('/update-all-databases', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'editAllDatabase']);
+        Route::post('/update-all-databases', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'updateAllDatabase']);
+        
         Route::post('/status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'changeStatus']);
         Route::post('/profile-status/{status}', [App\Http\Controllers\SuperAdmin\ProfessionalController::class, 'profileStatus']);
 

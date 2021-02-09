@@ -2,7 +2,7 @@
 <tr>
   <td class="table-column-pr-0">
     <div class="custom-control custom-checkbox">
-      <input type="checkbox" class="custom-control-input" id="row-{{$key}}">
+      <input type="checkbox" class="custom-control-input row-checkbox" id="row-{{$key}}">
       <label class="custom-control-label" for="row-{{$key}}"></label>
     </div>
   </td>

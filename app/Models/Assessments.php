@@ -23,6 +23,11 @@ class Assessments extends Model
     {
         return $this->belongsTo('App\Models\VisaServices','visa_service_id','unique_id');
     }
+    public function Client()
+    {
+        return $this->belongsTo('App\Models\User','user_id','unique_id');
+    }
+    
     public function AssessmentDocuments()
     {
         return $this->hasMany('App\Models\AssessmentDocuments','assessment_id','unique_id')->groupBy("created_by");

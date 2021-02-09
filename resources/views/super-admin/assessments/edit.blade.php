@@ -126,7 +126,7 @@
 
               <div class="col-sm-9">
                 <div class="js-form-message">
-                  <input type="text" class="form-control" name="case_name" id="validationFormCaseNameLabel" placeholder="Case Name" aria-label="Case Name" required data-msg="Please enter case name." value="{{$record->case_name}}">
+                  <input type="text" class="form-control" name="case_name" id="validationFormCaseNameLabel" placeholder="Case Name" aria-label="Case Name" required data-msg="Please enter case name." disabled value="{{$record->case_name}}">
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@
 
               <div class="col-sm-9">
                 <div class="js-form-message">
-                  <select name="visa_service_id" id="validationFormVisaServiceLabel" required data-msg="Please select visa service." class="form-control">
+                  <select name="visa_service_id" disabled id="validationFormVisaServiceLabel" required data-msg="Please select visa service." class="form-control">
                     <option value="">Select Visa Service</option>
                     @foreach($visa_services as $visa_service)
                     <option {{$record->visa_service_id == $visa_service->unique_id?'selected':''}} value="{{$visa_service->unique_id}}">{{$visa_service->name}}</option>
@@ -155,7 +155,7 @@
 
               <div class="col-sm-9">
                 <div class="js-form-message">
-                  <select name="case_type" id="validationFormCaseTypeLabel" required data-msg="Please select case type." class="form-control">
+                  <select name="case_type" disabled id="validationFormCaseTypeLabel" required data-msg="Please select case type." class="form-control">
                     <option value="">Select Case Type</option>
                     <option {{$record->case_type == 'new'?'selected':''}} value="new">New</option>
                     <option {{$record->case_type == 'previous'?'selected':''}} value="previous">Previous</option>
@@ -169,9 +169,15 @@
             <div class="d-flex align-items-center">
               <div class="ml-auto">
                 <!-- <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Next</button> -->
-                <button type="button" onclick="saveData('1')" class="btn btn-primary">
+                <button type="button" class="btn btn-primary"
+                  data-hs-step-form-next-options='{
+                    "targetSelector": "#validationFormPayment"
+                  }'>
                   Next <i class="tio-chevron-right"></i>
                 </button>
+                <!-- <button type="button" onclick="saveData('1')" class="btn btn-primary">
+                  Next <i class="tio-chevron-right"></i>
+                </button> -->
               </div>
             </div>
             <!-- End Footer -->
@@ -180,167 +186,8 @@
           <div id="validationFormPayment" class="{{($active_step == 2?'active':'')}}" style="display:{{($active_step != 2?'none':'')}};" class="active" >
             <div class="row">
               @if($record->Invoice->payment_status != 'paid')
-              <div class="col-3">
-                <div class="card mb-3 mb-lg-5">
-                  <div class="card-body">
-                    <div class="text-left">
-                      <ul class="list-checked list-checked-primary nav nav-pills payment-option mb-7 list-unstyled list-unstyled-py-4" role="tablist">
-                        <li class="nav-item">
-                          <a class="nav-link active" id="credit-debit-card-tab" data-toggle="pill" href="#credit-debit-card" role="tab" aria-controls="credit-debit-card" aria-selected="true">Credit/Debit Card</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="netbanking-tab" data-toggle="pill" href="#netbanking" role="tab" aria-controls="netbanking" aria-selected="false">Netbanking</a>
-                        </li>
-                        <li class="nav-item">
-                          <a class="nav-link" id="wallet-tab" data-toggle="pill" href="#wallet" role="tab" aria-controls="wallet" aria-selected="false">Wallet</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-9">
-                <div class="tab-content">
-                  <div class="col-sm mb-2 mb-sm-0 text-right">
-                    <h3><span class="font-weight-bold text-danger">Pay: </span>{{currencyFormat($pay_amount)}}</h3>
-                  </div>
-                  <div class="tab-pane fade show active" id="credit-debit-card" role="tabpanel" aria-labelledby="credit-debit-card-tab">
-                    <div class="card mb-3 mb-lg-5">
-                        <div class="card-header">
-                          <h4 class="card-header-title"> Credit or Debit Card</h4>
-                        </div>
-                        <div class="card-body">
-                          <div id="razorCardForm" name="razorCardForm">
-                              @csrf
-                              <input type="hidden" name="payment_type" value="credit_debit_card" />
-                           
-                              <div class="form-group js-form-message">
-                                <label for="cardNameLabel" class="input-label">Name on card</label>
-                                <input type="text" data-msg="Please enter card holder name" class="form-control" id="cardNameLabel" name="card_holder_name" placeholder="Name on the Card" aria-label="Payoneer">
-                              </div>
-                             
-                              <div class="form-group js-form-message">
-                                <label for="email" class="input-label">Email</label>
-                                <input type="email" data-msg="Please enter email" class="form-control" id="email" name="email" placeholder="Email" aria-label="Email" value="{{Auth::user()->email}}">
-                              </div>
-                             
-                              <div class="form-group js-form-message">
-                                <label for="mobile_no" class="input-label">Mobile No.</label>
-                                <input type="text" data-msg="Please enter mobile number" class="form-control" id="mobile_no" name="mobile_no" placeholder="Mobile No." aria-label="Mobile No." value="{{Auth::user()->phone_no}}">
-                              </div>
-                             
-                              <div class="form-group js-form-message">
-                                <label for="cardNumberLabel" class="input-label">Card number</label>
-                                <input type="text" data-msg="Please enter card number" class="js-masked-input form-control" name="card_number" id="cardNumberLabel" placeholder="xxxx xxxx xxxx xxxx" aria-label="xxxx xxxx xxxx xxxx"
-                                       data-hs-mask-options='{
-                                        "template": "0000 0000 0000 0000"
-                                      }'>
-                              </div>
-                             
-                              <div class="row">
-                                <div class="col-sm-6">
-                                  <div class="form-group js-form-message">
-                                    <label for="expirationDateLabel" class="input-label">Expiration date</label>
-                                    <input type="text" data-msg="Please enter expiry date" class="js-masked-input form-control" name="expire_date" id="expirationDateLabel" placeholder="xx/xxxx" aria-label="xx/xxxx"
-                                           data-hs-mask-options='{
-                                            "template": "00/0000"
-                                          }'>
-                                  </div>
-                                </div>
-                                <div class="col-sm-6">
-                                  <!-- Form Group -->
-                                  <div class="form-group js-form-message">
-                                    <label for="securityCodeLabel" class="input-label">CVV Code <i class="far fa-question-circle text-body ml-1" data-toggle="tooltip" data-placement="top" title="A 3 - digit number, typically printed on the back of a card."></i></label>
-                                    <input type="text" data-msg="Please enter cvv" class="js-masked-input form-control" name="cvv" id="securityCodeLabel" placeholder="xxx" aria-label="xxx"
-                                           data-hs-mask-options='{
-                                            "template": "000"
-                                          }'>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="d-flex justify-content-end">
-                                <button type="button" id="razorCardBtn" class="btn btn-primary">Pay Now</button>
-                              </div>
-                          </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="tab-pane fade" id="netbanking" role="tabpanel" aria-labelledby="netbanking-tab">
-                    <div class="card mb-3 mb-lg-5">
-                      <div class="card-header">
-                        <h4 class="card-header-title"> Netbanking</h4>
-                      </div>
-                      <div class="card-body">
-                        <div id="razorBankForm" name="razorBankForm">
-                            @csrf
-                            <input type="hidden" name="payment_type" value="netbanking" />
-                         
-                           
-                            <div class="form-group js-form-message">
-                              <label for="email" class="input-label">Email</label>
-                              <input type="email" data-msg="Please enter email" class="form-control" id="nb_email" name="email" placeholder="Email" aria-label="Email" value="{{Auth::user()->email}}">
-                            </div>
-                           
-                            <div class="form-group js-form-message">
-                              <label for="mobile_no" class="input-label">Mobile No.</label>
-                              <input type="text" data-msg="Please enter mobile number" class="form-control" id="nb_mobile_no" name="mobile_no" placeholder="Mobile No." aria-label="Mobile No." value="{{Auth::user()->phone_no}}">
-                            </div>
-                            
-                            <div class="form-group js-form-message">
-                              <label for="netbanking" class="input-label">Select Bank</label>
-                              <select class="form-control" name="netbanking" id="bankname">
-                                <option value="">Select Bank</option>
-                                @foreach(bankList() as $bank)
-                                    <option value="{{ $bank->code }}">{{ $bank->name }}</option>
-                                @endforeach
-                              </select>
-                            </div>
-                           
-                            <div class="d-flex justify-content-end">
-                              <button type="button" id="razorBankBtn" class="btn btn-primary">Pay Now</button>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
-                    <div class="card mb-3 mb-lg-5">
-                      <div class="card-header">
-                        <h4 class="card-header-title">Wallet</h4>
-                      </div>
-                      <div class="card-body">
-                        <div id="razorWalletForm" name="razorWalletForm">
-                            @csrf
-                            <input type="hidden" name="payment_type" value="wallet" />
-                            <div class="form-group js-form-message">
-                              <label for="wl_email" class="input-label">Email</label>
-                              <input type="email" data-msg="Please enter email" class="form-control" id="wl_email" name="email" placeholder="Email" aria-label="Email" value="{{Auth::user()->email}}">
-                            </div>
-                           
-                            <div class="form-group js-form-message">
-                              <label for="wl_mobile_no" class="input-label">Mobile No.</label>
-                              <input type="text" data-msg="Please enter mobile number" class="form-control" id="wl_mobile_no" name="mobile_no" placeholder="Mobile No." aria-label="Mobile No." value="{{Auth::user()->phone_no}}">
-                            </div>
-                            
-                            <div class="form-group js-form-message">
-                              <label for="wallet_selected" class="input-label">Select Wallet</label>
-                              <select class="form-control" name="wallet" id="wallet_selected">
-                                <option value="">Select Wallet</option>
-                                @foreach(walletList() as $wallet)
-                                    <option value="{{ $wallet->code }}">{{ $wallet->name }}</option>
-                                @endforeach
-                              </select>
-                            </div>
-                           
-                            <div class="d-flex justify-content-end">
-                              <button type="button" id="razorWalletBtn" class="btn btn-primary">Pay Now</button>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>                
+              <div class="col-12">
+                <div class="text-danger">Payment Pending</div>
               </div>
               @else
               <div class="col-sm mb-2 mb-sm-0 text-center">
@@ -358,8 +205,7 @@
                      "targetSelector": "#validationFormCaseInfo"
                    }'>
                   <i class="tio-chevron-left"></i> Previous step
-                </button>
-        @if($record->Invoice->payment_status == 'paid')    
+                </button>    
                 <div class="ml-auto">
                   <button type="button" class="btn btn-primary"
                           data-hs-step-form-next-options='{
@@ -368,7 +214,6 @@
                     Next <i class="tio-chevron-right"></i>
                   </button>
                 </div>
-        @endif
               </div>
             <!-- End Footer -->
           </div>
@@ -434,7 +279,7 @@
 
               <div class="col-sm-9">
                 <div class="js-form-message">
-                  <textarea class="form-control" rowspan="5" name="additional_comment" id="additional_comment" placeholder="Additional Comment" aria-label="Additional Comment">{{$record->additional_comment}}</textarea>
+                  <textarea disabled class="form-control" rowspan="5" name="additional_comment" id="additional_comment" placeholder="Additional Comment" aria-label="Additional Comment">{{$record->additional_comment}}</textarea>
                 </div>
               </div>
             </div>

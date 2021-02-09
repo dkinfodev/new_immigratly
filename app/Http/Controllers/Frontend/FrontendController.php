@@ -11,7 +11,9 @@ use DB;
 use Razorpay\Api\Api;
 use Image;
 use View;
-
+use App\Models\Articles;
+use App\Models\News;
+use App\Models\Professionals;
 
 class FrontendController extends Controller
 {
@@ -25,7 +27,19 @@ class FrontendController extends Controller
         
     }
 
-    
+    public function index(){
+
+     $articles = Articles::get();
+     $news = News::get();
+     $professionals = Professionals::get();
+
+     $viewData['professionals'] = $professionals;
+     $viewData['articles'] = $articles;   
+     $viewData['news'] = $news;   
+     $viewData['pageTitle'] = "Home Page";   
+     return view('frontend.index',$viewData);
+     
+    }	
 
     
 }

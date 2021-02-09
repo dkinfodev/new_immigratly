@@ -10,27 +10,22 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb breadcrumb-no-gutter">
             <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a class="breadcrumb-link" href="{{ baseUrl('/professionals') }}">Professionals</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Overview</li>
+            <li class="breadcrumb-item active" aria-current="page">{{$pageTitle}}</li>
           </ol>
         </nav>
 
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
 
-      <!-- <div class="col-sm-auto">
-        <a class="btn btn-primary" href="users-add-user.html">
-          <i class="tio-user-add mr-1"></i> Add user
+      <div class="col-sm-auto">
+        <a class="btn btn-primary" href="{{(baseUrl('user/add'))}}">
+          <i class="tio-user-add mr-1"></i> Add
         </a>
-      </div> -->
+      </div>
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
-
-  <!-- Stats -->
-  @include(roleFolder().".professionals.professional_count")
-  <!-- End Stats -->
 
   <!-- Card -->
   <div class="card">
@@ -46,7 +41,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search users" aria-label="Search users">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search " aria-label="Search">
             </div>
             <!-- End Search -->
           </form>
@@ -61,7 +56,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('user/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -78,21 +73,21 @@
       <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
         <thead class="thead-light">
           <tr>
-            <th class="table-column-pr-0">
+            <th scope="col" class="table-column-pr-0">
               <div class="custom-control custom-checkbox">
                 <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
                 <label class="custom-control-label" for="datatableCheckAll"></label>
               </div>
             </th>
-            <th class="table-column-pl-0">Name</th>
-            <th>Email</th>
-            <th>Contact Number</th>
-            <th>Profile Status</th>
-            <th></th>
+            <th scope="col" class="table-column-pl-0" style="min-width: 15rem;">Name</th>
+            <th scope="col" >Email</th>
+            <th scope="col">phone no</th>
+            <th scope="col">Status</th>
+            <th scope="col">action</th>
           </tr>
         </thead>
         <tbody>
-        </tbody>
+        </tbody>  
       </table>
     </div>
     <!-- End Table -->
@@ -154,6 +149,15 @@ $(document).ready(function(){
       changePage('prev');
     }
   });
+  $("#datatableSearch").keyup(function(){
+    var value = $(this).val();
+    if(value == ''){
+      loadData();
+    }
+    if(value.length > 3){
+      loadData();
+    }
+  });
   $("#datatableCheckAll").change(function(){
     if($(this).is(":checked")){
       $(".row-checkbox").prop("checked",true);
@@ -167,14 +171,17 @@ $(document).ready(function(){
     }
     $("#datatableCounter").html($(".row-checkbox:checked").length);
   });
+
 })
 loadData();
 function loadData(page=1){
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/professionals/ajax-inactive?page='+page,
+        url: BASEURL + '/user/ajax-list?page='+page,
         data:{
-            _token:csrf_token
+            _token:csrf_token,
+            search:search
         },
         dataType:'json',
         beforeSend:function(){
@@ -239,7 +246,7 @@ function confirmDelete(id){
       if (result.value) {
         $.ajax({
             type: "POST",
-            url: BASEURL + '/professionals/delete-user',
+            url: BASEURL + '/user/delete-user',
             data:{
                 _token:csrf_token,
                 user_id:id,
@@ -247,10 +254,10 @@ function confirmDelete(id){
             dataType:'json',
             success: function (result) {
                 if(result.status == true){
-                    Swal.fire({
+                    Swal.fire({   
                         type: "success",
                         title: 'Deleted!',
-                        text: 'Your file has been deleted.',
+                        text: 'User has been deleted.',
                         confirmButtonClass: 'btn btn-success',
                     }).then(function () {
 
@@ -276,7 +283,51 @@ function changeStatus(e){
   if($(e).is(":checked")){
     $.ajax({
         type: "POST",
-        url: BASEURL + '/professionals/status/active',
+        url: BASEURL + '/user/status/active',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+    });
+  }else{
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/user/status/inactive',
+        data:{
+            _token:csrf_token,
+            id:id,
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+        error: function(){
+          internalError();
+        }
+    });
+  }
+}
+
+function profileStatus(e){
+  var id = $(e).attr("data-id");
+  if($(e).is(":checked")){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/user/profile-status/active',
         data:{
             _token:csrf_token,
             id:id,
@@ -293,7 +344,7 @@ function changeStatus(e){
   }else{
     $.ajax({
         type: "POST",
-        url: BASEURL + '/professionals/status/inactive',
+        url: BASEURL + '/user/profile-status/inactive',
         data:{
             _token:csrf_token,
             id:id,

@@ -38,12 +38,18 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Staff</span>
                   </a>
                 </li>
-                <!-- <li class="navbar-vertical-aside-has-menu ">
+                <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/user') }}">
                     <i class="tio-user-outlined nav-icon"></i>
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">User</span>
                   </a>
-                </li> -->
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/assessments') }}" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Assessments</span>
+                  </a>
+                </li>
                 <!-- Accounts -->
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ baseUrl('/professionals') }}">

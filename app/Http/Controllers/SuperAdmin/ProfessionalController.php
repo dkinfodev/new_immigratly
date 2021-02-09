@@ -205,4 +205,46 @@ class ProfessionalController extends Controller
         
         return response()->json($response);
     }
+
+    public function editAllDatabase(){
+        $viewData['pageTitle'] = "Upgrade all database";
+        $view = View::make(roleFolder().'.professionals.modal.update-db',$viewData);
+        
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+
+    public function updateAllDatabase(Request $request){
+        try{
+            $records = Professionals::where('subdomain',"!=","fastzone")->get();
+            foreach($records as $record){
+                $database = PROFESSIONAL_DATABASE.$record->subdomain;
+
+                $url = url('/replicate-db.php?database='.$database);
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                   'Content-Type: application/json',
+                ));
+                curl_setopt($ch, CURLOPT_POST, 1);
+                // curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                
+                $return = curl_exec($ch);
+                
+                $info = curl_getinfo($ch);
+                curl_close($ch);
+                $curl_response = json_decode($return,true);
+
+                $response['status'] = true;
+                $response['message'] = $curl_response['html'];
+            }
+            return $response;
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
 }
