@@ -42,8 +42,7 @@
             data-hs-step-form-options='{
               "progressSelector": "#validationFormProgress",
               "stepsSelector": "#validationFormContent",
-              "endSelector": "#validationFormFinishBtn",
-              "isValidate": true
+              "endSelector": "#validationFormFinishBtn"
             }'>
             @csrf
         <!-- Step -->
@@ -295,7 +294,7 @@
                 </button>
         
                 <div class="ml-auto">
-                  <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Save Changes</button>
+                  <!-- <button id="validationFormFinishBtn" type="button" class="btn btn-primary">Save Changes</button> -->
                 </div>
               </div>
             <!-- End Footer -->
