@@ -813,6 +813,17 @@ if(!function_exists("professionalProfile")){
         return $url;
     }
 }
+if(!function_exists("professionalDetail")){
+    function professionalDetail($domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        
+        $user = DB::table(PROFESSIONAL_DATABASE.$domain.".professional_details")->first();
+        
+        return $user;
+    }
+}
 if(!function_exists("professionalLogo")){
     function professionalLogo($size='r',$domain = ''){
         if($domain == ''){

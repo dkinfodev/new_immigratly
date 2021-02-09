@@ -34,9 +34,10 @@
       </a>
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
-        <a class="dropdown-item" href="{{baseUrl('assessments/view/'.$record->unique_id)}}">View Assessment</a>
+        <a class="dropdown-item" href="{{baseUrl('assessments/view/'.$record->unique_id)}}"><i class="tio-comment-text-outlined"></i> View Assessment</a>
+        <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('assessments/view/'.$record->unique_id) ?>')"><i class="tio-user"></i> Assign to Professioanal</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('assessments/delete/'.base64_encode($record->id))}}">Delete</a> 
+        <!-- <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('assessments/delete/'.base64_encode($record->id))}}">Delete</a>  -->
       </div>
     </div>
   </td>

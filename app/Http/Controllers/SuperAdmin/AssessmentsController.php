@@ -28,8 +28,14 @@ class AssessmentsController extends Controller
     }
 
     public function getAjaxList(Request $request)
-    {
+    {   
+        $search = $request->input("search");
         $records = Assessments::with(['Client'])
+                                ->where(function($query) use($search){
+                                    if($search != ''){
+                                        $query->where("case_name","LIKE","%$search%");
+                                    }
+                                })
                                 ->orderBy('id',"desc")
                                 ->paginate();
 
@@ -505,5 +511,16 @@ class AssessmentsController extends Controller
         $id = base64_decode($id);
         AssessmentDocuments::deleteRecord($id);
         return redirect()->back()->with("success","Document has been deleted!");
+    }
+
+    public function assignToProfessional($id,Request $request){
+        $id = $request->input("id");
+        $professionals = Professionals::get();
+        $viewData['professionals'] = $professionals;
+        $view = View::make(roleFolder().'.assessments.modal.professionals',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);   
     }
 }

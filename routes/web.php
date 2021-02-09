@@ -140,6 +140,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         // Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'update']);
         Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteSingle']);
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteMultiple']);
+        Route::get('/assign-to-professional/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'assignToProfessional']);
         // Route::post('/payment-success', [App\Http\Controllers\SuperAdmin\TransactionController::class, 'assessmentPaymentSuccess']);
         // Route::post('/payment-failed', [App\Http\Controllers\SuperAdmin\TransactionController::class, 'assessmentPaymentFailed']);
         

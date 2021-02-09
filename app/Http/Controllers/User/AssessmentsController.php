@@ -29,9 +29,15 @@ class AssessmentsController extends Controller
 
     public function getAjaxList(Request $request)
     {
+        $search = $request->input("search");
         $records = Assessments::orderBy('id',"desc")
-                                    ->where("user_id",\Auth::user()->unique_id)
-                                    ->paginate();
+                                ->where(function($query) use($search){
+                                    if($search != ''){
+                                        $query->where("case_name","LIKE","%$search%");
+                                    }
+                                })
+                            ->where("user_id",\Auth::user()->unique_id)
+                            ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.assessments.ajax-list',$viewData);
         $contents = $view->render();

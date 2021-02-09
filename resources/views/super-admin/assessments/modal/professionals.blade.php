@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+<div class="modal-dialog modal-lg" role="document">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title" id="staticBackdropLabel">{{$pageTitle}}</h5>
@@ -8,24 +8,22 @@
     </div>
     <div class="modal-body">
       <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/services/add-folder/'.$service_id) }}">  
-          @csrf
-          <!-- Form Group -->
-          <div class="row form-group js-form-message">
-            <label class="col-sm-3 col-form-label input-label">Name</label>
-            <div class="col-sm-9">
-              <div class="input-group input-group-sm-down-break">
-                <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" id="name" placeholder="Enter folder name" aria-label="Enter folder name" >
-                @error('name')
-                <span class="invalid-feedback" role="alert">
-                  <strong>{{ $message }}</strong>
-                </span>
-                @enderror
-              </div>
+        @csrf
+        <div class="row">
+          @foreach($professionals as $key=>$prof)
+            <div class="col-md-4">
+                <div class="card">
+                  <div class="card-image">
+                    <img class="img-fluid w-100 rounded-lg" src="{{professionalLogo($prof->subdomain)}}" alt="Image Description">
+                  </div>
+                  <div class="card-footer">
+                      <h3>{{professionalDetail($prof->subdomain)->company_name}}</h3>
+                  </div>
+                </div>
             </div>
-          </div>
-          <!-- End Form Group -->
-
-        </form>
+          @endforeach
+        </div>    
+      </form>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
