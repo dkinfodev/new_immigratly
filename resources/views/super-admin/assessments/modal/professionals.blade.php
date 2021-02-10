@@ -1,4 +1,9 @@
-<div class="modal-dialog modal-lg" role="document">
+<style type="text/css">
+.professional-card {
+    border: 1px solid #d4c7c7;
+}
+</style>
+<div class="modal-dialog modal-xl" role="document">
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title" id="staticBackdropLabel">{{$pageTitle}}</h5>
@@ -7,27 +12,39 @@
       </button>
     </div>
     <div class="modal-body">
-      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/services/add-folder/'.$service_id) }}">  
+      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/assessments/assign-to-professional/'.$assessment->unique_id) }}">  
         @csrf
         <div class="row">
+          <div class="col-md-12 mb-3">
+            <h3>Select Professional to assign assessment:</h3>
+          </div>
           @foreach($professionals as $key=>$prof)
+          <?php 
+          $company_data = professionalDetail($prof->subdomain);
+          
+          ?>
+            @if(!empty($company_data))
             <div class="col-md-4">
-                <div class="card">
+                <div class="card mb-4 professional-card">
                   <div class="card-image">
-                    <img class="img-fluid w-100 rounded-lg" src="{{professionalLogo($prof->subdomain)}}" alt="Image Description">
+                    <img class="img-fluid w-100 rounded-lg" src="{{professionalLogo('m',$prof->subdomain)}}" alt="Image Description">
                   </div>
-                  <div class="card-footer">
-                      <h3>{{professionalDetail($prof->subdomain)->company_name}}</h3>
+                  <div class="card-footer text-center">
+                      <div class="custom-control custom-radio">
+                        <input type="radio" value="{{$prof->subdomain}}" id="customRadio-{{$key}}" class="custom-control-input" name="professional">
+                        <label class="custom-control-label" for="customRadio-{{$key}}"><h3>{{ $company_data->company_name }}</h3></label>
+                      </div>
                   </div>
                 </div>
             </div>
+            @endif
           @endforeach
         </div>    
       </form>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-      <button form="popup-form" class="btn btn-primary">Save</button>
+      <button form="popup-form" class="btn btn-primary">Assign</button>
     </div>
   </div>
 </div>
@@ -53,15 +70,8 @@
                   closeModal();
                   location.reload();
                 }else{
-                  $.each(response.message, function (index, value) {
-                      $("*[name="+index+"]").parents(".js-form-message").find("#"+index+"-error").remove();
-                      $("*[name="+index+"]").parents(".js-form-message").find(".form-control").removeClass('is-invalid');
-                      
-                      var html = '<div id="'+index+'-error" class="invalid-feedback">'+value+'</div>';
-                      $("*[name="+index+"]").parents(".js-form-message").append(html);
-                      $("*[name="+index+"]").parents(".js-form-message").find(".form-control").addClass('is-invalid');
-                  });
-                  // errorMessage(response.message);
+                  validation(response.message);
+                  
                 }
               },
               error:function(){

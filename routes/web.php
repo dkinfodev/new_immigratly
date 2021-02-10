@@ -133,6 +133,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
     });
     Route::group(array('prefix' => 'assessments'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'index']);
+        Route::get('/assigned', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'assigned']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'getAjaxList']);
         // Route::get('/add', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'add']);
         // Route::post('/save', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'save']);
@@ -141,6 +142,7 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteSingle']);
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'deleteMultiple']);
         Route::get('/assign-to-professional/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'assignToProfessional']);
+        Route::post('/assign-to-professional/{id}', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'assignAssessment']);
         // Route::post('/payment-success', [App\Http\Controllers\SuperAdmin\TransactionController::class, 'assessmentPaymentSuccess']);
         // Route::post('/payment-failed', [App\Http\Controllers\SuperAdmin\TransactionController::class, 'assessmentPaymentFailed']);
         

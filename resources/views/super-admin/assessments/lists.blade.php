@@ -26,7 +26,7 @@
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
-
+@include(roleFolder().".assessments.assessment-count")
   <!-- Card -->
   <div class="card">
     <!-- Header -->
@@ -85,6 +85,9 @@
               <th scope="col" class="table-column-pl-0">Visa Service</th>
               <th scope="col" class="table-column-pl-0">Price</th>
               <th scope="col" class="table-column-pl-0">Payment Status</th>
+              @if($assigned == 1)
+              <th scope="col" class="table-column-pl-0">Assigned To Professional</th>
+              @endif
               <th scope="col">Action</th>
             </tr>
           </thead>
@@ -161,7 +164,8 @@ function loadData(page=1){
         url: BASEURL + '/assessments/ajax-list?page='+page,
         data:{
             _token:csrf_token,
-            search:search
+            search:search,
+            assigned:"{{$assigned}}"
         },
         dataType:'json',
         beforeSend:function(){

@@ -15,6 +15,7 @@ use App\Models\VisaServices;
 use App\Models\DocumentFolder;
 use App\Models\UserDetails;
 use App\Models\FilesManager;
+use App\Models\Professionals;
 
 class AssessmentsController extends Controller
 {
@@ -24,13 +25,34 @@ class AssessmentsController extends Controller
     }
     public function index(Request $request){
         $viewData['pageTitle'] = "Assessments";
+        $viewData['assigned'] = 0;
+        $assigned_count = Assessments::where('professional_assigned',"1")->count();
+        $new_count = Assessments::where('professional_assigned',"0")->count();        
+        $total_assessments = $assigned_count + $new_count;
+        $viewData['assigned_count'] = $assigned_count;
+        $viewData['new_count'] = $new_count;
+        $viewData['total_assessments'] = $total_assessments;
+        return view(roleFolder().'.assessments.lists',$viewData);
+    }
+
+    public function assigned(Request $request){
+        $viewData['pageTitle'] = "Assigned Assessments";
+        $viewData['assigned'] = 1;
+        $assigned_count = Assessments::where('professional_assigned',"1")->count();
+        $new_count = Assessments::where('professional_assigned',"0")->count();        
+        $total_assessments = $assigned_count + $new_count;
+        $viewData['assigned_count'] = $assigned_count;
+        $viewData['new_count'] = $new_count;
+        $viewData['total_assessments'] = $total_assessments;
         return view(roleFolder().'.assessments.lists',$viewData);
     }
 
     public function getAjaxList(Request $request)
     {   
         $search = $request->input("search");
+        $assigned = $request->input("assigned");
         $records = Assessments::with(['Client'])
+                                ->where("professional_assigned",$assigned)
                                 ->where(function($query) use($search){
                                     if($search != ''){
                                         $query->where("case_name","LIKE","%$search%");
@@ -40,6 +62,7 @@ class AssessmentsController extends Controller
                                 ->paginate();
 
         $viewData['records'] = $records;
+        $viewData['assigned'] = $assigned;
         $view = View::make(roleFolder().'.assessments.ajax-list',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
@@ -514,13 +537,39 @@ class AssessmentsController extends Controller
     }
 
     public function assignToProfessional($id,Request $request){
-        $id = $request->input("id");
+
+        $assessment = Assessments::where("unique_id",$id)->first();
+        $viewData['assessment'] = $assessment;
         $professionals = Professionals::get();
         $viewData['professionals'] = $professionals;
+        $viewData['pageTitle'] = "Professioanls";
         $view = View::make(roleFolder().'.assessments.modal.professionals',$viewData);
         $contents = $view->render();
         $response['contents'] = $contents;
         $response['status'] = true;
         return response()->json($response);   
     }
+
+    public function assignAssessment($assessment_id,Request $request){
+        $object = Assessments::where("unique_id",$assessment_id)->first();
+        $object->professional_assigned = 1;
+        $object->professional = $request->input("professional");
+        $object->save();
+
+        $assessment = Assessments::with('AssessmentDocuments')->where("unique_id",$assessment_id)->first();
+
+        $apiData['created_by'] = \Auth::user()->unique_id;
+        $apiData['assessment'] = $assessment;
+        $subdomain = $request->input("professional");
+        $api_response = professionalCurl('cases/add-assessment-case',$subdomain,$apiData);
+        if($api_response['status'] == 'success'){
+            $response['status'] = true;
+            $response['message'] = "Assessment assigned to professional";
+        }else{
+            $response['status'] = false;
+            $response['message'] = "Assessment assigned failed, try again";
+        }
+        return response()->json($response);
+    }   
+
 }

@@ -667,7 +667,7 @@ if(!function_exists("professionalCurl")){
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
         $response = curl_exec($ch);
-
+        // echo $response;
         $info = curl_getinfo($ch);
         curl_close($ch);
         $curl_response = json_decode($response,true);
@@ -818,10 +818,16 @@ if(!function_exists("professionalDetail")){
         if($domain == ''){
             $domain = \Session::get("subdomain");
         }
-        
-        $user = DB::table(PROFESSIONAL_DATABASE.$domain.".professional_details")->first();
-        
-        return $user;
+        $database = PROFESSIONAL_DATABASE.$domain;
+        $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
+        $db = DB::select($query, [$database]);
+
+        if (!empty($db)) {
+            $user = DB::table($database.".professional_details")->first();
+            return $user;
+        }else{
+            return array();
+        }
     }
 }
 if(!function_exists("professionalLogo")){
@@ -829,7 +835,6 @@ if(!function_exists("professionalLogo")){
         if($domain == ''){
             $domain = \Session::get("subdomain");
         }
-        
         $user = DB::table(PROFESSIONAL_DATABASE.$domain.".professional_details")->first();
         $profile_image = $user->company_logo;
         $profile_dir = professionalDir($domain)."/profile/".$profile_image;

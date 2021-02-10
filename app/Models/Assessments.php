@@ -30,7 +30,7 @@ class Assessments extends Model
     
     public function AssessmentDocuments()
     {
-        return $this->hasMany('App\Models\AssessmentDocuments','assessment_id','unique_id')->groupBy("created_by");
+        return $this->hasMany('App\Models\AssessmentDocuments','assessment_id','unique_id')->with("FileDetail");
     }
     public function Invoice()
     {

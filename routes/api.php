@@ -72,6 +72,7 @@ Route::group(array('middleware' => 'professional_curl'), function () {
 			Route::post('/view-case-invoice', [App\Http\Controllers\Api\ProfessionalApiController::class, 'viewCaseInvoice']);
 			Route::post('/fetch-invoice', [App\Http\Controllers\Api\ProfessionalApiController::class, 'fetchInvoice']);			
 			Route::post('/send-invoice-data', [App\Http\Controllers\Api\ProfessionalApiController::class, 'sendInvoiceData']);			
+			Route::post('/add-assessment-case', [App\Http\Controllers\Api\ProfessionalApiController::class, 'addAssessmentCase']);
 		});	
 	});	
 });

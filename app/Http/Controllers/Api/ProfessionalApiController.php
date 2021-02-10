@@ -22,7 +22,7 @@ use App\Models\Invoices;
 use App\Models\CaseInvoices;
 use App\Models\CaseInvoiceItems;
 use App\Models\ProfessionalDetails;
-
+use App\Models\AssessmentCase;
 class ProfessionalApiController extends Controller
 {
     var $subdomain;
@@ -750,6 +750,80 @@ class ProfessionalApiController extends Controller
             $data['services'] = $services;
             $response['status'] = 'success';
             $response['data'] = $data;  
+        } catch (Exception $e) {
+            $response['status'] = "error";
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response); 
+    }
+
+    public function addAssessmentCase(Request $request){
+        try{
+            $postData = $request->input();
+            $request->request->add($postData);
+            $unique_id = randomNumber();
+            $created_by = $request->input("created_by");
+            $assessment = $request->input("assessment");
+            $check_assessment = AssessmentCase::where("assessment_id",$assessment['unique_id'])->first();
+
+            if(!empty($check_assessment)){
+                $object = Cases::where("unique_id",$check_assessment->case_id)->first();
+            }else{
+                $object = new Cases();
+                $object->unique_id = $unique_id;
+            }
+            
+            $object->case_title = $assessment['case_name'];
+            $object->visa_service_id = $assessment['visa_service_id'];
+            $object->client_id = $assessment['user_id'];
+            $object->save();
+
+            if(!empty($check_assessment)){
+                $ass_object = AssessmentCase::where("assessment_id",$check_assessment->assessment_id)->first();
+            }else{
+                $ass_object = new AssessmentCase();
+            }
+            $ass_object->case_id = $unique_id;
+            $ass_object->assessment_id = $assessment['unique_id'];
+            $ass_object->client_id = $assessment['user_id'];
+            $ass_object->save();
+
+            $documents = $assessment['assessment_documents'];
+            foreach($documents as $ass_document){
+                $document = Documents::where("shared_id",$ass_document['file_id'])->first();
+                if(!empty($document)){
+                    $document_id = $document->unique_id;
+                }else{
+                    $file = $ass_document['file_detail'];
+                    $source = userDir($file['user_id'])."/documents/".$file['file_name'];
+                    $new_name = randomNumber(5)."-".$file['original_name'];
+                    $destination = professionalDir($this->subdomain)."/documents/".$new_name;
+                    
+                    copy($source, $destination);
+                    $document_id = randomNumber();
+                    $object = new Documents();
+                    $object->file_name = $new_name;
+                    $object->original_name = $file['original_name'];
+                    $object->unique_id = $document_id;
+                    $object->is_shared = 1;
+                    $object->shared_id = $file['unique_id'];
+                    $object->created_by = $created_by;
+
+                    $object->save();
+                    
+                }
+                $object2 = new CaseDocuments();
+                $object2->case_id = $unique_id;
+                $object2->unique_id = randomNumber();
+                $object2->folder_id = $ass_document['folder_id'];
+                $object2->file_id = $document_id;
+                $object2->added_by = 'client';
+                $object2->created_by = $created_by;
+                $object2->document_type = "default";
+                $object2->save();
+            }
+            $response['status'] = "success";
+            $response['message'] = "Case created successfully";
         } catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();

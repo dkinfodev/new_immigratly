@@ -23,6 +23,18 @@
         <span class="badge badge-danger">{{$record->Invoice->payment_status}}</span>
     @endif
   </td>
+  @if($assigned == 1 && $record->professional != '')
+    <?php
+      $company_data = professionalDetail($record->professional);
+      if(!empty($company_data)){
+    ?>
+      <td class="table-column-pl-0">
+          {{$company_data->company_name}}
+      </td>
+    <?php
+      }
+    ?>
+  @endif
   <td class="table-column-pl-0">
     <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
@@ -35,7 +47,7 @@
 
       <div id="action-{{$key}}" class="hs-unfold-content dropdown-unfold dropdown-menu dropdown-menu-sm dropdown-menu-right">
         <a class="dropdown-item" href="{{baseUrl('assessments/view/'.$record->unique_id)}}"><i class="tio-comment-text-outlined"></i> View Assessment</a>
-        <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('assessments/view/'.$record->unique_id) ?>')"><i class="tio-user"></i> Assign to Professioanal</a>
+        <a class="dropdown-item" href="javascript:;" onclick="showPopup('<?php echo baseUrl('assessments/assign-to-professional/'.$record->unique_id) ?>')"><i class="tio-user"></i> Assign to Professioanal</a>
         <div class="dropdown-divider"></div>
         <!-- <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('assessments/delete/'.base64_encode($record->id))}}">Delete</a>  -->
       </div>
