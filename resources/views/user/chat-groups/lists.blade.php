@@ -80,6 +80,7 @@
               </div>
             </th>
             <th scope="col">Group Title</th>
+            <th scope="col">Created On</th>
             <th scope="col">Status</th>
             <th scope="col"><i class="tio-chat-outlined"></i></th>
             <th scope="col">Action</th>

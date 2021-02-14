@@ -153,30 +153,30 @@ $(document).ready(function(){
 loadData();
 function loadData(page=1){
   var search = $("#datatableSearch").val();
-    $.ajax({
-        type: "POST",
-        url: BASEURL + '/cases/ajax-list?page='+page,
-        data:{
-            _token:csrf_token,
-            search:search
-        },
-        dataType:'json',
-        beforeSend:function(){
-            var cols = $("#tableList thead tr > th").length;
-            // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
-            // $("#paginate").html('');
-            showLoader();
-        },
-        success: function (data) {
-            hideLoader();
-            $("#tableList tbody").html(data.contents);
-            initPagination(data);
-            
-        },
-        error:function(){
-          internalError();
-        }
-    });
+  $.ajax({
+      type: "POST",
+      url: BASEURL + '/cases/ajax-list?page='+page,
+      data:{
+          _token:csrf_token,
+          search:search
+      },
+      dataType:'json',
+      beforeSend:function(){
+          var cols = $("#tableList thead tr > th").length;
+          // $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+          // $("#paginate").html('');
+          showLoader();
+      },
+      success: function (data) {
+          hideLoader();
+          $("#tableList tbody").html(data.contents);
+          initPagination(data);
+          
+      },
+      error:function(){
+        internalError();
+      }
+  });
 }
 
 </script>

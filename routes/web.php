@@ -422,6 +422,9 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/update/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'update']);     
         Route::post('/change-status', [App\Http\Controllers\User\ChatGroupsController::class, 'changeStatus']);
         Route::get('/comments/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'chatGroupComments']);
+        Route::post('/send-comment', [App\Http\Controllers\User\ChatGroupsController::class, 'sendComment']);
+        Route::get('/fetch-comments/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'fetchComments']);
+        
     }); 
     Route::group(array('prefix' => 'assessments'), function () {
         Route::get('/', [App\Http\Controllers\User\AssessmentsController::class, 'index']);

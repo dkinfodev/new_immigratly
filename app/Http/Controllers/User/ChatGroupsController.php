@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use DB;
 use View;
 use App\Models\ChatGroups;
+use App\Models\ChatGroupComments;
 
 class ChatGroupsController extends Controller
 {
@@ -33,13 +34,14 @@ class ChatGroupsController extends Controller
     public function getAjaxList(Request $request)
     {
         $search = $request->input("search");
-        $records = ChatGroups::orderBy('id',"desc")
-                                ->where(function($query) use($search){
-                                    if($search != ''){
-                                        $query->where("group_title","LIKE","%$search%");
-                                    }
-                                })
+        $records = ChatGroups::withCount("Comments")
+                            ->where(function($query) use($search){
+                                if($search != ''){
+                                    $query->where("group_title","LIKE","%$search%");
+                                }
+                            })
                             ->where("created_by",\Auth::user()->unique_id)
+                            ->orderBy('id',"desc")
                             ->paginate();
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.chat-groups.ajax-list',$viewData);
@@ -155,8 +157,58 @@ class ChatGroupsController extends Controller
         $viewData['pageTitle'] = "Chat Group Comments";
         $record = ChatGroups::where("unique_id",$id)->first();
         $viewData['record'] = $record;
+        $viewData['chat_id'] = $id;
         return view(roleFolder().'.chat-groups.group-comments',$viewData);
 
+    }
+    public function fetchComments($chat_id,Request $request){
+
+        $comments = ChatGroupComments::with('User')->where("chat_id",$chat_id)->get();
+        $viewData['comments'] = $comments;
+        $view = View::make(roleFolder().'.chat-groups.group-chats',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['contents'] = $contents;
+        return response()->json($response);
+    }
+    public function sendComment(Request $request){
+
+        $object = new ChatGroupComments();
+        $unique_id = randomNumber();
+        $object->unique_id = $unique_id;
+        $object->chat_id = $request->input("chat_id");
+        if($request->input("message")){
+            $message = $request->input("message");
+            $object->message = $message;
+        }
+        
+        if($file = $request->file('file'))
+        {
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension();
+            $allowed_extension = allowed_extension();
+            if(in_array($extension,$allowed_extension)){
+                $newName        = randomNumber(5)."-".$fileName;
+                $source_url = $file->getPathName();
+                $destinationPath = public_path("/uploads/files");
+                if($file->move($destinationPath, $newName)){
+                    $object->file_name = $newName;
+                }
+            }else{
+                $response['status'] = false;
+                $response['message'] = "File not allowed";
+                return response()->json($response);
+            } 
+        }
+        $object->send_by = \Auth::user()->unique_id;
+        $object->user_type = "user";
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Comment added successfully";
+
+        return response()->json($response);
     }
     
 }

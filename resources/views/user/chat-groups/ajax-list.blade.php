@@ -12,7 +12,7 @@
       {{$record->group_title}}
     </div>
   </td>
-
+  <td>{{dateFormat($record->created_at)}}</td>
   <td>
     @if($record->status=='open')
       <label class="toggle-switch toggle-switch-sm d-flex align-items-center mb-3" for="status-{{$record->id}}">
@@ -39,7 +39,7 @@
   <td scope="col">
     <a class="js-nav-tooltip-link" data-toggle="tooltip" data-placement="top" title="View Group Comments" data-original-title="View Group Comments" href="{{ baseUrl('chat-groups/comments/'.$record->unique_id) }}">
       <i class="tio-chat-outlined"></i>
-      2
+      {{$record->comments_count}}
     </a>
   </td>
   <td>

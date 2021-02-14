@@ -57,248 +57,8 @@
 
           <!-- Step -->
           <div class="comments">
-          <ul class="step">
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <small class="step-divider">Today</small>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <div class="step-avatar">
-                  <img class="step-avatar-img" src="./assets/img/160x160/img9.jpg" alt="Image Description">
-                </div>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">Iana Robinson</a>
-                  </h5>
-
-                  <p class="font-size-sm">Uploaded weekly reports to the task <a class="text-uppercase" href="#"><i class="tio-folder-bookmarked"></i></a></p>
-
-                  <ul class="list-group">
-                    <!-- List Item -->
-                    <li class="list-group-item list-group-item-light">
-                      <div class="row gx-1">
-                        <div class="col">
-                          <div class="media">
-                            <span class="mt-1 mr-2">
-                              <img class="avatar avatar-xs" src="./assets/svg/brands/excel.svg" alt="Image Description">
-                            </span>
-                            <div class="media-body text-truncate">
-                              <span class="d-block font-size-sm text-dark text-truncate" title="weekly-reports.xls">weekly-reports.xls</span>
-                              <small class="d-block text-muted">12kb</small>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="media">
-                            <span class="mt-1 mr-2">
-                              <img class="avatar avatar-xs" src="./assets/svg/brands/word.svg" alt="Image Description">
-                            </span>
-                            <div class="media-body text-truncate">
-                              <span class="d-block font-size-sm text-dark text-truncate" title="weekly-reports.xls">weekly-reports.xls</span>
-                              <small class="d-block text-muted">4kb</small>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="media">
-                            <span class="mt-1 mr-2">
-                              <img class="avatar avatar-xs" src="./assets/svg/brands/word.svg" alt="Image Description">
-                            </span>
-                            <div class="media-body text-truncate">
-                              <span class="d-block font-size-sm text-dark text-truncate" title="monthly-reports.xls">monthly-reports.xls</span>
-                              <small class="d-block text-muted">8kb</small>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- End List Item -->
-                  </ul>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <span class="step-icon step-icon-soft-dark">B</span>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">Bob Dean</a>
-                  </h5>
-
-                  <p class="font-size-sm">Marked project status as <span class="badge badge-soft-primary badge-pill"><span class="legend-indicator bg-primary"></span>"In progress"</span></p>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <small class="step-divider">Yesterday</small>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <div class="step-avatar">
-                  <img class="step-avatar-img" src="./assets/img/160x160/img3.jpg" alt="Image Description">
-                </div>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">David Harrison</a>
-                  </h5>
-
-                  <p class="font-size-sm">Added 5 new card styles to <a href="#">Payments</a></p>
-
-                  <ul class="list-group">
-                    <!-- List Item -->
-                    <li class="list-group-item list-group-item-light">
-                      <div class="row gx-1">
-                        <div class="col">
-                          <img class="img-fluid rounded" src="./assets/svg/illustrations/card-1.svg" alt="Image Description">
-                        </div>
-                        <div class="col">
-                          <img class="img-fluid rounded" src="./assets/svg/illustrations/card-2.svg" alt="Image Description">
-                        </div>
-                        <div class="col">
-                          <img class="img-fluid rounded" src="./assets/svg/illustrations/card-3.svg" alt="Image Description">
-                        </div>
-                        <div class="col">
-                          <img class="img-fluid rounded" src="./assets/svg/illustrations/card-4.svg" alt="Image Description">
-                        </div>
-                        <div class="col">
-                          <img class="img-fluid rounded" src="./assets/svg/illustrations/card-5.svg" alt="Image Description">
-                        </div>
-                        <div class="col-auto align-self-center">
-                          <div class="text-center">
-                            <a href="#">+2</a>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- List Item -->
-                  </ul>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <span class="step-icon step-icon-soft-info">D</span>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">David Lidell</a>
-                  </h5>
-
-                  <p class="font-size-sm">Added a new member to Front Dashboard</p>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <div class="step-avatar">
-                  <img class="step-avatar-img" src="./assets/img/160x160/img7.jpg" alt="Image Description">
-                </div>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">Rachel King</a>
-                  </h5>
-
-                  <p class="font-size-sm">Earned a "Top endorsed" <i class="tio-verified text-primary"></i> badge</p>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <small class="step-divider">Last week</small>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <div class="step-avatar">
-                  <img class="step-avatar-img" src="./assets/img/160x160/img6.jpg" alt="Image Description">
-                </div>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">Mark Williams</a>
-                  </h5>
-
-                  <p class="font-size-sm">Attached two files.</p>
-
-                  <ul class="list-group list-group-sm">
-                    <!-- List Item -->
-                    <li class="list-group-item list-group-item-light">
-                      <div class="media">
-                        <i class="tio-attachment-diagonal mt-1 mr-2"></i>
-                        <div class="media-body text-truncate">
-                          <span class="d-block text-dark text-truncate">Requirements.figma</span>
-                          <small class="d-block">8mb</small>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- End List Item -->
-
-                    <!-- List Item -->
-                    <li class="list-group-item list-group-item-light">
-                      <div class="media">
-                        <i class="tio-attachment-diagonal mt-1 mr-2"></i>
-                        <div class="media-body text-truncate">
-                          <span class="d-block text-dark text-truncate">Requirements.sketch</span>
-                          <small class="d-block">4mb</small>
-                        </div>
-                      </div>
-                    </li>
-                    <!-- End List Item -->
-                  </ul>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-
-            <!-- Step Item -->
-            <li class="step-item">
-              <div class="step-content-wrapper">
-                <span class="step-icon step-icon-soft-primary">C</span>
-
-                <div class="step-content">
-                  <h5 class="mb-1">
-                    <a class="text-dark" href="#">Costa Quinn</a>
-                  </h5>
-
-                  <p class="font-size-sm">Marked project status as <span class="badge badge-soft-primary badge-pill"><span class="legend-indicator bg-primary"></span>"In progress"</span></p>
-                </div>
-              </div>
-            </li>
-            <!-- End Step Item -->
-          </ul>
+            <ul class="step">
+            </ul>
           </div>
           <!-- End Step -->
 
@@ -307,19 +67,21 @@
             @csrf
             <div class="row alert alert-soft-dark">
               <div class="col-md-12 mb-2">
-                <textarea name="comments" class="form-control js-count-characters" id="reviewLabelModalEg" rows="1" maxlength="100" placeholder="Place your comments here..."></textarea>
+                <textarea name="message" class="form-control js-count-characters" id="message" rows="1" maxlength="100" placeholder="Place your comments here..."></textarea>
               </div>
               <div class="col-md-6 text-left">
                 <label class="btn btn-sm btn-primary transition-3d-hover custom-file-btn" for="fileAttachmentBtn">
                   <span id="customFileExample5">Choose file to upload</span>
                   <input id="fileAttachmentBtn" name="custom-file" type="file" class="js-file-attach custom-file-btn-input"
                          data-hs-file-attach-options='{
-                            "textTarget": "#customFileExample5"
+                            "textTarget": "#customFileExample5",
+                            "resetTarget": ".js-file-attach-reset-img"
                          }'>
                 </label>
+                  <button type="button" class="js-file-attach-reset-img btn btn-sm btn-white ml-2">Reset</button>
               </div>
               <div class="col-md-6 text-right">
-                <button type="submit" class="btn btn-dark"><i class="fa fa-send"></i> Send</button>
+                <button type="button" id="submitbtn" class="btn btn-dark"><i class="fa fa-send"></i> Send</button>
               </div>
             </div>
           </form>
@@ -336,20 +98,59 @@
 <script src="assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
 <script src="assets/vendor/hs-count-characters/dist/js/hs-count-characters.js"></script>
 <script>
+  fetchComments();
+  function fetchComments(){
+    var chat_id = "{{$chat_id}}";
+    $.ajax({
+      url: BASEURL + '/chat-groups/fetch-comments/'+chat_id,
+      dataType:'json',
+      beforeSend:function(){
+          // showLoader();
+      },
+      success: function (data) {
+          // hideLoader();
+          $(".step").html(data.contents);
+          
+      },
+      error:function(){
+        internalError();
+      }
+    });
+  }
   $(document).on('ready', function () {
     
-    initEditor("description"); 
     $('.js-count-characters').each(function () {
       new HSCountCharacters($(this)).init()
     });
-    $("#form").submit(function(e){
-      e.preventDefault();
-      var formData = $("#form").serialize();
-      var url  = $("#form").attr('action');
+    $(".js-file-attach-reset-img").click(function(){
+      $("#customFileExample5").html("Choose file to upload");
+    });
+    $("#submitbtn").click(function(){
+      
+      var formData = new FormData();
+      var _isvalid = 0;
+      formData.append("_token",csrf_token);
+      formData.append("chat_id","{{ $chat_id }}");
+      if($("#message").val() != ''){
+        _isvalid = 1;
+        formData.append("message",$("#message").val());
+      }
+      if($('#fileAttachmentBtn').val() != ''){
+        _isvalid = 1;
+        formData.append('file', $('#fileAttachmentBtn')[0].files[0]);
+      }
+      if(_isvalid == 0){
+        errorMessage("No value to send");
+        return false;
+      }
+      var url  = "{{ baseUrl('chat-groups/send-comment') }}";
       $.ajax({
         url:url,
         type:"post",
         data:formData,
+        cache: false,
+        contentType: false,
+        processData: false,
         dataType:"json",
         beforeSend:function(){
           showLoader();
@@ -358,9 +159,12 @@
           hideLoader();
           if(response.status == true){
             successMessage(response.message);
-            redirect(response.redirect_back);
+            $("#form")[0].reset();
+            $(".js-file-attach-reset-img").trigger("click");
+            $("#customFileExample5").html("Choose file to upload");
+            fetchComments();
           }else{
-            validation(response.message);
+            errorMessage(response.message);
           }
         },
         error:function(){
