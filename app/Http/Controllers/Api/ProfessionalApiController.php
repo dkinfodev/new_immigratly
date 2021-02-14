@@ -39,7 +39,9 @@ class ProfessionalApiController extends Controller
     		$postData = $request->input();
             $request->request->add($postData);
 
-	       	$cases = Cases::with(['AssingedMember','VisaService'])->where("client_id",$request->input("client_id"))->get();
+	       	$cases = Cases::with(['AssingedMember','VisaService'])->where("client_id",$request->input("client_id"))
+                        ->orderBy("id","desc")
+                        ->get();
 	       	$data = array();
 	       	foreach($cases as $key => $record){
 	       		$temp = $record;
@@ -766,6 +768,7 @@ class ProfessionalApiController extends Controller
             $assessment = $request->input("assessment");
             $check_assessment = AssessmentCase::where("assessment_id",$assessment['unique_id'])->first();
 
+            $service = ProfessionalServices::where("service_id",$assessment['visa_service_id'])->first();
             if(!empty($check_assessment)){
                 $object = Cases::where("unique_id",$check_assessment->case_id)->first();
             }else{
@@ -774,7 +777,7 @@ class ProfessionalApiController extends Controller
             }
             
             $object->case_title = $assessment['case_name'];
-            $object->visa_service_id = $assessment['visa_service_id'];
+            $object->visa_service_id = $service->unique_id;
             $object->client_id = $assessment['user_id'];
             $object->save();
 

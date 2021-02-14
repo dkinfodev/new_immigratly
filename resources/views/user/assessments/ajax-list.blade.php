@@ -20,7 +20,19 @@
         <span class="badge badge-danger">{{$record->Invoice->payment_status}}</span>
     @endif
   </td>
+  
   <td class="table-column-pl-0">
+    @if($record->professional_assigned == 1)
+        <span class="badge badge-success">Assigned To Professional</span>
+        <div class="text-primary">
+          <?php
+          $company_data = professionalDetail($record->professional);
+          if(!empty($company_data)){
+            echo "<div class='text-danger'><i class='tio-user'></i> ".$company_data->company_name."</div>";
+          }
+          ?>
+        </div>
+    @else
     <div class="hs-unfold">
       <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
          data-hs-unfold-options='{
@@ -36,6 +48,7 @@
         <a class="dropdown-item text-danger" href="javascript:;" onclick="confirmAction(this)" data-href="{{baseUrl('assessments/delete/'.base64_encode($record->id))}}">Delete</a> 
       </div>
     </div>
+    @endif
   </td>
 </tr>
 @endforeach

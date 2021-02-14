@@ -22,7 +22,9 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/login');
 });
-Route::get('/', [App\Http\Controllers\Frontend\FrontendController::class, 'index']);
+Route::group(array('middleware' => 'frontend'), function () {
+    Route::get('/', [App\Http\Controllers\Frontend\FrontendController::class, 'index']);
+});
 // Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'welcome_page']);
@@ -408,7 +410,19 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
 
     Route::get('/cv', [App\Http\Controllers\User\DashboardController::class, 'manageCv']);
     Route::post('/save-language-proficiency', [App\Http\Controllers\User\DashboardController::class, 'saveLanguageProficiency']);
-
+    
+    Route::group(array('prefix' => 'chat-groups'), function () {
+        Route::get('/', [App\Http\Controllers\User\ChatGroupsController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\User\ChatGroupsController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\User\ChatGroupsController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\User\ChatGroupsController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\User\ChatGroupsController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'update']);     
+        Route::post('/change-status', [App\Http\Controllers\User\ChatGroupsController::class, 'changeStatus']);
+        Route::get('/comments/{id}', [App\Http\Controllers\User\ChatGroupsController::class, 'chatGroupComments']);
+    }); 
     Route::group(array('prefix' => 'assessments'), function () {
         Route::get('/', [App\Http\Controllers\User\AssessmentsController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\User\AssessmentsController::class, 'getAjaxList']);
@@ -420,8 +434,8 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/delete-multiple', [App\Http\Controllers\User\AssessmentsController::class, 'deleteMultiple']);
         Route::post('/payment-success', [App\Http\Controllers\User\TransactionController::class, 'assessmentPaymentSuccess']);
         Route::post('/payment-failed', [App\Http\Controllers\User\TransactionController::class, 'assessmentPaymentFailed']);
-        
         Route::post('/documents/{ass_id}/{doc_id}', [App\Http\Controllers\User\AssessmentsController::class, 'fetchDocuments']);
+
         
         Route::group(array('prefix' => 'files'), function () {
             Route::post('/upload-documents', [App\Http\Controllers\User\AssessmentsController::class, 'uploadDocuments']);

@@ -58,6 +58,12 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases With Professionals</span>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/chat-groups') }}" data-placement="left">
+                    <i class="tio-book-opened nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Chat Groups</span>
+                  </a>
+                </li>
                 <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
                     <i class="tio-apps nav-icon"></i>

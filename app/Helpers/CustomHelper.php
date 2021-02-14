@@ -1598,3 +1598,14 @@ if(!function_exists("site_url")){
         return $url;
     }
 }
+
+if(!function_exists("professionalService")){
+    function professionalService($subdomain,$service_id){
+        $service = DB::table(PROFESSIONAL_DATABASE.$subdomain.".professional_services")->where("service_id",$service_id)->first();
+        if(!empty($service)){
+            return $service;
+        }else{
+            return array();
+        }
+    }
+}

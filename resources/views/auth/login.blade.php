@@ -180,6 +180,8 @@
                     <div class="alert alert-success"><i class="fa fa-check"></i> {{ Session::get("success_message") }}</div>
                 @endif
                 <button type="submit" class="btn btn-lg btn-block btn-primary">Sign in</button>
+                <a class="text-dark float-right" href="{{ url('/') }}"><i class="tio-home"></i> Back To Home</a>
+                <div class="clearfix"></div>
               </form>
               <!-- End Form -->
             </div>

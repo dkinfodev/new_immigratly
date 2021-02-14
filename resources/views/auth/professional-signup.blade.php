@@ -204,6 +204,8 @@
                 <!-- End Checkbox -->
 
                 <button type="button" class="btn btn-lg btn-block btn-primary mb-2 signup-btn">Create an account</button>
+                <a class="text-dark float-right" href="{{ url('/') }}"><i class="tio-home"></i> Back To Home</a>
+                <div class="clearfix"></div>
               </div>
                 <div id="verify-screen"></div>
               </form>

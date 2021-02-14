@@ -18,15 +18,15 @@
       </div>
 
       <div class="col-sm-auto">
-        <!-- <a class="btn btn-primary" href="{{ baseUrl('/assessments/add') }}">
-          <i class="tio-add mr-1"></i> Add 
-        </a> -->
+        <a class="btn btn-primary" href="{{(baseUrl('chat-groups/add'))}}">
+          <i class="tio-user-add mr-1"></i> Add
+        </a>
       </div>
     </div>
     <!-- End Row -->
   </div>
   <!-- End Page Header -->
-  @include(roleFolder().".assessments.assessment-count")
+  {{-- @include(roleFolder().".chat-groups.group-counts") --}}
   <!-- Card -->
   <div class="card">
     <!-- Header -->
@@ -41,7 +41,7 @@
                   <i class="tio-search"></i>
                 </div>
               </div>
-              <input id="datatableSearch" type="search" class="form-control" placeholder="Search Assessment" aria-label="Search Assessment">
+              <input id="datatableSearch" type="search" class="form-control" placeholder="Search " aria-label="Search">
             </div>
             <!-- End Search -->
           </form>
@@ -56,7 +56,7 @@
                   <span id="datatableCounter">0</span>
                   Selected
                 </span>
-                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('assessments/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
+                <a class="btn btn-sm btn-outline-danger" data-href="{{ baseUrl('chat-groups/delete-multiple') }}" onclick="deleteMultiple(this)" href="javascript:;">
                   <i class="tio-delete-outlined"></i> Delete
                 </a>
               </div>
@@ -69,32 +69,25 @@
     <!-- End Header -->
 
     <!-- Table -->
-    <div class="col-sm-12">
-      <div class="table-responsive datatable-custom">
-        <table id="tableList" class="table table-borderless">
-          <thead class="thead-light">
-            <tr>
-              <th scope="col" class="table-column-pr-0">
-                <div class="custom-control custom-checkbox">
-                  <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
-                  <label class="custom-control-label" for="datatableCheckAll"></label>
-                </div>
-              </th>
-              <th scope="col" class="table-column-pl-0">Client</th>
-              <th scope="col" class="table-column-pl-0">Case Name</th>
-              <th scope="col" class="table-column-pl-0">Visa Service</th>
-              <th scope="col" class="table-column-pl-0">Price</th>
-              <th scope="col" class="table-column-pl-0">Payment Status</th>
-              @if($assigned == 1)
-              <th scope="col" class="table-column-pl-0">Assigned To Professional</th>
-              @endif
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
+    <div class="table-responsive datatable-custom">
+      <table id="tableList" class="table table-lg table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="table-column-pr-0">
+              <div class="custom-control custom-checkbox">
+                <input id="datatableCheckAll" type="checkbox" class="custom-control-input">
+                <label class="custom-control-label" for="datatableCheckAll"></label>
+              </div>
+            </th>
+            <th scope="col">Group Title</th>
+            <th scope="col">Status</th>
+            <th scope="col"><i class="tio-chat-outlined"></i></th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
     <!-- End Table -->
 
@@ -145,7 +138,16 @@ $(document).ready(function(){
   $('.js-toggle-switch').each(function () {
     var toggleSwitch = new HSToggleSwitch($(this)).init();
   });
-
+  $(".next").click(function(){
+    if(!$(this).hasClass('disabled')){
+      changePage('next');
+    }
+  });
+  $(".previous").click(function(){
+    if(!$(this).hasClass('disabled')){
+      changePage('prev');
+    }
+  });
   $("#datatableSearch").keyup(function(){
     var value = $(this).val();
     if(value == ''){
@@ -155,36 +157,123 @@ $(document).ready(function(){
       loadData();
     }
   });
+  $("#datatableCheckAll").change(function(){
+    if($(this).is(":checked")){
+      $(".row-checkbox").prop("checked",true);
+    }else{
+      $(".row-checkbox").prop("checked",false);
+    }
+    if($(".row-checkbox:checked").length > 0){
+      $("#datatableCounterInfo").show();
+    }else{
+      $("#datatableCounterInfo").hide();
+    }
+    $("#datatableCounter").html($(".row-checkbox:checked").length);
+  });
+
 })
 loadData();
 function loadData(page=1){
-    var search = $("#datatableSearch").val();
+  var search = $("#datatableSearch").val();
     $.ajax({
         type: "POST",
-        url: BASEURL + '/assessments/ajax-list?page='+page,
+        url: BASEURL + '/chat-groups/ajax-list?page='+page,
         data:{
             _token:csrf_token,
-            search:search,
-            assigned:"{{$assigned}}"
+            search:search
         },
         dataType:'json',
         beforeSend:function(){
-            showLoader();
+            var cols = $("#tableList thead tr > th").length;
+            $("#tableList tbody").html('<tr><td colspan="'+cols+'"><center><i class="fa fa-spin fa-spinner fa-3x"></i></center></td></tr>');
+            // $("#paginate").html('');
         },
         success: function (data) {
-            hideLoader();
             $("#tableList tbody").html(data.contents);
-            initPagination(data);
+            
+            if(data.total_records > 0){
+              var pageinfo = data.current_page+" of "+data.last_page+" <small class='text-danger'>("+data.total_records+" records)</small>";
+              $("#pageinfo").html(pageinfo);
+              $("#pageno").val(data.current_page);
+              if(data.current_page < data.last_page){
+                $(".next").removeClass("disabled");
+              }else{
+                $(".next").addClass("disabled","disabled");
+              }
+              if(data.current_page > 1){
+                $(".previous").removeClass("disabled");
+              }else{
+                $(".previous").addClass("disabled","disabled");
+              }
+              $("#pageno").attr("max",data.last_page);
+            }else{
+              $(".datatable-custom").find(".norecord").remove();
+              var html = '<div class="text-center text-danger norecord">No records available</div>';
+              $(".datatable-custom").append(html);
+            }
         },
-        error:function(){
-            internalError();
-        }
     });
+}
+function changePage(action){
+  var page = parseInt($("#pageno").val());
+  if(action == 'prev'){
+    page--;
+  }
+  if(action == 'next'){
+    page++;
+  }
+  if(!isNaN(page)){
+    loadData(page);
+  }else{
+    errorMessage("Invalid Page Number");
+  }
+  
 }
 
 
-function search(keyword){
-    loadData();
+function changeStatus(e){
+  var id = $(e).attr("data-id");
+  if($(e).is(":checked")){
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/chat-groups/change-status',
+        data:{
+            _token:csrf_token,
+            id:id,
+            status:"open"
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+            }else{
+                errorMessage(result.message);
+            }
+        },
+    });
+  }else{
+    $.ajax({
+        type: "POST",
+        url: BASEURL + '/chat-groups/change-status',
+        data:{
+            _token:csrf_token,
+            id:id,
+            status:"close"
+        },
+        dataType:'json',
+        success: function (result) {
+            if(result.status == true){
+                successMessage(result.message);
+                loadData();
+            }else{
+                errorMessage(result.message);
+            }
+        },
+        error: function(){
+          internalError();
+        }
+    });
+  }
 }
 
 </script>

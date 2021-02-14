@@ -24,6 +24,7 @@ class AssessmentsController extends Controller
     }
     public function index(Request $request){
         $viewData['pageTitle'] = "Assessments";
+        
         return view(roleFolder().'.assessments.lists',$viewData);
     }
 

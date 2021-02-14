@@ -85,7 +85,7 @@
             <th scope="col">Visa Service</th>
             <!-- <th scope="col">Start Date</th> -->
             <th scope="col">Assigned</th>
-            <th scope="col"><i class="tio-chat-outlined"></i></td>
+            <th scope="col"><i class="tio-chat-outlined"></i></th>
             <th scope="col"></th>
           </tr>
         </thead>

@@ -24,7 +24,9 @@ class FrontendController extends Controller
      */
     public function __construct()
     {
-        
+        if(\Session::get('login_to') == 'professional_panel'){
+            redirect("/login");
+        }
     }
 
     public function index(){

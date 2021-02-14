@@ -72,5 +72,6 @@ class Kernel extends HttpKernel
         'executive' => \App\Http\Middleware\Executive::class,
         'curl_api' => \App\Http\Middleware\CurlApi::class,
         'professional_curl' => \App\Http\Middleware\ProfessionalCurl::class,
+        'frontend' => \App\Http\Middleware\Frontend::class,
     ];
 }

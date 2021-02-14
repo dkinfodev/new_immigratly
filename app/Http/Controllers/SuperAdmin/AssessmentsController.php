@@ -16,6 +16,7 @@ use App\Models\DocumentFolder;
 use App\Models\UserDetails;
 use App\Models\FilesManager;
 use App\Models\Professionals;
+use App\Models\UserWithProfessional;
 
 class AssessmentsController extends Controller
 {
@@ -561,6 +562,14 @@ class AssessmentsController extends Controller
         $apiData['created_by'] = \Auth::user()->unique_id;
         $apiData['assessment'] = $assessment;
         $subdomain = $request->input("professional");
+        $check_is_exists = UserWithProfessional::where("professional",$subdomain)->count();
+        if($check_is_exists === 0){
+            $object2 = new UserWithProfessional();
+            $object2->user_id = \Auth::user()->unique_id;
+            $object2->professional= $subdomain;
+            $object2->status = 1;
+            $object2->save();
+        }
         $api_response = professionalCurl('cases/add-assessment-case',$subdomain,$apiData);
         if($api_response['status'] == 'success'){
             $response['status'] = true;

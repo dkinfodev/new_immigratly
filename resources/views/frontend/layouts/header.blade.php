@@ -18,7 +18,8 @@
           <!-- Secondary Content -->
           <div class="navbar-nav-wrap-content text-center">
             <div class="d-none d-lg-block">
-              <a class="btn btn-sm btn-light transition-3d-hover" href="https://themes.getbootstrap.com/product/front-multipurpose-responsive-template/" target="_blank">Login / Signup</a>
+              <a class="btn btn-sm btn-light transition-3d-hover" href="{{ url('/login') }}" target="_blank">Login</a>
+              <a class="btn btn-sm btn-light transition-3d-hover" href="{{ url('/signup/user') }}" target="_blank">Sign Up</a>
             </div>
           </div>
           <!-- End Secondary Content -->

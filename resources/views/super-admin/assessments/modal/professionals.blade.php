@@ -20,24 +20,26 @@
           </div>
           @foreach($professionals as $key=>$prof)
           <?php 
-          $company_data = professionalDetail($prof->subdomain);
-          
+            $check_service = professionalService($prof->subdomain,$assessment->visa_service_id);
+            $company_data = professionalDetail($prof->subdomain);
           ?>
+          @if(!empty($check_service))
             @if(!empty($company_data))
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card mb-4 professional-card">
                   <div class="card-image">
                     <img class="img-fluid w-100 rounded-lg" src="{{professionalLogo('m',$prof->subdomain)}}" alt="Image Description">
                   </div>
                   <div class="card-footer text-center">
                       <div class="custom-control custom-radio">
-                        <input type="radio" value="{{$prof->subdomain}}" id="customRadio-{{$key}}" class="custom-control-input" name="professional">
+                        <input type="radio" {{$prof->subdomain == $assessment->professional?'checked':''}} value="{{$prof->subdomain}}" id="customRadio-{{$key}}" class="custom-control-input" name="professional">
                         <label class="custom-control-label" for="customRadio-{{$key}}"><h3>{{ $company_data->company_name }}</h3></label>
                       </div>
                   </div>
                 </div>
             </div>
             @endif
+          @endif
           @endforeach
         </div>    
       </form>
