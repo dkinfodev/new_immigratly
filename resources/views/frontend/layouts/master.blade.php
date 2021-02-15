@@ -366,6 +366,7 @@
   <script src="assets/frontend/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- JS Implementing Plugins -->
+  <link rel="stylesheet" href="assets/vendor/icon-set/style.css">
   <script src="assets/frontend/vendor/hs-header/dist/hs-header.min.js"></script>
   <script src="assets/frontend/vendor/hs-go-to/dist/hs-go-to.min.js"></script>
   <script src="assets/frontend/vendor/hs-unfold/dist/hs-unfold.min.js"></script>
@@ -379,7 +380,7 @@
   <script src="assets/frontend/vendor/dzsparallaxer/dzsparallaxer.js"></script>
   <script src="assets/frontend/vendor/typed.js/lib/typed.min.js"></script>
   <script src="assets/frontend/vendor/aos/dist/aos.js"></script>
-
+  <script src="assets/js/theme-custom.js"></script>
   <!-- JS Front -->
   <script src="assets/frontend/js/theme.min.js"></script>
 

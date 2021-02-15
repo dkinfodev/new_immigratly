@@ -12,6 +12,7 @@ use Razorpay\Api\Api;
 use Image;
 use View;
 use App\Models\Articles;
+use App\Models\ChatGroups;
 use App\Models\News;
 use App\Models\Professionals;
 
@@ -24,9 +25,7 @@ class FrontendController extends Controller
      */
     public function __construct()
     {
-        if(\Session::get('login_to') == 'professional_panel'){
-            redirect("/login");
-        }
+       
     }
 
     public function index(){
@@ -41,7 +40,64 @@ class FrontendController extends Controller
      $viewData['pageTitle'] = "Home Page";   
      return view('frontend.index',$viewData);
      
-    }	
+    }
 
-    
+    public function articles(){
+
+     $articles = Articles::get();
+     $viewData['articles'] = $articles;   
+     $viewData['pageTitle'] = "Articles";   
+     return view('frontend.articles.articles',$viewData);
+     
+    }   
+
+    public function articleSingle($slug){
+         $article = Articles::where('slug',$slug)->first();
+         if(empty($article)){
+            return redirect('/');   
+         }
+         $viewData['article'] = $article;   
+         $viewData['pageTitle'] = $article->title;   
+         return view('frontend.articles.article-single',$viewData);
+    }
+    public function discussions(){
+        $viewData['pageTitle'] = "Discussions Topics";   
+        return view('frontend.discussions.discussions',$viewData);
+    }
+
+    public function fetchTopics(Request $request){
+        $search = $request->input("search");
+        $discussions = ChatGroups::with('User')
+                                ->where("status","open")
+                                ->where(function($query) use($search){
+                                    if($search != ''){
+                                        $query->where("group_title","LIKE","%$search%");
+                                        $query->orWhere("description","LIKE","%$search%");
+                                    }
+                                })
+                                ->paginate(2);
+
+        $viewData['discussions'] = $discussions;
+        $view = View::make('frontend.discussions.topic-list',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['contents'] = $contents;
+        $response['last_page'] = $discussions->lastPage();
+        $response['current_page'] = $discussions->currentPage();
+        $next_page = $discussions->currentPage() + 1;
+        $response['next_page'] = $next_page;
+        $response['total_records'] = $discussions->total();
+        return response()->json($response);
+    }
+
+    public function topicDetails($slug){
+        $viewData['pageTitle'] = "Discussions Topics";   
+        $discussions = ChatGroups::with('User')
+                                ->where("slug",$slug)
+                                ->first();
+
+        $viewData['record'] = $discussions;
+        return view('frontend.discussions.topic-detail',$viewData);
+    }
 }

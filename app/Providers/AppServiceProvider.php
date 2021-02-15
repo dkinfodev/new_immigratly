@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\VisaServices;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        $visa_services = VisaServices::with('SubServices')
+                                    ->where("parent_id",0)
+                                    ->select("id","name","slug","unique_id")
+                                    ->get();
+        view()->share('visa_services', $visa_services);
     }
 }

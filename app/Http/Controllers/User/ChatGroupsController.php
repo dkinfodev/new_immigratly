@@ -77,6 +77,7 @@ class ChatGroupsController extends Controller
         $object =  new ChatGroups();
         $object->unique_id = $unique_id;
         $object->group_title = $request->input("group_title");
+        $object->slug = str_slug($request->input("group_title"))."-".$unique_id;
         $object->description = $request->input("description");
         $object->status = "open";
         $object->created_by = \Auth::user()->unique_id;
@@ -114,6 +115,7 @@ class ChatGroupsController extends Controller
         }
         $object = ChatGroups::where("unique_id",$id)->first();;
         $object->group_title = $request->input("group_title");
+        $object->slug = str_slug($request->input("group_title"))."-".$object->unique_id;
         $object->description = $request->input("description");
         $object->save();
         

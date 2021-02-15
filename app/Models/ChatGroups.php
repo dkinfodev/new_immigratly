@@ -20,4 +20,8 @@ class ChatGroups extends Model
     public function Comments(){
         return $this->hasMany('App\Models\ChatGroupComments','chat_id','unique_id');
     }
+    public function User()
+    {
+        return $this->belongsTo('App\Models\User','created_by','unique_id');
+    }
 }

@@ -10,16 +10,22 @@
         <!-- Nav -->
         <nav class="js-mega-menu navbar navbar-expand-lg">
           <!-- Logo -->
-          <a class="navbar-brand" href="./index.html" aria-label="Front">
+          <a class="navbar-brand" href="{{ url('/') }}" aria-label="Front">
             <img src="./assets/svg/logos/logo-white.svg" alt="Logo">
           </a>
           <!-- End Logo -->
 
           <!-- Secondary Content -->
+          <div class="navbar-nav-wrap-content text-center mr-3">
+            <div class="d-none d-lg-block">
+              <a class="btn btn-sm btn-light transition-3d-hover" href="{{url('login')}}" target="_blank">Login </a>
+            </div>
+          </div> 
+          <!-- End Secondary Content -->
+          <!-- Secondary Content -->
           <div class="navbar-nav-wrap-content text-center">
             <div class="d-none d-lg-block">
-              <a class="btn btn-sm btn-light transition-3d-hover" href="{{ url('/login') }}" target="_blank">Login</a>
-              <a class="btn btn-sm btn-light transition-3d-hover" href="{{ url('/signup/user') }}" target="_blank">Sign Up</a>
+              <a class="btn btn-sm btn-light transition-3d-hover" href="{{url('signup/user')}}" target="_blank"> Signup</a>
             </div>
           </div>
           <!-- End Secondary Content -->
@@ -50,7 +56,7 @@
               <ul class="navbar-nav">
                 
                 <li class="p-2 navbar-nav-item">
-                  <a class="nav-link" href="#">Home</a>
+                  <a class="nav-link" href="{{ url('/') }}">Home</a>
                 </li>
 
 
@@ -60,91 +66,41 @@
 
 
                 <li class="p-2 navbar-nav-item">
-                  <a class="nav-link" href="#">Articles</a>
+                  <a class="nav-link" href="{{ url('/articles') }}">Articles</a>
                 </li>
-
-
                 <!-- Pages -->
-                <li class="p-2 hs-has-sub-menu navbar-nav-item">
+                <li class="hs-has-sub-menu navbar-nav-item">
                   <a id="pagesMegaMenu" class="hs-mega-menu-invoker nav-link nav-link-toggle " href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-labelledby="pagesSubMenu">Visa Services</a>
 
                   <!-- Pages - Submenu -->
                   <div id="pagesSubMenu" class="hs-sub-menu dropdown-menu" aria-labelledby="pagesMegaMenu" style="min-width: 230px;">
                     <!-- Account -->
+                    @foreach($visa_services as $key => $service)
                     <div class="hs-has-sub-menu">
-                      <a id="navLinkPagesAccount" class="hs-mega-menu-invoker dropdown-item dropdown-item-toggle " href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesAccount">Student Visa <span class="badge badge-success badge-pill ml-2">New</span></a>
-
-                      <div id="navSubmenuPagesAccount" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPagesAccount" style="min-width: 230px;">
-                        <a class="dropdown-item " href="./account-overview.html">Employment Visa</a>
-                        <a class="dropdown-item " href="./account-login-and-security.html">Login &amp; security</a>
-                        <a class="dropdown-item " href="./account-notifications.html">Notifications</a>
-                        <a class="dropdown-item " href="./account-preferences.html">Preferences</a>
-                        <a class="dropdown-item " href="./account-orders.html">Orders</a>
-                        <a class="dropdown-item " href="./account-wishlist.html">Wishlist</a>
-                        <a class="dropdown-item " href="./account-billing.html">Plans &amp; payment</a>
-                        <a class="dropdown-item " href="./account-address.html">Address</a>
-                        <a class="dropdown-item " href="./account-teams.html">Teams</a>
+                      <a id="navLinkPages-{{$key}}" class="hs-mega-menu-invoker dropdown-item {{count($service->SubServices) > 0?'dropdown-item-toggle':''}}" href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesAccount">{{$service->name}}</a>
+                      <div id="navSubmenuPagesAccount" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPages-{{$key}}" style="min-width: 230px;">
+                        @foreach($service->SubServices as $subservice)
+                        <a class="dropdown-item " href="./account-overview.html">{{$subservice->name}}</a>
+                        @endforeach
                       </div>
+                      
                     </div>
                     <!-- Account -->
-
-                    <!-- Company -->
-                    <div class="hs-has-sub-menu">
-                      <a id="navLinkPagesCompany" class="hs-mega-menu-invoker dropdown-item dropdown-item-toggle " href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesCompany">Employment Visa</a>
-
-                      <div id="navSubmenuPagesCompany" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPagesCompany" style="min-width: 230px;">
-                        <a class="dropdown-item " href="./page-about-agency.html">About Agency</a>
-                        <a class="dropdown-item " href="./page-services-agency.html">Services Agency</a>
-                      </div>
-                    </div>
-                    <!-- Company -->
-
-                    <!-- Portfolio -->
-                    <div class="hs-has-sub-menu">
-                      <a id="navLinkPagesPortfolio" class="hs-mega-menu-invoker dropdown-item dropdown-item-toggle " href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesPortfolio">Visit Visa</a>
-
-                      <div id="navSubmenuPagesPortfolio" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPagesPortfolio" style="min-width: 230px;">
-                        <a class="dropdown-item " href="./portfolio-grid.html">Grid</a>
-                        <a class="dropdown-item " href="./portfolio-masonry.html">Masonry</a>
-                       
-                      </div>
-                    </div>
-                    <!-- End Portfolio -->
-
-                   
-
-                    <!-- Contacts -->
-                    <div class="hs-has-sub-menu">
-                      <a id="navLinkContactsServices" class="hs-mega-menu-invoker dropdown-item dropdown-item-toggle " href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuContactsServices">BCPNP</a>
-
-                      <div id="navSubmenuContactsServices" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkContactsServices" style="min-width: 230px;">
-                        <a class="dropdown-item " href="./page-contacts-agency.html">Contacts Agency</a>
-                        <a class="dropdown-item " href="./page-contacts-start-up.html">Contacts Start-Up</a>
-                      </div>
-                    </div>
-                    <!-- Contacts -->
-
-                    <!-- Utilities -->
-                    <div class="hs-has-sub-menu">
-                      <a id="navLinkPagesUtilities" class="hs-mega-menu-invoker dropdown-item dropdown-item-toggle " href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesUtilities">Express Entry</a>
-
-                      <div id="navSubmenuPagesUtilities" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPagesUtilities" style="min-width: 230px;">
-                        <a class="dropdown-item " href="./page-pricing.html">Pricing</a>
-                        <a class="dropdown-item " href="./page-faq.html">FAQ</a>
-                      </div>
-                    </div>
-                    <!-- Utilities -->
-
+                    @endforeach
+                    
+                    <!-- Specialty -->
                   </div>
                   <!-- End Pages - Submenu -->
                 </li>
-                <!-- End Pages -->
+                
 
                 <li class="p-2 navbar-nav-item">
                   <a class="nav-link" href="#">Contact Us</a>
                 </li>
            
-
+                <li class="p-2 navbar-nav-item">
+                  <a class="nav-link" href="{{ url('/discussions') }}">Discussion</a>
+                </li>
                     
               </ul>
             </div>

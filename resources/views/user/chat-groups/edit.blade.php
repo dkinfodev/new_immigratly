@@ -52,7 +52,7 @@
           </div>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn add-btn btn-primary">Add</button>
+          <button type="submit" class="btn add-btn btn-primary">Save</button>
         </div>
       </form>
     </div>
