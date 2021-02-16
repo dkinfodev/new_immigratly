@@ -77,7 +77,7 @@ function loadData(page=1,type=''){
     var search = $("#search").val();
     $.ajax({
         type: "GET",
-        url: BASEURL + '/discussions/fetch-topics?page='+page,
+        url: "{{ url('discussions/fetch-topics') }}?page="+page,
         data:{
             _token:csrf_token,
             search:search

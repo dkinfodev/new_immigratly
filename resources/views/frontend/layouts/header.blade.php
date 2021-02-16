@@ -76,13 +76,15 @@
                   <div id="pagesSubMenu" class="hs-sub-menu dropdown-menu" aria-labelledby="pagesMegaMenu" style="min-width: 230px;">
                     <!-- Account -->
                     @foreach($visa_services as $key => $service)
-                    <div class="hs-has-sub-menu">
-                      <a id="navLinkPages-{{$key}}" class="hs-mega-menu-invoker dropdown-item {{count($service->SubServices) > 0?'dropdown-item-toggle':''}}" href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesAccount">{{$service->name}}</a>
-                      <div id="navSubmenuPagesAccount" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPages-{{$key}}" style="min-width: 230px;">
+                    <div class=" {{count($service->SubServices) > 0?'hs-has-sub-menu':''}}">
+                      <a id="navLinkPages-{{$key}}" class="hs-mega-menu-invoker dropdown-item {{count($service->SubServices) > 0?'dropdown-item-toggle':''}}" href="javascript:;" aria-haspopup="true" aria-expanded="false" aria-controls="navSubmenuPagesAccount-{{$key}}">{{$service->name}}</a>
+                      
+                      <div id="navSubmenuPagesAccount-{{$key}}" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPages-{{$key}}" style="min-width: 230px; display:{{ (count($service->SubServices) <= 0)?'none':'block' }}">
                         @foreach($service->SubServices as $subservice)
-                        <a class="dropdown-item " href="./account-overview.html">{{$subservice->name}}</a>
+                        <a class="dropdown-item " href="{{ url('visa-services/'.$subservice->slug) }}">{{$subservice->name}}</a>
                         @endforeach
                       </div>
+                      
                       
                     </div>
                     <!-- Account -->

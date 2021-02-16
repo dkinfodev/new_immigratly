@@ -15,7 +15,7 @@ use App\Models\Articles;
 use App\Models\ChatGroups;
 use App\Models\News;
 use App\Models\Professionals;
-
+use App\Models\ChatGroupComments;
 class FrontendController extends Controller
 {
     /**
@@ -30,25 +30,23 @@ class FrontendController extends Controller
 
     public function index(){
 
-     $articles = Articles::get();
-     $news = News::get();
-     $professionals = Professionals::get();
+         $articles = Articles::get();
+         $news = News::get();
+         $professionals = Professionals::get();
 
-     $viewData['professionals'] = $professionals;
-     $viewData['articles'] = $articles;   
-     $viewData['news'] = $news;   
-     $viewData['pageTitle'] = "Home Page";   
-     return view('frontend.index',$viewData);
+         $viewData['professionals'] = $professionals;
+         $viewData['articles'] = $articles;   
+         $viewData['news'] = $news;   
+         $viewData['pageTitle'] = "Home Page";   
+         return view('frontend.index',$viewData);
      
     }
 
     public function articles(){
-
-     $articles = Articles::get();
-     $viewData['articles'] = $articles;   
-     $viewData['pageTitle'] = "Articles";   
-     return view('frontend.articles.articles',$viewData);
-     
+        $articles = Articles::get();
+        $viewData['articles'] = $articles;   
+        $viewData['pageTitle'] = "Articles";   
+        return view('frontend.articles.articles',$viewData);
     }   
 
     public function articleSingle($slug){
@@ -99,5 +97,56 @@ class FrontendController extends Controller
 
         $viewData['record'] = $discussions;
         return view('frontend.discussions.topic-detail',$viewData);
+    }
+
+    public function fetchComments(Request $request){
+        $chat_id = $request->input("chat_id");
+        $comments = ChatGroupComments::with('User')->where("chat_id",$chat_id)->get();
+        $viewData['comments'] = $comments;
+        $view = View::make('frontend.discussions.comments',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['contents'] = $contents;
+        return response()->json($response);
+    }
+
+    public function sendComment(Request $request){
+
+        $object = new ChatGroupComments();
+        $unique_id = randomNumber();
+        $object->unique_id = $unique_id;
+        $object->chat_id = $request->input("chat_id");
+        if($request->input("message")){
+            $message = $request->input("message");
+            $object->message = $message;
+        }
+        
+        if($file = $request->file('file'))
+        {
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension();
+            $allowed_extension = allowed_extension();
+            if(in_array($extension,$allowed_extension)){
+                $newName        = randomNumber(5)."-".$fileName;
+                $source_url = $file->getPathName();
+                $destinationPath = public_path("/uploads/files");
+                if($file->move($destinationPath, $newName)){
+                    $object->file_name = $newName;
+                }
+            }else{
+                $response['status'] = false;
+                $response['message'] = "File not allowed";
+                return response()->json($response);
+            } 
+        }
+        $object->send_by = \Auth::user()->unique_id;
+        $object->user_type = "user";
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Comment added successfully";
+
+        return response()->json($response);
     }
 }

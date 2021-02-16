@@ -30,6 +30,8 @@ Route::group(array('middleware' => 'frontend'), function () {
     Route::get('/discussions', [App\Http\Controllers\Frontend\FrontendController::class, 'discussions']);
     Route::get('/discussions/fetch-topics', [App\Http\Controllers\Frontend\FrontendController::class, 'fetchTopics']);
     Route::get('/topic/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'topicDetails']);
+    Route::post('/discussions/fetch-comments', [App\Http\Controllers\Frontend\FrontendController::class, 'fetchComments']);
+    Route::post('/discussions/send-comment', [App\Http\Controllers\Frontend\FrontendController::class, 'sendComment']);
 
 });
 // Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);

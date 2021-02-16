@@ -59,5 +59,131 @@
     </div>
     <!-- End Article -->
   </div>
+  
+  <hr class="my-10">
+
+  <ul class="list-unstyled list-lg-article comments">
+    
+  </ul>
+  <!-- Footer -->
+  @if(Auth::check())
+  <form id="form" class="js-validate" method="post">
+    @csrf
+    <div class="row alert alert-soft-dark">
+      <div class="col-md-12 mb-2">
+        <textarea name="message" class="form-control js-count-characters" id="message" rows="1" maxlength="100" placeholder="Place your comments here..."></textarea>
+      </div>
+      <div class="col-md-4 text-left">
+         <div class="custom-file">
+            <input type="file" class="js-file-attach custom-file-input" id="customFile"
+                    data-hs-file-attach-options='{
+                      "textTarget": "[for=\"customFile\"]",
+                      "resetTarget": ".js-file-attach-reset-img"
+                   }'>
+            <label class="custom-file-label" for="customFile">Choose file</label>
+          </div>
+        
+      </div>
+      <div class="col-md-2 text-left">
+        <button type="button" class="js-file-attach-reset-img btn btn-sm btn-outline-dark mt-1">Reset</button>
+      </div>
+      <div class="col-md-6 text-right">
+        <button type="button" id="submitbtn" class="btn btn-dark"><i class="fa fa-send"></i> Send</button>
+      </div>
+    </div>
+  </form>
+  <!-- <div class="text-danger h3">Login to place your comments</div> -->
+  @endif
+          <!-- End Footer -->
 </div>
+@endsection
+
+@section("javascript")
+<script src="assets/vendor/hs-file-attach/dist/hs-file-attach.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".js-file-attach-reset-img").click(function(){
+      $("#customFile").val(null);
+      $(".custom-file-label").html("Choose File");
+     
+  });
+  $('.js-file-attach').each(function () {
+    var customFile = new HSFileAttach($(this)).init();
+  });
+  $("#submitbtn").click(function(){
+      
+      var formData = new FormData();
+      var _isvalid = 0;
+      formData.append("_token",csrf_token);
+      formData.append("chat_id","{{ $record->unique_id }}");
+      if($("#message").val() != ''){
+        _isvalid = 1;
+        formData.append("message",$("#message").val());
+      }
+      if($('#customFile').val() != ''){
+        _isvalid = 1;
+        formData.append('file', $('#customFile')[0].files[0]);
+      }
+      if(_isvalid == 0){
+        errorMessage("No value to send");
+        return false;
+      }
+      var url  = "{{ url('discussions/send-comment') }}";
+      $.ajax({
+        url:url,
+        type:"post",
+        data:formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType:"json",
+        beforeSend:function(){
+          showLoader();
+        },
+        success:function(response){
+          hideLoader();
+          if(response.status == true){
+            successMessage(response.message);
+            $("#form")[0].reset();
+            $(".js-file-attach-reset-img").trigger("click");
+            $("#customFileExample5").html("Choose file to upload");
+            fetchComments();
+          }else{
+            errorMessage(response.message);
+          }
+        },
+        error:function(){
+            internalError();
+        }
+      });
+      
+    });
+})
+fetchComments();
+
+function fetchComments(){
+
+    $.ajax({
+        type: "POST",
+        url:"{{url('discussions/fetch-comments')}}",
+        data:{
+          _token:csrf_token,
+          chat_id:"{{ $record->unique_id }}"
+        },
+        dataType:'json',
+        beforeSend:function(){
+            showLoader();
+        },
+        success: function (data) {
+            hideLoader();
+            $(".comments").html(data.contents);
+            
+        },
+        error:function(){
+            internalError();
+        }
+    });
+}
+</script>
 @endsection

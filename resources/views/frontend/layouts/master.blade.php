@@ -21,10 +21,9 @@
     <link rel="stylesheet" href="assets/frontend/vendor/dzsparallaxer/dzsparallaxer.css">
     <link rel="stylesheet" href="assets/frontend/vendor/cubeportfolio/css/cubeportfolio.min.css">
     <link rel="stylesheet" href="assets/frontend/vendor/aos/dist/aos.css">
-
     <!-- CSS Front Template -->
     <link rel="stylesheet" href="assets/frontend/css/theme.min.css">
-
+    <link rel="stylesheet" href="assets/vendor/toastr/toastr.css">
     @yield('style')
 
     <script>
@@ -380,6 +379,7 @@
   <script src="assets/frontend/vendor/dzsparallaxer/dzsparallaxer.js"></script>
   <script src="assets/frontend/vendor/typed.js/lib/typed.min.js"></script>
   <script src="assets/frontend/vendor/aos/dist/aos.js"></script>
+  <script src="assets/vendor/toastr/toastr.min.js"></script>
   <script src="assets/js/theme-custom.js"></script>
   <!-- JS Front -->
   <script src="assets/frontend/js/theme.min.js"></script>
