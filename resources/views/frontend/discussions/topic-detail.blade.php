@@ -10,7 +10,7 @@
 <div class="bg-dark">
   <div class="bg-img-hero-center" style="background-image: url({{asset('assets/frontend/svg/components/abstract-shapes-19.svg')}});padding-top: 94px;">
     <div class="container space-1">
-      <div class="w-lg-80 mx-lg-auto">
+      <div class="w-lg-100 mx-lg-auto">
         <!-- Input -->
         <h1 class="text-lh-sm text-white">{{$record->group_title}}</h1>
         <!-- End Input -->
@@ -19,7 +19,7 @@
   </div>
 </div>
 <div class="container space-bottom-2">
-  <div class="w-lg-80 mx-lg-auto">
+  <div class="w-lg-100 mx-lg-auto">
     <!-- Breadcrumbs -->
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb breadcrumb-no-gutter font-size-1 space-1">
@@ -31,7 +31,7 @@
     <!-- End Breadcrumbs -->
 
     <!-- Article -->
-    <div class="card card-bordered p-4 p-md-7">
+    <div class="card card-bordered">
       <!-- <h1 class="h2">What's Front?</h1> -->
       <!-- <p>How Front works, what it can do for your business and what makes it different to other solutions.</p> -->
 
