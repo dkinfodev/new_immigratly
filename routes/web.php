@@ -22,9 +22,11 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/login');
 });
+
 Route::group(array('middleware' => 'frontend'), function () {
     Route::get('/', [App\Http\Controllers\Frontend\FrontendController::class, 'index']);
     Route::get('/articles', [App\Http\Controllers\Frontend\FrontendController::class, 'articles']);
+
     Route::get('/articles/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'articleSingle']);
 
     Route::get('/discussions', [App\Http\Controllers\Frontend\FrontendController::class, 'discussions']);

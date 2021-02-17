@@ -58,6 +58,7 @@ class FrontendController extends Controller
          $viewData['pageTitle'] = $article->title;   
          return view('frontend.articles.article-single',$viewData);
     }
+    
     public function discussions(){
         $viewData['pageTitle'] = "Discussions Topics";   
         return view('frontend.discussions.discussions',$viewData);
