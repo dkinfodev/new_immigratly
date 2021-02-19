@@ -147,12 +147,12 @@
     <div class="container space-top-2 space-top-lg-3">
       <!-- Title -->
       <div class="w-md-80 w-lg-50 text-center mx-md-auto mb-5 mb-md-9">
-        <h2 class="h1">Read our latest Articles</h2>
+        <h2 class="h1">Read our Latest Articles</h2>
       </div>
       <!-- End Title -->
 
       <div class="row mx-n2 mb-5 mb-md-9">
-        
+        @if(count($articles) > 0)
         @foreach($articles as $key=>$article)
         <div class="col-sm-6 col-lg-3 px-2 mb-3 mb-lg-0">
           <!-- Card -->
@@ -175,7 +175,7 @@
             <div class="card-body">
               <span class="d-block small font-weight-bold text-cap mb-2">{{$article->Category->name}}</span>
               <h5 class="mb-5">{{substr($article->short_description,0,30)}}<?php if(strlen($article->short_description)>29){echo "...";} ?></h5>
-                <span class="mt-2 float-left d-block small font-weight-bold text-cap">{{$article->professional}}</span>
+                <span class="mt-2 float-left d-block small font-weight-bold text-cap">{{dateFormat($article->created_at)}}</span>
                 <span class="float-right mt-1 text-danger"><small>Read More</small></span>
             </div>
           </a>
@@ -183,7 +183,11 @@
           <!-- End Card -->
         </div>
         @endforeach
-
+        @else
+        <div class="col-md-12">
+          <div class="alert alert-danger text-center">No articles available</div>
+        </div>
+        @endif
         <!--
         <div class="col-sm-6 col-lg-3 px-2 mb-3 mb-lg-0">
          
@@ -329,7 +333,7 @@
       
         <!-- Title -->
         <div class="w-md-80 w-lg-50 text-center mx-md-auto mb-5 mb-md-9">
-          <h2 class="h1">Webinar</h2>
+          <h2 class="h1">Recent Webinars</h2>
         </div>
         <!-- End Title -->
        
@@ -345,110 +349,55 @@
         <!-- End Title -->
 
       <div class="row mb-3">
+        @if(count($webinars) > 0)
+        @foreach($webinars as $webinar)
           <div class="col-sm-6 col-lg-4 mb-3 mb-sm-8">
             <!-- Blog Card -->
             <article class="card h-100">
               <div class="card-img-top position-relative">
-                <img class="card-img-top" src="assets/frontend/img/500x280/img7.jpg" alt="Image Description">
-                <figure class="ie-curved-y position-absolute right-0 bottom-0 left-0 mb-n1">
+                <img class="card-img-top" src="assets/svg/illustrations/yelling-reverse.svg" alt="Image Description">
+                <!-- <figure class="ie-curved-y position-absolute right-0 bottom-0 left-0 mb-n1">
                   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 1920 100.1">
                     <path fill="#fff" d="M0,0c0,0,934.4,93.4,1920,0v100.1H0L0,0z"/>
                   </svg>
-                </figure>
+                </figure> -->
               </div>
 
               <div class="card-body">
-                <p class="text-primary">Employment Visa</p>
-                <h3><a class="text-inherit" href="blog-single-article.html">Drone Company PrecisionHawk Names New CEO</a></h3>
-                <p>Drone company PrecisionHawk has survived 10 years in the industry.</p>
-                <p class="text-muted font-size-1">Webinar Date 23-1-21</p>
+                <p class="text-primary">{{$webinar->Category->name}}</p>
+                <h3><a class="text-inherit" href="{{ url('webinar/'.$webinar->slug) }}">{{$webinar->title}}</a></h3>
+                <p>
+                  {{substr($webinar->short_description,0,100)}}...
+                </p>
+                <p class="text-muted font-size-1">Webinar Date {{dateFormat($webinar->webinar_date)}}</p>
               </div>
 
+              <?php 
+              $company_data = professionalDetail($webinar->professional); 
+              if(!empty($company_data)){
+              ?>
               <div class="card-footer border-0 pt-0">
                 <div class="media align-items-center">
                   <div class="avatar-group">
-                    <a class="avatar avatar-xs avatar-circle" href="#" data-toggle="tooltip" data-placement="top" title="Aaron Larsson">
-                      <img class="avatar-img" src="assets/frontend/img/100x100/img3.jpg" alt="Image Description">
-                    </a> FastZone Services
+                    <a class="avatar avatar-xs avatar-circle" href="#" data-toggle="tooltip" data-placement="top" title="{{$company_data->company_name}}">
+                      <img class="avatar-img" src="{{ professionalLogo('m',$webinar->professional) }}" alt="Image Description">
+                    </a> {{$company_data->company_name}}
                   </div>
                   <div class="media-body d-flex justify-content-end text-primary font-size-1 ml-2">
                      Join
                   </div>
                 </div>
               </div>
+              <?php } ?>
             </article>
             <!-- End Blog Card -->
           </div>
-
-          <div class="col-sm-6 col-lg-4 mb-3 mb-sm-8">
-            <!-- Blog Card -->
-            <article class="card h-100">
-              <div class="card-img-top position-relative">
-                <img class="card-img-top" src="assets/frontend/img/500x280/img8.jpg" alt="Image Description">
-                <figure class="ie-curved-y position-absolute right-0 bottom-0 left-0 mb-n1">
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 1920 100.1">
-                    <path fill="#fff" d="M0,0c0,0,934.4,93.4,1920,0v100.1H0L0,0z"/>
-                  </svg>
-                </figure>
-              </div>
-
-              <div class="card-body">
-                <p class="text-primary">Visit Visa</p>
-                <h3><a class="text-inherit" href="blog-single-article.html">Drone Company PrecisionHawk Names New CEO</a></h3>
-                <p>Drone company PrecisionHawk has survived 10 years in the industry.</p>
-                <p class="text-muted font-size-1">Webinar Date 23-1-21</p>
-              </div>
-
-              <div class="card-footer border-0 pt-0">
-                <div class="media align-items-center">
-                  <div class="avatar-group">
-                    <a class="avatar avatar-xs avatar-circle" href="#" data-toggle="tooltip" data-placement="top" title="Emily Milda">
-                      <img class="avatar-img" src="assets/frontend/img/100x100/img2.jpg" alt="Image Description">
-                    </a>
-                  </div>
-                  <div class="media-body d-flex justify-content-end text-primary font-size-1 ml-2">
-                    Join
-                  </div>
-                </div>
-              </div>
-            </article>
-            <!-- End Blog Card -->
-          </div>
-
-          <div class="col-sm-6 col-lg-4 mb-3 mb-sm-8">
-            <!-- Blog Card -->
-            <article class="card h-100">
-              <div class="card-img-top position-relative">
-                <img class="card-img-top" src="assets/frontend/img/500x280/img2.jpg" alt="Image Description">
-                <figure class="ie-curved-y position-absolute right-0 bottom-0 left-0 mb-n1">
-                  <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 1920 100.1">
-                    <path fill="#fff" d="M0,0c0,0,934.4,93.4,1920,0v100.1H0L0,0z"/>
-                  </svg>
-                </figure>
-              </div>
-
-              <div class="card-body">
-                <p class="text-primary">Student Visa</p>
-                <h3><a class="text-inherit" href="blog-single-article.html">Drone Company PrecisionHawk Names New CEO</a></h3>
-                <p>Drone company PrecisionHawk has survived 10 years in the industry.</p>
-                <p class="text-muted font-size-1">Webinar Date 23-1-21</p>
-              </div>
-
-              <div class="card-footer border-0 pt-0">
-                <div class="media align-items-center">
-                  <div class="avatar-group">
-                    <a class="avatar avatar-xs avatar-circle" href="#" data-toggle="tooltip" data-placement="top" title="Emily Milda">
-                      <img class="avatar-img" src="assets/frontend/img/100x100/img2.jpg" alt="Image Description">
-                    </a>
-                  </div>
-                  <div class="media-body d-flex justify-content-end text-primary font-size-1 ml-2">
-                    Join
-                  </div>
-                </div>
-              </div>
-            </article>
-            <!-- End Blog Card -->
-          </div>
+        @endforeach
+        @else
+        <div class="col-md-12">
+          <div class="alert alert-danger text-center">No Webniar events available</div>
+        </div>
+        @endif
       </div>
 
     </div>    
@@ -515,15 +464,20 @@
         </div>-->
 
         @foreach($professionals as $key=>$prof)
+        <?php
+          $company_data = professionalDetail($prof->subdomain);
+          if(!empty($company_data)){
+        ?>
         <div class="js-slide pb-6">
-          <img class="img-fluid w-100 rounded-lg" src="assets/frontend/img/400x500/img29.jpg" alt="Image Description">
+          <img class="img-fluid w-100 rounded-lg" src="{{professionalLogo('m',$prof->subdomain)}}" alt="Image Description">
           <div class="card mt-n7 mx-3">
             <div class="card-body text-center">
-              <h5 class="mb-1">{{ucwords($prof->first_name)}} {{ucwords($prof->last_name)}}</h5>
-              <p class="font-size-1 mb-0">{{$prof->company_name}}</p>
+              <h5 class="mb-1">{{$company_data->company_name}}</h5>
+              
             </div>
           </div>
         </div>
+        <?php } ?>
         @endforeach
 
       </div>
@@ -551,37 +505,10 @@
 
       <div class="row justify-content-lg-between">
 
-
+      @if(count($news) > 0)
       @foreach($news as $key=>$n)
         <div class="col-lg-6">
-          <!-- Blog --
-          <article class="row mb-7">
-            <div class="col-md-5">
-              <img class="card-img" src="assets/frontend/img/400x500/img7.jpg" alt="Image Description">
-            </div>
-            <div class="col-md-7">
-              <div class="card-body d-flex flex-column h-100 px-0">
-                <span class="d-block mb-2">
-                  <a class="font-weight-bold" href="#">Business</a>
-                </span>
-                <h3><a class="text-inherit" href="blog-single-article.html">Front becomes an official Instagram Marketing Partner</a></h3>
-                <p>Great news we're eager to share.</p>
-                <div class="media align-items-center mt-auto">
-                  <a class="avatar avatar-sm avatar-circle mr-3" href="blog-profile.html">
-                    <img class="avatar-img" src="assets/frontend/img/100x100/img3.jpg" alt="Image Description">
-                  </a>
-                  <div class="media-body">
-                    <span class="text-dark">
-                      <a class="d-inline-block text-inherit font-weight-bold" href="blog-profile.html">Aaron Larsson</a>
-                    </span>
-                    <small class="d-block">Feb 15, 2020</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-          !-- End Blog -->
-          <!-- Blog -->
+          
           <article class="row mb-7">
             <div class="col-md-5">
               <img class="card-img" src="assets/frontend/img/400x500/img5.jpg" alt="Image Description">
@@ -601,7 +528,7 @@
                     <span class="text-dark">
                       <a class="d-inline-block text-inherit font-weight-bold" href="blog-profile.html">{{$n->fetchUser->first_name}}</a>
                     </span>
-                    <small class="d-block">{{date('d-m-Y',strtotime($n->created_at))}}</small>
+                    <small class="d-block">{{$n->news_date}}</small>
                   </div>
                 </div>
               </div>
@@ -613,6 +540,11 @@
         </div>
 
         @endforeach
+        @else
+        <div class="col-md-12">
+          <div class="alert alert-danger text-center">No news available</div>
+        </div>
+        @endif
           <!--<div class="col-lg-6">
           <!- Blog 
           <article class="row mb-7">

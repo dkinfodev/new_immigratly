@@ -14,7 +14,19 @@
             <img src="./assets/svg/logos/logo-white.svg" alt="Logo">
           </a>
           <!-- End Logo -->
-
+          @if(Auth::check())
+          <!-- Secondary Content -->
+          <div class="navbar-nav-wrap-content text-center mr-3">
+            <div class="d-none d-lg-block">
+              <a class="btn btn-sm btn-light transition-3d-hover" href="{{ baseUrl('/') }}" target="_blank">Go To Dashboard</a>
+            </div>
+          </div> 
+          <div class="navbar-nav-wrap-content text-center mr-3">
+            <div class="d-none d-lg-block">
+              <a class="btn btn-sm btn-dark transition-3d-hover" href="{{ baseUrl('/') }}" target="_blank"><i class="tio-sign-out"></i> Logout</a>
+            </div>
+          </div> 
+          @else
           <!-- Secondary Content -->
           <div class="navbar-nav-wrap-content text-center mr-3">
             <div class="d-none d-lg-block">
@@ -29,7 +41,7 @@
             </div>
           </div>
           <!-- End Secondary Content -->
-
+          @endif
           <!-- Responsive Toggle Button -->
           <button type="button" class="navbar-toggler btn btn-icon btn-sm rounded-circle"
                   aria-label="Toggle navigation"

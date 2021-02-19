@@ -29,7 +29,10 @@ class HomeController extends Controller
             return redirect('/login');
         }
     }
-
+    public function random_number(){
+        echo randomNumber();
+        
+    }
     public function welcome_page(){
         if(\Session::get("professional_register")){
             $viewData['portal_url'] = \Session::get("portal_url");

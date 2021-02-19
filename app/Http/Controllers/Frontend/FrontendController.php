@@ -16,6 +16,8 @@ use App\Models\ChatGroups;
 use App\Models\News;
 use App\Models\Professionals;
 use App\Models\ChatGroupComments;
+use App\Models\Webinar;
+
 class FrontendController extends Controller
 {
     /**
@@ -29,11 +31,27 @@ class FrontendController extends Controller
     }
 
     public function index(){
+         $now = \Carbon\Carbon::now();
+         $articles = Articles::where("status","publish")
+                        ->orderBy('id','desc')
+                        ->limit(4)
+                        ->get();
+         $news = News::where(DB::raw("(STR_TO_DATE(news_date,'%d-%m-%Y'))"), ">=",$now)
+                    ->orderBy("id",'desc')
+                    ->limit(4)
+                    ->get();
 
-         $articles = Articles::get();
-         $news = News::get();
-         $professionals = Professionals::get();
+         $webinars = Webinar::where("status","publish")
+                        ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now)
+                        ->orderBy(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"),'desc')
+                        ->limit(4)
+                        ->get();
 
+         $professionals = Professionals::orderBy('id','desc')
+                        ->limit(4)
+                        ->get();
+       
+         $viewData['webinars'] = $webinars;
          $viewData['professionals'] = $professionals;
          $viewData['articles'] = $articles;   
          $viewData['news'] = $news;   

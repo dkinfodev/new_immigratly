@@ -66,12 +66,7 @@
               <p>
                 {{substr($record->short_description,0,150)}}
               </p>
-              <div class="article-user">
-                <span class="avatar avatar-circle">
-                  <img class="avatar-img" src="{{professionalLogo('m',$record->professional)}}" alt="Image Description">
-                </span>
-                <span class="h3 avatar-name">{{ $record->professional_info->company_name }}</span>
-              </div>
+              
             </div>
             <a class="stretched-link" href="#"></a>
           </div>

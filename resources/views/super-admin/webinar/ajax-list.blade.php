@@ -63,7 +63,7 @@
                   <span class="legend-indicator bg-primary"></span> {{$record->Category->name}}
                 </div>
                 <div class="col-auto">
-                  <span class="font-size-sm"><i class="tio-calendar"></i> {{dateFormat($record->created_at)}}</span>
+                  <span class="font-size-sm"><i class="tio-calendar"></i> {{dateFormat($record->webinar_date)}}</span>
                 </div>
               </div>
               <p>

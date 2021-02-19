@@ -20,7 +20,7 @@ class ArticlesController extends Controller
     }
     public function publishArticles()
     {
-       	$viewData['pageTitle'] = "Articles";
+        $viewData['pageTitle'] = "Articles";
         
         $publish = 0;
         $draft = 0;
@@ -54,7 +54,7 @@ class ArticlesController extends Controller
 
     public function getAjaxList(Request $request)
     {
-        $subdomain = \Session::get("subdomain");
+       
         $search = $request->input("search");
         $status = $request->input("status");
         $apiData['search'] = $search;
@@ -75,9 +75,7 @@ class ArticlesController extends Controller
                         ->orderBy("id","desc")
                         ->paginate();
         
-        foreach($records as $record){
-            $record->professional_info = $record->ProfessionalDetail($record->professional);
-        }
+        
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.articles.ajax-list',$viewData);
         $contents = $view->render();
@@ -144,12 +142,12 @@ class ArticlesController extends Controller
         $object->short_description = $request->input("short_description");
         $object->category_id = $request->input("category_id");
         $object->share_with = $request->input("share_with");
-        // $object->status = $request->input("status");
+        $object->status = "publish";
         // if($request->input("content_block")){
         //     $object->content_block = $request->input("content_block");
         // }
-        $object->professional= $this->subdomain;
-        $object->added_by = $request->input("added_by");
+
+        $object->added_by = \Auth::user()->unique_id;
         if($request->input("timestamp")){
             $timestamp = $request->input("timestamp");
             $files = glob(public_path()."/uploads/temp/". $timestamp."/*");
@@ -183,7 +181,7 @@ class ArticlesController extends Controller
 
         $response['status'] = true;
         $response['redirect_back'] = baseUrl('articles');
-        $response['message'] = $result['message'];
+        $response['message'] = "Record added successfully";
         return response()->json($response);
     }
  

@@ -57,14 +57,14 @@
           if($article->images != ''){
             $images = explode(",",$article->images);
               if(file_exists(public_path('uploads/articles/'.$images[0]))){
-                  $image = url('public/uploads/articles/'.$images[0]);
+                $image = url('public/uploads/articles/'.$images[0]);
               }
               else
               {
-               $image = "assets/frontend/img/500x280/img9.jpg"; 
+                $image = "assets/svg/illustrations/yelling-reverse.svg"; 
               }
-            }else{
-            $image = "assets/frontend/img/500x280/img9.jpg";
+          }else{
+            $image = "assets/svg/illustrations/yelling-reverse.svg";
           } ?>
 
           <article class="card h-100">
@@ -88,7 +88,7 @@
               <div class="media align-items-center">
                
                 <div class="media-body d-flex justify-content-end text-muted font-size-1 ml-2">
-                  {{date('d-m-Y',strtotime($article->created_at))}}
+                 Created on {{dateFormat($article->created_at)}}
                 </div>
               </div>
             </div>

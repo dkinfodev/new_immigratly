@@ -76,6 +76,12 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Webinar</span>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/discussions') }}" data-placement="left">
+                    <i class="tio-book-opened nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Discussions</span>
+                  </a>
+                </li>
                 <!-- <li class="navbar-vertical-aside-has-menu ">
                   <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
                     <i class="tio-feed-outlined nav-icon"></i>

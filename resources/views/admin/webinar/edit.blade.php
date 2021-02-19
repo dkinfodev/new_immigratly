@@ -548,7 +548,7 @@ $(document).on('ready', function () {
     var date = new Date();
     date.setDate(date.getDate()); 
     var attr = $("#webinar_date").attr('date-format');
-    var format ="MM dd, yyyy";
+    var format ="dd-mm-yyyy";
     if (typeof attr !== typeof undefined && attr !== false) {
       format = $("#webinar_date").attr("date-format");
     }

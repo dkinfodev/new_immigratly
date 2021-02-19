@@ -36,6 +36,7 @@ Route::group(array('middleware' => 'frontend'), function () {
 });
 // Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/random_number', [App\Http\Controllers\HomeController::class, 'random_number']);
 Route::get('/welcome', [App\Http\Controllers\HomeController::class, 'welcome_page']);
 Route::get('/dbupgrade', [App\Http\Controllers\HomeController::class, 'dbupgrade']);
 Route::get('/states', [App\Http\Controllers\CommonController::class, 'stateList']);
@@ -142,6 +143,8 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'update']);
         Route::post('/search/{key}', [App\Http\Controllers\SuperAdmin\DocumentFolderController::class, 'search']); 
     });
+
+    
     Route::group(array('prefix' => 'assessments'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'index']);
         Route::get('/assigned', [App\Http\Controllers\SuperAdmin\AssessmentsController::class, 'assigned']);
@@ -335,6 +338,23 @@ Route::group(array('prefix' => 'super-admin', 'middleware' => 'super_admin'), fu
         Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'deleteSingle']);
         Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\WebinarController::class, 'deleteMultiple']);
     });
+
+    Route::group(array('prefix' => 'discussions'), function () {
+        Route::get('/', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'index']);
+        Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'getAjaxList']); 
+        Route::get('/add', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'add']);
+        Route::post('/save', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'save']); 
+        Route::get('/delete/{id}', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'deleteSingle']); 
+        Route::post('/delete-multiple', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'deleteMultiple']); 
+        Route::get('/edit/{id}', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'edit']); 
+        Route::post('/update/{id}', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'update']);     
+        Route::post('/change-status', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'changeStatus']);
+        Route::get('/comments/{id}', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'chatGroupComments']);
+        Route::post('/send-comment', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'sendComment']);
+        Route::get('/fetch-comments/{id}', [App\Http\Controllers\SuperAdmin\DiscussionsController::class, 'fetchComments']);
+        
+    }); 
+
     Route::group(array('prefix' => 'employee-privileges'), function () {
         Route::get('/', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'index']);
         Route::post('/ajax-list', [App\Http\Controllers\SuperAdmin\EmployeePrivilegesController::class, 'getAjaxList']); 
