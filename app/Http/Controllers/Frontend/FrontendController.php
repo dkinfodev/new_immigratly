@@ -42,7 +42,7 @@ class FrontendController extends Controller
                     ->get();
 
          $webinars = Webinar::where("status","publish")
-                        ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now)
+                       /* ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now) */
                         ->orderBy(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"),'desc')
                         ->limit(4)
                         ->get();
