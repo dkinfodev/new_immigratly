@@ -13,4 +13,9 @@ class ArticleTags extends Model
     static function deleteRecord($id){
         ArticleTags::where("id",$id)->delete();
     }
+
+    public function tagName()
+    {
+        return $this->belongsTo('App\Models\Tags','tag_id');
+    }
 }

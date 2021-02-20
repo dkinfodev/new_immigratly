@@ -16,6 +16,8 @@
     <div class="container space-1">
       <div class="w-lg-80 mx-lg-auto">
         
+        <h4 class="h4 text-white mb-4">{{$article->Category->name}}</h4>
+
         <h1 class="h1 text-white mb-4">{{$article->title}} </h1>
         
 
@@ -30,17 +32,28 @@
 
     <div class="container space-top-1 space-bottom-2 space-top-lg-2">
 
+
        <div class="w-lg-60 mx-lg-auto text-justify">
-        
-        
+      
+
         <p class="text-primary">{{$article->short_description}}</p> 
+
+        
 
         <small class="float-right">Added On - {{date('d-m-Y',strtotime($article->created_at))}} </small><br>
         <br>
 
         {!! $article->description !!}
 
+        <br><br>
+        Tags : 
+        <span class="badge badge-secondary">{{$article->Category->name}}</span>
+        <span class="badge badge-secondary">{{$article->Category->name}}</span>
+        <span class="badge badge-secondary">{{$article->Category->name}}</span>
+
       </div> 
+
+      
 
 
 
