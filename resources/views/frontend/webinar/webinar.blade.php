@@ -17,7 +17,7 @@
     <div class="container space-1">
       <div class="w-lg-90 mx-lg-auto">
         
-        <h2 class="h1 text-white">Read Our Latest Articles</h2>
+        <h2 class="h1 text-white">Join Our Webinars</h2>
 
       </div>
     </div>
@@ -157,15 +157,15 @@
           </div>
           <!-- End Filter -->
 
-          @foreach($articles as $key=>$article)
+          @foreach($webinars as $key=>$webinar)
           <!-- Card -->
-          <a class="d-block border-bottom pb-5 mb-5" href="{{url('articles/'.$article->slug)}}">
+          <a class="d-block border-bottom pb-5 mb-5" href="{{url('webinar/'.$webinar->slug)}}">
             <div class="row mx-md-n2">
               <div class="col-md-4 px-md-2 mb-3 mb-md-0">
                 <div class="position-relative">
                   <?php
-                  if($article->images != ''){
-                    $images = explode(",",$article->images);
+                  if($webinar->images != ''){
+                    $images = explode(",",$webinar->images);
                       if(file_exists(public_path('uploads/articles/'.$images[0]))){
                           $image = url('public/uploads/articles/'.$images[0]);
                       }
@@ -189,7 +189,7 @@
               <div class="col-md-8">
                 <div class="media mb-2">
                   <div class="media-body mr-7">
-                    <h3 class="text-hover-primary">{{ substr($article->title,0,100) }}<?php if(strlen($article->title)>100){echo "...";} ?></h3>
+                    <h3 class="text-hover-primary">{{ substr($webinar->title,0,100) }}<?php if(strlen($webinar->title)>100){echo "...";} ?></h3>
                   </div>
 
                   <!--
@@ -226,7 +226,7 @@
                   </div>-->
                 </div>
 
-                <p class="font-size-1 text-body mb-0">{!! substr($article->short_description,0,300) !!}<?php if(strlen($article->short_description)>300){echo "...";} ?></p>
+                <p class="font-size-1 text-body mb-0">{!! substr($webinar->short_description,0,300) !!}<?php if(strlen($webinar->short_description)>300){echo "...";} ?></p>
               </div>
             </div>
           </a>

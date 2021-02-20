@@ -64,6 +64,8 @@ class FrontendController extends Controller
         $articles = Articles::get();
         $viewData['articles'] = $articles;   
         $viewData['pageTitle'] = "Articles";   
+        $services = DB::table(MAIN_DATABASE.".visa_services")->get();
+        $viewData['services'] = $services;
         return view('frontend.articles.articles',$viewData);
     }   
 
@@ -76,6 +78,32 @@ class FrontendController extends Controller
          $viewData['pageTitle'] = $article->title;   
          return view('frontend.articles.article-single',$viewData);
     }
+
+    public function webinar(){
+        
+        $webinars = Webinar::where("status","publish")
+                       /* ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now) */
+                        ->orderBy(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"),'desc')
+                        ->limit(4)
+                        ->get();
+
+        $viewData['webinars'] = $webinars;   
+        $viewData['pageTitle'] = "Webinars";   
+        $services = DB::table(MAIN_DATABASE.".visa_services")->get();
+        $viewData['services'] = $services;
+        return view('frontend.webinar.webinar',$viewData);
+    }   
+
+    public function webinarSingle($slug){
+         $webinar = Webinar::where('slug',$slug)->first();
+         if(empty($webinar)){
+            return redirect('/');   
+         }
+         $viewData['webinar'] = $webinar;   
+         $viewData['pageTitle'] = $webinar->title;   
+         return view('frontend.webinar.webinar-single',$viewData);
+    }
+
     public function discussions(){
         $viewData['pageTitle'] = "Discussions Topics";   
         return view('frontend.discussions.discussions',$viewData);

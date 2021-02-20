@@ -71,11 +71,9 @@
                   <a class="nav-link" href="{{ url('/') }}">Home</a>
                 </li>
 
-
                 <li class="p-2 navbar-nav-item">
-                  <a class="nav-link" href="#">Webinar</a>
+                  <a class="nav-link" href="{{ url('/webinar') }}">Webinar</a>
                 </li>
-
 
                 <li class="p-2 navbar-nav-item">
                   <a class="nav-link" href="{{ url('/articles') }}">Articles</a>
