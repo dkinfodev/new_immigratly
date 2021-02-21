@@ -182,7 +182,7 @@ class DashboardController extends Controller
         $viewData['notes'] = $notes;
         $view = View::make(roleFolder().'.modal.reminder-list',$viewData);
         $contents = $view->render();
-
+        
         $response['status'] = true;
         $response['html'] = $contents;
         return response()->json($response);

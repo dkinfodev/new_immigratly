@@ -24,6 +24,7 @@ class ProfileController extends Controller
         if(\Auth::user()->role != 'admin'){
             return redirect(baseUrl('/'));
         }
+       
         $setting = DomainDetails::first();
         $viewData['profile_status'] = $setting->profile_status;
         $viewData['pageTitle'] = "Complete Profile";

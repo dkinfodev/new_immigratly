@@ -782,20 +782,21 @@ if(!function_exists("professionalProfile")){
         }
         
         $user = DB::table(PROFESSIONAL_DATABASE.$domain.".users")->where("unique_id",$unique_id)->first();
+      
         $profile_image = $user->profile_image;
         $profile_dir = professionalDir($domain)."/profile/".$profile_image;
         if($profile_image == '' || !file_exists($profile_dir)){
-            $url = asset("public/uploads/users/default.jpg");
+            $url = asset("/public/uploads/users/default.jpg");
             return $url;
         }
-        $original = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+        $original = asset("/public/uploads/professional/".$domain."/profile/".$profile_image);
         $url = '';
         if($size == 'r'){
-            $url = asset("public/uploads/professional/".$domain."/profile/".$profile_image);
+            $url = asset("/public/uploads/professional/".$domain."/profile/".$profile_image);
         }
         if($size == 'm'){
             if(file_exists(professionalDir($domain)."/profile/medium/".$profile_image)){
-                $url = asset("public/uploads/professional/".$domain."/profile/medium/".$profile_image);
+                $url = asset("/public/uploads/professional/".$domain."/profile/medium/".$profile_image);
             }else{
                 $url = $original;
             }

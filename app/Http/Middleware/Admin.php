@@ -25,7 +25,14 @@ class Admin
                 if($setting->profile_status == 2){
                     return $next($request);
                 }else{
-                    return Redirect::to(baseUrl('/complete-profile'));
+                    if($request->ajax()){
+                        $response['status'] = "error";
+                        $response['message'] = "Not allowed to access this before profile approved";
+                        return response()->json($response);
+                    }else{
+                        return Redirect::to(baseUrl('/complete-profile'));
+                    }
+                    
                 }
             }else{
                 return Redirect::to('/home');

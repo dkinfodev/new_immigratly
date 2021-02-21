@@ -116,12 +116,8 @@
       <div class="col-md-4">
         <!-- Logo -->
         <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
-          @if($user->profile_image != '' &&  file_exists(professionalDir().'/profile/'.$user->profile_image))
-            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$user->profile_image }}" alt="Profile Image">
-          @else
-            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
-          @endif
-
+            <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalProfile() }}" alt="Profile Image">
+          
           <span class="d-block">Upload your Image here</span>
 
           <input type="file" class="js-file-attach custom-file-boxed-input" name="profile_image" id="logoUploader"
@@ -468,12 +464,8 @@ Next <i class="tio-chevron-right"></i>
   <div class="col-md-6">
     <!-- Logo -->
       <label class="custom-file-boxed custom-file-boxed-sm" for="company_logo">
-          @if($company_details->company_logo != '' &&  file_exists(professionalDir().'/profile/'.$company_details->company_logo))
-            <img id="companylogoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl().'/profile/'.$company_details->company_logo }}" alt="Company Logo">
-          @else
-            <img id="companylogoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Company Logo">
-          @endif
-
+          <img id="companylogoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalLogo() }}" alt="Company Logo">
+         
           <span class="d-block">Upload your company logo</span>
 
           <input type="file" class="js-file-attach custom-file-boxed-input" name="company_logo" id="company_logo"

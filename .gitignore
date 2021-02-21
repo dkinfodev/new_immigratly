@@ -5,6 +5,7 @@
 /public/uploads/*
 /storage/*.key
 /storage
+/librar/*
 /database
 /vendor
 /config
