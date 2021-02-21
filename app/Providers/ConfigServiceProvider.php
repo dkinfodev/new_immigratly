@@ -43,14 +43,14 @@ class ConfigServiceProvider extends ServiceProvider
             }
         }else{
            
-            $login_to = 'professional_panel'; // admin_panel/professional_panel
+            $login_to = 'admin_panel'; // admin_panel/professional_panel
             \Session::put("login_to",$login_to);
             
             if($login_to == 'professional_panel'){
                 \Session::forget("subdomain");
-                \Session::put("subdomain",'immi');
+                \Session::put("subdomain",'fastzone');
               
-                \Config::set('database.connections.mysql.database', 'immigrat_immigratly_immi');
+                \Config::set('database.connections.mysql.database', 'immigrat_immigratly_fastzone');
                 \DB::purge('mysql');
                 // \Config::set('database.connections.mysql.database', 'immigrat_immigratly_fastzone');
             }

@@ -1,3 +1,4 @@
+@if(!empty($records))
 @foreach($records as $key => $record)
 <div class="col-md-12 article-block">
   <!-- Card -->
@@ -82,6 +83,9 @@
   <!-- End Card -->
 </div>
 @endforeach
+@else
+<div class="col-md-12 text-danger text-center">No records available</div>
+@endif
 <script type="text/javascript">
 $(document).ready(function(){
   $('.js-hs-action').each(function () {

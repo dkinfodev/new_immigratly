@@ -281,6 +281,7 @@ class MyDocumentsController extends Controller
 
         $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
         $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+        
         $drive = create_crm_gservice($google_drive_auth['access_token']);
         $drive_folders = get_gdrive_folder($drive);
         if(isset($drive_folders['gdrive_files'])){
@@ -303,6 +304,7 @@ class MyDocumentsController extends Controller
         $folder = $request->input("folder_name");
         $user_detail = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
         $google_drive_auth = json_decode($user_detail->google_drive_auth,true);
+       
         $drive = create_crm_gservice($google_drive_auth['access_token']);
         $drive_folders = get_gdrive_folder($drive,$folder_id,$folder);
         if(isset($drive_folders['gdrive_files'])){
@@ -356,7 +358,15 @@ class MyDocumentsController extends Controller
                 $original_name = $file['name'];
                 
                 $newName = time()."-".$original_name;
+                if (!file_exists(userDir())) {
+                    mkdir(userDir(), 0777, true);
+                }
                 $path = userDir()."/documents";
+                if (!file_exists($path)) {
+                    mkdir($path, 0777, true);
+                }
+                $destinationPath = $path.'/thumb';
+                
                 if(file_put_contents($path."/".$newName, $base64_code)){
                     $unique_id = randomNumber();
                     $object = new FilesManager();

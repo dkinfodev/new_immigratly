@@ -1,3 +1,4 @@
+@if(!empty($records))
 @foreach($records as $key => $record)
 <div class="col-md-12 article-block">
   <!-- Card -->
@@ -76,7 +77,7 @@
                 <span class="h3 avatar-name">{{ $record['professional_info']['company_name'] }}</span>
               </div>
             </div>
-            <a class="stretched-link" href="#"></a>
+            <a class="stretched-link" href="{{baseUrl('webinar/edit/'.$record['unique_id'])}}"></a>
           </div>
         </div>
       </div>
@@ -85,6 +86,9 @@
   <!-- End Card -->
 </div>
 @endforeach
+@else
+<div class="col-md-12 text-danger text-center">No records available</div>
+@endif
 <script type="text/javascript">
 $(document).ready(function(){
   $('.js-hs-action').each(function () {
