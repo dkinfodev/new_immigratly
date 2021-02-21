@@ -767,7 +767,7 @@ if(!function_exists("professionalDirUrl")){
             $domain = \Session::get("subdomain");
         }
         // $dir = asset("public/uploads/professional/".$domain);
-        $dir = site_url()."public/uploads/professional/".$domain;
+        $dir = site_url()."/public/uploads/professional/".$domain;
         
         return $dir;
     }
@@ -803,7 +803,7 @@ if(!function_exists("professionalProfile")){
         }
         if($size == 't'){
             if(file_exists(professionalDir($domain)."/profile/thumb/".$profile_image)){
-                $url = asset("public/uploads/professional/".$domain."/profile/thumb/".$profile_image);
+                $url = asset("/public/uploads/professional/".$domain."/profile/thumb/".$profile_image);
             }else{
                 $url = $original;
             }

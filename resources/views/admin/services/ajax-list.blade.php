@@ -12,7 +12,6 @@
       @else
         Service Removed by adminstrator
       @endif
-      {{$record->id}}
   </td>
   <td>{{$record->price}}</td>
   <td> 

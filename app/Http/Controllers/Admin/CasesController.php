@@ -375,6 +375,7 @@ class CasesController extends Controller
         $viewData['doc_type'] = "default";
         $viewData['case_id'] = $case_id;
         $viewData['subdomain'] = \Session::get("subdomain");
+        
         $file_url = professionalDirUrl()."/documents";
         $file_dir = professionalDir()."/documents";
         $viewData['file_url'] = $file_url;

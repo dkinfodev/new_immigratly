@@ -176,11 +176,7 @@
       <div class="col-md-4">
         <!-- Logo -->
         <label class="custom-file-boxed custom-file-boxed-sm" for="logoUploader">
-          @if($user->profile_image != '' &&  file_exists(professionalDir($subdomain).'/profile/'.$user->profile_image))
-          <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalDirUrl($subdomain).'/profile/'.$user->profile_image }}" alt="Profile Image">
-          @else
-          <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="./assets/svg/illustrations/browse.svg" alt="Profile Image">
-          @endif
+        <img id="logoImg" class="avatar avatar-xl avatar-4by3 avatar-centered h-100 mb-2" src="{{ professionalProfile($user->unique_id,'m',$subdomain) }}" alt="Profile Image">
 
           <!-- <span class="d-block">Upload your Image here</span> -->
 
