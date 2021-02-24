@@ -17,7 +17,7 @@
     <div class="container space-1">
       <div class="w-lg-90 mx-lg-auto">
         
-        <h2 class="h1 text-white">Read Our Latest Articles</h2>
+        <h2 class="h1 text-white">Join Our Webinars</h2>
 
       </div>
     </div>
@@ -32,20 +32,40 @@
         <div class="col-lg-3 mb-5 mb-lg-0">
           <div class="navbar-expand-lg navbar-expand-lg-collapse-block">
             <!-- Responsive Toggle Button -->
-           
+            <button type="button" class="navbar-toggler btn btn-block border py-3"
+                    aria-label="Toggle navigation"
+                    aria-expanded="false"
+                    aria-controls="sidebarNav"
+                    data-toggle="collapse"
+                    data-target="#sidebarNav">
+              <span class="d-flex justify-content-between align-items-center">
+                <span class="h5 mb-0">View all categories</span>
+                <span class="navbar-toggler-default">
+                  <svg width="14" height="14" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" d="M17.4,6.2H0.6C0.3,6.2,0,5.9,0,5.5V4.1c0-0.4,0.3-0.7,0.6-0.7h16.9c0.3,0,0.6,0.3,0.6,0.7v1.4C18,5.9,17.7,6.2,17.4,6.2z M17.4,14.1H0.6c-0.3,0-0.6-0.3-0.6-0.7V12c0-0.4,0.3-0.7,0.6-0.7h16.9c0.3,0,0.6,0.3,0.6,0.7v1.4C18,13.7,17.7,14.1,17.4,14.1z"/>
+                  </svg>
+                </span>
+                <span class="navbar-toggler-toggled">
+                  <svg width="14" height="14" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="currentColor" d="M11.5,9.5l5-5c0.2-0.2,0.2-0.6-0.1-0.9l-1-1c-0.3-0.3-0.7-0.3-0.9-0.1l-5,5l-5-5C4.3,2.3,3.9,2.4,3.6,2.6l-1,1 C2.4,3.9,2.3,4.3,2.5,4.5l5,5l-5,5c-0.2,0.2-0.2,0.6,0.1,0.9l1,1c0.3,0.3,0.7,0.3,0.9,0.1l5-5l5,5c0.2,0.2,0.6,0.2,0.9-0.1l1-1 c0.3-0.3,0.3-0.7,0.1-0.9L11.5,9.5z"/>
+                  </svg>
+                </span>
+              </span>
+            </button>
             <!-- End Responsive Toggle Button -->
 
             <div id="sidebarNav" class="collapse navbar-collapse">
               <div class="mt-5 mt-lg-0">
 
-
                 <h2 class="h4"><a class="text-inherit">Filter By Category</a></h2>
+
           
                 @foreach($services as $service)
-                <a class="dropdown-item d-flex justify-content-between align-items-center px-0" href="{{url('articles/'.$service->slug)}}">
+                <a class="dropdown-item d-flex justify-content-between align-items-center px-0" href="{{url('webinars/'.$service->slug)}}">
                   {{$service->name}}
                 </a>
                 @endforeach
+
               </div>
 
              
@@ -58,20 +78,21 @@
           <div class="border-bottom pb-3 mb-5">
             <div class="row justify-content-md-start align-items-md-center">
               <div class="col-md-4 mb-3 mb-md-0">
-                <p class="font-size-1 mr-md-auto mb-0"><span class="text-dark font-weight-bold">{{$articles->total()}}</span> articles</p>
+                <p class="font-size-1 mr-md-auto mb-0"><span class="text-dark font-weight-bold">195 courses</span> to get started</p>
               </div>
             </div>
           </div>
           <!-- End Filter -->
-          @foreach($articles as $key=>$article)
+
+          @foreach($webinars as $key=>$webinar)
           <!-- Card -->
-          <a class="d-block border-bottom pb-5 mb-5" href="{{url('article/'.$article->slug)}}">
+          <a class="d-block border-bottom pb-5 mb-5" href="{{url('webinar/'.$webinar->slug)}}">
             <div class="row mx-md-n2">
               <div class="col-md-4 px-md-2 mb-3 mb-md-0">
                 <div class="position-relative">
                   <?php
-                  if($article->images != ''){
-                    $images = explode(",",$article->images);
+                  if($webinar->images != ''){
+                    $images = explode(",",$webinar->images);
                       if(file_exists(public_path('uploads/articles/'.$images[0]))){
                           $image = url('public/uploads/articles/'.$images[0]);
                       }
@@ -86,7 +107,7 @@
                   <img class="card-img-top" src="{{$image}}">
 
                   <div class="position-absolute top-0 left-0 mt-1 ml-3">
-                    <small class="btn btn-xs btn-success btn-pill text-uppercase shadow-soft py-1 px-2 mb-3">{{$article->Category->name}}</small>
+                    <small class="btn btn-xs btn-success btn-pill text-uppercase shadow-soft py-1 px-2 mb-3">{{$webinar->Category->name}}</small>
                   </div>
 
                 </div>
@@ -95,7 +116,7 @@
               <div class="col-md-8">
                 <div class="media mb-2">
                   <div class="media-body mr-7">
-                    <h3 class="text-hover-primary">{{ substr($article->title,0,100) }}<?php if(strlen($article->title)>100){echo "...";} ?></h3>
+                    <h3 class="text-hover-primary">{{ substr($webinar->title,0,100) }}<?php if(strlen($webinar->title)>100){echo "...";} ?></h3>
                   </div>
 
                   <!--
@@ -132,7 +153,7 @@
                   </div>-->
                 </div>
 
-                <p class="font-size-1 text-body mb-0">{!! substr($article->short_description,0,300) !!}<?php if(strlen($article->short_description)>300){echo "...";} ?></p>
+                <p class="font-size-1 text-body mb-0">{!! substr($webinar->short_description,0,300) !!}<?php if(strlen($webinar->short_description)>300){echo "...";} ?></p>
               </div>
             </div>
           </a>

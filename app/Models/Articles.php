@@ -39,6 +39,6 @@ class Articles extends Model
 
     public function ArticleTags()
     {
-        return $this->hasMany('App\Models\ArticleTags','article_id');
+        return $this->hasMany('App\Models\ArticleTags','article_id')->with("Tag");
     }
 }

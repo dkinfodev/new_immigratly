@@ -17,6 +17,7 @@ use App\Models\News;
 use App\Models\Professionals;
 use App\Models\ChatGroupComments;
 use App\Models\Webinar;
+use App\Models\VisaServices;
 
 class FrontendController extends Controller
 {
@@ -60,10 +61,23 @@ class FrontendController extends Controller
      
     }
 
-    public function articles(){
-        $articles = Articles::get();
+    public function articles($category=''){
+        if($category != ''){
+            $visa_service = VisaServices::where("slug",$category)->first();
+            $articles = Articles::orderBy('id','desc')
+                        ->where("category_id",$visa_service->id)
+                        ->where("status",'publish')
+                        ->paginate();
+        }else{
+            $articles = Articles::orderBy('id','desc')
+                        ->where("status",'publish')
+                        ->paginate();
+        }
+        
         $viewData['articles'] = $articles;   
         $viewData['pageTitle'] = "Articles";   
+        $services = VisaServices::whereHas('Articles')->get();
+        $viewData['services'] = $services;
         return view('frontend.articles.articles',$viewData);
     }   
 
@@ -75,6 +89,43 @@ class FrontendController extends Controller
          $viewData['article'] = $article;   
          $viewData['pageTitle'] = $article->title;   
          return view('frontend.articles.article-single',$viewData);
+    }
+
+    public function webinars($category=''){
+        $now = \Carbon\Carbon::now();
+        if($category != ''){
+            $visa_service = VisaServices::where("slug",$category)->first();
+            
+            $webinars = Webinar::where("status","publish")
+                        ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now) 
+                        ->where("category_id",$visa_service->id)
+                        ->where("status",'publish')
+                        ->orderBy(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"),'desc')
+                        ->paginate();
+        }else{
+            $webinars = Webinar::where("status","publish")
+                        ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now) 
+                        ->where("status",'publish')
+                        ->orderBy(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"),'desc')
+                        ->paginate();
+        }
+        
+
+        $viewData['webinars'] = $webinars;   
+        $viewData['pageTitle'] = "Webinars";   
+        $services = VisaServices::whereHas('Webinars')->get();
+        $viewData['services'] = $services;
+        return view('frontend.webinar.webinar',$viewData);
+    }   
+
+    public function webinarSingle($slug){
+         $webinar = Webinar::where('slug',$slug)->first();
+         if(empty($webinar)){
+            return redirect('/');   
+         }
+         $viewData['webinar'] = $webinar;   
+         $viewData['pageTitle'] = $webinar->title;   
+         return view('frontend.webinar.webinar-single',$viewData);
     }
     public function discussions(){
         $viewData['pageTitle'] = "Discussions Topics";   

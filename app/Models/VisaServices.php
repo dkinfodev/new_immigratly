@@ -17,6 +17,16 @@ class VisaServices extends Model
         return $this->hasMany('App\Models\VisaServices','parent_id');
     }
 
+    public function Articles()
+    {
+        return $this->hasMany('App\Models\Articles','category_id');
+    }
+
+    public function Webinars()
+    {
+        return $this->hasMany('App\Models\Webinar','category_id');
+    }
+
     public function DocumentFolders($id)
     {
         $visa_service = VisaServices::where("id",$id)->first();

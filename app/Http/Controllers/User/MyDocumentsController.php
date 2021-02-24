@@ -346,14 +346,14 @@ class MyDocumentsController extends Controller
                 // get file base64 format
                 $ch = curl_init();
                 $endpoint = 'https://www.googleapis.com/drive/v3/files/'.$fileId.'?alt=media';
-                curl_setopt($ch, CURLOPT_URL,$endpoint);
+                curl_setopt($ch,' CURLOPT_URL,$endpoint);
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST,$method);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer ".$access_token['access_token']));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
                 $api_response = curl_exec($ch);
                 $err = curl_error($ch);
-                curl_close($ch);
+                curl_close($ch);'
                 $base64_code = $api_response;
                 $original_name = $file['name'];
                 

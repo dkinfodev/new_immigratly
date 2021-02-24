@@ -25,8 +25,11 @@ Route::get('/logout', function () {
 Route::group(array('middleware' => 'frontend'), function () {
     Route::get('/', [App\Http\Controllers\Frontend\FrontendController::class, 'index']);
     Route::get('/articles', [App\Http\Controllers\Frontend\FrontendController::class, 'articles']);
-    Route::get('/articles/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'articleSingle']);
-
+    Route::get('/articles/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'articles']);
+    Route::get('/article/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'articleSingle']);
+    Route::get('/webinars', [App\Http\Controllers\Frontend\FrontendController::class, 'webinars']);
+    Route::get('/webinars/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'webinars']);
+    Route::get('/webinar/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'webinarSingle']);
     Route::get('/discussions', [App\Http\Controllers\Frontend\FrontendController::class, 'discussions']);
     Route::get('/discussions/fetch-topics', [App\Http\Controllers\Frontend\FrontendController::class, 'fetchTopics']);
     Route::get('/topic/{slug}', [App\Http\Controllers\Frontend\FrontendController::class, 'topicDetails']);
