@@ -4,6 +4,6 @@ define("MAIN_DATABASE","new_immigratly");
 }else{
 define("MAIN_DATABASE","immigrat_new_immigratly");    
 }
-define("PROFESSIONAL_DATABASE","immigrat_immigratly_");
+define("PROFESSIONAL_DATABASE","immigrat_");
 define("ACCESS_DENIED_MSG","Not having access permission");
 ?>

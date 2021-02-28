@@ -78,7 +78,7 @@
                            <i class="tio-share dropdown-item-icon"></i>
                            Share Folder
                            </a> -->
-                           <a class="dropdown-item" href="<?php echo baseUrl("documents/files/".$document->unique_id) ?>">
+                           <a class="dropdown-item" href="<?php echo baseUrl("documents/files/lists/".$document->unique_id) ?>">
                            <i class="tio-folder-add dropdown-item-icon"></i>
                            View Documents
                            </a>

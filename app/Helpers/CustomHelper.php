@@ -403,62 +403,12 @@ if(!function_exists("sendSms")){
 }   
 
 if(!function_exists("sendToWhatsApp")){
-    function sendToWhatsApp($parameter){
+    function sendToWhatsApp($to,$message){
         
-        // $twilio = new TwilioApi(env('TWILIO_AID'),env('TWILIO_TOKEN'));
-        // $response = $twilio->sendWhatsMessage($parameter);
-        // return $response;
-        try{
-            
-            $messages = array(
-                'send_channel' => 'whatsapp',
-                'messages' => array(
-                    array(
-                        'number' => str_replace("+","",$parameter['phone_no']),
-                        'template' => array(
-                            'id' => '446209',
-                            'merge_fields' => array(
-                                'FirstName' => $parameter['first_name'],
-                                'LastName' => $parameter['last_name'],
-                                'Custom1' => $parameter['message'],
-                                'Custom2' => 'tesata',
-                                'Custom3' => 'test',
-
-                            )
-                        )
-                    )
-                )
-            );
-            pre($messages);
-            exit;
-
-            // Prepare data for POST request
-            $data = array(
-                'apikey' => env("TEXT_LOCAL_KEY"),
-                'data' => json_encode($messages),
-                // 'test'=> true
-            );
-             
-            // Send the POST request with cURL
-            $ch = curl_init('https://api.textlocal.in/bulk_json/');
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-            $result = json_decode($result,true);
-            $response['status'] = true;
-            pre($result);
-            exit;
-            if($result['status'] == 'success'){
-                $response['status'] = true;
-                $response['message'] = "Message send successfully";
-            }
-            
-        } catch (Exception $e) {
-            $response['status'] = false;
-            $response['message'] = $e->getMessage();
-        }
+        $twilio = new TwilioApi(env('TWILIO_SID'),env('TWILIO_TOKEN'),env('TWILIO_AID'));
+        $response = $twilio->sendWhatsAppMessage($to,$message);
+        return $response;
+       
         return $response;
     }
 }
@@ -560,7 +510,17 @@ if(!function_exists("createSubDomain")){
             'dir' => $root_dir,
             'disallowdot' => 1,
         ];
-        $cPanel = new cPanel("immigratly", "Immigratly@", "138.197.137.123");
+
+        $cpanel_user = Settings::where("meta_key",'cpanel_user')->first();
+        $cpanel_user = $cpanel_user->meta_value;
+
+        $cpanel_pass = Settings::where("meta_key",'cpanel_pass')->first();
+        $cpanel_pass = $cpanel_pass->meta_value;
+
+        $cpanel_ip = Settings::where("meta_key",'cpanel_ip')->first();
+        $cpanel_ip = $cpanel_ip->meta_value;
+
+        $cPanel = new cPanel($cpanel_user, $cpanel_pass, $cpanel_ip);
         $result = $cPanel->execute('api2',"SubDomain", "addsubdomain" , $parameters);
         if (isset($result->cpanelresult->error)) {
             $response['status'] = "error";
@@ -613,7 +573,7 @@ if(!function_exists("curlRequest")){
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
            'Content-Type: application/json',
            'subdomain:'.\Session::get("subdomain"),
-           'Authorization:' . $token
+           'Authorization: Bearer '. $token
         ));
         curl_setopt($ch, CURLOPT_POST, 1);
         if(count($data) > 0){
@@ -660,7 +620,7 @@ if(!function_exists("professionalCurl")){
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
            'Content-Type: application/json',
            'subdomain:'.$subdomain,
-           'Authorization:' . $token
+           'Authorization: Bearer '. $token
         ));
         curl_setopt($ch, CURLOPT_POST, 1);
         if(count($data) > 0){
@@ -694,7 +654,6 @@ if(!function_exists("sendVerifyCode")){
     function sendVerifyCode($phoneno){
         $twilio = new TwilioApi(env('TWILIO_SID'),env('TWILIO_TOKEN'),env('TWILIO_AID'));
         $response = $twilio->verifyPhone($phoneno);
-        pre($response);
         return $response;
     }
 }
@@ -703,6 +662,15 @@ if(!function_exists("verifyCode")){
 
         $twilio = new TwilioApi(env('TWILIO_SID'),env('TWILIO_TOKEN'),env('TWILIO_AID'));
         $response = $twilio->verifyCode($service_code,$verify_code,$phoneno);
+       
+        return $response;
+    }
+}
+if(!function_exists("sendSms")){
+    function sendSms($to,$message){
+
+        $twilio = new TwilioApi(env('TWILIO_SID'),env('TWILIO_TOKEN'),env('TWILIO_AID'));
+        $response = $twilio->sendSms($to,$message);
         return $response;
     }
 }
@@ -1383,10 +1351,10 @@ if(!function_exists("create_crm_gservice")){
             $client->addScope(Google_Service_Drive::DRIVE_FILE);
             $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
             $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
-
+            
             if (isset($access_token['access_token'])) {
                 if ($client->isAccessTokenExpired()) {
-                    $client->refreshToken($access_token['refresh_token']);
+                    // $client->refreshToken($access_token['refresh_token']);
                     $client->setAccessToken($access_token['access_token']);
                 }else{
                     $client->setAccessToken($access_token['access_token']);

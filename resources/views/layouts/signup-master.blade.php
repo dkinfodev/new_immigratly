@@ -23,12 +23,19 @@
 
     <!-- CSS Front Template -->
     <link rel="stylesheet" href="assets/css/theme.min.css">
+    <link rel="stylesheet" href="assets/vendor/toastr/toastr.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/custom.css">
     @yield('style')
   </head>
 
   <body class="d-flex align-items-center min-h-100">
+  <div class="loader">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <h4 class="text-danger">Loading...</h4>
+  </div>
     @yield("content")
 
     <!-- JS Global Compulsory  -->
@@ -40,7 +47,7 @@
     <script src="assets/vendor/hs-toggle-password/dist/js/hs-toggle-password.js"></script>
     <script src="assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="assets/vendor/select2/dist/js/select2.full.min.js"></script>
-
+    <script src="assets/vendor/toastr/toastr.min.js"></script>
     <!-- JS Front -->
     <script src="assets/js/theme.min.js"></script>
     <script src="assets/js/theme-custom.js"></script>

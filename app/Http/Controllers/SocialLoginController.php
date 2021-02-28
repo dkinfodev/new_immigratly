@@ -73,7 +73,6 @@ class SocialLoginController extends Controller
         $cookies = $_COOKIE;
         
         $url = '';
-        pre($cookies);
         foreach($cookies as $key =>$value){
             if(strpos($key,"google_url") !== false){
                 $url = $value;

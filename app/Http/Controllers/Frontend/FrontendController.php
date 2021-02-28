@@ -11,6 +11,7 @@ use DB;
 use Razorpay\Api\Api;
 use Image;
 use View;
+use App\Models\User;
 use App\Models\Articles;
 use App\Models\ChatGroups;
 use App\Models\News;
@@ -32,32 +33,38 @@ class FrontendController extends Controller
     }
 
     public function index(){
-         $now = \Carbon\Carbon::now();
-         $articles = Articles::where("status","publish")
+        // $to = "+919099700212";
+        // $message = "Testing twilio message";
+        // // $sid = sendSms($to,$message);
+        // $id = sendToWhatsApp($to,$message);
+        // pre($sid);
+        // exit;
+        $now = \Carbon\Carbon::now();
+        $articles = Articles::where("status","publish")
                         ->orderBy('id','desc')
                         ->limit(4)
                         ->get();
-         $news = News::where(DB::raw("(STR_TO_DATE(news_date,'%d-%m-%Y'))"), ">=",$now)
+        $news = News::where(DB::raw("(STR_TO_DATE(news_date,'%d-%m-%Y'))"), ">=",$now)
                     ->orderBy("id",'desc')
                     ->limit(4)
                     ->get();
 
-         $webinars = Webinar::where("status","publish")
+        $webinars = Webinar::where("status","publish")
                         ->where(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"), ">=",$now)
                         ->orderBy(DB::raw("(STR_TO_DATE(webinar_date,'%d-%m-%Y'))"),'desc')
                         ->limit(4)
                         ->get();
 
-         $professionals = Professionals::orderBy('id','desc')
+        $professionals = Professionals::orderBy('id','desc')
                         ->limit(4)
                         ->get();
        
-         $viewData['webinars'] = $webinars;
-         $viewData['professionals'] = $professionals;
-         $viewData['articles'] = $articles;   
-         $viewData['news'] = $news;   
-         $viewData['pageTitle'] = "Home Page";   
-         return view('frontend.index',$viewData);
+        $viewData['webinars'] = $webinars;
+        $viewData['professionals'] = $professionals;
+        $viewData['articles'] = $articles;   
+        $viewData['news'] = $news;   
+        $viewData['pageTitle'] = "Home Page";   
+        return view('frontend.index',$viewData);
      
     }
 
@@ -217,5 +224,79 @@ class FrontendController extends Controller
         $response['message'] = "Comment added successfully";
 
         return response()->json($response);
+    }
+
+    public function sendVerifyCode(Request $request){
+        $validator = Validator::make($request->all(), [
+            'value' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $response['error_type'] = 'validation';
+            $error = $validator->errors()->toArray();
+            $errMsg = array();
+
+            foreach($error as $key => $err){
+                $errMsg[$key] = $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+
+        $value = $request->input("value");
+        $verify_type = explode(":",$value);
+        \Session::forget("verify_code");
+        \Session::forget("service_code");
+        if($verify_type[0] == 'mobile_no'){
+            $checkExists = User::whereRaw("CONCAT(`country_code`, `phone_no`) = ?", [$verify_type[1]])->count();
+          
+            if($checkExists > 0){
+                $response['status'] = false;
+                $response['message'] = "Mobile exists try another number";
+                return response()->json($response);
+            }
+            $return = sendVerifyCode($verify_type[1]);
+            
+            if($return['status'] == 1){
+                $response['status'] = true;
+                \Session::put("service_code",$return['service_code']);
+                $response['message'] = $return['message'];
+            }else{
+                $response['status'] = false;
+                $response['message'] = $return['message'];
+            }
+            return response()->json($response);
+        }else{
+            $checkExists = User::where("email",$verify_type[1])->count();
+            if($checkExists > 0){
+                $response['status'] = false;
+                $response['message'] = "Email already exists try another email";
+                return response()->json($response);
+            }
+            \Session::forget("verify_code");
+            $verify_code = mt_rand(100000,999999);
+            
+            $mailData['verify_code'] = $verify_code;
+            $view = View::make('emails.verify-code',$mailData);
+            $message = $view->render();
+            $parameter['to'] = $value;
+            $parameter['to_name'] = '';
+            $parameter['message'] = $message;
+            $parameter['subject'] = companyName()." verfication code";
+            // echo $message;
+            // exit;
+            $parameter['view'] = "emails.verify-code";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
+            \Session::put("verify_code",$verify_code);
+            if($mailRes['status'] == true){
+                \Session::put("verify_code",$verify_code);
+                $response['status'] = true;
+                $response['message'] = "Check your email for verfication code";
+            }else{
+                $response['status'] = false;
+                $response['message'] = $mailRes['message'];
+            }
+        }
     }
 }

@@ -181,7 +181,7 @@
                   <th scope="col" class="table-column-pl-0">Document Name</th>
                   <!-- <th scope="col">Folder</th> -->
                   <th scope="col"><i class="tio-chat-outlined"></i></th>
-                  <th scope="col">Members</th>
+                  <!-- <th scope="col">Members</th> -->
                   <th scope="col"></th>
                </tr>
             </thead>
@@ -233,7 +233,7 @@
                      <!-- End Toggle -->
                        
                   </td>
-                  <td>
+                  <!-- <td>
                      <div class="avatar-group avatar-group-xs avatar-circle">
                         <span class="avatar" data-toggle="tooltip" data-placement="top" title="Ella Lauda">
                         <img class="avatar-img" src="./assets/img/160x160/img9.jpg" alt="Image Description">
@@ -254,7 +254,7 @@
                         <span class="avatar-initials">+3</span>
                         </span>
                      </div>
-                  </td>
+                  </td> -->
                   <td>
                      <!-- Unfold -->
                      <div class="hs-unfold">

@@ -51,8 +51,9 @@ Route::post('/signup/professional', [App\Http\Controllers\Auth\RegisterControlle
 
 Route::get('/signup/user', [App\Http\Controllers\Auth\RegisterController::class, 'userSignup']);
 Route::post('/signup/user', [App\Http\Controllers\Auth\RegisterController::class, 'registerUser']);
+Route::post("send-verify-code",[App\Http\Controllers\Frontend\FrontendController::class, 'sendVerifyCode']);
+Route::post("verify-code",[App\Http\Controllers\Auth\RegisterController::class, 'verifyOtp']);
 
-Route::post("send-verify-code",[App\Http\Controllers\BackendController::class, 'sendVerifyCode']);
 
 Route::get('/login/{provider}', [App\Http\Controllers\SocialLoginController::class, 'redirect']);
 Route::get('/login/{provider}/callback', [App\Http\Controllers\SocialLoginController::class, 'Callback']);

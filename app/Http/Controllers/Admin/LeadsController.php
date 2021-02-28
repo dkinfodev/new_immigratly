@@ -183,6 +183,13 @@ class LeadsController extends Controller
         $object->country_code = $request->input("country_code");
         $object->phone_no = $request->input("phone_no");
         $object->date_of_birth = $request->input("date_of_birth");
+        $object->gender = $request->input("gender");
+        $object->country_id = $request->input("country_id");
+        $object->state_id = $request->input("state_id");
+        $object->city_id = $request->input("city_id");
+        $object->address = $request->input("address");
+        $object->zip_code = $request->input("zip_code");
+        
         
         $object->visa_service_id = $request->input("visa_service_id");
         $object->save();

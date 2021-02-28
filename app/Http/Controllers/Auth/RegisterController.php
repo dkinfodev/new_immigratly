@@ -112,14 +112,12 @@ class RegisterController extends Controller
             'password_confirmation' => 'required|min:6',
             'country_code' => 'required',
             'phone_no' => 'required',
-            'verify_by'=>'required',
+            // 'verify_by'=>'required',
             // 'verification_code'=>'required',
         ]);
-
-
-        session(['redirect_back' => $request->input('redirect_back')]);
         if ($validator->fails()) {
             $response['status'] = false;
+            $response['error_type'] = 'validation';
             $error = $validator->errors()->toArray();
             $errMsg = array();
 
@@ -129,63 +127,63 @@ class RegisterController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
-
-
         $phone = $request->input("country_code").$request->input("phone_no");
-
-        if($request->input("verify_by") == 'sms'){
-            // $res = verifyCode(\Session::get("service_code"),$request->input('verification_code'),$phone);
-
-            // if($res['status'] == false){
-            //     $response['status'] = false;
-            //     $response['message'] = 'OTP Verification code entered is invalid';
-            //     return response()->json($response);
-            // }
-        }else{
-            $date = date("Y-m-d H:i:s");
-            $match_code = VerificationCode::where("verify_by","email")
-                        ->where("match_string",$request->input("email"))
-                        ->where("verify_code",$request->input("verification_code"))
-                        ->whereDate("expiry_time","<",$date)
-                        ->count();
-            // if($request->input("verification_code") != \Session::get("verify_code")){
-           if($match_code <= 0){
-                return redirect()->back()
-                        ->with("verification_code","Verification code entered is invalid")
-                        ->withInput();
+        if($request->input("verify_status") != 'true'){
+            if($request->input("verify_by")){
+                $verify_code = $request->input("verify_type");
+                if(\Session::get('verify_by') == 'email'){
+                    if(\Session::get('verify_code') != $verify_code){
+                        $response['status'] = false;
+                        $response['error_type'] = 'verify_failed';
+                        $response['message'] = 'Verification code mismatch';
+                        return response()->json($response);
+                    }
+                }
+            }else{
+                $response['status'] = false;
+                $response['error_type'] = 'not_verified';
+                $response['email'] = $request->input("email");
+                $response['mobile_no'] = $phone;
+                return response()->json($response);
             }
-            VerificationCode::where("match_string",$request->input("email"))->delete();
         }
-        $object = new User();
-        $unique_id = randomNumber();
-        $object->unique_id = $unique_id ;
-        $object->first_name = $request->input("first_name");
-        $object->last_name = $request->input("last_name");
-        $object->email = $request->input("email");
-        $object->password = bcrypt($request->input("password"));
-        $object->country_code = $request->input("country_code");
-        $object->phone_no = $request->input("phone_no");
-        $object->role = "user";
-        $object->is_active = 1;
-        $object->is_verified = 1;
 
-        $object->save();
-        $user_id = $object->id;
+        
+        if($request->input("verify_status") == 'true'){
+            $object = new User();
+            $unique_id = randomNumber();
+            $object->unique_id = $unique_id ;
+            $object->first_name = $request->input("first_name");
+            $object->last_name = $request->input("last_name");
+            $object->email = $request->input("email");
+            $object->password = bcrypt($request->input("password"));
+            $object->country_code = $request->input("country_code");
+            $object->phone_no = $request->input("phone_no");
+            $object->role = "user";
+            $object->is_active = 1;
+            $object->is_verified = 1;
+
+            $object->save();
+            $user_id = $object->id;
 
 
-        $object2 = new UserDetails();
-        $object2->user_id = $unique_id;
-        $object2->save();
+            $object2 = new UserDetails();
+            $object2->user_id = $unique_id;
+            $object2->save();
 
-        \Auth::loginUsingId($user_id);
-        \Session::forget("verify_code");
-        $response['status'] = true;
-        if(!empty($request->input('redirect_back'))){
-            $response['redirect_back']= $request->input('redirect_back');    
+            \Auth::loginUsingId($user_id);
+            \Session::forget("verify_code");
+            $response['status'] = true;
+            if(!empty($request->input('redirect_back'))){
+                $response['redirect_back']= $request->input('redirect_back');    
+            }else{
+                $response['redirect_back'] = url('home');  
+            }
         }else{
-            $response['redirect_back'] = url('home');  
+            $response['status'] = false;
+            $response['error_type'] = "verification_pending";
+            $response['message'] = "OTP verification pending";
         }
-
         return response()->json($response);
     }
     public function registerProfessional(Request $request){
@@ -369,5 +367,59 @@ class RegisterController extends Controller
         $parameter['data'] = $mailData;
         $mailRes = sendMail($parameter);
         return response()->json($response);
+    }
+
+    public function verifyOtp(Request $request){
+        $validator = Validator::make($request->all(), [
+            'verify_code' => 'required',
+            'verify_by' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $response['status'] = false;
+            $response['error_type'] = 'validation';
+            $error = $validator->errors()->toArray();
+            $errMsg = '';
+
+            foreach($error as $key => $err){
+                $errMsg .= $err[0];
+            }
+            $response['message'] = $errMsg;
+            return response()->json($response);
+        }
+        if($request->input("verify_code")){
+            $verify_code = $request->input("verify_code");
+            $verify_by = explode(":",$request->input("verify_by"));
+            
+            if($verify_by[0] == 'email'){
+                if(\Session::get('verify_code') != $verify_code){
+                    $response['status'] = false;
+                    $response['error_type'] = 'verify_failed';
+                    $response['message'] = 'Verification code mismatch';
+                    return response()->json($response);
+                }else{
+                    $response['status'] = true;
+                    $response['message'] = 'Verification successfull';
+                    return response()->json($response);
+                }
+            }else{
+                $phone = $verify_by[1];
+                $return = verifyCode(\Session::get("service_code"),$verify_code,$phone);
+                if($return['status'] == 1){
+                    $response['status'] = true;
+                    $response['message'] = $return['message'];
+                    return response()->json($response);
+                }else{
+                    $response['status'] = false;
+                    $response['error_type'] = 'verify_failed';
+                    $response['message'] = 'Verification code mismatch';
+                    return response()->json($response);
+                }
+            }
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = 'verify_failed';
+            $response['message'] = 'Verification code required';
+            return response()->json($response);
+        }
     }
 }

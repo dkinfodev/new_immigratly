@@ -21,11 +21,13 @@ class CurlApi
     {
         \Config::set('database.connections.mysql.database', MAIN_DATABASE);
         $headers = $request->header();
+
         if(isset($headers['subdomain'][0])){
             $subdomain = $headers['subdomain'][0];
-            $authorization = $headers['authorization'][0];
-           
+            $authorization = str_replace("Bearer ","",$headers['authorization'][0]);
+            
             $data = Professionals::where("subdomain",$subdomain)->first();
+
             if(!empty($data)){
                 if($data->client_secret != $authorization){
                     $response['status'] = "api_error";
