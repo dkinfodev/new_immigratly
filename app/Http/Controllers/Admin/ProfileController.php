@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use DB;
+use View;
 use App\Models\User;
 use App\Models\DomainDetails;
 use App\Models\ProfessionalDetails;
@@ -211,6 +212,31 @@ class ProfileController extends Controller
 
         $response['status'] = true;
         $response['message'] = "Profile submitted sucessfully";
+
+        $mailData = array();
+        $mailData['mail_message'] = "Hello Admin,<Br> ".$request->input("company_name")." has completed his profile. Waiting for your approval.";
+        $view = View::make('emails.notification',$mailData);
+        
+        $message = $view->render();
+        $parameter['to'] = adminInfo("email");
+        $parameter['to_name'] = adminInfo("name");
+        $parameter['message'] = $message;
+        $parameter['subject'] = "Professional profile submitted";
+        $parameter['view'] = "emails.notification";
+        $parameter['data'] = $mailData;
+        $mailRes = sendMail($parameter);
+
+
+        $not_data['send_by'] = \Auth::user()->role;
+        $not_data['added_by'] = \Auth::user()->unique_id;
+        $not_data['user_id'] = adminInfo()->unique_id;
+        $not_data['type'] = "other";
+        $not_data['notification_type'] = "professional_profile";
+        $not_data['title'] = "Professional Profile submitted his profile";
+        $not_data['comment'] = $professional->company_name." submitted his profile";;
+        $not_data['url'] = "super-admin/professionals";
+        
+        sendNotification($not_data,"super_admin");
 
         return response()->json($response);
     }

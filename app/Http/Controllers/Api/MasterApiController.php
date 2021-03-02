@@ -34,7 +34,7 @@ class MasterApiController extends Controller
             $request->request->add($postData);
             $password = "demo@123";
             $user = $postData['data'];
-
+            $professional = $postData['professional'];
             $checkExists = User::where("email",$user['email'])
                                 ->where("phone_no",$user['phone_no'])
                                 ->first();
@@ -117,6 +117,24 @@ class MasterApiController extends Controller
 	        $response['post_data'] = $postData;
 	        $response['message'] = "Client has been created successfully";
 	        $response['status'] = 'success';
+
+            $mailData = array();
+            $mail_message = "Hello ".$user['first_name']." ".$user['last_name'].",<Br> Your account has been created in ".companyName()." by ".$professional->company_name.". Case has been created.";
+            $mail_message .= "<br> You login details are as below:";
+            $mail_message .= "<br> <b>Email:</b>".$user['email'];
+            $mail_message .= "<br> <b>Password:</b>".$password;
+            $mail_message .= "<br> <b>Site Url:</b>".site_url();
+            $mailData['mail_message'] = $mail_message;
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = $user['email'];
+            $parameter['to_name'] = $user['first_name']." ".$user['last_name'];
+            $parameter['message'] = $message;
+            $parameter['subject'] = "Account has been created in ".companyName();
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
        	} catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();

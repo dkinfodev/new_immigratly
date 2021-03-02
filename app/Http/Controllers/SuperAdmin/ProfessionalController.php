@@ -66,10 +66,42 @@ class ProfessionalController extends Controller
     public function changeStatus($status,Request $request)
     {
         $id = $request->input("id");
+        $professional = Professionals::where("id",$id)->first();
+        $subdomain = $professional->subdomain;
+
         if($status == 'active'){
             $upData['panel_status'] = 1;
+
+            $professional_detail = professionalDetail($subdomain);
+            $mailData = array();
+            $mailData['mail_message'] = "Hello ".$professional_detail->company_name.",<Br> Your professional panel has been activated. You are now ready to use the panel. You can <a href='".professionalDomain($subdomain)."'>Click Here</a>";
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = professionalAdmin($subdomain)->email;
+            $parameter['to_name'] = professionalAdmin($subdomain)->first_name." ".professionalAdmin($subdomain)->last_name;
+            $parameter['message'] = $message;
+            $parameter['subject'] = "Professional panel approved";
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
         }else{
             $upData['panel_status'] = 0;
+
+            $professional_detail = professionalDetail($subdomain);
+            $mailData = array();
+            $mailData['mail_message'] = "Hello ".$professional_detail->company_name.",<Br> Your professional panel has been suspended. You can contact support team for further details.";
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = professionalAdmin($subdomain)->email;
+            $parameter['to_name'] = professionalAdmin($subdomain)->first_name." ".professionalAdmin($subdomain)->last_name;
+            $parameter['message'] = $message;
+            $parameter['subject'] = "Professional panel suspended";
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
+
         }
         Professionals::where("id",$id)->update($upData);
         
@@ -90,9 +122,36 @@ class ProfessionalController extends Controller
         if($status == 'active'){
             $upData['profile_status'] = 2;
             $response['message'] = "Professional profile verified";
+            $professional_detail = professionalDetail($subdomain);
+            $mailData = array();
+            $mailData['mail_message'] = "Hello ".$professional_detail->company_name.",<Br> Your professional profile has been approved. You are now ready to use the panel. You can <a href='".professionalDomain($subdomain)."'>Click Here</a>";
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = professionalAdmin($subdomain)->email;
+            $parameter['to_name'] = professionalAdmin($subdomain)->first_name." ".professionalAdmin($subdomain)->last_name;
+            $parameter['message'] = $message;
+            $parameter['subject'] = "Professional profile approved";
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
         }else{
             $upData['profile_status'] = 0;
             $response['message'] = "Professional profile unverified";
+
+            $professional_detail = professionalDetail($subdomain);
+            $mailData = array();
+            $mailData['mail_message'] = "Hello ".$professional_detail->company_name.",<Br> Your professional profile has been inactivated. You can contact support team for further details.";
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = professionalAdmin($subdomain)->email;
+            $parameter['to_name'] = professionalAdmin($subdomain)->first_name." ".professionalAdmin($subdomain)->last_name;
+            $parameter['message'] = $message;
+            $parameter['subject'] = "Professional profile inactivated";
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
         }
         DB::table($database.".domain_details")->where('id',$professional_status->id)->update($upData);
         $response['status'] = true;

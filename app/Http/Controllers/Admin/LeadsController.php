@@ -235,6 +235,7 @@ class LeadsController extends Controller
         $id = base64_decode($id);
         $lead = Leads::select('first_name','last_name','email','country_code','phone_no','date_of_birth','gender','country_id','state_id','city_id','address','zip_code')->where("id",$id)->first();
         $postData['data'] = $lead;
+        $postData['professional'] = professionalDetail();
         $result = curlRequest("create-client",$postData);
        
         if($result['status'] == 'error'){

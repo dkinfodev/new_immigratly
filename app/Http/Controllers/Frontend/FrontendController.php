@@ -39,6 +39,7 @@ class FrontendController extends Controller
         // $id = sendToWhatsApp($to,$message);
         // pre($sid);
         // exit;
+       
         $now = \Carbon\Carbon::now();
         $articles = Articles::where("status","publish")
                         ->orderBy('id','desc')
@@ -288,7 +289,8 @@ class FrontendController extends Controller
             $mailData['verify_code'] = $verify_code;
             $view = View::make('emails.verify-code',$mailData);
             $message = $view->render();
-            $parameter['to'] = $verify_type[1];
+            // $parameter['to'] = $verify_type[1];
+            $parameter['to'] = 'developertest143@gmail.com';
             $parameter['to_name'] = '';
             $parameter['message'] = $message;
             $parameter['subject'] = companyName()." verfication code";

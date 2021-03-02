@@ -21,6 +21,7 @@ use App\Models\ClientExperience;
 use App\Models\ClientEducations;
 use App\Models\StaffPrivileges;
 use App\Models\UserDetails;
+use App\Models\User;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -799,6 +800,23 @@ if(!function_exists("professionalDetail")){
         }
     }
 }
+if(!function_exists("professionalAdmin")){
+    function professionalAdmin($domain = ''){
+        if($domain == ''){
+            $domain = \Session::get("subdomain");
+        }
+        $database = PROFESSIONAL_DATABASE.$domain;
+        $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
+        $db = DB::select($query, [$database]);
+
+        if (!empty($db)) {
+            $user = DB::table($database.".users")->where('role','admin')->first();
+            return $user;
+        }else{
+            return array();
+        }
+    }
+}
 if(!function_exists("professionalLogo")){
     function professionalLogo($size='r',$domain = ''){
         if($domain == ''){
@@ -1052,7 +1070,7 @@ if(!function_exists("chatNotifications")){
 if(!function_exists("otherNotifications")){
     function otherNotifications(){
         $notifications = array();
-        
+        echo \Session::get("login_to");
         if(\Session::get("login_to") == 'professional_panel'){
             $notifications = Notifications::where('type','other')
                         ->whereDoesntHave("Read")
@@ -1580,5 +1598,32 @@ if(!function_exists("professionalService")){
         }else{
             return array();
         }
+    }
+}
+
+if(!function_exists("adminInfo")){
+    function adminInfo($key=''){
+        $user = DB::table(MAIN_DATABASE.".users")->where("role","super_admin")->first();
+        switch($key){
+            case "email":
+                $return = $user->email;
+                break;
+            case "name":
+                $return = $user->first_name." ".$user->last_name;
+                break;
+            default:
+                $return = $user;
+                break;
+        }
+        return $return;
+    }
+}
+
+if(!function_exists("professionalDomain")){
+    function professionalDomain($subdomain){
+        $rootdomain = DB::table(MAIN_DATABASE.".settings")->where("meta_key",'rootdomain')->first();
+        $rootdomain = $rootdomain->meta_value;
+        $portal_url = "http://".$subdomain.".".$rootdomain;
+        return $portal_url;
     }
 }

@@ -179,6 +179,40 @@ class RegisterController extends Controller
             }else{
                 $response['redirect_back'] = url('home');  
             }
+
+             // Professional Mail
+
+             $name = $request->input('first_name')." ".$request->input('last_name');
+            
+
+             $mailData = array();
+             $mailData['mail_message'] = "Hello ".$name.",<Br> Welcome to ".companyName().". We are happy to have you with us.";
+             $view = View::make('emails.notification',$mailData);
+             
+             $message = $view->render();
+             $parameter['to'] = $request->input('email');
+             $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
+             $parameter['message'] = $message;
+             $parameter['subject'] = companyName()." Welcome Mail";
+             $parameter['view'] = "emails.notification";
+             $parameter['data'] = $mailData;
+             $mailRes = sendMail($parameter);
+ 
+ 
+             // Admin Mail
+ 
+             $mailData = array();
+             $mailData['mail_message'] = "Hello Admin,<Br> New user ".$name." has been registered to our panel.";
+             $view = View::make('emails.notification',$mailData);
+             $message = $view->render();
+             $parameter['to'] = adminInfo('email');
+             $parameter['to_name'] = adminInfo('name');
+             $parameter['message'] = $message;
+             $parameter['subject'] = companyName()." Welcome Mail";
+             $parameter['view'] = "emails.notification";
+             $parameter['data'] = $mailData;
+             $mailRes = sendMail($parameter);
+
         }else{
             $response['status'] = false;
             $response['error_type'] = "verification_pending";
@@ -215,32 +249,6 @@ class RegisterController extends Controller
             return response()->json($response);
         }
         
-
-        $phone = $request->input("country_code").$request->input("phone_no");
-        
-        // if($request->input("verify_by") == 'sms'){
-        //     // $res = verifyCode(\Session::get("service_code"),$request->input('verification_code'),$phone);
-
-        //     // if($res['status'] == false){
-        //     //     $response['status'] = false;
-        //     //     $response['message'] = 'OTP Verification code entered is invalid';
-        //     //     return response()->json($response);
-        //     // }
-        // }else{
-        //     $date = date("Y-m-d H:i:s");
-        //     $match_code = VerificationCode::where("verify_by","email")
-        //                 ->where("match_string",$request->input("email"))
-        //                 ->where("verify_code",$request->input("verification_code"))
-        //                 ->whereDate("expiry_time","<",$date)
-        //                 ->count();
-        //     // if($request->input("verification_code") != \Session::get("verify_code")){
-        //    if($match_code <= 0){
-        //         return redirect()->back()
-        //                 ->with("verification_code","Verification code entered is invalid")
-        //                 ->withInput();
-        //     }
-        //     VerificationCode::where("match_string",$request->input("email"))->delete();
-        // }
 
         $phone = $request->input("country_code").$request->input("phone_no");
         if($request->input("verify_status") != 'true'){
@@ -379,9 +387,9 @@ class RegisterController extends Controller
             $mailData['subdomain'] = $request->input('subdomain');
             $mailData['portal_url'] = $portal_url;
             $mailData['email']  = $request->input('email');
-            $view = View::make(roleFolder().'.emails.panel-notification',$mailData);
+            $view = View::make('emails.panel-notification',$mailData);
             $message = $view->render();
-            $parameter['to'] = $request->input('email');
+            // $parameter['to'] = $request->input('email');
             $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
             $parameter['message'] = $message;
             $parameter['subject'] = companyName()." Welcome Mail";
@@ -394,20 +402,15 @@ class RegisterController extends Controller
 
             // Admin Mail
 
-            $mailData['message'] = "Hello Admin,<Br> New professional has been registered to our panel.";
-            $mailData['last_name'] = $request->input('last_name');
-            $mailData['subdomain'] = $request->input('subdomain');
-            $mailData['portal_url'] = $portal_url;
-            $mailData['email']  = $request->input('email');
-            $view = View::make(roleFolder().'.emails.panel-notification',$mailData);
+            $mailData = array();
+            $mailData['mail_message'] = "Hello Admin,<Br> New professional ".$request->input("company_name")." has been registered to our panel.";
+            $view = View::make('emails.notification',$mailData);
             $message = $view->render();
-            $parameter['to'] = $request->input('email');
-            $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
+            $parameter['to'] = adminInfo('email');
+            $parameter['to_name'] = adminInfo('name');
             $parameter['message'] = $message;
-            $parameter['subject'] = companyName()." Welcome Mail";
-            // echo $message;
-            // exit;
-            $parameter['view'] = "emails.panel-notification";
+            $parameter['subject'] = "New Professional Signup";
+            $parameter['view'] = "emails.notification";
             $parameter['data'] = $mailData;
             $mailRes = sendMail($parameter);
         }else{

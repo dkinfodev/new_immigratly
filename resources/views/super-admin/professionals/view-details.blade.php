@@ -810,6 +810,9 @@ function profileStatus(e){
             id:id,
         },
         dataType:'json',
+        beforeSend:function(){
+          showLoader();
+        },
         success: function (result) {
             if(result.status == true){
                 successMessage(result.message);
@@ -828,6 +831,9 @@ function profileStatus(e){
             id:id,
         },
         dataType:'json',
+        beforeSend:function(){
+          showLoader();
+        },
         success: function (result) {
             if(result.status == true){
                 successMessage(result.message);
@@ -855,6 +861,9 @@ function changeStatus(e){
             id:id,
         },
         dataType:'json',
+        beforeSend:function(){
+          showLoader();
+        },
         success: function (result) {
             if(result.status == true){
                 successMessage(result.message);
@@ -873,6 +882,9 @@ function changeStatus(e){
             id:id,
         },
         dataType:'json',
+        beforeSend:function(){
+          showLoader();
+        },
         success: function (result) {
             if(result.status == true){
                 successMessage(result.message);
