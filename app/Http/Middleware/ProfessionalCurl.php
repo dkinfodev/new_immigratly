@@ -24,9 +24,14 @@ class ProfessionalCurl
         if(isset($headers['subdomain'][0])){
 
             $subdomain = $headers['subdomain'][0];
-            $authorization = $headers['authorization'][0];
+            // $authorization = $headers['authorization'][0];
+            $authorization = str_replace("Bearer ","",$headers['authorization'][0]);
+            // pre($headers);
             \Config::set('database.connections.mysql.database', PROFESSIONAL_DATABASE.$subdomain);
+            \DB::purge('mysql');
+            // $data = DB::table(PROFESSIONAL_DATABASE.$subdomain.".domain_details")->first();
             $data = DomainDetails::first();
+            
             if(!empty($data)){
                 if($data->client_secret != $authorization){
                     $response['status'] = "api_error";

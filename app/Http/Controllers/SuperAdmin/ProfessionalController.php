@@ -236,7 +236,6 @@ class ProfessionalController extends Controller
                 $info = curl_getinfo($ch);
                 curl_close($ch);
                 $curl_response = json_decode($return,true);
-
                 $response['status'] = true;
                 $response['message'] = $curl_response['html'];
             }

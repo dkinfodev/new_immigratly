@@ -338,7 +338,7 @@ $(document).ready(function() {
             data: formData,
             dataType: "json",
             beforeSend: function() {
-
+                
             },
             success: function(response) {
                 $(".signup-btn").find(".fa-spin").remove();
@@ -390,6 +390,7 @@ function sendOtp() {
         data: {
             _token: "{{ csrf_token() }}",
             value: value,
+            check:"user",
         },
         dataType: "json",
         beforeSend: function() {
@@ -399,7 +400,7 @@ function sendOtp() {
             hideLoader();
             $("#opt_response").html("");
             if (response.status == true) {
-                $("#verificiationModal").modal("hide");
+                $("#verificationModal").modal("hide");
                 $("#opt_response").html("<b>" + response.message + "</b>");
                 $("#verificationCodeModal").modal("show");
             } else {

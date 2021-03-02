@@ -248,7 +248,11 @@ class FrontendController extends Controller
         \Session::forget("verify_code");
         \Session::forget("service_code");
         if($verify_type[0] == 'mobile_no'){
-            $checkExists = User::whereRaw("CONCAT(`country_code`, `phone_no`) = ?", [$verify_type[1]])->count();
+            if($request->input("check") == 'user'){
+                $checkExists = User::whereRaw("CONCAT(`country_code`, `phone_no`) = ?", [$verify_type[1]])->count();
+            }else{
+                $checkExists = Professionals::whereRaw("CONCAT(`country_code`, `phone_no`) = ?", [$verify_type[1]])->count();
+            }
           
             if($checkExists > 0){
                 $response['status'] = false;
@@ -267,7 +271,12 @@ class FrontendController extends Controller
             }
             return response()->json($response);
         }else{
-            $checkExists = User::where("email",$verify_type[1])->count();
+            if($request->input("check") == 'user'){
+                $checkExists = User::where("email",$verify_type[1])->count();
+            }else{
+                $checkExists = Professionals::where("email",$verify_type[1])->count();
+            }
+            
             if($checkExists > 0){
                 $response['status'] = false;
                 $response['message'] = "Email already exists try another email";
@@ -279,7 +288,7 @@ class FrontendController extends Controller
             $mailData['verify_code'] = $verify_code;
             $view = View::make('emails.verify-code',$mailData);
             $message = $view->render();
-            $parameter['to'] = $value;
+            $parameter['to'] = $verify_type[1];
             $parameter['to_name'] = '';
             $parameter['message'] = $message;
             $parameter['subject'] = companyName()." verfication code";
@@ -288,6 +297,7 @@ class FrontendController extends Controller
             $parameter['view'] = "emails.verify-code";
             $parameter['data'] = $mailData;
             $mailRes = sendMail($parameter);
+
             \Session::put("verify_code",$verify_code);
             if($mailRes['status'] == true){
                 \Session::put("verify_code",$verify_code);
@@ -297,6 +307,7 @@ class FrontendController extends Controller
                 $response['status'] = false;
                 $response['message'] = $mailRes['message'];
             }
+            return response()->json($response);
         }
     }
 }

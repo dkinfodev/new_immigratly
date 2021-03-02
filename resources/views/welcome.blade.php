@@ -46,9 +46,9 @@
                 <img class="img-fluid mb-5" src="./assets/svg/illustrations/graphs.svg" alt="Image Description" style="max-width: 21rem;">
 
                 <h1>You account has been registered successfully</h1>
-                <p>You are now minutes away from accessing you portal. Please click to below link to go to your portal</p>
-                <a class="btn btn-primary" href="{{ $portal_url }}"><i class="tio-home"></i> Go Back</a>
-                <a class="btn btn-primary" href="{{ $portal_url }}"><i class="tio-layers-outlined"></i> Open your portal</a>
+                <p>Mail has been sent to your email with your professional url.</p>
+                <a class="btn btn-primary" href="{{ url('/') }}"><i class="tio-home"></i> Go To Home</a>
+              {{--  <a class="btn btn-primary" href="{{ $portal_url }}"><i class="tio-layers-outlined"></i> Open your portal</a> --}}
               </div>
             </div>
             <!-- End Row -->

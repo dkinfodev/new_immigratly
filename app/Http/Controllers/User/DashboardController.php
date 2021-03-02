@@ -634,7 +634,7 @@ class DashboardController extends Controller
        
         if(isset($_GET['code'])){
             $return = dropbox_callback($_GET['code']);
-            
+          
             if(isset($return['access_token'])){
                 $object = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
                 $object->dropbox_auth = json_encode($return);

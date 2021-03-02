@@ -571,6 +571,7 @@ class AssessmentsController extends Controller
             $object2->save();
         }
         $api_response = professionalCurl('cases/add-assessment-case',$subdomain,$apiData);
+        
         if($api_response['status'] == 'success'){
             $response['status'] = true;
             $response['message'] = "Assessment assigned to professional";

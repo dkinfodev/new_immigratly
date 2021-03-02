@@ -93,7 +93,8 @@
                       
                       <div id="navSubmenuPagesAccount-{{$key}}" class="hs-sub-menu dropdown-menu" aria-labelledby="navLinkPages-{{$key}}" style="min-width: 230px; display:{{ (count($service->SubServices) <= 0)?'none':'block' }}">
                         @foreach($service->SubServices as $subservice)
-                        <a class="dropdown-item " href="{{ url('visa-services/'.$subservice->slug) }}">{{$subservice->name}}</a>
+                        <!-- <a class="dropdown-item " href="{{ url('visa-services/'.$subservice->slug) }}">{{$subservice->name}}</a> -->
+                        <a class="dropdown-item " href="javascript:;">{{$subservice->name}}</a>
                         @endforeach
                       </div>
                       

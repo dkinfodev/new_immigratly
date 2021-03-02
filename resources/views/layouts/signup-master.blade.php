@@ -30,12 +30,7 @@
   </head>
 
   <body class="d-flex align-items-center min-h-100">
-  <div class="loader">
-    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-      <span class="sr-only">Loading...</span>
-    </div>
-    <h4 class="text-danger">Loading...</h4>
-  </div>
+
     @yield("content")
 
     <!-- JS Global Compulsory  -->
@@ -51,6 +46,12 @@
     <!-- JS Front -->
     <script src="assets/js/theme.min.js"></script>
     <script src="assets/js/theme-custom.js"></script>
+    <div class="loader">
+      <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <h4 class="text-danger">Loading...</h4>
+    </div>
     <!-- JS Plugins Init. -->
     <script>
       $(document).on('ready', function () {

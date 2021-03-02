@@ -1460,12 +1460,16 @@ if(!function_exists("dropbox_callback")){
                 'app_secret' => env('DROPBOX_APP_SECRET'),
                 'app_full_access' => true,
             )); 
+          
             $server_arr = explode('.', $_SERVER['HTTP_HOST']);
             array_shift($server_arr);
             $url = implode('.', $server_arr);
             $return_url = site_url().'/dropbox-callback';
+            
             $bearer_token = $dropbox->GetBearerToken($code, $return_url);
+            
             $account = $dropbox->getAccountInfo();
+           
             if(isset($account->email)){
                 $response['user_email'] = $account->email;
                 $response['dropbox_account_id'] = $account->account_id;

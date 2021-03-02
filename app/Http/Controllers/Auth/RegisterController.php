@@ -195,13 +195,13 @@ class RegisterController extends Controller
             'password_confirmation' => 'required|min:4',
             'country_code' => 'required',
             'phone_no' => 'required|unique:professionals',
-            'verify_by'=>'required',
+            // 'verify_by'=>'required',
             'company_name'=>'required',
-            'subdomain'=>'required|unique:professionals|max:10|min:4',
+            'subdomain'=>'required|unique:professionals|max:10|min:3',
         ]);
 
         
-        session(['redirect_back' => $request->input('redirect_back')]);
+        // session(['redirect_back' => $request->input('redirect_back')]);
         if ($validator->fails()) {
             $response['status'] = false;
             $error = $validator->errors()->toArray();
@@ -210,6 +210,7 @@ class RegisterController extends Controller
             foreach($error as $key => $err){
                 $errMsg[$key] = $err[0];
             }
+            $response['error_type'] = 'validation';
             $response['message'] = $errMsg;
             return response()->json($response);
         }
@@ -217,155 +218,203 @@ class RegisterController extends Controller
 
         $phone = $request->input("country_code").$request->input("phone_no");
         
-        if($request->input("verify_by") == 'sms'){
-            // $res = verifyCode(\Session::get("service_code"),$request->input('verification_code'),$phone);
+        // if($request->input("verify_by") == 'sms'){
+        //     // $res = verifyCode(\Session::get("service_code"),$request->input('verification_code'),$phone);
 
-            // if($res['status'] == false){
-            //     $response['status'] = false;
-            //     $response['message'] = 'OTP Verification code entered is invalid';
-            //     return response()->json($response);
-            // }
-        }else{
-            $date = date("Y-m-d H:i:s");
-            $match_code = VerificationCode::where("verify_by","email")
-                        ->where("match_string",$request->input("email"))
-                        ->where("verify_code",$request->input("verification_code"))
-                        ->whereDate("expiry_time","<",$date)
-                        ->count();
-            // if($request->input("verification_code") != \Session::get("verify_code")){
-           if($match_code <= 0){
-                return redirect()->back()
-                        ->with("verification_code","Verification code entered is invalid")
-                        ->withInput();
-            }
-            VerificationCode::where("match_string",$request->input("email"))->delete();
-        }
-        $subdomain = trim($request->input("subdomain"));
-        $subdomain = strtolower(str_replace(" ","",$subdomain));
-        $client_secret = generateString(50);
-        $object = new Professionals();
-        $object->unique_id = randomNumber();
-        $object->first_name = $request->input("first_name");
-        $object->last_name = $request->input("last_name");
-        $object->email = $request->input("email");
-        $object->country_code = $request->input("country_code");
-        $object->phone_no = $request->input("phone_no");
-        $object->company_name = $request->input("company_name");
-        $object->subdomain = $subdomain;
-        $object->client_secret = $client_secret;
-        $object->panel_status = 1;
-        $object->save();
-        $user_id = $object->id;
+        //     // if($res['status'] == false){
+        //     //     $response['status'] = false;
+        //     //     $response['message'] = 'OTP Verification code entered is invalid';
+        //     //     return response()->json($response);
+        //     // }
+        // }else{
+        //     $date = date("Y-m-d H:i:s");
+        //     $match_code = VerificationCode::where("verify_by","email")
+        //                 ->where("match_string",$request->input("email"))
+        //                 ->where("verify_code",$request->input("verification_code"))
+        //                 ->whereDate("expiry_time","<",$date)
+        //                 ->count();
+        //     // if($request->input("verification_code") != \Session::get("verify_code")){
+        //    if($match_code <= 0){
+        //         return redirect()->back()
+        //                 ->with("verification_code","Verification code entered is invalid")
+        //                 ->withInput();
+        //     }
+        //     VerificationCode::where("match_string",$request->input("email"))->delete();
+        // }
 
-
-        $db_prefix = Settings::where("meta_key","database_prefix")->first();
-        $db_prefix = $db_prefix->meta_value;
-        $sample_db = Settings::where("meta_key","sample_database")->first();
-        $sample_db = $sample_db->meta_value;
-
-        $database_name = $db_prefix.$subdomain;
-        if($_SERVER['SERVER_NAME'] != 'localhost'){
-            $response = createSubDomain($subdomain,$database_name);
-
-            if($response['status'] == 'error'){
+        $phone = $request->input("country_code").$request->input("phone_no");
+        if($request->input("verify_status") != 'true'){
+            if($request->input("verify_by")){
+                $verify_code = $request->input("verify_type");
+                if(\Session::get('verify_by') == 'email'){
+                    if(\Session::get('verify_code') != $verify_code){
+                        $response['status'] = false;
+                        $response['error_type'] = 'verify_failed';
+                        $response['message'] = 'Verification code mismatch';
+                        return response()->json($response);
+                    }
+                }
+            }else{
                 $response['status'] = false;
-                $response['message'] = $response['message']." Process of creating panel interrupted. Try again!";
-                \Session::flash('error_message', $response['message']." Process of creating panel interrupted. Try again!"); 
-                Professionals::where("id",$user_id)->delete();
+                $response['error_type'] = 'not_verified';
+                $response['email'] = $request->input("email");
+                $response['mobile_no'] = $phone;
                 return response()->json($response);
-                // return redirect()->back()->with('error_message',$response['message']." Process of creating panel interrupted. Try again!");
             }
-        }else{
-            $sql = "CREATE DATABASE IF NOT EXISTS `$database_name` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;";
-            DB::statement($sql);
         }
 
-        $sql = "SHOW TABLES FROM ".$sample_db;
-        $sample_tables = DB::select($sql);
         
-        for($i=0;$i < count($sample_tables);$i++){
-            $sdb = "Tables_in_".$sample_db;
-            $table = $sample_tables[$i]->$sdb;
+        if($request->input("verify_status") == 'true'){
+            $subdomain = trim($request->input("subdomain"));
+            $subdomain = strtolower(str_replace(" ","",$subdomain));
+            $client_secret = generateString(50);
+            $object = new Professionals();
+            $object->unique_id = randomNumber();
+            $object->first_name = $request->input("first_name");
+            $object->last_name = $request->input("last_name");
+            $object->email = $request->input("email");
+            $object->country_code = $request->input("country_code");
+            $object->phone_no = $request->input("phone_no");
+            $object->company_name = $request->input("company_name");
+            $object->subdomain = $subdomain;
+            $object->client_secret = $client_secret;
+            $object->panel_status = 1;
+            $object->save();
+            $user_id = $object->id;
+
+
+            $db_prefix = Settings::where("meta_key","database_prefix")->first();
+            $db_prefix = $db_prefix->meta_value;
+            $sample_db = Settings::where("meta_key","sample_database")->first();
+            $sample_db = $sample_db->meta_value;
+
+            $database_name = $db_prefix.$subdomain;
+            if($_SERVER['SERVER_NAME'] != 'localhost'){
+                $response = createSubDomain($subdomain,$database_name);
+
+                if($response['status'] == 'error'){
+                    $response['status'] = false;
+                    $response['message'] = $response['message']." Process of creating panel interrupted. Try again!";
+                    \Session::flash('error_message', $response['message']." Process of creating panel interrupted. Try again!"); 
+                    Professionals::where("id",$user_id)->delete();
+                    return response()->json($response);
+                    // return redirect()->back()->with('error_message',$response['message']." Process of creating panel interrupted. Try again!");
+                }
+            }else{
+                $sql = "CREATE DATABASE IF NOT EXISTS `$database_name` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;";
+                DB::statement($sql);
+            }
+
+            $sql = "SHOW TABLES FROM ".$sample_db;
+            $sample_tables = DB::select($sql);
             
+            for($i=0;$i < count($sample_tables);$i++){
+                $sdb = "Tables_in_".$sample_db;
+                $table = $sample_tables[$i]->$sdb;
+                
 
-            DB::statement('CREATE TABLE IF NOT EXISTS '.$database_name.'.'.$table.' LIKE '.$sample_db.'.'.$table.';');
-        }
-        $now = \Carbon\Carbon::now();
-        $password = $request->input("password");
-        $user_data = array(
-                "unique_id"=> randomNumber(),
-                "first_name"=>$request->input('first_name'),
-                "last_name"=>$request->input('last_name'),
-                "email"=>$request->input('email'),
-                "country_code"=>$request->input('country_code'),
-                "phone_no"=>$request->input('phone_no'),
-                "role"=>"admin",
-                "is_active"=>"1",
-                "is_verified"=>"1",
-                "password"=>bcrypt($password),
-                "created_at"=>$now,
-                "updated_at"=>$now
-        );
-        DB::table($database_name.'.users')->insert($user_data);
+                DB::statement('CREATE TABLE IF NOT EXISTS '.$database_name.'.'.$table.' LIKE '.$sample_db.'.'.$table.';');
+            }
+            $now = \Carbon\Carbon::now();
+            $password = $request->input("password");
+            $user_data = array(
+                    "unique_id"=> randomNumber(),
+                    "first_name"=>$request->input('first_name'),
+                    "last_name"=>$request->input('last_name'),
+                    "email"=>$request->input('email'),
+                    "country_code"=>$request->input('country_code'),
+                    "phone_no"=>$request->input('phone_no'),
+                    "role"=>"admin",
+                    "is_active"=>"1",
+                    "is_verified"=>"1",
+                    "password"=>bcrypt($password),
+                    "created_at"=>$now,
+                    "updated_at"=>$now
+            );
+            DB::table($database_name.'.users')->insert($user_data);
 
-        $company_name = array(
-                "company_name"=>$request->input('company_name'),
-                "created_at"=>$now,
-                "updated_at"=>$now
-        );
-        DB::table($database_name.'.professional_details')->insert($company_name);
+            $company_name = array(
+                    "company_name"=>$request->input('company_name'),
+                    "created_at"=>$now,
+                    "updated_at"=>$now
+            );
+            DB::table($database_name.'.professional_details')->insert($company_name);
 
-        $api_keys = array(
-                "client_secret"=>$client_secret,
-                "subdomain"=>$subdomain,
-                "master_id"=>$user_id,
-                "created_at"=>$now,
-                "updated_at"=>$now
-        );
-        DB::table($database_name.'.domain_details')->insert($api_keys);
-
-        if($_SERVER['SERVER_NAME'] == 'localhost'){
-            $response['status'] = true;
-            $response['redirect_back'] = url('login');
-            $response['message'] = "Your panel has been created successfully";
-            \Session::flash('success_message', 'Your panel has been created successfully!'); 
-        }else{
-            $response['status'] = true;
+            $api_keys = array(
+                    "client_secret"=>$client_secret,
+                    "subdomain"=>$subdomain,
+                    "master_id"=>$user_id,
+                    "created_at"=>$now,
+                    "updated_at"=>$now
+            );
+            DB::table($database_name.'.domain_details')->insert($api_keys);
             $rootdomain = DB::table(MAIN_DATABASE.".settings")->where("meta_key",'rootdomain')->first();
             $rootdomain = $rootdomain->meta_value;
             $portal_url = "http://".$subdomain.".".$rootdomain."/";
-            $url = url('welcome');
-            $response['redirect_back'] = $url;
-            $response['message'] = "Your panel has been created successfully. You can login to your panel with the access you entered.";
-            \Session::flash('success_message', "Your panel has been created successfully. You can login to your panel with the access you entered."); 
-            \Session::put('professional_register', true); 
-            \Session::put('portal_url', $portal_url); 
-        }
-        // \Auth::loginUsingId($user_id);
-        // \Session::forget("verify_code");
-        // $response['status'] = true;
-        // if(!empty($request->input('redirect_back'))){
-        //     $response['redirect_back']= $request->input('redirect_back');    
-        // }else{
-        //     $response['redirect_back'] = url('home');  
-        // }
+            // $portal_url = url("signup/professional");
+            if($_SERVER['SERVER_NAME'] == 'localhost'){
+                $response['status'] = true;
+                $response['redirect_back'] = url('welcome');
+                // $response['message'] = "Your panel has been created successfully";
+                $response['message'] = "Your panel has been created successfully. Mail has been sent to your emailm please check it.";
+                \Session::flash('success_message', "Your panel has been created successfully. You can login to your panel with the access you entered."); 
+                \Session::put('professional_register', true); 
+                \Session::put('portal_url', $portal_url); 
+            }else{
+                $response['status'] = true;
+                
+                $url = url('welcome');
+                // $url = url("signup/professional");
+                $response['redirect_back'] = $url;
+                $response['message'] = "Your panel has been created successfully. Mail has been sent to your emailm please check it.";
+                \Session::flash('success_message', "Your panel has been created successfully. You can login to your panel with the access you entered."); 
+                \Session::put('professional_register', true); 
+                \Session::put('portal_url', $portal_url); 
+            }
+            
+            // Professional Mail
 
-        $mailData['firstname'] = $request->input('first_name');
-        $mailData['lastname'] = $request->input('last_name');
-        $mailData['password'] = $request->input('password');
-        $mailData['subdomain'] = $request->input('subdomain');
-        $mailData['emails']  = $request->input('email');
-        $view = View::make(roleFolder().'.emails.panel-notification',$mailData);
-        $message = $view->render();
-        $parameter['to'] = $request->input('email');
-        $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
-        $parameter['message'] = $message;
-        $parameter['subject'] = companyName()." Welcome Mail";
-        // echo $message;
-        // exit;
-        $parameter['view'] = "emails.panel-notification";
-        $parameter['data'] = $mailData;
-        $mailRes = sendMail($parameter);
+            $mailData['first_name'] = $request->input('first_name');
+            $mailData['last_name'] = $request->input('last_name');
+            $mailData['subdomain'] = $request->input('subdomain');
+            $mailData['portal_url'] = $portal_url;
+            $mailData['email']  = $request->input('email');
+            $view = View::make(roleFolder().'.emails.panel-notification',$mailData);
+            $message = $view->render();
+            $parameter['to'] = $request->input('email');
+            $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
+            $parameter['message'] = $message;
+            $parameter['subject'] = companyName()." Welcome Mail";
+            // echo $message;
+            // exit;
+            $parameter['view'] = "emails.panel-notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
+
+
+            // Admin Mail
+
+            $mailData['message'] = "Hello Admin,<Br> New professional has been registered to our panel.";
+            $mailData['last_name'] = $request->input('last_name');
+            $mailData['subdomain'] = $request->input('subdomain');
+            $mailData['portal_url'] = $portal_url;
+            $mailData['email']  = $request->input('email');
+            $view = View::make(roleFolder().'.emails.panel-notification',$mailData);
+            $message = $view->render();
+            $parameter['to'] = $request->input('email');
+            $parameter['to_name'] = $request->input('first_name')." ". $request->input('last_name');
+            $parameter['message'] = $message;
+            $parameter['subject'] = companyName()." Welcome Mail";
+            // echo $message;
+            // exit;
+            $parameter['view'] = "emails.panel-notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
+        }else{
+            $response['status'] = false;
+            $response['error_type'] = "verification_pending";
+            $response['message'] = "OTP verification pending";
+        }
         return response()->json($response);
     }
 

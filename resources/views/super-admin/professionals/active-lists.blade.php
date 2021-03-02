@@ -17,9 +17,9 @@
         <h1 class="page-title">{{$pageTitle}}</h1>
       </div>
       <div class="col-sm-6 mb-2 mb-sm-0">
-        <div class="update_db_btn text-right">
+        <!-- <div class="update_db_btn text-right">
           <button type="button" onclick="showPopup('<?php echo baseUrl('professionals/update-all-databases') ?>')" class="btn btn-primary"><i class="fa fa-database"></i> Update All Database</button>
-        </div>
+        </div> -->
       </div>
 
       <div class="col-sm-auto">
