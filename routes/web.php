@@ -815,7 +815,14 @@ Route::group(array('prefix' => 'admin'), function () {
                 Route::get('/delete/{id}', [App\Http\Controllers\Admin\InvoiceController::class, 'deleteSingle']);
                 Route::post('/delete-multiple', [App\Http\Controllers\Admin\InvoiceController::class, 'deleteMultiple']);
             });
-    
+            
+            Route::group(array('prefix' => 'tasks'), function () {
+                Route::get('/list/{id}', [App\Http\Controllers\Admin\CasesController::class, 'tasks']);
+                Route::post('/ajax-list', [App\Http\Controllers\Admin\CasesController::class, 'getTasksList']);
+                Route::get('/add/{id}', [App\Http\Controllers\Admin\CasesController::class, 'addNewTask']);
+                Route::post('/add/{id}', [App\Http\Controllers\Admin\CasesController::class, 'saveTask']);
+                
+            });
         });
 
     });

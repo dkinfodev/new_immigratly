@@ -956,6 +956,7 @@ class ProfessionalCasesController extends Controller
                 foreach($records as $record){
                     unset($record['id']);
                     $temp = $record;
+                    $temp['professional'] = $subdomain;
                     $invoices[] = $temp;
                 }
             }
@@ -967,7 +968,8 @@ class ProfessionalCasesController extends Controller
     } 
 
     public function caseInvoices($subdomain,$case_id)
-    {   $data['case_id'] = $case_id;
+    {  
+        $data['case_id'] = $case_id;
         $api_response = professionalCurl('cases/view',$subdomain,$data);
         $case = $api_response['data'];
         $viewData['case'] = $case;

@@ -22,6 +22,7 @@ use App\Models\Documents;
 use App\Models\DocumentChats;
 use App\Models\Chats;
 use App\Models\ProfessionalDetails;
+use App\Models\CaseTasks;
 
 class CasesController extends Controller
 {
@@ -1105,4 +1106,86 @@ class CasesController extends Controller
         $viewData['pageTitle'] = "View Documents";
         return view(roleFolder().'.cases.view-documents',$viewData);
     }
+
+    public function addNewTask($case_id,Request $request){
+       
+        $viewData['pageTitle'] = "Add case task";
+        $case_id = base64_decode($case_id);
+        $case = Cases::where("id",$case_id)->first();
+        $viewData['case'] = $case;
+        $ext_files = implode(",",allowed_extension());
+        $viewData['ext_files'] = $ext_files;
+        $viewData['timestamp'] = time();
+        $view = View::make(roleFolder().'.cases.modal.add-task',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+    public function saveTask($case_id,Request $request){
+
+        $object = new CaseTasks();
+        $object->case_id = $case_id;
+        $object->task_title = $request->input("task_title");
+        $object->description = $request->input("description");
+        $object->added_by = \Auth::user()->unique_id;
+        $object->unique_id = randomNumber();
+        $object->status = 'pending';
+        if($request->input("timestamp")){
+            $timestamp = $request->input("timestamp");
+            if(is_dir(public_path()."/uploads/temp/". $timestamp)){
+                $files = glob(public_path()."/uploads/temp/". $timestamp."/*");
+                $filename = array();
+                for($f = 0; $f < count($files);$f++){
+                    $file_arr = explode("/",$files[$f]);
+                    $filename[] = end($file_arr);
+                    $file_name =  end($file_arr);
+                    $destinationPath = professionalDir()."/tasks/".$file_name;
+                    copy($files[$f], $destinationPath);
+                    unlink($files[$f]);
+                }
+                if(file_exists(public_path()."/uploads/temp/". $timestamp)){
+                    rmdir(public_path()."/uploads/temp/". $timestamp);
+                }
+                if(!empty($filename)){
+                    $object->files = implode(",",$filename);
+                }
+            }
+        }
+        $object->save();
+
+        $response['status'] = true;
+        $response['message'] = "Task added successfully";
+        return response()->json($response);
+    }
+    public function tasks($case_id,Request $request){
+        $case_id = base64_decode($case_id);
+        $case = Cases::where("id",$case_id)->first();
+        $viewData['case'] = $case;
+        $viewData['pageTitle'] = "Tasks List";
+        
+        return view(roleFolder().'.cases.tasks',$viewData);
+    }
+
+    public function getTasksList(Request $request)
+    {
+        $search = $request->input("search");
+        $records = CaseTasks::orderBy('id',"desc")
+                        ->where(function($query) use($search){
+                            if($search != ''){
+                                $query->where("case_title","LIKE","%$search%");
+                            }
+                        })
+                        ->where("case_id",$request->input("case_id"))
+                        ->paginate(5);
+        $viewData['records'] = $records;
+        $view = View::make(roleFolder().'.cases.tasks-list',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['last_page'] = $records->lastPage();
+        $response['current_page'] = $records->currentPage();
+        $response['total_records'] = $records->total();
+        return response()->json($response);
+    }
+
 }
