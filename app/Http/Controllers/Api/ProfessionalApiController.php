@@ -652,14 +652,27 @@ class ProfessionalApiController extends Controller
             $request->request->add($postData);
 
             $case_id = $request->input("case_id");
-            $records = CaseInvoices::with(['Invoice'])
-                            ->where("case_id",$case_id)
-                            ->orderBy('id',"desc")
-                            ->paginate();
-            $data['records'] = $records->items();
-            $data['last_page'] = $records->lastPage();
-            $data['current_page'] = $records->currentPage();
-            $data['total_records'] = $records->total();
+            $client_id = $request->input("client_id");
+            if($request->input("invoice_type") == 'all'){
+                $records = CaseInvoices::with(['Invoice'])
+                ->whereHas("Invoice",function($query) use($client_id){
+                    $query->where("client_id",$client_id);
+                })
+                ->orderBy('id',"desc")
+                ->get();
+                $data['records'] = $records;
+            }else{
+                $records = CaseInvoices::with(['Invoice'])
+                ->where("case_id",$case_id)
+                ->orderBy('id',"desc")
+                ->paginate();
+                $data['records'] = $records->items();
+                $data['last_page'] = $records->lastPage();
+                $data['current_page'] = $records->currentPage();
+                $data['total_records'] = $records->total();
+            }
+           
+            
             $response['status'] = "success";
             $response['data'] = $data;
         } catch (Exception $e) {

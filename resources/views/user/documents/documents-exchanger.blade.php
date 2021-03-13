@@ -14,6 +14,7 @@
 }
 .droppable{
   min-height: 65px;
+  padding-bottom:65px;
 }
 .document-drop {
     list-style: none;

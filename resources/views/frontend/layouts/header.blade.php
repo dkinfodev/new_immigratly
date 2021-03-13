@@ -23,7 +23,7 @@
           </div> 
           <div class="navbar-nav-wrap-content text-center mr-3">
             <div class="d-none d-lg-block">
-              <a class="btn btn-sm btn-dark transition-3d-hover" href="{{ baseUrl('/') }}" target="_blank"><i class="tio-sign-out"></i> Logout</a>
+              <a class="btn btn-sm btn-dark transition-3d-hover" href="{{ url('/logout') }}" target="_blank"><i class="tio-sign-out"></i> Logout</a>
             </div>
           </div> 
           @else

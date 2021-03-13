@@ -25,7 +25,13 @@
 <div class="navbar-nav-wrap-content-right">
 <!-- Navbar -->
 <ul class="navbar-nav align-items-center flex-row">
-
+  <li class="nav-item d-none d-sm-inline-block">
+  
+      <a class="btn btn-sm btn-primary" href="javascript:;" onclick="showPopup('<?php echo baseUrl('/notes/add-reminder-note') ?>')">
+        <i class="tio-edit"></i>
+        My Notes
+      </a>
+  </li>
   <li class="nav-item d-none d-sm-inline-block">
     <!-- Notification -->
     <div class="hs-unfold">

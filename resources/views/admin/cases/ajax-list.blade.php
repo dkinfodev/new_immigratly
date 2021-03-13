@@ -12,11 +12,11 @@
       <?php
       $client = $record->Client($record->client_id);
       ?>
-      <div class="avatar avatar-soft-primary mt-4 avatar-circle">
+      <div class="avatar avatar-soft-primary avatar-circle">
         <span class="avatar-initials">{{userInitial($client)}}</span>
       </div>
       @else
-      <div class="avatar avatar-soft-primary mt-4 avatar-circle">
+      <div class="avatar avatar-soft-primary avatar-circle">
         <span class="avatar-initials">UN</span>
       </div>
       @endif

@@ -33,12 +33,18 @@ class FrontendController extends Controller
     }
 
     public function index(){
-        // $to = "+919099700212";
-        // $message = "Testing twilio message";
-        // // $sid = sendSms($to,$message);
-        // $id = sendToWhatsApp($to,$message);
-        // pre($sid);
+        // $db['GOOGLE_CLIENT_ID'] = base64_encode("972372764079-l4dqpfuun15l5oetf070mh6ek60m6jl7.apps.googleusercontent.com");
+        // $db['GOOGLE_CLIENT_SECRET'] = base64_encode("YV9PppIZly96PyGTDIXuV4Ly");
+        // $db['GOOGLE_URL'] = base64_encode("https://immigratly.com/login/google/callback");
+        // echo json_encode($db);
         // exit;
+       //$contens = public_path('uploads/files/26531-2stallions-300x300.jpg');
+       //$image = \Storage::disk('s3')->put('26531-2stallions-300x300.jpg', $contens);
+
+        // $image = Image::create([
+        //     'filename' => public_path('uploads/files/65912-75910-noc_codes.csv'),
+        //     'url' => Storage::disk('s3')->url($path)
+        // ]);
        
         $now = \Carbon\Carbon::now();
         $articles = Articles::where("status","publish")

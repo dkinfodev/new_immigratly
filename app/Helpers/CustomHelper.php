@@ -6,6 +6,7 @@ require dirname(__DIR__)."/../library/dropbox/demo-lib.php";
 require dirname(__DIR__)."/../library/dropbox/DropboxClient.php";
 
 use Illuminate\Support\Str;
+use Illuminate\Encryption\Encrypter;
 
 use App\Models\Settings;
 use App\Models\DomainDetails;
@@ -22,6 +23,7 @@ use App\Models\ClientEducations;
 use App\Models\StaffPrivileges;
 use App\Models\UserDetails;
 use App\Models\User;
+use App\Models\ApiConstants;
 
 if (! function_exists('getFileType')) {
     function getFileType($ext) {
@@ -406,7 +408,7 @@ if(!function_exists("sendSms")){
 if(!function_exists("sendToWhatsApp")){
     function sendToWhatsApp($to,$message){
         
-        $twilio = new TwilioApi(env('TWILIO_SID'),env('TWILIO_TOKEN'),env('TWILIO_AID'));
+        $twilio = new TwilioApi(api_key('TWILIO_SID'),api_key('TWILIO_TOKEN'),api_key('TWILIO_AID'));
         $response = $twilio->sendWhatsAppMessage($to,$message);
         return $response;
        
@@ -1431,7 +1433,41 @@ if(!function_exists("refresh_google_token")){
         }
     }
 }
+if(!function_exists("googleClient")){
+    function googleClient()
+    {
+        $client = new Google_Client();
+        $user_details = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
+        if(empty($user_details->google_drive_auth)){
+            return false;
+        }
+        $gurl = site_url().'/google-callback';
+        $config_file = base_path("library/google-api/credentials.json");
+        $client->setAuthConfigFile($config_file);
+        $client->setRedirectUri($gurl);
+        
+        $client->addScope("https://www.googleapis.com/auth/userinfo.profile");
+        $client->addScope("https://www.googleapis.com/auth/userinfo.email");
+        $client->addScope(Google_Service_Drive::DRIVE_FILE);
+        $client->addScope(Google_Service_Drive::DRIVE_METADATA_READONLY);
+        $client->addScope(Google_Service_Drive::DRIVE_PHOTOS_READONLY);
+        $google_drive_auth = json_decode($user_details->google_drive_auth,true);
+        $access_token = $google_drive_auth['access_token'];
+        
+        if(isset($access_token['access_token'])){
+            if ($client->isAccessTokenExpired()) {
+                $client->refreshToken($access_token['refresh_token']);
+                $access_token = $client->getAccessToken();
 
+                $google_drive_auth['access_token']['access_token'] = $access_token['access_token'];
+                $updata['google_drive_auth'] = json_encode($google_drive_auth);
+                
+                UserDetails::where("user_id",\Auth::user()->unique_id)->update($updata);
+            }
+        }
+        return $client;
+    }
+}
 if(!function_exists("google_auth_url")){
     function google_auth_url(){
         
@@ -1456,12 +1492,85 @@ if(!function_exists("google_auth_url")){
         return $url;
     } 
 }  
+if(!function_exists("create_gdrive_folder")){
+    function create_gdrive_folder($folder_name){
+        $folder_list = gdrive_folder_exists( $folder_name );
 
+        if( count( $folder_list ) == 0 ){
+            $client = googleClient();
+            $service = new Google_Service_Drive($client);
+            $folder = new Google_Service_Drive_DriveFile();
+        
+            $folder->setName( $folder_name );
+            $folder->setMimeType('application/vnd.google-apps.folder');
+            if( !empty( $parent_folder_id ) ){
+                $folder->setParents( [ $parent_folder_id ] );        
+            }
+
+            $result = $service->files->create( $folder );
+        
+            $folder_id = null;
+            
+            if( isset( $result['id'] ) && !empty( $result['id'] ) ){
+                $folder_id = $result['id'];
+            }
+        
+            return $folder_id;
+        }
+
+        return $folder_list[0]['id'];
+    }
+}
+if(!function_exists("gdrive_folder_exists")){
+    function gdrive_folder_exists( $folder_name ){
+        $client = googleClient();
+        $service = new Google_Service_Drive($client);
+
+        $parameters['q'] = "mimeType='application/vnd.google-apps.folder' and name='$folder_name' and trashed=false";
+        $files = $service->files->listFiles($parameters);
+
+        $op = [];
+        foreach( $files as $k => $file ){
+            $op[] = $file;
+        }
+
+        return $op;
+    }
+}
+if(!function_exists("gdrive_file_export")){
+    function gdrive_file_export( $file_path, $file_name, $parent_file_id = null ){
+        $client = googleClient();
+        $service = new Google_Service_Drive($client);
+        $file = new Google_Service_Drive_DriveFile();
+
+        $file->setName( $file_name );
+
+        if( !empty( $parent_file_id ) ){
+            $file->setParents( [ $parent_file_id ] );        
+        }
+
+        $result = $service->files->create(
+            $file,
+            array(
+                'data' => file_get_contents($file_path),
+                'mimeType' => 'application/octet-stream',
+            )
+        );
+
+        $is_success = false;
+        
+        if( isset( $result['name'] ) && !empty( $result['name'] ) ){
+            $is_success = true;
+        }
+
+        return $is_success;
+    }
+}
 if(!function_exists("dropbox_auth_url")){
     function dropbox_auth_url(){
         $dropbox = new DropboxClient(array(
-            'app_key' => env('DROPBOX_APP_KEY'),
-            'app_secret' => env('DROPBOX_APP_SECRET'),
+            'app_key' => api_key('DROPBOX_APP_KEY'),
+            'app_secret' => api_key('DROPBOX_APP_SECRET'),
             'app_full_access' => true,
         )); 
         // $return_url = "https://" . $url . "/login/dropbox_return/?auth_redirect=1";
@@ -1474,8 +1583,8 @@ if(!function_exists("dropbox_callback")){
     function dropbox_callback($code){
         try{
             $dropbox = new DropboxClient(array(
-                'app_key' => env('DROPBOX_APP_KEY'),
-                'app_secret' => env('DROPBOX_APP_SECRET'),
+                'app_key' => api_key('DROPBOX_APP_KEY'),
+                'app_secret' => api_key('DROPBOX_APP_SECRET'),
                 'app_full_access' => true,
             )); 
           
@@ -1509,8 +1618,8 @@ if(!function_exists("dropbox_files_list")){
     function dropbox_files_list($access_token,$path=''){
         try{
             $dropbox = new DropboxClient(array(
-                'app_key' => env('DROPBOX_APP_KEY'),
-                'app_secret' => env('DROPBOX_APP_SECRET'),
+                'app_key' => api_key('DROPBOX_APP_KEY'),
+                'app_secret' => api_key('DROPBOX_APP_SECRET'),
                 'app_full_access' => true,
             )); 
             $bearer_token = array();
@@ -1556,8 +1665,8 @@ if(!function_exists("dropbox_file_download")){
     function dropbox_file_download($access_token,$source_path,$destination){
         try{
             $dropbox = new DropboxClient(array(
-                'app_key' => env('DROPBOX_APP_KEY'),
-                'app_secret' => env('DROPBOX_APP_SECRET'),
+                'app_key' => api_key('DROPBOX_APP_KEY'),
+                'app_secret' => api_key('DROPBOX_APP_SECRET'),
                 'app_full_access' => true,
             )); 
             $bearer_token = array();
@@ -1625,5 +1734,47 @@ if(!function_exists("professionalDomain")){
         $rootdomain = $rootdomain->meta_value;
         $portal_url = "http://".$subdomain.".".$rootdomain;
         return $portal_url;
+    }
+}
+if(!function_exists("userDetail")){
+    function userDetail($unique_id){
+        $user = DB::table(MAIN_DATABASE.".users")->where("unique_id",$unique_id)->first();
+        return $user;
+    }
+}
+if(!function_exists("configData")){
+    function configData(){
+       $data = file_get_contents(storage_path('app/public/st.config'));
+       return json_decode($data,true);
+    }
+}
+if(!function_exists("dc")){
+    function dc($key){
+       $data = base64_decode($key);
+       return $data;
+    }
+}
+
+if(!function_exists("api_key")){
+    function api_key($meta_key){
+        $key = 'a3c4b614a1f072e0f968c2712a36323f'; // same key is used for decrypt
+        $encrypter = new Encrypter($key, 'AES-256-CBC'); // same key and cipher used for decrypt
+        $api_constants = ApiConstants::where('meta_key',$meta_key)->first(); 
+        $value = $encrypter->decryptString($api_constants->meta_value);
+       
+        return $value;
+    }
+}
+if(!function_exists("date_difference")){
+    function date_difference($start_date1,$end_date2){
+        $date1 = new DateTime($start_date1);
+        $date2 = new DateTime($end_date2);
+        $interval = $date1->diff($date2);
+        // echo "difference " . $interval->y . " years, " . $interval->m." months, ".$interval->d." days "; 
+
+        // // shows the total amount of days (not divided into years, months and days like above)
+        // echo "difference " . $interval->days . " days ";
+        $days = $interval->days;
+        return $days;
     }
 }

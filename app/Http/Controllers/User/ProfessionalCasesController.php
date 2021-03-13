@@ -567,6 +567,8 @@ class ProfessionalCasesController extends Controller
                 $object = new FilesManager();
                 $object->file_name = $new_name;
                 $object->original_name = $document['original_name'];
+                $ext = pathinfo($document['original_name'], PATHINFO_EXTENSION);
+                $object->file_type = $ext;
                 $object->user_id = \Auth::user()->unique_id;
                 $object->unique_id = $unique_id;
                 $object->is_shared = 1;
@@ -937,6 +939,33 @@ class ProfessionalCasesController extends Controller
         return view(roleFolder().'.cases.chat-demo',$viewData);
     }
 
+    public function allInvoices()
+    {   
+        $professionals = UserWithProfessional::where('user_id',\Auth::user()->unique_id)->get();
+        
+        $invoices = array();
+        foreach($professionals as $professional){
+            $data['client_id'] = \Auth::user()->unique_id;
+            $subdomain = $professional->professional;
+            $data['invoice_type'] = 'all';
+            // pre($data);
+            $api_response = professionalCurl('cases/fetch-case-invoices',$subdomain,$data);
+            
+            if($api_response['status'] == 'success'){
+                $records = $api_response['data']['records'];
+                foreach($records as $record){
+                    unset($record['id']);
+                    $temp = $record;
+                    $invoices[] = $temp;
+                }
+            }
+        }
+        $viewData['records'] = $invoices;
+        $viewData['pageTitle'] = "All Invoices";
+        $viewData['subdomain'] = $subdomain;
+        return view(roleFolder().'.cases.all-invoices',$viewData);
+    } 
+
     public function caseInvoices($subdomain,$case_id)
     {   $data['case_id'] = $case_id;
         $api_response = professionalCurl('cases/view',$subdomain,$data);
@@ -950,6 +979,7 @@ class ProfessionalCasesController extends Controller
     public function getCaseInvoice($subdomain,Request $request)
     {
         $data = $request->input();
+        $data['invoice_type'] = 'cases';
         $api_response = professionalCurl('cases/fetch-case-invoices',$subdomain,$data);
 
         if($api_response['status'] != 'success'){

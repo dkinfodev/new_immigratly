@@ -321,6 +321,8 @@ class AssessmentsController extends Controller
                     $object = new FilesManager();
                     $object->file_name = $newName;
                     $object->original_name = $original_name;
+                    $ext = pathinfo($original_name, PATHINFO_EXTENSION);
+                    $object->file_type = $ext;
                     $object->user_id = \Auth::user()->unique_id;
                     $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->unique_id;
@@ -414,6 +416,8 @@ class AssessmentsController extends Controller
                     $object = new FilesManager();
                     $object->file_name = $newName;
                     $object->original_name = $original_name;
+                    $ext = pathinfo($original_name, PATHINFO_EXTENSION);
+                    $object->file_type = $ext;
                     $object->user_id = \Auth::user()->unique_id;
                     $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->unique_id;
@@ -459,6 +463,8 @@ class AssessmentsController extends Controller
                         $object = new FilesManager();
                         $object->file_name = $newName;
                         $object->original_name = $fileName;
+                        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                        $object->file_type = $ext;
                         $object->user_id = $id;
                         $object->unique_id = $unique_id;
                         $object->created_by = \Auth::user()->unique_id;

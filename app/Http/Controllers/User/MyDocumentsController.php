@@ -13,6 +13,7 @@ use App\Models\UserDetails;
 use App\Models\FilesManager;
 use App\Models\UserFolders;
 use App\Models\UserFiles;
+use App\Models\UserDocumentNotes;
 
 class MyDocumentsController extends Controller
 {
@@ -50,9 +51,14 @@ class MyDocumentsController extends Controller
             $response['message'] = $errMsg;
             return response()->json($response);
         }
+        $name_exists = 0;
+        $counter = 1;
+        $folder_name = $request->input("name");
+        
+        
         $object = new UserFolders();
         $object->user_id = \Auth::user()->unique_id;
-        $object->name = $request->input("name");
+        $object->name = $folder_name;
         $object->slug = str_slug($request->input("name"));
         $object->unique_id = randomNumber();
         $object->save();
@@ -111,24 +117,96 @@ class MyDocumentsController extends Controller
 
         $user_id = \Auth::user()->unique_id;
         $document = UserFolders::where("unique_id",$id)->first();
+
+        // $file_managers = FilesManager::get();
+       
         $user_documents = UserFiles::with('FileDetail')
                                     ->where("folder_id",$id)
                                     ->where("user_id",$user_id)
                                     ->orderBy("id","desc")
                                     ->get();
+        $extensions = array();
+        foreach($user_documents as $doc){
+            if(!in_array($doc->FileDetail->file_type,$extensions)){
+                $extensions[] = $doc->FileDetail->file_type;
+            }
+        }
+        
         $user_detail = UserDetails::where("user_id",$user_id)->first();
         $viewData['user_detail'] = $user_detail;
         $viewData['user_documents'] = $user_documents;
         $viewData['pageTitle'] = "Files List for ".$document->name;
+        $viewData['extensions'] = $extensions;
  
         $file_url = userDirUrl()."/documents";
         $file_dir = userDir()."/documents";
         $viewData['file_url'] = $file_url;
         $viewData['file_dir'] = $file_dir;
         $viewData['document'] = $document;
+        $ext_files = implode(",",allowed_extension());
+        $viewData['ext_files'] = $ext_files;
         return view(roleFolder().'.documents.files',$viewData);
     }
+    public function folderFilesAjax(Request $request){
+        $folder_id = $request->input("folder_id");
+        $search = $request->input("search");
+        $file_type = $request->input("file_type");
+        $sort_by = $request->input("sort_by");
+       
+        $document = UserFolders::where("unique_id",$folder_id)->first();
+        $user_id = \Auth::user()->unique_id;
+        $column = "files_manager.id";
+        $order = "desc";
+        if($sort_by != ''){
+            switch($sort_by){
+                case "added_by_asc":
+                    $column = "files_manager.created_at";
+                    $order = "asc";
+                    break;
+                case "added_by_desc":
+                    $column = "files_manager.created_at";
+                    $order = "desc";
+                    break;
+                case "name_asc":
+                    $column = "files_manager.original_name";
+                    $order = "asc";
+                    break;
+                case "name_desc":
+                    $column = "files_manager.original_name";
+                    $order = "desc";
+                    break;
+                default:
+                    $column = "files_manager.id";
+                    $order = "desc";
+                    break;
 
+            }
+        }
+        $user_documents = UserFiles::with('FileDetail')
+                                    ->join('files_manager', 'files_manager.unique_id', '=', 'user_files.file_id')
+                                    ->where(function ($query) use ($file_type) {
+                                        if($file_type != ''){
+                                            $query->where("files_manager.file_type",$file_type);
+                                        }
+                                    })
+                                    ->where("user_files.folder_id",$folder_id)
+                                    ->where("user_files.user_id",$user_id)
+                                    ->orderBy($column,$order)
+                                    ->get();
+       
+        $viewData['user_documents'] = $user_documents;
+        $file_url = userDirUrl()."/documents";
+        $file_dir = userDir()."/documents";
+        $viewData['file_url'] = $file_url;
+        $viewData['file_dir'] = $file_dir;
+        $viewData['document'] = $document;
+        
+        $view = View::make(roleFolder().'.documents.files-ajax',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
     public function uploadDocuments(Request $request){
         try{
             $id = \Auth::user()->unique_id;
@@ -145,9 +223,16 @@ class MyDocumentsController extends Controller
                     $destinationPath = userDir()."/documents";
                     if($file->move($destinationPath, $newName)){
                         $unique_id = randomNumber();
+                        $check_file_name = FilesManager::where("created_by",\Auth::user()->unique_id)->count();
+                        if(!empty($check_file_name)){
+                            $filname_without_ext = pathinfo($fileName, PATHINFO_FILENAME);
+                            $fileName = $filname_without_ext."(".$check_file_name.").".$extension;
+                        }
                         $object = new FilesManager();
                         $object->file_name = $newName;
                         $object->original_name = $fileName;
+                        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                        $object->file_type = $ext;
                         $object->user_id = $id;
                         $object->unique_id = $unique_id;
                         $object->created_by = \Auth::user()->unique_id;
@@ -187,6 +272,7 @@ class MyDocumentsController extends Controller
         $viewData['user_folders'] = $user_folders;
 
         $viewData['id'] = $id;
+        $viewData['move_type'] = 'single';
         $viewData['pageTitle'] = "Move File";
         $viewData['record'] = $record;
         $view = View::make(roleFolder().'.documents.modal.move-to',$viewData);
@@ -204,6 +290,37 @@ class MyDocumentsController extends Controller
 
         $response['status'] = true;
         $response['message'] = "File moved to folder successfully";
+        \Session::flash('success', 'File moved to folder successfully'); 
+        return response()->json($response);       
+    }
+
+    public function moveFiles($folder_id){
+        $user_id = \Auth::user()->unique_id;
+        $user_folders = UserFolders::where("user_id",$user_id)->get();
+        $folder = UserFolders::where("unique_id",$folder_id)->first();
+        $viewData['folder'] = $folder;
+        $viewData['user_folders'] = $user_folders;
+        $viewData['move_type'] = 'multiple';
+        $viewData['pageTitle'] = "Move File";
+        $view = View::make(roleFolder().'.documents.modal.move-files',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);        
+    }
+
+    public function moveMultipleFiles(Request $request){
+        $ids = $request->input("ids");
+        $folder_id = $request->input("folder_id");
+        $ids = explode(",",$ids);
+     
+        for($i = 0;$i < count($ids);$i++){
+            $data['folder_id'] = $folder_id;
+            UserFiles::where("unique_id",$ids[$i])->update($data);
+        }
+
+        $response['status'] = true;
+        $response['message'] = "Files moved to folder successfully";
         \Session::flash('success', 'File moved to folder successfully'); 
         return response()->json($response);       
     }
@@ -249,16 +366,18 @@ class MyDocumentsController extends Controller
     }
 
     public function viewDocument($file_id,Request $request){
+        
         $url = $request->get("url");
         $filename = $request->get("file_name");
         $folder_id = $request->get("folder_id");
         $ext = fileExtension($filename);
         $subdomain = $request->get("p");
-
+        $user_file = UserFiles::with('FileDetail')->where("file_id",$file_id)->first();
         $viewData['url'] = $url;
         $viewData['extension'] = $ext;
         $viewData['document_id'] = $file_id;
         $viewData['folder_id'] = $folder_id;
+        $viewData['user_file'] = $user_file;
         $viewData['pageTitle'] = "View Documents";
         return view(roleFolder().'.documents.view-documents',$viewData);
     }
@@ -372,6 +491,8 @@ class MyDocumentsController extends Controller
                     $object = new FilesManager();
                     $object->file_name = $newName;
                     $object->original_name = $original_name;
+                    $ext = pathinfo($original_name, PATHINFO_EXTENSION);
+                    $object->file_type = $ext;
                     $object->user_id = \Auth::user()->unique_id;
                     $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->unique_id;
@@ -460,6 +581,8 @@ class MyDocumentsController extends Controller
                     $object = new FilesManager();
                     $object->file_name = $newName;
                     $object->original_name = $original_name;
+                    $ext = pathinfo($original_name, PATHINFO_EXTENSION);
+                    $object->file_type = $ext;
                     $object->user_id = \Auth::user()->unique_id;
                     $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->unique_id;
@@ -480,6 +603,74 @@ class MyDocumentsController extends Controller
             $response['error_type'] = 'no_files';
             $response['message'] = "No Files selected";
         }
+        return response()->json($response);
+    }
+
+    public function fetchDocumentNotes(Request $request){
+        $file_id = $request->input("file_id");
+        $user_id = \Auth::user()->unique_id;
+        $notes = UserDocumentNotes::with('FileDetail')->where("file_id",$file_id)->where("user_id",$user_id)->get();
+
+        $viewData['user_id'] = $user_id;
+        $viewData['file_id'] = $file_id;
+        $viewData['notes'] = $notes;
+        $view = View::make(roleFolder().'.documents.document-notes',$viewData);
+        $contents = $view->render();
+
+        $response['status'] = true;
+        $response['html'] = $contents;
+        return response()->json($response);
+    }
+
+    public function saveDocumentNote(Request $request){
+        $object = new UserDocumentNotes();
+        $object->file_id = $request->input("file_id");
+        $object->message = $request->input("message");
+        $object->type = $request->input("type");
+        $object->user_id = \Auth::user()->unique_id;
+        $object->save();
+    
+        $response['status'] = true;
+        $response['message'] = "Note added successfully";
+
+        return response()->json($response);
+    }
+
+    public function saveDocumentNoteFile(Request $request){
+
+        if ($file = $request->file('attachment')){
+            $data['case_id'] = $request->input("case_id");
+            $data['document_id'] = $request->input("document_id");
+
+            $fileName        = $file->getClientOriginalName();
+            $extension       = $file->getClientOriginalExtension() ?: 'png';
+            $newName        = mt_rand(1,99999)."-".$fileName;
+            $source_url = $file->getPathName();
+            $destinationPath = userDir()."/documents";
+            
+            
+            if($file->move($destinationPath, $newName)){
+
+                $object = new UserDocumentNotes();
+                $object->file_id = $request->input("file_id");
+                $object->message = $fileName;
+                $object->type = 'file';
+                $object->user_id = \Auth::user()->unique_id;
+                $object->save();
+            
+                $response['status'] = true;
+                $response['message'] = "File send successfully";
+               
+                
+            }else{
+                $response['status'] = true;
+                $response['message'] = "File send failed, try again!";
+            }
+        }else{
+            $response['status'] = false;
+            $response['message'] = "File not selected!";
+        }
+        
         return response()->json($response);
     }
 }

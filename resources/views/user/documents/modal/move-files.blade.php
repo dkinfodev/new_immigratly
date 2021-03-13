@@ -24,12 +24,11 @@
     </div>
     <div class="modal-body">
       <h4 class="text-danger text-left mb-3">*Choose the folder you want to move the file into</h4>
-      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/documents/files/file-move-to') }}">  
+      <form method="post" id="popup-form" class="js-validate" action="{{ baseUrl('/documents/files/move-files') }}">  
           @csrf
-         <input type="hidden" value="{{ $record->unique_id }}" name="id" />
          <div class="row">
             @foreach($user_folders as $key => $doc)
-              @if($record->folder_id != $doc->unique_id)
+              @if($folder->unique_id != $doc->unique_id)
                 <div class="col-md-3 col-sm-12 col-lg-3">
                     <div class="folder-block text-center">
 
@@ -66,10 +65,21 @@
         $(".folder-block").removeClass("active");
         $(this).addClass("active");
         $(this).find(".custom-control-input").prop("checked",true);
-      })
+      });
+      if($(".row-checkbox:checked").length <= 0){
+        errorMessage("No File selected");
+        return false;
+      }
+      var file_ids = [];
+      $(".row-checkbox:checked").each(function(){
+          var unq_id = $(this).attr('data-fileid');
+          file_ids.push(unq_id);
+      });  
       $("#popup-form").submit(function(e){
           e.preventDefault();
+          
           var formData = $("#popup-form").serialize();
+          formData += "&ids="+file_ids.join(",");
           var url  = $("#popup-form").attr('action');
           $.ajax({
               url:url,

@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
                                     ->where("parent_id",0)
                                     ->select("id","name","slug","unique_id")
                                     ->get();
+        
         view()->share('visa_services', $visa_services);
     }
 }

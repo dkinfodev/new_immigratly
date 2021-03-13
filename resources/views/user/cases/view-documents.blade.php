@@ -63,12 +63,27 @@
       </div>
       <div class="col-md-5">
          <div class="card" style="margin:0 auto; width:100%; height:750px;">
+         <div class="card-header">
+            <h3>Document Notes</h3>
+         </div>
           <div class="card-body sidebar-body">
              <div class="chat_window3">
                 <ul class="messages">
                    
                 </ul>
-                <div class="doc_chat_input bottom_wrapper clearfix">
+                
+             </div>
+             <div class="message_template">
+                <li class="message">
+                   <div class="avatar"></div>
+                   <div class="text_wrapper">
+                      <div class="text"></div>
+                   </div>
+                </li>
+             </div>
+          </div>
+          <div class="card-footer">
+               <div class="doc_chat_input bottom_wrapper clearfix">
                    <div class="message_input_wrapper">
                       <input class="form-control msg_textbox" id="message_input" placeholder="Type your message here..." />
                       <input type="file" name="chat_file" id="chat-attachment" style="display:none" />
@@ -83,15 +98,6 @@
                       </button>
                    </div>
                 </div>
-             </div>
-             <div class="message_template">
-                <li class="message">
-                   <div class="avatar"></div>
-                   <div class="text_wrapper">
-                      <div class="text"></div>
-                   </div>
-                </li>
-             </div>
           </div>
          </div>
       </div>

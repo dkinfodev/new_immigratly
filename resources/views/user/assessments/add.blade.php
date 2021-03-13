@@ -53,15 +53,15 @@
               </div>
             </a>
           </li>
-
           <li class="step-item">
             <a class="step-content-wrapper" href="javascript:;">
               <span class="step-icon step-icon-soft-dark">2</span>
               <div class="step-content">
-                <span class="step-title">Payment</span>
+                <span class="step-title">Additional Comments</span>
               </div>
             </a>
           </li>
+          
 
           <li class="step-item">
             <a class="step-content-wrapper" href="javascript:;">
@@ -72,14 +72,15 @@
             </a>
           </li>
 
-           <li class="step-item">
+          <li class="step-item">
             <a class="step-content-wrapper" href="javascript:;">
               <span class="step-icon step-icon-soft-dark">4</span>
               <div class="step-content">
-                <span class="step-title">Additional Comments</span>
+                <span class="step-title">Payment</span>
               </div>
             </a>
           </li>
+           
         </ul>
         <!-- End Step -->
 
@@ -88,9 +89,9 @@
           <div id="validationFormCaseInfo" class="active">
             <!-- Form Group -->
             <div class="row form-group">
-              <label for="validationFormCaseNameLabel" class="col-sm-3 col-form-label input-label">Case Name</label>
+              <label for="validationFormCaseNameLabel" class="col-sm-2 col-form-label input-label">Case Name</label>
 
-              <div class="col-sm-9">
+              <div class="col-sm-10">
                 <div class="js-form-message">
                   <input type="text" class="form-control" name="case_name" id="validationFormCaseNameLabel" placeholder="Case Name" aria-label="Case Name" required data-msg="Please enter case name.">
                 </div>
@@ -100,9 +101,9 @@
 
             <!-- Form Group -->
             <div class="row form-group">
-              <label for="validationFormVisaServiceLabel" class="col-sm-3 col-form-label input-label">Visa Service</label>
+              <label for="validationFormVisaServiceLabel" class="col-sm-2 col-form-label input-label">Visa Service</label>
 
-              <div class="col-sm-9">
+              <div class="col-sm-10">
                 <div class="js-form-message">
                   <select name="visa_service_id" id="validationFormVisaServiceLabel" required data-msg="Please select visa service." class="form-control">
                     <option value="">Select Visa Service</option>
@@ -117,9 +118,9 @@
 
             <!-- Form Group -->
             <div class="row form-group">
-              <label for="validationFormCaseTypeLabel" class="col-sm-3 col-form-label input-label">Case Type</label>
+              <label for="validationFormCaseTypeLabel" class="col-sm-2 col-form-label input-label">Case Type</label>
 
-              <div class="col-sm-9">
+              <div class="col-sm-10">
                 <div class="js-form-message">
                   <select name="case_type" id="validationFormCaseTypeLabel" required data-msg="Please select case type." class="form-control">
                     <option value="">Select Case Type</option>

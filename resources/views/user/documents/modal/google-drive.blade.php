@@ -1,3 +1,17 @@
+<style type="text/css">
+.folder-block .app-icon {
+    font-size: 50px;
+}
+.folder-block {
+    background-color: #EEE;
+    cursor: pointer;
+    transition: 0.6s;
+}
+.folder-block:hover,.active-card {
+    background-color: #ddd;
+    transition: 0.6s;
+}
+</style>
 <div class="modal-dialog modal-xl" role="document">
   <div class="modal-content">
     <div class="modal-header">
@@ -60,6 +74,15 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
+  $(".gdrive-file").click(function(){
+    if($(this).hasClass("active-card")){
+      $(this).removeClass("active-card");
+      $(this).find('.chk-file').prop("checked",false);
+    }else{
+      $(this).addClass("active-card");
+      $(this).find('.chk-file').prop("checked",true);
+    }
+  })
     $("#popup-form").submit(function(e){
         e.preventDefault();
         var formData = $("#popup-form").serialize();

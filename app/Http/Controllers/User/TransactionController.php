@@ -238,6 +238,21 @@ class TransactionController extends Controller
             $response['status'] = true;
             $response['message'] = "Payment paid successfully";
 
+            $mailData = array();
+            $mail_message = "Hello Admin,<Br> ".\Auth::user()->first_name." ".\Auth::user()->last_name." has created the assessment. Please check the panel";
+            
+            $mailData['mail_message'] = $mail_message;
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = adminInfo('email');
+            $parameter['to_name'] = adminInfo('name');
+            $parameter['message'] = $message;
+            
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
+
         } catch (\Exception $e) {
             $response['status'] = false;
             $response['message'] = $e->getMessage();

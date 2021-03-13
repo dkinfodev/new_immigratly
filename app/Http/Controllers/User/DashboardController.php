@@ -17,6 +17,8 @@ use App\Models\LanguageProficiency;
 use App\Models\ClientExperience;
 use App\Models\ClientEducations;
 use App\Models\PrimaryDegree;
+use App\Models\BackupSettings;
+use App\Models\UserReminderNotes;
 
 class DashboardController extends Controller
 {
@@ -614,7 +616,7 @@ class DashboardController extends Controller
                 $object = UserDetails::where("user_id",\Auth::user()->unique_id)->first();
                 $object->google_drive_auth = json_encode($return);
                 $object->save();
-                return redirect(baseUrl('/connect-apps'))->with("success","Google account connected successfully");
+                return redirect(baseUrl('/connect-apps'))->with("success","Google account connected successfully. You can now use the gdrive to upload documents");
             }
             return redirect(baseUrl('/connect-apps'))->with("error","Google connection failed try again");
         }else{
@@ -646,4 +648,105 @@ class DashboardController extends Controller
             return redirect(baseUrl('/connect-apps'))->with("error","Dropbox connection failed");
         }   
     }
+
+    public function googleSetting(Request $request){
+        $viewData['pageTitle'] = "Google Backup Setting";
+        $settings = BackupSettings::where("user_id",\Auth::user()->unique_id)->first();
+        $viewData['record'] = $settings;
+        $view = View::make(roleFolder().'.modal.google-setting',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+
+    public function saveGoogleSetting(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'duration' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $response['status'] = false;
+                $error = $validator->errors()->toArray();
+                $errMsg = array();
+                
+                foreach($error as $key => $err){
+                    $errMsg[$key] = $err[0];
+                }
+                $response['message'] = $errMsg;
+                return response()->json($response);
+            }
+            
+            $checkSetting = BackupSettings::where("user_id",\Auth::user()->unique_id)->first();
+            if(!empty($checkSetting)){
+                $object = BackupSettings::find($checkSetting->id);
+                
+            }else{
+                $object = new BackupSettings();
+                $object->unique_id = randomNumber();
+            }
+            $object->user_id = \Auth::user()->unique_id;
+            $object->gdrive_duration = $request->input("duration");
+            $object->save();
+
+            $response['status'] = true;
+            $response['message'] = "Backup setting saved successfully";
+        } catch (Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    public function dropboxSetting(Request $request){
+        $viewData['pageTitle'] = "Dropbox Backup Setting";
+        $settings = BackupSettings::where("user_id",\Auth::user()->unique_id)->first();
+        $viewData['record'] = $settings;
+        $view = View::make(roleFolder().'.modal.dropbox-setting',$viewData);
+        $contents = $view->render();
+        $response['contents'] = $contents;
+        $response['status'] = true;
+        return response()->json($response);
+    }
+
+    public function saveDropboxSetting(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'duration' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $response['status'] = false;
+                $error = $validator->errors()->toArray();
+                $errMsg = array();
+                
+                foreach($error as $key => $err){
+                    $errMsg[$key] = $err[0];
+                }
+                $response['message'] = $errMsg;
+                return response()->json($response);
+            }
+
+            $checkSetting = BackupSettings::where("user_id",\Auth::user()->unique_id)->first();
+            if(!empty($checkSetting)){
+                $object = BackupSettings::find($checkSetting->id);
+            }else{
+                $object = new BackupSettings();
+                $object->unique_id = randomNumber();
+            }
+            $object->user_id = \Auth::user()->unique_id;
+            $object->dropbox_duration = $request->input("duration");
+            $object->save();
+
+            $response['status'] = true;
+            $response['message'] = "Backup setting saved successfully";
+        } catch (Exception $e) {
+            $response['status'] = false;
+            $response['message'] = $e->getMessage();
+        }
+        return response()->json($response);
+    }
+
+    
 }

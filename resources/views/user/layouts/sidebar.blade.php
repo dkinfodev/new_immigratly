@@ -28,7 +28,7 @@
                 <!-- End Dashboards -->
                 <!-- Personal -->
                 <li class="nav-item">
-                  <small class="nav-subtitle" title="Personal">Personal Links</small>
+                  <small class="nav-subtitle" title="Personal">Personal</small>
                   <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                 </li>
                 
@@ -38,24 +38,28 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Documents</span>
                   </a>
                 </li>
-
-                <!-- End Personal -->
-
-                <!-- Professionals -->
-                <li class="nav-item">
-                  <small class="nav-subtitle" title="Professionals">Professionals</small>
-                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
-                </li>
-                <li class="nav-item">
-                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/assessments') }}" data-placement="left">
-                    <i class="tio-comment-text-outlined nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Assessments</span>
+                <li class="nav-item ">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/cv') }}" data-placement="left">
+                    <i class="tio-documents nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Manage CV</span>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/cases') }}" data-placement="left">
                     <i class="tio-account-square nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Cases With Professionals</span>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Cases</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/invoices') }}" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Invoices</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/notes') }}" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My Notes</span>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -64,21 +68,118 @@
                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Chat Groups</span>
                   </a>
                 </li>
-                <li class="navbar-vertical-aside-has-menu ">
-                  <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle " href="javascript:;">
-                    <i class="tio-apps nav-icon"></i>
-                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Settings</span>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">All Activities</span>
                   </a>
-
-                  <ul class="js-navbar-vertical-aside-submenu nav nav-sub">
-                    <li class="nav-item">
-                      <a class="nav-link " href="{{ baseUrl('/connect-apps') }}">
-                        <span class="tio-circle nav-indicator-icon"></span>
-                        <span class="text-truncate">Connect Apps</span>
-                      </a>
-                    </li>
-                  </ul>
                 </li>
+                <!-- End Personal -->
+
+                <!-- Professionals -->
+                <li class="nav-item">
+                  <small class="nav-subtitle" title="Professionals">Assessments</small>
+                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Self Assessments</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/assessments') }}" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Paid Assessments</span>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <small class="nav-subtitle" title="Professionals">Notification and messages</small>
+                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{baseUrl('notifications')}}" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Notifications</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Messages</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Pending Tasks</span>
+                  </a>
+                </li>
+
+
+                <li class="nav-item">
+                  <small class="nav-subtitle" title="Professionals">News and Feed</small>
+                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Professional feed</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Latest News</span>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <small class="nav-subtitle" title="Professionals">Articles</small>
+                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Latest Articles</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Bookmarked Articles</span>
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <small class="nav-subtitle" title="Professionals">Webinar</small>
+                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Latest Webinar</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="javascript:;" data-placement="left">
+                    <i class="tio-comment-text-outlined nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">My webinar</span>
+                  </a>
+                </li>
+                
+                <li class="nav-item">
+                  <small class="nav-subtitle" title="Professionals">Settings</small>
+                  <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="nav-item">
+                  <a class="js-nav-tooltip-link nav-link" href="{{ baseUrl('/connect-apps') }}" data-placement="left">
+                    <i class="tio-account-square nav-icon"></i>
+                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Connect Apps</span>
+                  </a>
+                </li>
+               
 
               </ul>
             </div>

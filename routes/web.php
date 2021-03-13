@@ -22,6 +22,11 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/login');
 });
+
+// Cronjob
+Route::group(array('prefix' => 'cron'), function () {
+    Route::get('/backup-to-gdrive', [App\Http\Controllers\CronController::class, 'backupFilesToGdrive']);
+});
 Route::group(array('middleware' => 'frontend'), function () {
     Route::get('/', [App\Http\Controllers\Frontend\FrontendController::class, 'index']);
     Route::get('/articles', [App\Http\Controllers\Frontend\FrontendController::class, 'articles']);
@@ -440,7 +445,19 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
     Route::post('/update-profile', [App\Http\Controllers\User\DashboardController::class, 'updateProfile']);
     Route::get('/change-password', [App\Http\Controllers\User\DashboardController::class, 'changePassword']);
     Route::post('/update-password', [App\Http\Controllers\User\DashboardController::class, 'updatePassword']);
+    
+    Route::group(array('prefix' => 'notes'), function () {
+        Route::get('/', [App\Http\Controllers\User\ReminderNotesController::class, 'list']);
+        Route::get('/add-reminder-note', [App\Http\Controllers\User\ReminderNotesController::class, 'addReminderNote']);
+        Route::post('/add-reminder-note', [App\Http\Controllers\User\ReminderNotesController::class, 'saveReminderNote']);
 
+        Route::get('/edit-reminder-note/{id}', [App\Http\Controllers\User\ReminderNotesController::class, 'editReminderNote']);
+        Route::post('/edit-reminder-note/{id}', [App\Http\Controllers\User\ReminderNotesController::class, 'updateReminderNote']);
+
+        Route::get('/delete/{id}', [App\Http\Controllers\User\ReminderNotesController::class, 'deleteRecord']);
+
+    });
+    
     Route::get('/cv', [App\Http\Controllers\User\DashboardController::class, 'manageCv']);
     Route::post('/save-language-proficiency', [App\Http\Controllers\User\DashboardController::class, 'saveLanguageProficiency']);
     
@@ -498,6 +515,14 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::get('/connect-google', [App\Http\Controllers\User\DashboardController::class, 'connectGoogle']);
         Route::get('/dropbox-auth', [App\Http\Controllers\User\DashboardController::class, 'dropboxAuthention']);
         Route::get('/connect-dropbox', [App\Http\Controllers\User\DashboardController::class, 'connectDropbox']);
+
+        Route::get('/google-setting', [App\Http\Controllers\User\DashboardController::class, 'googleSetting']);
+        Route::get('/dropbox-setting', [App\Http\Controllers\User\DashboardController::class, 'dropboxSetting']);
+
+        Route::post('/google-setting', [App\Http\Controllers\User\DashboardController::class, 'saveGoogleSetting']);
+        Route::post('/dropbox-setting', [App\Http\Controllers\User\DashboardController::class, 'saveDropboxSetting']);
+
+        
     });
 
     Route::group(array('prefix' => 'work-experiences'), function () {
@@ -546,6 +571,7 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         });
         Route::group(array('prefix' => 'files'), function () {
             Route::get('/lists/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'folderFiles']);
+            Route::get('/list-ajax', [App\Http\Controllers\User\MyDocumentsController::class, 'folderFilesAjax']);
             Route::post('/upload-documents', [App\Http\Controllers\User\MyDocumentsController::class, 'uploadDocuments']);
             Route::get('/delete/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteDocument']);
             Route::post('/delete-multiple', [App\Http\Controllers\User\MyDocumentsController::class, 'deleteMultipleDocuments']);
@@ -553,14 +579,23 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
             Route::get('/file-move-to/{file_id}', [App\Http\Controllers\User\MyDocumentsController::class, 'fileMoveTo']);
             Route::post('/file-move-to', [App\Http\Controllers\User\MyDocumentsController::class, 'moveFileToFolder']);
 
+            Route::get('/move-files/{folder_id}', [App\Http\Controllers\User\MyDocumentsController::class, 'moveFiles']);
+            Route::post('/move-files', [App\Http\Controllers\User\MyDocumentsController::class, 'moveMultipleFiles']);            
+
             Route::get('/view-document/{id}', [App\Http\Controllers\User\MyDocumentsController::class, 'viewDocument']);
+            Route::post('/fetch-notes', [App\Http\Controllers\User\MyDocumentsController::class, 'fetchDocumentNotes']);
+            Route::post('/save-notes', [App\Http\Controllers\User\MyDocumentsController::class, 'saveDocumentNote']);
+            Route::post('/save-file-notes', [App\Http\Controllers\User\MyDocumentsController::class, 'saveDocumentNoteFile']);
+
         });
 
         Route::get('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'documentsExchanger']);
         Route::post('/documents-exchanger', [App\Http\Controllers\User\MyDocumentsController::class, 'saveExchangeDocuments']);
     });
     
-    
+    Route::group(array('prefix' => 'invoices'), function () {
+        Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'allInvoices']);
+    });
 
     Route::group(array('prefix' => 'cases'), function () {
         Route::get('/', [App\Http\Controllers\User\ProfessionalCasesController::class, 'cases']);
@@ -603,6 +638,8 @@ Route::group(array('prefix' => 'user', 'middleware' => 'user'), function () {
         Route::post('/import-documents', [App\Http\Controllers\User\ProfessionalCasesController::class, 'saveImportDocuments']);
         Route::post('/remove-user-document', [App\Http\Controllers\User\ProfessionalCasesController::class, 'removeUserDocument']);
         Route::get('/view-document/{case_id}/{doc_id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'viewDocument']);
+        
+        
 
         Route::group(array('prefix' => '{subdomain}/invoices'), function () {
             Route::get('/list/{id}', [App\Http\Controllers\User\ProfessionalCasesController::class, 'caseInvoices']);

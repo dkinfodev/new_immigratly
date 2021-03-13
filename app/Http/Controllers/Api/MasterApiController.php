@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use View;
 
 use App\Models\User;
 use App\Models\UserWithProfessional;
@@ -42,7 +43,9 @@ class MasterApiController extends Controller
                 $response['status'] = 'error';
                 $response['error'] = "email_exists";
                 $response['message'] = "Client account with email ".$user['email']." and ".$user['phone_no']." already exists";
-                return response()->json($response);
+                // return response()->json($response);
+                $is_exists = 1;
+                $unique_id = $checkExists->unique_id;
             }
 
             $checkExists = User::where("email",$user['email'])->first();
@@ -57,7 +60,7 @@ class MasterApiController extends Controller
             }
 
             $checkExists = User::where("phone_no",$user['phone_no'])->first();
-            if(!empty($checkExists)){
+            if(!empty($checkExists) && $is_exists == 0){
             	$response['status'] = 'error';
             	$response['error'] = "phone_exists";
             	$response['message'] = "Phone no already exists";
@@ -106,7 +109,7 @@ class MasterApiController extends Controller
                 }
                 $object->save();
             }
-
+            
 	        $object2 = new UserWithProfessional();
 	        $object2->user_id = $unique_id;
 	        $object2->professional= $this->subdomain;
@@ -118,23 +121,36 @@ class MasterApiController extends Controller
 	        $response['message'] = "Client has been created successfully";
 	        $response['status'] = 'success';
 
-            $mailData = array();
-            $mail_message = "Hello ".$user['first_name']." ".$user['last_name'].",<Br> Your account has been created in ".companyName()." by ".$professional->company_name.". Case has been created.";
-            $mail_message .= "<br> You login details are as below:";
-            $mail_message .= "<br> <b>Email:</b>".$user['email'];
-            $mail_message .= "<br> <b>Password:</b>".$password;
-            $mail_message .= "<br> <b>Site Url:</b>".site_url();
+            if($is_exists == 0){
+                $mailData = array();
+                $mail_message = "Hello ".$user['first_name']." ".$user['last_name'].",<Br> Your account has been created in ".companyName()." by ".$professional['company_name'].". Case has been created.";
+                $mail_message .= "<br> You login details are as below:";
+                $mail_message .= "<br> <b>Email: </b>".$user['email'];
+                $mail_message .= "<br> <b>Password: </b>".$password;
+                $mail_message .= "<br> <b>Site Url: </b>".site_url();
+                $parameter['subject'] = "Account has been created in ".companyName();
+            }else{
+                $mailData = array();
+                $mail_message = "Hello ".$user['first_name']." ".$user['last_name'].",<br>".$professional['company_name']." has created the case. Please login to the panel and check it.";
+                $parameter['subject'] = "New case added to your profile";
+            }
             $mailData['mail_message'] = $mail_message;
             $view = View::make('emails.notification',$mailData);
             
             $message = $view->render();
-            $parameter['to'] = $user['email'];
+            // $parameter['to'] = $user['email'];
+            $parameter['to'] = "developertest143@gmail.com";
             $parameter['to_name'] = $user['first_name']." ".$user['last_name'];
             $parameter['message'] = $message;
-            $parameter['subject'] = "Account has been created in ".companyName();
+            
             $parameter['view'] = "emails.notification";
             $parameter['data'] = $mailData;
             $mailRes = sendMail($parameter);
+
+            $sms_message = $mail_message;
+            $to_no = $user['country_code'].$user['phone_no'];
+            sendSms($to_no,$sms_message);
+            
        	} catch (Exception $e) {
             $response['status'] = "error";
             $response['message'] = $e->getMessage();

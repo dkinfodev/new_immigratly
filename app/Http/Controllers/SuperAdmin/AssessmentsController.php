@@ -344,6 +344,8 @@ class AssessmentsController extends Controller
                     $object = new FilesManager();
                     $object->file_name = $newName;
                     $object->original_name = $original_name;
+                    $ext = pathinfo($original_name, PATHINFO_EXTENSION);
+                    $object->file_type = $ext;
                     $object->user_id = \Auth::user()->unique_id;
                     $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->unique_id;
@@ -437,6 +439,8 @@ class AssessmentsController extends Controller
                     $object = new FilesManager();
                     $object->file_name = $newName;
                     $object->original_name = $original_name;
+                    $ext = pathinfo($original_name, PATHINFO_EXTENSION);
+                    $object->file_type = $ext;
                     $object->user_id = \Auth::user()->unique_id;
                     $object->unique_id = $unique_id;
                     $object->created_by = \Auth::user()->unique_id;
@@ -482,6 +486,8 @@ class AssessmentsController extends Controller
                         $object = new FilesManager();
                         $object->file_name = $newName;
                         $object->original_name = $fileName;
+                        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                        $object->file_type = $ext;
                         $object->user_id = $id;
                         $object->unique_id = $unique_id;
                         $object->created_by = \Auth::user()->unique_id;
@@ -565,7 +571,7 @@ class AssessmentsController extends Controller
         $check_is_exists = UserWithProfessional::where("professional",$subdomain)->count();
         if($check_is_exists === 0){
             $object2 = new UserWithProfessional();
-            $object2->user_id = \Auth::user()->unique_id;
+            $object2->user_id = $object->user_id;
             $object2->professional= $subdomain;
             $object2->status = 1;
             $object2->save();
@@ -575,6 +581,23 @@ class AssessmentsController extends Controller
         if($api_response['status'] == 'success'){
             $response['status'] = true;
             $response['message'] = "Assessment assigned to professional";
+
+            $mailData = array();
+            $user = userDetail($object->user_id);
+            $mail_message = "Hello Admin,<Br> ".\Auth::user()->first_name." ".\Auth::user()->last_name." has created the assessment. Please check the panel";
+            
+            $mailData['mail_message'] = $mail_message;
+            $view = View::make('emails.notification',$mailData);
+            
+            $message = $view->render();
+            $parameter['to'] = adminInfo('email');
+            $parameter['to_name'] = adminInfo('name');
+            $parameter['message'] = $message;
+            
+            $parameter['view'] = "emails.notification";
+            $parameter['data'] = $mailData;
+            $mailRes = sendMail($parameter);
+
         }else{
             $response['status'] = false;
             $response['message'] = "Assessment assigned failed, try again";

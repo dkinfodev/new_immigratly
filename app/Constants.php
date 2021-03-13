@@ -6,4 +6,5 @@ define("MAIN_DATABASE","immigrat_new_immigratly");
 }
 define("PROFESSIONAL_DATABASE","immigrat_");
 define("ACCESS_DENIED_MSG","Not having access permission");
+
 ?>

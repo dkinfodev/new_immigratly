@@ -44,7 +44,7 @@ class CasesController extends Controller
                                 $query->where("case_title","LIKE","%$search%");
                             }
                         })
-                        ->paginate();
+                        ->paginate(5);
         $viewData['records'] = $records;
         $view = View::make(roleFolder().'.cases.ajax-list',$viewData);
         $contents = $view->render();

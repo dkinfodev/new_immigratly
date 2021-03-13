@@ -149,7 +149,7 @@
              </div>
           </td>
           <td>
-              <div class="hs-unfold">
+            <div class="hs-unfold">
               <a class="js-hs-action btn btn-sm btn-white" href="javascript:;"
                  data-hs-unfold-options='{
                    "target": "#action-{{$key}}",
@@ -170,7 +170,6 @@
                  <i class="tio-dollar dropdown-item-icon"></i>
                  Invoices
                 </a>
-                
               </div>
             </div>
            </td>

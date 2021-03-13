@@ -134,6 +134,7 @@
   padding: 20px 20px;
   position: absolute;
   bottom: 0;
+  left: 0px;
 }
 .bottom_wrapper .message_input_wrapper {
     display: inline-block;
@@ -212,4 +213,8 @@
 }
 #pageno {
     height: 36px;
+}
+li.paginate_item.page-item.previous, li.paginate_item.page-item.next {
+  top: 1px;
+  position: relative;
 }
